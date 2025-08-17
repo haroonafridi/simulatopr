@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio;
+package com.hkcapital.portoflio.model;
 
 public record Position(int index,
                        Instrument instrument,

@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio;
+package com.hkcapital.portoflio.ui.fields;
 
 import javax.swing.*;
 import java.awt.*;

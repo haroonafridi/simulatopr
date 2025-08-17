@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio;
+package com.hkcapital.portoflio.model;
 
 import java.time.LocalDate;
 

@@ -1,11 +1,13 @@
-package com.hkcapital.portoflio;
+package com.hkcapital.portoflio.service;
+
+import com.hkcapital.portoflio.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.round;
 
-public class PortfolioPnLSimulator
+public class PortfolioPnLService
 {
     private final List<Instrument> instruments;
     private final Configuraion configuraion;
@@ -18,10 +20,10 @@ public class PortfolioPnLSimulator
 
     private List<PositionPnL> positionPnLList = new ArrayList<>();
 
-    public PortfolioPnLSimulator(final List<Instrument> instruments, final Configuraion configuraion, //
-                                 final List<MarketConditions> marketConditions,//
-                                 final List<Position> positionList,
-                                 final OpeningCapital openingCapital)
+    public PortfolioPnLService(final List<Instrument> instruments, final Configuraion configuraion, //
+                               final List<MarketConditions> marketConditions,//
+                               final List<Position> positionList,
+                               final OpeningCapital openingCapital)
     {
         this.instruments = instruments;
         this.configuraion = configuraion;
@@ -69,4 +71,11 @@ public class PortfolioPnLSimulator
     {
         instruments.add(i);
     }
+
+
+    public List<PositionPnL> getPositionPnLList()
+    {
+        return positionPnLList;
+    }
+
 }

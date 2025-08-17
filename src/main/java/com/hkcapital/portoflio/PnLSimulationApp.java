@@ -1,17 +1,28 @@
 package com.hkcapital.portoflio;
 
+import com.hkcapital.portoflio.model.*;
+import com.hkcapital.portoflio.service.PortfolioPnLService;
+import com.hkcapital.portoflio.ui.panels.PositionActionsPanel;
+import com.hkcapital.portoflio.ui.panels.SimulationActionsPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PnLSimulationApp
 {
 
-    private static final  String GOLD = "GOLD";
+    private static final String GOLD = "GOLD";
+    PortfolioPnLService portfolioPnLSimulator;
+
+
     public static void main(String args[])
     {
+        PnLSimulationApp simulatorApp = new PnLSimulationApp();
+
         List<Instrument> instrumentList = Arrays.asList(new Instrument(1, "GOLD"),
                 new Instrument(2, "NASDAQ"));
 
@@ -23,13 +34,18 @@ public class PnLSimulationApp
         ConfigurationTableModel model =
                 new ConfigurationTableModel(new PnLSimulationApp().simulate(configuration));
         JTable table = new JTable(model);
+        table.setRowHeight(25);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 14));
         JFrame mainFrame = new JFrame("PnL Simulator App");
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
 
-        ConfigurationPanel  configurationPanel = new ConfigurationPanel();
+        ConfigurationPanel configurationPanel = new ConfigurationPanel();
         contents.add(configurationPanel);
+        PositionActionsPanel positionActionsPanel = new PositionActionsPanel();
+        contents.add(configurationPanel);
+        contents.add(positionActionsPanel);
         contents.add(new JScrollPane(table));
         SimulationActionsPanel simulation = new SimulationActionsPanel();
         contents.add(simulation);
@@ -37,13 +53,29 @@ public class PnLSimulationApp
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setVisible(true);
-        simulation.getSimulate().addActionListener(e -> {
-            model.updateData(new PnLSimulationApp().simulate2(configurationPanel.getConfiguration()));
+        simulation.getSimulate().addActionListener(e ->
+        {
+            try
+            {
+                model.updateData(simulatorApp.simulate2((configurationPanel.getConfiguration())));
+            } catch (Exception ex)
+            {
+                JOptionPane.showMessageDialog(mainFrame, "Please check configuration!",
+                        "Configuration Error!",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+        });
+
+        positionActionsPanel.getRemovePosition().addActionListener((e) ->
+        {
+            simulatorApp.portfolioPnLSimulator.getPositionPnLList().remove(table.getSelectedRow());
+            model.updateData( simulatorApp.portfolioPnLSimulator.getPositionPnLList());
         });
     }
 
-
-    private  List<PositionPnL> simulate( Configuraion configuration) {
+    private List<PositionPnL> simulate(Configuraion configuration)
+    {
 
         List<Instrument> instrumentList = Arrays.asList(new Instrument(1, GOLD),
                 new Instrument(2, "NASDAQ"));
@@ -56,15 +88,15 @@ public class PnLSimulationApp
 
         List<Position> positionList = Arrays.asList(p1Gold, p1Gold, p1Gold);
 
-        PortfolioPnLSimulator portfolioPnLSimulator =
-                new PortfolioPnLSimulator(instrumentList, configuration, marketConditions, positionList , openingCapital);
+        PortfolioPnLService portfolioPnLSimulator =
+                new PortfolioPnLService(instrumentList, configuration, marketConditions, positionList, openingCapital);
 
-        return  portfolioPnLSimulator.simulate();
+        return portfolioPnLSimulator.simulate();
 
     }
 
-
-    private  List<PositionPnL> simulate2( Configuraion configuration) {
+    private List<PositionPnL> simulate2(Configuraion configuration)
+    {
 
         List<Instrument> instrumentList = Arrays.asList(new Instrument(1, GOLD),
                 new Instrument(2, "NASDAQ"));
@@ -82,10 +114,14 @@ public class PnLSimulationApp
                 p1Gold, p1Gold, p1Gold,
                 p1Gold, p1Gold, p1Gold);
 
-        PortfolioPnLSimulator portfolioPnLSimulator =
-                new PortfolioPnLSimulator(instrumentList, configuration, marketConditions, positionList , openingCapital);
+        portfolioPnLSimulator = new PortfolioPnLService(instrumentList, configuration, marketConditions, positionList, openingCapital);
 
-        return  portfolioPnLSimulator.simulate();
+        return portfolioPnLSimulator.simulate();
 
+    }
+
+    public PortfolioPnLService getPortfolioPnLSimulator()
+    {
+        return portfolioPnLSimulator;
     }
 }

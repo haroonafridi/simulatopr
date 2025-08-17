@@ -1,5 +1,7 @@
 package com.hkcapital.portoflio;
 
+import com.hkcapital.portoflio.model.*;
+import com.hkcapital.portoflio.service.PortfolioPnLService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +33,8 @@ class PortfolioPnLSimulatorTest
 
         List<Position> positionList = Arrays.asList(p1Gold);
 
-        PortfolioPnLSimulator portfolioPnLSimulator =
-                new PortfolioPnLSimulator(instrumentList, configuration, marketConditions, positionList , openingCapital);
+        PortfolioPnLService portfolioPnLSimulator =
+                new PortfolioPnLService(instrumentList, configuration, marketConditions, positionList , openingCapital);
 
         List<PositionPnL> pnlList = portfolioPnLSimulator.simulate();
 

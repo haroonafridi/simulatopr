@@ -1,11 +1,13 @@
-package com.hkcapital.portoflio;
+package com.hkcapital.portoflio.model;
+
+import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ConfigurationPanel extends JPanel {
 
-    private final  NumberTextField percentAllowedAllocation=  new NumberTextField(30);
+    private final NumberTextField percentAllowedAllocation=  new NumberTextField(30);
     private final  NumberTextField noOfInstrumentsAllowed=  new NumberTextField(30);
     private final  NumberTextField noOfPositionsPerInstrument=  new NumberTextField(30);
 
