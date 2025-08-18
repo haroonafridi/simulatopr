@@ -1,6 +1,8 @@
 package com.hkcapital.portoflio.model;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ConfigurationTableModel extends AbstractTableModel
@@ -81,8 +83,9 @@ public class ConfigurationTableModel extends AbstractTableModel
     }
 
     public void updateData(List<PositionPnL> newData) {
+        List<PositionPnL> d = new ArrayList<>(newData);
         data.clear();
-        data.addAll(newData);
+        data.addAll(d);
         fireTableDataChanged();
     }
 }

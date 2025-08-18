@@ -37,6 +37,7 @@ public class PortfolioPnLService
         positionList.add(p);
     }
 
+
     public void addMarkerCondition(MarketConditions m)
     {
         marketConditions.add(m);
@@ -76,6 +77,12 @@ public class PortfolioPnLService
     public List<PositionPnL> getPositionPnLList()
     {
         return positionPnLList;
+    }
+
+
+    public void addPositionPnL(PositionPnL positionPnL)
+    {
+        positionPnLList.add(positionPnL);
     }
 
 }
