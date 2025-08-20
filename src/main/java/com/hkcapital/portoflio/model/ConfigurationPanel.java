@@ -39,7 +39,7 @@ public class ConfigurationPanel extends JPanel {
      return new Configuraion(1, percentAllowedAllocation.getDoubleValue(),
              noOfInstrumentsAllowed.getIntValue(),
              noOfPositionsPerInstrument.getIntValue(),
-             maxAllowedPercentPerPosition.getIntValue(),
+             maxAllowedPercentPerPosition.getDoubleValue(),
              lev.getIntValue());
     }
 

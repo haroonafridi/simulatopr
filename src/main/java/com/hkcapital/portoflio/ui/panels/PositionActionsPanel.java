@@ -11,6 +11,8 @@ public class PositionActionsPanel extends JPanel {
 
     private final JButton addPosition =  new JButton("Add Position");
     private final JButton removePosition =  new JButton("Remove Position");
+
+    private final JButton removePositionAll =  new JButton("Remove All Positions.");
     private static Instrument[] instruments = {new Instrument(1, "GOLD"), //
             new Instrument(2, "NASDAQ"), new Instrument(3, "CRUD OIL"), //
             new Instrument(4, "Nikkei")};
@@ -30,6 +32,7 @@ public class PositionActionsPanel extends JPanel {
         positionPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
         buttonPanel.add(addPosition);
         buttonPanel.add(removePosition);
+        buttonPanel.add(removePositionAll);
         add(positionPanel);
         add(buttonPanel);
         positionPanel.add(instrumentLabel);
@@ -60,6 +63,11 @@ public class PositionActionsPanel extends JPanel {
         return removePosition;
     }
 
+    public JButton getRemoveAllPositions()
+    {
+        return removePositionAll;
+    }
+
     public JComboBox<Instrument> getInstrumentComboBox() {
         return instrumentComboBox;
     }
@@ -67,7 +75,7 @@ public class PositionActionsPanel extends JPanel {
 
     public Position getPosition()
     {
-        return new Position(1, (Instrument)instrumentComboBox.getModel().getSelectedItem(),
+        return new Position(null, (Instrument)instrumentComboBox.getModel().getSelectedItem(),
                 positionSize.getDoubleValue());
     }
 }

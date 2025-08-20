@@ -61,7 +61,7 @@ public class PortfolioPnLService
 
             PositionPnL positionPnl = new PositionPnL(index, p, configuraion, //
                     mc, round(configuraion.lev()* (mc.percentMove() / 100)), round(pnl),
-                    round(amountInvested), round(openingCapital.capital()+pnl));
+                    round(amountInvested), round(openingCapital.capital()+pnl),1,1, 1);
 
             positionPnLList.add(positionPnl);
         }
@@ -83,6 +83,11 @@ public class PortfolioPnLService
     public void addPositionPnL(PositionPnL positionPnL)
     {
         positionPnLList.add(positionPnL);
+    }
+
+    public void updatePositionPnL(List<PositionPnL> pnl) {
+        positionPnLList.clear();
+        positionPnLList.addAll(pnl);
     }
 
 }

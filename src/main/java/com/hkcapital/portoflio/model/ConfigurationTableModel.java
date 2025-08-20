@@ -54,11 +54,11 @@ public class ConfigurationTableModel extends AbstractTableModel
             case 5:
                 return c.pnl();
             case 6:
-                return c.configuraion().percentAllocationAllowed();
+                return c.allowedFirePower();
             case 7:
-                return c.configuraion().percentAllocationAllowed();
+                return c.remainingFirepower();
             case 8:
-                return c.configuraion().percentAllocationAllowed();
+                return c.capitalRemainingFirePower();
             case 9:
                 return c.configuraion().lev();
             default:
@@ -77,7 +77,6 @@ public class ConfigurationTableModel extends AbstractTableModel
     {
         if (col == 1)
         {
-            // data.get(row).currentPositionEquity(Integer.parseInt(value.toString()));
             fireTableCellUpdated(row, col);
         }
     }

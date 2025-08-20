@@ -4,6 +4,7 @@ import com.hkcapital.portoflio.PnLSimulationApp;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.service.PortfolioPnLService;
 import com.hkcapital.portoflio.simulation.SimulationData;
+import com.hkcapital.portoflio.ui.panels.CapitalPanel;
 import com.hkcapital.portoflio.ui.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.SimulationActionsPanel;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class PnLSimulatorFacad
 
     public void createApplication()
     {
-        List<PositionPnL> positionPnLList = new ArrayList<>(); ///portfolioPnLService.simulate();
+        List<PositionPnL> positionPnLList = new ArrayList<>();
 
         ConfigurationTableModel model = new ConfigurationTableModel(positionPnLList);
 
@@ -37,8 +38,9 @@ public class PnLSimulatorFacad
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-
         ConfigurationPanel configurationPanel = new ConfigurationPanel();
+        CapitalPanel capitalPanel =  new CapitalPanel();
+        configurationPanel.add(capitalPanel);
         contents.add(configurationPanel);
         PositionActionsPanel positionActionsPanel = new PositionActionsPanel();
         contents.add(configurationPanel);
@@ -68,10 +70,18 @@ public class PnLSimulatorFacad
         {
             Position position = positionActionsPanel.getPosition();
             Configuraion configuraion = configurationPanel.getConfiguration();
+            OpeningCapital openingCapital = capitalPanel.getOpeningCapital();
+
+            double capital = Math.round( openingCapital.capital() * (position.percentCapitalDeployed() / 100) );
+            double allowedFirepower = openingCapital.capital() * (configuraion.maxPercentAllowedPerInstrument() / 100);
+            double remainingFirepower = allowedFirepower - capital;
+            double capitalRemainingFirePower = (openingCapital.capital() * configuraion.percentAllocationAllowed()/100) - capital ;
             int index = portfolioPnLService.getPositionPnLList().size();
             index++;
             portfolioPnLService.addPositionPnL(new PositionPnL(index, position, configuraion,
-                    SimulationData.MARKET_CONDITION, 1, 1, 1, 1));
+                    SimulationData.MARKET_CONDITION, 1, 1, capital, allowedFirepower ,
+                    remainingFirepower,
+                    capitalRemainingFirePower, 1));
             List<PositionPnL> pnl = portfolioPnLService.getPositionPnLList();
             model.updateData(pnl);
         });
@@ -82,6 +92,20 @@ public class PnLSimulatorFacad
             {
                 positionPnLList.remove(table.getSelectedRow());
                 model.updateData(positionPnLList);
+                portfolioPnLService.updatePositionPnL(positionPnLList);
+            } catch (Exception ex)
+            {
+                logger.error("Error while removing a row => {} ", ex.getMessage());
+                JOptionPane.showMessageDialog(mainFrame, "Please choose a position to delete!", "Delete Row!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        positionActionsPanel.getRemoveAllPositions().addActionListener(e-> {
+            try
+            {
+                positionPnLList.clear();
+                model.updateData(positionPnLList);
+                portfolioPnLService.updatePositionPnL(positionPnLList);
             } catch (Exception ex)
             {
                 logger.error("Error while removing a row => {} ", ex.getMessage());

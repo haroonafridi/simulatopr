@@ -29,7 +29,7 @@ public class SimulationData
     public static final MarketConditions MARKET_CONDITION= new MarketConditions(1, new Instrument(1, SimulationData.GOLD), -1);
 
     public static  final PositionPnL POSITION_PN_L =  new PositionPnL(4, P1_GOLD, CONFIGURAION, MARKET_CONDITION, 100, 100,
-   100, 100);
+   100, 100, 1,1 , 1);
 
 
 }
