@@ -15,7 +15,7 @@ public class CapitalPanel extends JPanel {
     private final JLabel openinDateLabel = new JLabel("Date:");
     private final JLabel openingDate = new JLabel(LocalDate.now().format(DateTimeFormatter.ISO_DATE));
     private final JLabel openinCapitalLabel = new JLabel("Opening capital:");
-    private final NumberTextField openingCapital = new NumberTextField();
+    private final NumberTextField openingCapital = new NumberTextField(200, 5000d);
 
     public CapitalPanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 20, 15));

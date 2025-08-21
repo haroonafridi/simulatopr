@@ -21,7 +21,7 @@ public class PositionActionsPanel extends JPanel {
 
     private final JLabel instrumentLabel = new JLabel("Instrument:");
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
-    private final NumberTextField positionSize = new NumberTextField(30);
+    private final NumberTextField positionSize = new NumberTextField(30, 2);
     private final JComboBox<Instrument> instrumentComboBox = new JComboBox<>(instruments);
 
     public PositionActionsPanel() {

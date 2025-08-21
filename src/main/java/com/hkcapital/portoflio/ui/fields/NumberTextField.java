@@ -10,6 +10,20 @@ public class NumberTextField extends JTextField
         setPreferredSize(new Dimension(200, 20));
     }
 
+    public NumberTextField(int width, Double value)
+    {
+        setPreferredSize(new Dimension(width, 20));
+        setText(value.toString());
+    }
+
+    public NumberTextField(int width, Integer value)
+    {
+        setPreferredSize(new Dimension(width, 20));
+        setText(value.toString());
+    }
+
+
+
     public NumberTextField(int width)
     {
         setPreferredSize(new Dimension(width, 20));

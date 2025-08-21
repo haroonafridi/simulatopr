@@ -5,6 +5,7 @@ import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.service.PortfolioPnLService;
 import com.hkcapital.portoflio.simulation.SimulationData;
 import com.hkcapital.portoflio.ui.panels.CapitalPanel;
+import com.hkcapital.portoflio.ui.panels.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.SimulationActionsPanel;
 import org.slf4j.Logger;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PnLSimulatorFacad
@@ -73,9 +73,38 @@ public class PnLSimulatorFacad
             OpeningCapital openingCapital = capitalPanel.getOpeningCapital();
 
             double capital = Math.round( openingCapital.capital() * (position.percentCapitalDeployed() / 100) );
+
             double allowedFirepower = openingCapital.capital() * (configuraion.maxPercentAllowedPerInstrument() / 100);
-            double remainingFirepower = allowedFirepower - capital;
-            double capitalRemainingFirePower = (openingCapital.capital() * configuraion.percentAllocationAllowed()/100) - capital ;
+
+            double capitalRemainingFirePower  = (openingCapital.capital() * configuraion.percentAllocationAllowed()/100) - capital ;
+
+            double remainingFirepower = 0;
+
+            double capitalInvestedPerInsrument = 0;
+            double capitalInvestedTotal = 0;
+
+            double totalRemainingFirePower = 0;
+
+            if(portfolioPnLService.getPositionPnLList().size() == 0)
+            {
+                remainingFirepower = allowedFirepower - capital;
+
+            }
+            else
+            {
+                capitalInvestedPerInsrument =  portfolioPnLService.getPositionPnLList().stream()
+                        .filter(pnl -> pnl.position().instrument().name().equals(position.instrument().name()))
+                        .mapToDouble(pnl->pnl.currentPositionEquity()).sum();
+
+                remainingFirepower = allowedFirepower-capitalInvestedPerInsrument-capital;
+
+                totalRemainingFirePower = portfolioPnLService.getPositionPnLList().stream()
+                        .mapToDouble(pnl->pnl.currentPositionEquity()).sum();
+
+                capitalRemainingFirePower = capitalRemainingFirePower - totalRemainingFirePower;
+
+            }
+
             int index = portfolioPnLService.getPositionPnLList().size();
             index++;
             portfolioPnLService.addPositionPnL(new PositionPnL(index, position, configuraion,
