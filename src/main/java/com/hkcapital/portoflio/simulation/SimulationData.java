@@ -13,7 +13,7 @@ public class SimulationData
 
     public static final Position P1_GOLD = new Position(1, new Instrument(1, SimulationData.GOLD), 3.8722);
 
-    public static final Configuraion CONFIGURAION = new Configuraion(1, 15, //
+    public static final Configuraion CONFIGURAION = new Configuraion(1, 15d, //
             2, 3, //
             7.5,
             20);
@@ -25,11 +25,11 @@ public class SimulationData
     public static final OpeningCapital OPENING_CAPITAL = new OpeningCapital(1, LocalDate.now(), 5165);
 
     public static final List<MarketConditions> MARKET_CONDITIONS =
-            Arrays.asList(new MarketConditions(1, new Instrument(1, SimulationData.GOLD), -1));
-    public static final MarketConditions MARKET_CONDITION= new MarketConditions(1, new Instrument(1, SimulationData.GOLD), -1);
+            Arrays.asList(new MarketConditions(1, new Instrument(1, SimulationData.GOLD),3372d , 3354d, -1d));
+    public static final MarketConditions MARKET_CONDITION= new MarketConditions(1, new Instrument(1, SimulationData.GOLD), 3372d
+            , 3354d, -1d);
 
-    public static  final PositionPnL POSITION_PN_L =  new PositionPnL(4, P1_GOLD, CONFIGURAION, MARKET_CONDITION, 100, 100,
-   100, 100, 1,1 , 1);
-
+    public static  final PositionPnL POSITION_PN_L =  new PositionPnL(4, P1_GOLD, CONFIGURAION, MARKET_CONDITION, 100d, 100d,
+   100d, 100d, 1d,1d , 1d);
 
 }

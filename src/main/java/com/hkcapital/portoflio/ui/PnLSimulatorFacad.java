@@ -13,8 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class PnLSimulatorFacad
 {
@@ -28,9 +31,7 @@ public class PnLSimulatorFacad
     public void createApplication()
     {
         List<PositionPnL> positionPnLList = new ArrayList<>();
-
         ConfigurationTableModel model = new ConfigurationTableModel(positionPnLList);
-
         JTable table = new JTable(model);
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -39,7 +40,7 @@ public class PnLSimulatorFacad
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
         ConfigurationPanel configurationPanel = new ConfigurationPanel();
-        CapitalPanel capitalPanel =  new CapitalPanel();
+        CapitalPanel capitalPanel =  new CapitalPanel(new OpeningCapital(1, LocalDate.now(), 5000));
         configurationPanel.add(capitalPanel);
         contents.add(configurationPanel);
         PositionActionsPanel positionActionsPanel = new PositionActionsPanel();
@@ -56,32 +57,42 @@ public class PnLSimulatorFacad
         {
             try
             {
+                positionPnLList.forEach(positionPnL ->
+                {
+                   double percentMove =  positionActionsPanel.getMarketConditions().getPercentMove();
+                   double  pnl = positionPnL.getPnl() + positionPnL.getCurrentPositionEquity() * (percentMove * 20) / 100;
+                   double  percentPnl = (percentMove + positionPnL.getPercentPnL()) * positionPnL.getConfiguraion().getLev();
+                   positionPnL.setPnl(pnl);
+                    positionPnL.setPercentPnL(percentPnl);
+                });
                 model.updateData(positionPnLList);
             } catch (Exception ex)
             {
-                JOptionPane.showMessageDialog(mainFrame, "Please check configuration!",
+                JOptionPane.showMessageDialog(mainFrame, ex.getMessage(),
                         "Configuration Error!",
                         JOptionPane.ERROR_MESSAGE);
             }
 
         });
 
+
         positionActionsPanel.getAddPosition().addActionListener(e ->
         {
             Position position = positionActionsPanel.getPosition();
+
             Configuraion configuraion = configurationPanel.getConfiguration();
+
             OpeningCapital openingCapital = capitalPanel.getOpeningCapital();
 
-            double capital = Math.round( openingCapital.capital() * (position.percentCapitalDeployed() / 100) );
+            double capital = Math.round( openingCapital.getCapital()* (position.getPercentCapitalDeployed() / 100) );
 
-            double allowedFirepower = openingCapital.capital() * (configuraion.maxPercentAllowedPerInstrument() / 100);
+            double allowedFirepower = openingCapital.getCapital() * (configuraion.getMaxPercentAllowedPerInstrument() / 100);
 
-            double capitalRemainingFirePower  = (openingCapital.capital() * configuraion.percentAllocationAllowed()/100) - capital ;
+            double capitalRemainingFirePower  = (openingCapital.getCapital() * configuraion.getPercentAllocationAllowed()/100) - capital ;
 
             double remainingFirepower = 0;
 
             double capitalInvestedPerInsrument = 0;
-            double capitalInvestedTotal = 0;
 
             double totalRemainingFirePower = 0;
 
@@ -93,26 +104,38 @@ public class PnLSimulatorFacad
             else
             {
                 capitalInvestedPerInsrument =  portfolioPnLService.getPositionPnLList().stream()
-                        .filter(pnl -> pnl.position().instrument().name().equals(position.instrument().name()))
-                        .mapToDouble(pnl->pnl.currentPositionEquity()).sum();
+                        .filter(pnl -> pnl.getPosition().getInstrument().getName().equals(position.getInstrument().getName()))
+                        .mapToDouble(pnl->pnl.getCurrentPositionEquity()).sum();
 
                 remainingFirepower = allowedFirepower-capitalInvestedPerInsrument-capital;
 
                 totalRemainingFirePower = portfolioPnLService.getPositionPnLList().stream()
-                        .mapToDouble(pnl->pnl.currentPositionEquity()).sum();
+                        .mapToDouble(pnl->pnl.getCurrentPositionEquity()).sum();
 
                 capitalRemainingFirePower = capitalRemainingFirePower - totalRemainingFirePower;
 
             }
 
             int index = portfolioPnLService.getPositionPnLList().size();
+
             index++;
+
+            MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
+            double percentPnl = Math.round(marketConditions.getPercentMove() * configuraion.getLev());
+            double pnl =  capital * (percentPnl / 100);
             portfolioPnLService.addPositionPnL(new PositionPnL(index, position, configuraion,
-                    SimulationData.MARKET_CONDITION, 1, 1, capital, allowedFirepower ,
+                    marketConditions, percentPnl, pnl, capital, allowedFirepower ,
                     remainingFirepower,
-                    capitalRemainingFirePower, 1));
-            List<PositionPnL> pnl = portfolioPnLService.getPositionPnLList();
-            model.updateData(pnl);
+                    capitalRemainingFirePower, 1d));
+
+            List<PositionPnL> pnlList = portfolioPnLService.getPositionPnLList();
+
+            model.updateData(pnlList);
+
+            double totalPnl =  pnlList.stream().mapToDouble(p->p.getPnl()).sum() + openingCapital.getCapital();
+
+            positionActionsPanel.getRunningCapitalPanel().getRunningCapital().setText(Double.toString(totalPnl));
+
         });
 
         positionActionsPanel.getRemovePosition().addActionListener((e) ->
@@ -141,5 +164,23 @@ public class PnLSimulatorFacad
                 JOptionPane.showMessageDialog(mainFrame, "Please choose a position to delete!", "Delete Row!", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    public void simulate(MarketConditions marketConditions,  List<PositionPnL> positionPnLList)
+    {
+        List<PositionPnL> instrumentPositions = //
+                positionPnLList.stream().filter(positionPnL -> //
+                positionPnL.getPosition().getInstrument().getName().equals(marketConditions.getInstrument().getName())) //
+                .collect(Collectors.toList());
+
+        for (PositionPnL instrumentPosition : instrumentPositions)
+        {
+            Position position =  instrumentPosition.getPosition();
+            double capitalDeployed = position.getPercentCapitalDeployed();
+            double pnl = instrumentPosition.getPnl();
+            double pnlPercent = instrumentPosition.getPercentPnL();
+            double lev = instrumentPosition.getConfiguraion().getLev();
+        }
+
     }
 }

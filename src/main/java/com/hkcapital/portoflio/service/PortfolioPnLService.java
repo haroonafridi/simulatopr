@@ -53,15 +53,20 @@ public class PortfolioPnLService
         {
             index++;
 
-            double positionPercent = p.percentCapitalDeployed();
+            double positionPercent = p.getPercentCapitalDeployed();
 
-            double amountInvested = openingCapital.capital() * positionPercent / 100;
+            double amountInvested = openingCapital.getCapital() * positionPercent / 100;
 
-            double pnl = amountInvested * configuraion.lev()* (mc.percentMove() / 100);
+            double pnl = amountInvested * configuraion.getLev()* (mc.getPercentMove() / 100);
 
             PositionPnL positionPnl = new PositionPnL(index, p, configuraion, //
-                    mc, round(configuraion.lev()* (mc.percentMove() / 100)), round(pnl),
-                    round(amountInvested), round(openingCapital.capital()+pnl),1,1, 1);
+                    mc, configuraion.getLev() * (mc.getPercentMove() / 100),
+                    pnl,
+                    amountInvested,
+                    openingCapital.getCapital()+pnl,
+                    1d,
+                    1d,
+                    1d);
 
             positionPnLList.add(positionPnl);
         }

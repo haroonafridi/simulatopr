@@ -2,7 +2,6 @@ package com.hkcapital.portoflio.model;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ConfigurationTableModel extends AbstractTableModel
@@ -42,25 +41,25 @@ public class ConfigurationTableModel extends AbstractTableModel
         switch (col)
         {
             case 0:
-                return c.index();
+                return c.getIndex();
             case 1:
-                return c.position().instrument().name();
+                return c.getPosition().getInstrument().getName();
             case 2:
-                return  c.position().percentCapitalDeployed();
+                return c.getPosition().getPercentCapitalDeployed();
             case 3:
-                return c.currentPositionEquity();
+                return c.getCurrentPositionEquity();
             case 4:
-                return c.percentPnL();
+                return c.getPercentPnL();
             case 5:
-                return c.pnl();
+                return c.getPnl();
             case 6:
-                return c.allowedFirePower();
+                return c.getAllowedFirePower();
             case 7:
-                return c.remainingFirepower();
+                return c.getRemainingFirepower();
             case 8:
-                return c.capitalRemainingFirePower();
+                return c.getCapitalRemainingFirePower();
             case 9:
-                return c.configuraion().lev();
+                return c.getConfiguraion().getLev();
             default:
                 return null;
         }
@@ -81,7 +80,8 @@ public class ConfigurationTableModel extends AbstractTableModel
         }
     }
 
-    public void updateData(List<PositionPnL> newData) {
+    public void updateData(List<PositionPnL> newData)
+    {
         List<PositionPnL> d = new ArrayList<>(newData);
         data.clear();
         data.addAll(d);

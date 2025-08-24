@@ -22,8 +22,6 @@ public class NumberTextField extends JTextField
         setText(value.toString());
     }
 
-
-
     public NumberTextField(int width)
     {
         setPreferredSize(new Dimension(width, 20));
@@ -49,4 +47,6 @@ public class NumberTextField extends JTextField
         }
         return Integer.valueOf(value);
     }
+
+
 }
