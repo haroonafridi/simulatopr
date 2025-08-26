@@ -1,8 +1,15 @@
 package com.hkcapital.portoflio.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "instruments")
 public class Instrument
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "instrument_name")
     private String name;
 
     public Instrument(Integer id, String name)

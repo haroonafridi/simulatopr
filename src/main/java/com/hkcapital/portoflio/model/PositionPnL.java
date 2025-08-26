@@ -1,31 +1,49 @@
 package com.hkcapital.portoflio.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name ="position_pnl")
 public class PositionPnL
 {
-
-    Integer index;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "position_id", referencedColumnName = "id")
     Position position;
-    Configuraion configuraion;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "configuration_id", referencedColumnName = "id")
+    Configuration configurtaion;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "market_condition_id", referencedColumnName = "id")
     MarketConditions marketConditions;
+    @Column(name = "percent_pnl")
     Double percentPnL;
+    @Column(name = "pnl")
     Double pnl;
+    @Column(name = "current_position_equity")
     Double currentPositionEquity;
+    @Column(name = "allowed_fire_power")
     Double allowedFirePower;
 
+    @Column(name = "remaining_fire_power")
     Double remainingFirepower;
-
+    @Column(name = "capital_remaining_fire_power")
     Double capitalRemainingFirePower;
+    @Column(name = "portfolio_value")
     Double portfolioValue;
 
-    public PositionPnL(Integer index, Position position, Configuraion configuraion, //
+    public PositionPnL(Integer index, Position position, Configuration configuraion, //
                        MarketConditions marketConditions, Double percentPnL, //
                        Double pnl, Double currentPositionEquity, //
                        Double allowedFirePower, Double remainingFirepower, //
                        Double capitalRemainingFirePower, Double portfolioValue)
     {
-        this.index = index;
+        this.id = index;
         this.position = position;
-        this.configuraion = configuraion;
+        this.configurtaion = configuraion;
         this.marketConditions = marketConditions;
         this.percentPnL = percentPnL;
         this.pnl = pnl;
@@ -36,14 +54,14 @@ public class PositionPnL
         this.portfolioValue = portfolioValue;
     }
 
-    public Integer getIndex()
+    public Integer getId()
     {
-        return index;
+        return id;
     }
 
-    public void setIndex(Integer index)
+    public void setId(Integer id)
     {
-        this.index = index;
+        this.id = id;
     }
 
     public Position getPosition()
@@ -56,14 +74,14 @@ public class PositionPnL
         this.position = position;
     }
 
-    public Configuraion getConfiguraion()
+    public Configuration getConfigurtaion()
     {
-        return configuraion;
+        return configurtaion;
     }
 
-    public void setConfiguraion(Configuraion configuraion)
+    public void setConfigurtaion(Configuration configurtaion)
     {
-        this.configuraion = configuraion;
+        this.configurtaion = configurtaion;
     }
 
     public MarketConditions getMarketConditions()

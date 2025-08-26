@@ -1,27 +1,35 @@
 package com.hkcapital.portoflio.model;
 
-public class Position
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "positions")
+public class Position
 {
-    private Integer index;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
+    @Column(name = "percent_capital_deployed")
     private Double percentCapitalDeployed;
 
     public Position(Integer index, Instrument instrument, Double percentCapitalDeployed)
     {
-        this.index = index;
+        this.id = index;
         this.instrument = instrument;
         this.percentCapitalDeployed = percentCapitalDeployed;
     }
 
-    public Integer getIndex()
+    public Integer getId()
     {
-        return index;
+        return id;
     }
 
-    public void setIndex(Integer index)
+    public void setId(Integer id)
     {
-        this.index = index;
+        this.id = id;
     }
 
     public Instrument getInstrument()

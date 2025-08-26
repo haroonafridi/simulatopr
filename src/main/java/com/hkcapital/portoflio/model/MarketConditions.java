@@ -1,30 +1,41 @@
 package com.hkcapital.portoflio.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "market_conditions")
 public class MarketConditions
 {
-    Integer index;
-    Instrument instrument;
-    Double dayLow;
-    Double dayHigh;
-    Double percentMove;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "instrument_id", referencedColumnName = "id")
+    private Instrument instrument;
+    @Column(name="day_low")
+    private Double dayLow;
+    @Column(name="day_high")
+    private Double dayHigh;
+    @Column(name = "percent_move")
+    private Double percentMove;
 
     public MarketConditions(Integer index, Instrument instrument, Double dayLow, Double dayHigh, Double percentMove)
     {
-        this.index = index;
+        this.id = index;
         this.instrument = instrument;
         this.dayLow = dayLow;
         this.dayHigh = dayHigh;
         this.percentMove = percentMove;
     }
 
-    public Integer getIndex()
+    public Integer getId()
     {
-        return index;
+        return id;
     }
 
-    public void setIndex(Integer index)
+    public void setId(Integer id)
     {
-        this.index = index;
+        this.id = id;
     }
 
     public Instrument getInstrument()

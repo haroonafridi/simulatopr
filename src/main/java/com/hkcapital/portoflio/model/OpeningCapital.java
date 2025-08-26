@@ -1,14 +1,22 @@
 package com.hkcapital.portoflio.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
 
-
+@Entity
+@Table(name = "opening_capital")
 public class OpeningCapital
 {
-    int id; LocalDate date;  double capital;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
+    @Column(name = "opening_date")
+    LocalDate date;
+    @Column(name = "opening_capital")
+    double capital;
 
     public OpeningCapital(int id, LocalDate date, double capital)
     {

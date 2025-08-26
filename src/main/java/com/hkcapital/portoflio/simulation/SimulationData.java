@@ -13,7 +13,7 @@ public class SimulationData
 
     public static final Position P1_GOLD = new Position(1, new Instrument(1, SimulationData.GOLD), 3.8722);
 
-    public static final Configuraion CONFIGURAION = new Configuraion(1, 15d, //
+    public static final Configuration CONFIGURAION = new Configuration( 15d, //
             2, 3, //
             7.5,
             20);

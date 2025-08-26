@@ -41,7 +41,7 @@ public class ConfigurationTableModel extends AbstractTableModel
         switch (col)
         {
             case 0:
-                return c.getIndex();
+                return c.getId();
             case 1:
                 return c.getPosition().getInstrument().getName();
             case 2:
@@ -59,7 +59,7 @@ public class ConfigurationTableModel extends AbstractTableModel
             case 8:
                 return c.getCapitalRemainingFirePower();
             case 9:
-                return c.getConfiguraion().getLev();
+                return c.getConfigurtaion().getLev();
             default:
                 return null;
         }

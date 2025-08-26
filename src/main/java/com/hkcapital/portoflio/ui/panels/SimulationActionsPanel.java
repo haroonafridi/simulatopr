@@ -7,32 +7,34 @@ import java.awt.*;
 
 public class SimulationActionsPanel extends JPanel {
 
-    private final JButton simulate =  new JButton("Simulate");
-    private final JButton strategy =  new JButton("Print Strategy");
+    private final JButton simulateStrategy =  new JButton("Simulate Strategy");
+    private final JButton saveStrategy =  new JButton("Save Strategy");
+    private final JButton printStrategy =  new JButton("Print Strategy");
 
     public SimulationActionsPanel() //
     {
         setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
         setBorder(BorderFactory.createTitledBorder("⚙ Simulation Actions"));
-        add(simulate);
-        add(strategy);
+        add(simulateStrategy);
+        add(saveStrategy);
+        add(printStrategy);
     }
 
 
     public void simulate(MarketConditions mc) {
-        simulate.addActionListener(e -> {
+        simulateStrategy.addActionListener(e -> {
             System.out.println("Market conditions => "+mc);
         });
     }
 
-    public JButton getSimulate()
+    public JButton getSimulateStrategy()
     {
-        return simulate;
+        return simulateStrategy;
     }
 
 
-    public JButton getStrategy()
+    public JButton getPrintStrategy()
     {
-        return strategy;
+        return printStrategy;
     }
 }
