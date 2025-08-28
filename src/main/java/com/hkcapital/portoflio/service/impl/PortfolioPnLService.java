@@ -1,9 +1,11 @@
 package com.hkcapital.portoflio.service.impl;
 
 import com.hkcapital.portoflio.model.*;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class PortfolioPnLService
 {

@@ -9,15 +9,18 @@ public class Position
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
     @Column(name = "percent_capital_deployed")
     private Double percentCapitalDeployed;
 
-    public Position(Integer index, Instrument instrument, Double percentCapitalDeployed)
+    public Position()
     {
-        this.id = index;
+    }
+
+    public Position(Instrument instrument, Double percentCapitalDeployed)
+    {
         this.instrument = instrument;
         this.percentCapitalDeployed = percentCapitalDeployed;
     }

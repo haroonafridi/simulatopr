@@ -18,7 +18,9 @@ public class Configuration
     @Column(name = "max_percent_allowed_per_instrument")
     private Double maxPercentAllowedPerInstrument;
     private Integer lev;
+     public Configuration () {
 
+     }
     public Configuration( Double percentAllocationAllowed, //
                          Integer noOfInsutrments, //
                          Integer noOfPositionsPerInstruments, //

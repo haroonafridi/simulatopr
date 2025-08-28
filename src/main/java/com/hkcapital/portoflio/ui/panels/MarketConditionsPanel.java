@@ -41,7 +41,7 @@ public class MarketConditionsPanel extends JPanel
 
     public MarketConditions getMarketConditions()
     {
-        return new MarketConditions(1, this.instrument, dayLowField.getDoubleValue(), dayHighField.getDoubleValue(),
+        return new MarketConditions( this.instrument, dayLowField.getDoubleValue(), dayHighField.getDoubleValue(),
                 percentMoveField.getDoubleValue());
     }
 }

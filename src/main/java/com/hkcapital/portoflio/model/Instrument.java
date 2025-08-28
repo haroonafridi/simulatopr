@@ -12,7 +12,10 @@ public class Instrument
     @Column(name = "instrument_name")
     private String name;
 
-    public Instrument(Integer id, String name)
+    public Instrument () {
+
+    }
+    public Instrument(String name)
     {
         this.id = id;
         this.name = name;

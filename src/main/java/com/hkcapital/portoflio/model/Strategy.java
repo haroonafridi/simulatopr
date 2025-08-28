@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "strategy")
@@ -12,14 +13,24 @@ public class Strategy
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "description", length = 4000)
+    @Column(name = "name", length = 200)
+    private String name;
+    @Column(name = "description", length = 500)
     private String description;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    public Strategy(String description, LocalDateTime creationDate)
+    @OneToMany(mappedBy = "strategy", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PositionPnL> positionPnLList;
+
+    public Strategy() {}
+    public Strategy(final String name,
+                    final String description,  //
+                    final LocalDateTime creationDate
+                    )
     {
+        this.name = name;
         this.description = description;
         this.creationDate = creationDate;
     }
@@ -52,5 +63,25 @@ public class Strategy
     public void setCreationDate(LocalDateTime creationDate)
     {
         this.creationDate = creationDate;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public List<PositionPnL> getPositionPnLList()
+    {
+        return positionPnLList;
+    }
+
+    public void setPositionPnLList(List<PositionPnL> positionPnLList)
+    {
+        this.positionPnLList = positionPnLList;
     }
 }

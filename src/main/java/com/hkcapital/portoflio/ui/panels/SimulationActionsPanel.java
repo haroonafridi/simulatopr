@@ -37,4 +37,9 @@ public class SimulationActionsPanel extends JPanel {
     {
         return printStrategy;
     }
+
+    public JButton getSaveStrategy()
+    {
+        return saveStrategy;
+    }
 }

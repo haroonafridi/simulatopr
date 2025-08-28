@@ -18,6 +18,10 @@ public class OpeningCapital
     @Column(name = "opening_capital")
     double capital;
 
+    public OpeningCapital()
+    {
+    }
+
     public OpeningCapital(int id, LocalDate date, double capital)
     {
         this.id = id;

@@ -11,9 +11,9 @@ public class PositionActionsPanel extends JPanel {
     private final JButton addPosition =  new JButton("Add Position");
     private final JButton removePosition =  new JButton("Remove Position");
     private final JButton removePositionAll =  new JButton("Remove All Positions.");
-    private static Instrument[] instruments = {new Instrument(1, "GOLD"), //
-            new Instrument(2, "NASDAQ"), new Instrument(3, "CRUD OIL"), //
-            new Instrument(4, "Nikkei")};
+    private static Instrument[] instruments = {new Instrument("GOLD"), //
+            new Instrument( "NASDAQ"), new Instrument( "CRUD OIL"), //
+            new Instrument( "Nikkei")};
 
     private Label caiptalLabel = new Label("Capital:");
     private NumberTextField runningCapital = new NumberTextField();
@@ -86,7 +86,7 @@ public class PositionActionsPanel extends JPanel {
 
     public Position getPosition()
     {
-        return new Position(null, (Instrument)instrumentComboBox.getModel().getSelectedItem(),
+        return new Position( (Instrument)instrumentComboBox.getModel().getSelectedItem(),
                 positionSize.getDoubleValue());
     }
 

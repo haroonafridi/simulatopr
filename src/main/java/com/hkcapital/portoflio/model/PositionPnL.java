@@ -2,38 +2,51 @@ package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name ="position_pnl")
-public class PositionPnL
+public class PositionPnL implements Serializable
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "position_id", referencedColumnName = "id")
-    Position position;
+    private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @Column(name = "record_index")
+    private Integer recordIndex;
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "position_id", referencedColumnName = "id")
+    private Position position;
+
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "configuration_id", referencedColumnName = "id")
-    Configuration configurtaion;
-    @OneToOne(cascade = CascadeType.ALL)
+    private Configuration configurtaion;
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "market_condition_id", referencedColumnName = "id")
-    MarketConditions marketConditions;
+    private MarketConditions marketConditions;
+
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "strategy_id", referencedColumnName = "id")
+    private Strategy strategy;
     @Column(name = "percent_pnl")
-    Double percentPnL;
+    private Double percentPnL;
     @Column(name = "pnl")
-    Double pnl;
+    private Double pnl;
     @Column(name = "current_position_equity")
-    Double currentPositionEquity;
+    private Double currentPositionEquity;
     @Column(name = "allowed_fire_power")
-    Double allowedFirePower;
+    private Double allowedFirePower;
 
     @Column(name = "remaining_fire_power")
-    Double remainingFirepower;
+    private Double remainingFirepower;
     @Column(name = "capital_remaining_fire_power")
-    Double capitalRemainingFirePower;
+    private Double capitalRemainingFirePower;
     @Column(name = "portfolio_value")
-    Double portfolioValue;
+    private Double portfolioValue;
+
+    public PositionPnL()
+    {
+    }
 
     public PositionPnL(Integer index, Position position, Configuration configuraion, //
                        MarketConditions marketConditions, Double percentPnL, //
@@ -41,7 +54,7 @@ public class PositionPnL
                        Double allowedFirePower, Double remainingFirepower, //
                        Double capitalRemainingFirePower, Double portfolioValue)
     {
-        this.id = index;
+        this.recordIndex = index;
         this.position = position;
         this.configurtaion = configuraion;
         this.marketConditions = marketConditions;
@@ -162,5 +175,25 @@ public class PositionPnL
     public void setPortfolioValue(Double portfolioValue)
     {
         this.portfolioValue = portfolioValue;
+    }
+
+    public Strategy getStrategy()
+    {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy)
+    {
+        this.strategy = strategy;
+    }
+
+    public Integer getRecordIndex()
+    {
+        return recordIndex;
+    }
+
+    public void setRecordIndex(Integer recordIndex)
+    {
+        this.recordIndex = recordIndex;
     }
 }

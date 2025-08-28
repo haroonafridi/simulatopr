@@ -1,13 +1,10 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.model.*;
-import com.hkcapital.portoflio.service.ConfigurationService;
+import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.service.impl.PortfolioPnLService;
 import com.hkcapital.portoflio.simulation.SimulationData;
-import com.hkcapital.portoflio.ui.panels.CapitalPanel;
-import com.hkcapital.portoflio.ui.panels.ConfigurationPanel;
-import com.hkcapital.portoflio.ui.panels.PositionActionsPanel;
-import com.hkcapital.portoflio.ui.panels.SimulationActionsPanel;
+import com.hkcapital.portoflio.ui.panels.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,9 +25,22 @@ public class PnLSimulatorFacad
             SimulationData.POSITIONS,
             SimulationData.OPENING_CAPITAL);
     private final ConfigurationService configurationService;
+    private final StrategyService strategyService;
 
-    public PnLSimulatorFacad(ConfigurationService configurationService) {
+    private final MarketConditionsService marketConditionsService;
+
+    private final InstrumentService instrumentService;
+
+    private final PositionService positionService;
+
+
+    public PnLSimulatorFacad(ConfigurationService configurationService, StrategyService strategyService, MarketConditionsService marketConditionsService, InstrumentService instrumentService, PositionService positionService)
+    {
         this.configurationService = configurationService;
+        this.strategyService = strategyService;
+        this.marketConditionsService = marketConditionsService;
+        this.instrumentService = instrumentService;
+        this.positionService = positionService;
     }
 
     public void createApplication()
@@ -44,11 +54,13 @@ public class PnLSimulatorFacad
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
+        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel();
         ConfigurationPanel configurationPanel = new ConfigurationPanel(configurationService);
         CapitalPanel capitalPanel = new CapitalPanel(new OpeningCapital(1, LocalDate.now(), 5000));
         configurationPanel.add(capitalPanel);
         contents.add(configurationPanel);
         PositionActionsPanel positionActionsPanel = new PositionActionsPanel();
+        contents.add(strategyHeaderPanel);
         contents.add(configurationPanel);
         contents.add(positionActionsPanel);
         contents.add(new JScrollPane(table));
@@ -59,21 +71,52 @@ public class PnLSimulatorFacad
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setVisible(true);
 
-        simulation.getSimulateStrategy().addActionListener(e -> simulate(positionPnLList, model, mainFrame, positionActionsPanel));
+        simulation.getSimulateStrategy().addActionListener(e -> simulate(positionPnLList, model, mainFrame, positionActionsPanel, strategyHeaderPanel));
         positionActionsPanel.getAddPosition().addActionListener(e -> addPosition(model, configurationPanel, capitalPanel, positionActionsPanel));
         positionActionsPanel.getRemovePosition().addActionListener(e -> removePosition(positionPnLList, model, table, mainFrame));
         positionActionsPanel.getRemoveAllPositions().addActionListener(e -> removeAllPositions(positionPnLList, model, mainFrame));
+        Strategy strategy = strategyHeaderPanel.getStrategy();
 
+        Configuration configuration = configurationPanel.getConfiguration();
+        MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
+        Instrument instrument = positionActionsPanel.getPosition().getInstrument();
+
+
+        strategy.setPositionPnLList(positionPnLList);
+        simulation.getSaveStrategy().addActionListener(e-> saveOrUpdate(positionPnLList,configuration,marketConditions,
+                instrument,strategy));
         configurationPanel.getSaveOrUpdateConfigButton().addActionListener(e-> {
             configurationService.addConfiguration(configurationPanel.getConfiguration());
         });
 
     }
 
+    void saveOrUpdate(List<PositionPnL> pnl,
+                      Configuration configuration,
+                      MarketConditions marketCondition,
+                      Instrument instrument,
+                      Strategy str) {
+        Configuration conf = configurationService.addConfiguration(configuration);
+        MarketConditions marketCon = marketConditionsService.addMarketCondition(marketCondition);
+        Instrument inst = instrumentService.addInstrument(instrument);
+        pnl.forEach(pos ->
+        {
+            Position position = positionService.addPosition(pos.getPosition());
+            //position.setInstrument(null);
+            pos.setPosition(position);
+            pos.setStrategy(str);
+            pos.setConfigurtaion(conf);
+            pos.setMarketConditions(marketCon);
+
+        });
+        strategyService.addStrategy(str);
+    }
+
     private static void simulate(List<PositionPnL> positionPnLList, //
                                  ConfigurationTableModel model, //
                                  JFrame mainFrame,//
-                                 PositionActionsPanel positionActionsPanel)
+                                 PositionActionsPanel positionActionsPanel,
+                                 StrategyHeaderPanel strategyHeaderPanel)
     {
         try
         {
@@ -82,6 +125,7 @@ public class PnLSimulatorFacad
                 double percentMove = positionActionsPanel.getMarketConditions().getPercentMove();
                 double pnl = positionPnL.getPnl() + positionPnL.getCurrentPositionEquity() * (percentMove * 20) / 100;
                 double percentPnl = (percentMove + positionPnL.getPercentPnL()) * positionPnL.getConfigurtaion().getLev();
+                positionPnL.setStrategy(strategyHeaderPanel.getStrategy());
                 positionPnL.setPnl(pnl);
                 positionPnL.setPercentPnL(percentPnl);
             });

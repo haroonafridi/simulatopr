@@ -18,6 +18,10 @@ public class RunningCapital
         this.capital = capital;
     }
 
+    public RunningCapital()
+    {
+    }
+
     public int getId()
     {
         return id;

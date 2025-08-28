@@ -19,9 +19,12 @@ public class MarketConditions
     @Column(name = "percent_move")
     private Double percentMove;
 
-    public MarketConditions(Integer index, Instrument instrument, Double dayLow, Double dayHigh, Double percentMove)
+    public MarketConditions()
     {
-        this.id = index;
+    }
+
+    public MarketConditions(Instrument instrument, Double dayLow, Double dayHigh, Double percentMove)
+    {
         this.instrument = instrument;
         this.dayLow = dayLow;
         this.dayHigh = dayHigh;
