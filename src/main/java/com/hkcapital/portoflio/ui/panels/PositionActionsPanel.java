@@ -84,12 +84,6 @@ public class PositionActionsPanel extends JPanel {
     }
 
 
-    public Position getPosition()
-    {
-        return new Position( (Instrument)instrumentComboBox.getModel().getSelectedItem(),
-                positionSize.getDoubleValue());
-    }
-
     public MarketConditions getMarketConditions()
     {
         return marketConditionsPanel.getMarketConditions();

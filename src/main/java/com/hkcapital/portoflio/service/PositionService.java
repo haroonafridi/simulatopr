@@ -1,15 +1,22 @@
 package com.hkcapital.portoflio.service;
 
 import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.model.Strategy;
+
+import java.util.List;
 
 public interface PositionService
 {
-    Position addPosition(Position position);
+    Position add(Position positionPnL);
 
-    void removePosition(Position position);
+    void remove(Position positionPnL);
 
-    Position updatePosition(Position position);
+    Position updatePosition(Position positionPnL);
+
+    Position findById(Integer id);
+
+    List<Position> findAll();
+
+    void removeAll();
 
 
 }

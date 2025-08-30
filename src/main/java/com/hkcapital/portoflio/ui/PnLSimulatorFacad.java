@@ -2,8 +2,6 @@ package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.service.*;
-import com.hkcapital.portoflio.service.impl.PortfolioPnLService;
-import com.hkcapital.portoflio.simulation.SimulationData;
 import com.hkcapital.portoflio.ui.panels.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +16,8 @@ import java.util.stream.Collectors;
 @Component
 public class PnLSimulatorFacad
 {
+
     private static Logger logger = LoggerFactory.getLogger(PnLSimulatorFacad.class);
-    PortfolioPnLService portfolioPnLService = new PortfolioPnLService(SimulationData.INSTRUMENTS,
-            SimulationData.CONFIGURAION,
-            SimulationData.MARKET_CONDITIONS,
-            SimulationData.POSITIONS,
-            SimulationData.OPENING_CAPITAL);
     private final ConfigurationService configurationService;
     private final StrategyService strategyService;
 
@@ -31,21 +25,34 @@ public class PnLSimulatorFacad
 
     private final InstrumentService instrumentService;
 
-    private final PositionService positionService;
+
+    private final PositionService positionPnLService;
 
 
-    public PnLSimulatorFacad(ConfigurationService configurationService, StrategyService strategyService, MarketConditionsService marketConditionsService, InstrumentService instrumentService, PositionService positionService)
+//    PortfolioPnLServiceImpl portfolioPnLService = new PortfolioPnLServiceImpl(SimulationData.INSTRUMENTS,
+//            SimulationData.CONFIGURAION,
+//            SimulationData.MARKET_CONDITIONS,
+//            SimulationData.POSITIONS,
+//            SimulationData.OPENING_CAPITAL,
+//            null);
+
+
+    public PnLSimulatorFacad(ConfigurationService configurationService,
+                             StrategyService strategyService,
+                             MarketConditionsService marketConditionsService,
+                             InstrumentService instrumentService,
+                             PositionService positionPnLService)
     {
         this.configurationService = configurationService;
         this.strategyService = strategyService;
         this.marketConditionsService = marketConditionsService;
         this.instrumentService = instrumentService;
-        this.positionService = positionService;
+        this.positionPnLService = positionPnLService;
     }
 
     public void createApplication()
     {
-        List<PositionPnL> positionPnLList = new ArrayList<>();
+        List<Position> positionPnLList = new ArrayList<>();
         ConfigurationTableModel model = new ConfigurationTableModel(positionPnLList);
         JTable table = new JTable(model);
         table.setRowHeight(25);
@@ -79,19 +86,19 @@ public class PnLSimulatorFacad
 
         Configuration configuration = configurationPanel.getConfiguration();
         MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
-        Instrument instrument = positionActionsPanel.getPosition().getInstrument();
+        //Instrument instrument = positionActionsPanel.getPosition();
 
 
         strategy.setPositionPnLList(positionPnLList);
-        simulation.getSaveStrategy().addActionListener(e-> saveOrUpdate(positionPnLList,configuration,marketConditions,
-                instrument,strategy));
+//        simulation.getSaveStrategy().addActionListener(e-> saveOrUpdate(positionPnLList,configuration,marketConditions,
+//                instrument,strategy));
         configurationPanel.getSaveOrUpdateConfigButton().addActionListener(e-> {
             configurationService.addConfiguration(configurationPanel.getConfiguration());
         });
 
     }
 
-    void saveOrUpdate(List<PositionPnL> pnl,
+    void saveOrUpdate(List<Position> pnl,
                       Configuration configuration,
                       MarketConditions marketCondition,
                       Instrument instrument,
@@ -101,10 +108,10 @@ public class PnLSimulatorFacad
         Instrument inst = instrumentService.addInstrument(instrument);
         pnl.forEach(pos ->
         {
-            Position position = positionService.addPosition(pos.getPosition());
+           // Position position = positionService.addPosition(pos.getPosition());
             //position.setInstrument(null);
-            pos.setPosition(position);
-            pos.setStrategy(str);
+            //pos.setPosition(position);
+            //pos.setStrategy(str);
             pos.setConfigurtaion(conf);
             pos.setMarketConditions(marketCon);
 
@@ -112,7 +119,7 @@ public class PnLSimulatorFacad
         strategyService.addStrategy(str);
     }
 
-    private static void simulate(List<PositionPnL> positionPnLList, //
+    private static void simulate(List<Position> positionPnLList, //
                                  ConfigurationTableModel model, //
                                  JFrame mainFrame,//
                                  PositionActionsPanel positionActionsPanel,
@@ -138,13 +145,13 @@ public class PnLSimulatorFacad
         }
     }
 
-    private void removeAllPositions(List<PositionPnL> positionPnLList, ConfigurationTableModel model, JFrame mainFrame)
+    private void removeAllPositions(List<Position> positionPnLList, ConfigurationTableModel model, JFrame mainFrame)
     {
         try
         {
             positionPnLList.clear();
             model.updateData(positionPnLList);
-            portfolioPnLService.updatePositionPnL(positionPnLList);
+           // portfolioPnLService.updatePositionPnL(positionPnLList);
         } catch (Exception ex)
         {
             logger.error("Error while removing a row => {} ", ex.getMessage());
@@ -152,13 +159,13 @@ public class PnLSimulatorFacad
         }
     }
 
-    private void removePosition(List<PositionPnL> positionPnLList, ConfigurationTableModel model, JTable table, JFrame mainFrame)
+    private void removePosition(List<Position> positionPnLList, ConfigurationTableModel model, JTable table, JFrame mainFrame)
     {
         try
         {
             positionPnLList.remove(table.getSelectedRow());
             model.updateData(positionPnLList);
-            portfolioPnLService.updatePositionPnL(positionPnLList);
+            //portfolioPnLService.updatePositionPnL(positionPnLList);
         } catch (Exception ex)
         {
             logger.error("Error while removing a row => {} ", ex.getMessage());
@@ -168,7 +175,6 @@ public class PnLSimulatorFacad
 
     private void addPosition(ConfigurationTableModel model, ConfigurationPanel configurationPanel, CapitalPanel capitalPanel, PositionActionsPanel positionActionsPanel)
     {
-        Position position = positionActionsPanel.getPosition();
 
         Configuration configuraion = configurationPanel.getConfiguration();
 
@@ -176,26 +182,25 @@ public class PnLSimulatorFacad
 
         MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
 
-        portfolioPnLService.addPositionPnL(position, configuraion, openingCapital, marketConditions);
+       // portfolioPnLService.addPositionPnL(position, configuraion, openingCapital, marketConditions);
 
-        model.updateData(portfolioPnLService.getPositionPnLList());
+       // model.updateData(portfolioPnLService.getPositionPnLList());
 
-        double totalPnl = portfolioPnLService.calculateTotalPnl();
+      //  double totalPnl = portfolioPnLService.calculateTotalPnl();
 
-        positionActionsPanel.getRunningCapitalPanel().getRunningCapital().setText(Double.toString(totalPnl));
+       // positionActionsPanel.getRunningCapitalPanel().getRunningCapital().setText(Double.toString(totalPnl));
     }
 
-    public void simulate(MarketConditions marketConditions, List<PositionPnL> positionPnLList)
+    public void simulate(MarketConditions marketConditions, List<Position> positionPnLList)
     {
-        List<PositionPnL> instrumentPositions = //
+        List<Position> instrumentPositions = //
                 positionPnLList.stream().filter(positionPnL -> //
-                                positionPnL.getPosition().getInstrument().getName().equals(marketConditions.getInstrument().getName())) //
+                                positionPnL.getInstrument().getName().equals(marketConditions.getInstrument().getName())) //
                         .collect(Collectors.toList());
 
-        for (PositionPnL instrumentPosition : instrumentPositions)
+        for (Position instrumentPosition : instrumentPositions)
         {
-            Position position = instrumentPosition.getPosition();
-            double capitalDeployed = position.getPercentCapitalDeployed();
+            double capitalDeployed = instrumentPosition.getPercentCapitalDeployed();
             double pnl = instrumentPosition.getPnl();
             double pnlPercent = instrumentPosition.getPercentPnL();
             double lev = instrumentPosition.getConfigurtaion().getLev();

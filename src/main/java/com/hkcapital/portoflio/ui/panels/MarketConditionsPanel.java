@@ -2,11 +2,9 @@ package com.hkcapital.portoflio.ui.panels;
 
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.MarketConditions;
-import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MarketConditionsPanel extends JPanel
 {

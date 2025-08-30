@@ -9,7 +9,7 @@ public class MarketConditions
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
     @Column(name="day_low")

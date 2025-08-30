@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StrategyServiceImpl implements StrategyService
@@ -34,6 +35,31 @@ public class StrategyServiceImpl implements StrategyService
     public Strategy updateStrategy(Strategy strategy)
     {
          return strategyRepository.save(strategy);
+    }
+
+    @Override
+    public List<Strategy> findAll()
+    {
+        return strategyRepository.findAll();
+    }
+
+    @Override
+    public Strategy findById(Integer id)
+    {
+        final Optional<Strategy> strategy = strategyRepository.findById(id);
+        return !strategy.isEmpty() ? strategy.get() : null;
+    }
+
+    @Override
+    public void removeById(Integer id)
+    {
+        strategyRepository.findById(id).ifPresent(strategy -> strategyRepository.delete(strategy));
+    }
+
+    @Override
+    public void removeAll()
+    {
+        strategyRepository.deleteAll();
     }
 
 }

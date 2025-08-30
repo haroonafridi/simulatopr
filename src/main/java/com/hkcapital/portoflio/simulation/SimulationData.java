@@ -11,13 +11,12 @@ public class SimulationData
     public static final String GOLD = "GOLD";
     public static final String NASDAQ = "NASDAQ";
 
-    public static final Position P1_GOLD = new Position(new Instrument( SimulationData.GOLD), 3.8722);
+
 
     public static final Configuration CONFIGURAION = new Configuration( 15d, //
             2, 3, //
             7.5,
             20);
-    public static final List<Position> POSITIONS = Arrays.asList(P1_GOLD, P1_GOLD, P1_GOLD);
 
     public static final List<Instrument> INSTRUMENTS = Arrays.asList(new Instrument( GOLD),
             new Instrument( NASDAQ));
@@ -29,7 +28,7 @@ public class SimulationData
     public static final MarketConditions MARKET_CONDITION= new MarketConditions( new Instrument( SimulationData.GOLD), 3372d
             , 3354d, -1d);
 
-    public static  final PositionPnL POSITION_PN_L =  new PositionPnL(4, P1_GOLD, CONFIGURAION, MARKET_CONDITION, 100d, 100d,
+    public static  final Position POSITION_PN_L =  new Position(4,  null, CONFIGURAION,  MARKET_CONDITION, null, null, 100d, 100d,
    100d, 100d, 1d,1d , 1d);
 
 }

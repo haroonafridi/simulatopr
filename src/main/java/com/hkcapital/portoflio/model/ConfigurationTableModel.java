@@ -9,9 +9,9 @@ public class ConfigurationTableModel extends AbstractTableModel
     private final String[] columns = {"index", "Instrument", "% Capital Deployed", "Capital",
             "%Pnl", "PnL", "Allowed Fire Power", "Remaining Fire Power", "Capital Remaining Firepower"
             , "leverage"};
-    private final List<PositionPnL> data;
+    private final List<Position> data;
 
-    public ConfigurationTableModel(List<PositionPnL> data)
+    public ConfigurationTableModel(List<Position> data)
     {
         this.data = data;
     }
@@ -37,15 +37,15 @@ public class ConfigurationTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int row, int col)
     {
-        PositionPnL c = data.get(row);
+        Position c = data.get(row);
         switch (col)
         {
             case 0:
                 return c.getId();
             case 1:
-                return c.getPosition().getInstrument().getName();
+                return c.getInstrument().getName();
             case 2:
-                return c.getPosition().getPercentCapitalDeployed();
+                return c.getPercentCapitalDeployed();
             case 3:
                 return c.getCurrentPositionEquity();
             case 4:
@@ -80,9 +80,9 @@ public class ConfigurationTableModel extends AbstractTableModel
         }
     }
 
-    public void updateData(List<PositionPnL> newData)
+    public void updateData(List<Position> newData)
     {
-        List<PositionPnL> d = new ArrayList<>(newData);
+        List<Position> d = new ArrayList<>(newData);
         data.clear();
         data.addAll(d);
         fireTableDataChanged();

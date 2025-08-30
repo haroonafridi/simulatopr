@@ -22,7 +22,7 @@ public class Strategy
     private LocalDateTime creationDate;
 
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<PositionPnL> positionPnLList;
+    private List<Position> positionPnLList;
 
     public Strategy() {}
     public Strategy(final String name,
@@ -75,12 +75,12 @@ public class Strategy
         this.name = name;
     }
 
-    public List<PositionPnL> getPositionPnLList()
+    public List<Position> getPositionPnLList()
     {
         return positionPnLList;
     }
 
-    public void setPositionPnLList(List<PositionPnL> positionPnLList)
+    public void setPositionPnLList(List<Position> positionPnLList)
     {
         this.positionPnLList = positionPnLList;
     }

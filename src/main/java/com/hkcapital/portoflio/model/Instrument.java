@@ -17,7 +17,6 @@ public class Instrument
     }
     public Instrument(String name)
     {
-        this.id = id;
         this.name = name;
     }
 

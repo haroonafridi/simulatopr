@@ -1,41 +1,38 @@
 package com.hkcapital.portoflio.service.impl;
 
 import com.hkcapital.portoflio.model.*;
-import org.springframework.stereotype.Service;
+import com.hkcapital.portoflio.repository.PositionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PortfolioPnLService
+
+public class PortfolioPnLServiceImpl
 {
+    private final PositionRepository positionPnLRepository;
     private final List<Instrument> instruments;
     private final Configuration configuraion;
 
     private final List<MarketConditions> marketConditions;
 
-    private final List<Position> positionList;
-
     private final OpeningCapital openingCapital;
 
-    private List<PositionPnL> positionPnLList = new ArrayList<>();
+    private List<Position> positionPnLList = new ArrayList<>();
 
-    public PortfolioPnLService(final List<Instrument> instruments, final Configuration configuraion, //
-                               final List<MarketConditions> marketConditions,//
-                               final List<Position> positionList,
-                               final OpeningCapital openingCapital)
+
+    public PortfolioPnLServiceImpl(final List<Instrument> instruments, final Configuration configuraion, //
+                                   final List<MarketConditions> marketConditions,//
+                                   final OpeningCapital openingCapital,
+                                   final PositionRepository positionPnLRepository)
     {
         this.instruments = instruments;
         this.configuraion = configuraion;
         this.marketConditions = marketConditions;
-        this.positionList = positionList;
         this.openingCapital = openingCapital;
+        this.positionPnLRepository = positionPnLRepository;
     }
 
-    public void addPosition(Position p)
-    {
-        positionList.add(p);
-    }
 
 
     public void addMarkerCondition(MarketConditions m)
@@ -43,35 +40,35 @@ public class PortfolioPnLService
         marketConditions.add(m);
     }
 
-    public List<PositionPnL> simulate()
-    {
-        int index = 0;
-
-        MarketConditions mc = marketConditions.stream().findAny().get();
-
-        for (Position p : positionList)
-        {
-            index++;
-
-            double positionPercent = p.getPercentCapitalDeployed();
-
-            double amountInvested = openingCapital.getCapital() * positionPercent / 100;
-
-            double pnl = amountInvested * configuraion.getLev() * (mc.getPercentMove() / 100);
-
-            PositionPnL positionPnl = new PositionPnL(index, p, configuraion, //
-                    mc, configuraion.getLev() * (mc.getPercentMove() / 100),
-                    pnl,
-                    amountInvested,
-                    openingCapital.getCapital() + pnl,
-                    1d,
-                    1d,
-                    1d);
-
-            positionPnLList.add(positionPnl);
-        }
-        return positionPnLList;
-    }
+//    public List<PositionPnL> simulate()
+//    {
+//        int index = 0;
+//
+//        MarketConditions mc = marketConditions.stream().findAny().get();
+//
+//        for (Position p : positionList)
+//        {
+//            index++;
+//
+//            double positionPercent = p.getPercentCapitalDeployed();
+//
+//            double amountInvested = openingCapital.getCapital() * positionPercent / 100;
+//
+//            double pnl = amountInvested * configuraion.getLev() * (mc.getPercentMove() / 100);
+//
+//            PositionPnL positionPnl = new PositionPnL(index, configuraion, //
+//                    mc, null, null, configuraion.getLev() * (mc.getPercentMove() / 100),
+//                    pnl,
+//                    amountInvested,
+//                    openingCapital.getCapital() + pnl,
+//                    1d,
+//                    1d,
+//                    1d);
+//
+//            positionPnLList.add(positionPnl);
+//        }
+//        return positionPnLList;
+//    }
 
     public void addInstrument(Instrument i)
     {
@@ -79,18 +76,18 @@ public class PortfolioPnLService
     }
 
 
-    public List<PositionPnL> getPositionPnLList()
+    public List<Position> getPositionPnLList()
     {
         return positionPnLList;
     }
 
 
-    public void addPositionPnL(Position position,
+    public void addPositionPnL(
                                Configuration configuraion,
                                OpeningCapital openingCapital,
                                MarketConditions marketConditions)
     {
-        double capital = Math.round(openingCapital.getCapital() * (position.getPercentCapitalDeployed() / 100));
+        double capital = 2;//Math.round(openingCapital.getCapital() * (getPercentCapitalDeployed() / 100));
         double allowedFirepower = openingCapital.getCapital() * (configuraion.getMaxPercentAllowedPerInstrument() / 100);
         double capitalRemainingFirePower = (openingCapital.getCapital() * configuraion.getPercentAllocationAllowed() / 100) - capital;
         double remainingFirepower = 0;
@@ -106,7 +103,7 @@ public class PortfolioPnLService
         } else
         {
             capitalInvestedPerInsrument = getPositionPnLList().stream()
-                    .filter(pnl -> pnl.getPosition().getInstrument().getName().equals(position.getInstrument().getName()))
+                    .filter(pnl -> pnl.getInstrument().getName().equals(pnl.getInstrument().getName()))
                     .mapToDouble(pnl -> pnl.getCurrentPositionEquity()).sum();
 
             remainingFirepower = allowedFirepower - capitalInvestedPerInsrument - capital;
@@ -117,11 +114,11 @@ public class PortfolioPnLService
             capitalRemainingFirePower = capitalRemainingFirePower - totalRemainingFirePower;
 
         }
-        int index = getPositionPnLList().size()+1;
+        int index = getPositionPnLList().size() + 1;
         double percentPnl = Math.round(marketConditions.getPercentMove() * configuraion.getLev());
         double pnl = capital * (percentPnl / 100);
-        positionPnLList.add(new PositionPnL(index, position, configuraion,
-                marketConditions, percentPnl, pnl, capital, allowedFirepower,
+        positionPnLList.add(new Position(index,null, configuraion,
+                marketConditions, null, null, percentPnl, pnl, capital, allowedFirepower,
                 remainingFirepower,
                 capitalRemainingFirePower, calculateTotalPnl()));
 
@@ -132,7 +129,7 @@ public class PortfolioPnLService
         return positionPnLList.stream().mapToDouble(p -> p.getPnl()).sum() + openingCapital.getCapital();
     }
 
-    public void updatePositionPnL(List<PositionPnL> pnl)
+    public void updatePositionPnL(List<Position> pnl)
     {
         positionPnLList.clear();
         positionPnLList.addAll(pnl);

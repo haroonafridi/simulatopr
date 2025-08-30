@@ -12,5 +12,12 @@ public interface StrategyService
 
     Strategy updateStrategy(Strategy strategy);
 
+    List<Strategy> findAll();
+
+    Strategy findById(Integer id);
+
+    void removeById(Integer id);
+
+    void removeAll();
 
 }

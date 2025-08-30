@@ -5,32 +5,55 @@ import com.hkcapital.portoflio.repository.PositionRepository;
 import com.hkcapital.portoflio.service.PositionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+
 @Service
 public class PositionServiceImpl implements PositionService
 {
 
-    private final PositionRepository positionRepository;
+    private final PositionRepository positionPnLRepository;
 
-    public PositionServiceImpl(PositionRepository positionRepository)
+    public PositionServiceImpl(PositionRepository positionPnLRepository)
     {
-        this.positionRepository = positionRepository;
+        this.positionPnLRepository = positionPnLRepository;
     }
 
     @Override
-    public Position addPosition(Position position)
+    public Position add(Position position)
     {
-        return positionRepository.save(position);
+        return positionPnLRepository.save(position);
     }
 
     @Override
-    public void removePosition(Position position)
+    public void remove(Position position)
     {
-        positionRepository.delete(position);
+        positionPnLRepository.delete(position);
     }
 
     @Override
     public Position updatePosition(Position position)
     {
-        return   positionRepository.save(position);
+        return positionPnLRepository.save(position);
+    }
+
+    @Override
+    public Position findById(Integer id)
+    {
+        Optional<Position> positionPnL = positionPnLRepository.findById(id);
+        return positionPnL.isEmpty() ? null : positionPnL.get();
+    }
+
+    @Override
+    public List<Position> findAll()
+    {
+        return positionPnLRepository.findAll();
+    }
+
+    @Override
+    public void removeAll()
+    {
+        positionPnLRepository.deleteAll();
     }
 }
