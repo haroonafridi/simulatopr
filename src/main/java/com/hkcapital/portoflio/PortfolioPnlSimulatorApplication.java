@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio;
 
-import com.hkcapital.portoflio.ui.PnLSimulatorFacad;
+import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanelTest;
+import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanelTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -14,8 +15,10 @@ public class PortfolioPnlSimulatorApplication {
 		System.setProperty("java.awt.headless", "false");
 		ConfigurableApplicationContext context = SpringApplication.run(PortfolioPnlSimulatorApplication.class, args);
 		SwingUtilities.invokeLater(() -> {
-			PnLSimulatorFacad simulator = context.getBean(PnLSimulatorFacad.class);
-			simulator.createApplication();
+			//PnLSimulatorFacad simulator = context.getBean(PnLSimulatorFacad.class);
+			//simulator.createApplication();
+			ConfigurationPanelTest instrumentPanelTest = context.getBean(ConfigurationPanelTest.class);
+			instrumentPanelTest.launch();
 		});
 	}
 

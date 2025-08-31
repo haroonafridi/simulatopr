@@ -29,7 +29,7 @@ public class InstrumentServiceImpl implements InstrumentService
     @Override
     public void removeInstrument(Instrument instrument)
     {
-
+        instrumentRepository.delete(instrument);
     }
 
     @Override
