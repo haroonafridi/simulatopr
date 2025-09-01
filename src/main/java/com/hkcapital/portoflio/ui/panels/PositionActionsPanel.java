@@ -22,8 +22,6 @@ public class PositionActionsPanel extends JPanel {
 
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
 
-    private MarketConditionsPanel marketConditionsPanel;
-
     private final JLabel instrumentLabel = new JLabel("Instrument:");
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
     private final NumberTextField positionSize = new NumberTextField(30, 2);
@@ -36,15 +34,15 @@ public class PositionActionsPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
         positionPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
-        marketConditionsPanel = new MarketConditionsPanel((Instrument) instrumentComboBox.getModel().getSelectedItem(),
-                3321.15,3378.40, 1.06);
-        marketConditionsPanel.setBorder(BorderFactory.createTitledBorder("Market Conditions"));
+//        marketConditionsPanel = new MarketConditionsPanel((Instrument) instrumentComboBox.getModel().getSelectedItem(),
+//                3321.15,3378.40, 1.06);
+        //marketConditionsPanel.setBorder(BorderFactory.createTitledBorder("Market Conditions"));
         buttonPanel.add(addPosition);
         buttonPanel.add(removePosition);
         buttonPanel.add(removePositionAll);
         add(positionPanel);
         add(buttonPanel);
-        add(marketConditionsPanel);
+       // add(marketConditionsPanel);
         add(runningCapitalPanel);
         positionPanel.add(instrumentLabel);
         positionPanel.add(instrumentComboBox);
@@ -84,10 +82,6 @@ public class PositionActionsPanel extends JPanel {
     }
 
 
-    public MarketConditions getMarketConditions()
-    {
-        return marketConditionsPanel.getMarketConditions();
-    }
 
     public RunningCapitalPanel getRunningCapitalPanel()
     {

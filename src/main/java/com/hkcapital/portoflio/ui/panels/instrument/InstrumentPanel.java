@@ -6,47 +6,44 @@ import com.hkcapital.portoflio.service.InstrumentService;
 import javax.swing.*;
 import java.awt.*;
 
-public class InstrumentPanel extends JPanel
-{
+public class InstrumentPanel extends JPanel {
 
     private final InstrumentService instrumentService;
 
     private final JLabel instrumentLabel = new JLabel("Instrument Name:");
-    private final JTextField instrumentName = new JTextField(30); // 20 columns looks better
+    private final JTextField instrumentName = new JTextField(30);
 
     private final JTable instrumentTable;
     private final InstrumentTableModel tableModel;
+
     private final JButton saveButton = new JButton("Save");
     private final JButton cancelButton = new JButton("Cancel");
     private final JButton closeButton = new JButton("Close");
     private final JButton removeButton = new JButton("Remove");
 
-    public InstrumentPanel(final InstrumentService instrumentService)
-    {
+    public InstrumentPanel(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
 
-        tableModel = new InstrumentTableModel<Instrument>(new String[]{"Id", "Instrument Name"}, instrumentService.findAll());
+        tableModel = new InstrumentTableModel<>(new String[]{"Id", "Instrument Name"}, instrumentService.findAll());
 
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder("Instrument Panel"));
-
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8); // spacing around components
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 8, 8, 8);
 
-        // Row 0: Text field
-        gbc.gridx = 1;
+        // Row 0: Instrument label + text field
+        JPanel instrumentInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        instrumentInputPanel.add(instrumentLabel);
+        instrumentInputPanel.add(instrumentName);
+
+        gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1.0; // text field expands horizontally
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(instrumentInputPanel, gbc);
 
-        JPanel instrumentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        instrumentPanel.add(instrumentLabel);
-        instrumentPanel.add(instrumentName);
-
-        add(instrumentPanel);
-
-        // Row 1: Buttons (in a sub-panel for better alignment)
+        // Row 1: Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         buttonPanel.add(saveButton);
         buttonPanel.add(removeButton);
@@ -61,62 +58,56 @@ public class InstrumentPanel extends JPanel
         gbc.anchor = GridBagConstraints.EAST;
         add(buttonPanel, gbc);
 
-
+        // Row 2: Table inside scroll pane
         instrumentTable = new JTable(tableModel);
-
         JScrollPane scrollPane = new JScrollPane(instrumentTable);
 
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // allows table to expand vertically
+        gbc.fill = GridBagConstraints.BOTH;
         add(scrollPane, gbc);
-
+        saveButton.addActionListener(e -> save());
+        removeButton.addActionListener(e -> remove());
+        cancelButton.addActionListener(e -> clear());
+        closeButton.addActionListener(e -> {
+            // Close the dialog (find top-level window)
+            SwingUtilities.getWindowAncestor(this).dispose();
+        });
     }
 
-    public JButton getSaveButton()
-    {
-        return saveButton;
-    }
-
-    public JButton getCancelButton()
-    {
-        return cancelButton;
-    }
-
-    public JButton getCloseButton()
-    {
-        return closeButton;
-    }
-
-    public void save()
-    {
-
+    public void save() {
         String name = instrumentName.getText();
-
-        if (name != null && !name.trim().isEmpty())
-        {
+        if (name != null && !name.trim().isEmpty()) {
             Instrument instrument = new Instrument(name.trim());
             instrumentService.addInstrument(instrument);
-            instrumentName.setText(null);
             tableModel.addRow(instrument);
-            instrumentService.addInstrument(instrument);
-        } else
-        {
+            instrumentName.setText(null);
+        } else {
             JOptionPane.showMessageDialog(this, "Please enter an instrument name.",
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    public void remove()
-    {
-       Instrument instrument =  (Instrument) tableModel.removeRow(instrumentTable.getSelectedRow());
-       instrumentService.removeInstrument(instrument);
+    public void remove() {
+        int selectedRow = instrumentTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            Instrument instrument = (Instrument) tableModel.removeRow(selectedRow);
+            instrumentService.removeInstrument(instrument);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an instrument to remove.",
+                    "No Selection", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
-    public void clear()
-    {
+    public void clear() {
         instrumentName.setText(null);
     }
 
-    public JButton getRemoveButton()
-    {
-        return removeButton;
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g); // always call super
     }
 }

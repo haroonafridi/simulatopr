@@ -39,4 +39,10 @@ public class Instrument
     {
         this.name = name;
     }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }

@@ -1,18 +1,21 @@
-package com.hkcapital.portoflio.ui.panels.instrument;
+package com.hkcapital.portoflio.ui.panels.marketconditions;
 
 import com.hkcapital.portoflio.service.InstrumentService;
-import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanel;
+import com.hkcapital.portoflio.service.MarketConditionsService;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
 @Component
-public class InstrumentPanelTest
+public class MarketConditionsPanelTest
 {
+    private final MarketConditionsService marketconditionsService;
     private final InstrumentService instrumentService;
 
-    public InstrumentPanelTest(InstrumentService instrumentService)
+    public MarketConditionsPanelTest(MarketConditionsService marketConditionsService,
+                                     InstrumentService instrumentService)
     {
+        this.marketconditionsService = marketConditionsService;
         this.instrumentService = instrumentService;
     }
 
@@ -22,16 +25,16 @@ public class InstrumentPanelTest
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        InstrumentPanel instrumentPanel = new InstrumentPanel(instrumentService);
-        mainFrame.add(instrumentPanel);
+        MarketConditionsPanel marketConditionsPanel = new MarketConditionsPanel(marketconditionsService, instrumentService);
+        mainFrame.add(marketConditionsPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setVisible(true);
     }
 
-    public InstrumentService getInstrumentService()
+    public MarketConditionsService getMarketconditionsService()
     {
-        return instrumentService;
+        return marketconditionsService;
     }
 
 }

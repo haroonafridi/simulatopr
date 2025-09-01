@@ -3,6 +3,11 @@ package com.hkcapital.portoflio.ui;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.ui.panels.*;
+import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationDialogue;
+import com.hkcapital.portoflio.ui.panels.instrument.InstrumentDialogue;
+import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanel;
+import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsDialogue;
+import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,6 +32,7 @@ public class PnLSimulatorFacad
 
 
     private final PositionService positionPnLService;
+
 
 
 //    PortfolioPnLServiceImpl portfolioPnLService = new PortfolioPnLServiceImpl(SimulationData.INSTRUMENTS,
@@ -59,16 +65,21 @@ public class PnLSimulatorFacad
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
         JFrame mainFrame = new JFrame("PnL Simulator App");
         JPanel contents = new JPanel();
+        JPanel buttonsPanel = new JPanel();
+        JButton instrumentButton = new JButton("Show Instruments.");
+        JButton configurationButton = new JButton("Show Configuration.");
+        JButton marketConditionsButton = new JButton("Show Market Conditions.");
+        buttonsPanel.add(instrumentButton);
+        buttonsPanel.add(configurationButton);
+        buttonsPanel.add(marketConditionsButton);
+        contents.add(buttonsPanel);
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
         StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel();
-        ConfigurationPanel configurationPanel = new ConfigurationPanel(configurationService);
         CapitalPanel capitalPanel = new CapitalPanel(new OpeningCapital(1, LocalDate.now(), 5000));
-        configurationPanel.add(capitalPanel);
-        contents.add(configurationPanel);
         PositionActionsPanel positionActionsPanel = new PositionActionsPanel();
         contents.add(strategyHeaderPanel);
-        contents.add(configurationPanel);
+
         contents.add(positionActionsPanel);
         contents.add(new JScrollPane(table));
         SimulationActionsPanel simulation = new SimulationActionsPanel();
@@ -79,22 +90,28 @@ public class PnLSimulatorFacad
         mainFrame.setVisible(true);
 
         simulation.getSimulateStrategy().addActionListener(e -> simulate(positionPnLList, model, mainFrame, positionActionsPanel, strategyHeaderPanel));
-        positionActionsPanel.getAddPosition().addActionListener(e -> addPosition(model, configurationPanel, capitalPanel, positionActionsPanel));
         positionActionsPanel.getRemovePosition().addActionListener(e -> removePosition(positionPnLList, model, table, mainFrame));
         positionActionsPanel.getRemoveAllPositions().addActionListener(e -> removeAllPositions(positionPnLList, model, mainFrame));
         Strategy strategy = strategyHeaderPanel.getStrategy();
-
-        Configuration configuration = configurationPanel.getConfiguration();
-        MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
+       // MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
         //Instrument instrument = positionActionsPanel.getPosition();
 
-
-        strategy.setPositionPnLList(positionPnLList);
-//        simulation.getSaveStrategy().addActionListener(e-> saveOrUpdate(positionPnLList,configuration,marketConditions,
-//                instrument,strategy));
-        configurationPanel.getSaveOrUpdateConfigButton().addActionListener(e-> {
-            configurationService.addConfiguration(configurationPanel.getConfiguration());
+        instrumentButton.addActionListener(a -> {
+            new InstrumentDialogue(mainFrame,new InstrumentPanel(instrumentService)).setVisible(true);
         });
+
+
+        configurationButton.addActionListener(a -> {
+            new ConfigurationDialogue(mainFrame,
+                    new com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel(configurationService)).setVisible(true);
+        });
+
+        marketConditionsButton.addActionListener(a -> {
+            new MarketConditionsDialogue(mainFrame,
+                    new MarketConditionsPanel(marketConditionsService, instrumentService)).setVisible(true);
+        });
+
+
 
     }
 
@@ -129,12 +146,12 @@ public class PnLSimulatorFacad
         {
             positionPnLList.forEach(positionPnL ->
             {
-                double percentMove = positionActionsPanel.getMarketConditions().getPercentMove();
-                double pnl = positionPnL.getPnl() + positionPnL.getCurrentPositionEquity() * (percentMove * 20) / 100;
-                double percentPnl = (percentMove + positionPnL.getPercentPnL()) * positionPnL.getConfigurtaion().getLev();
-                positionPnL.setStrategy(strategyHeaderPanel.getStrategy());
-                positionPnL.setPnl(pnl);
-                positionPnL.setPercentPnL(percentPnl);
+                //double percentMove = positionActionsPanel.getMarketConditions().getPercentMove();
+               // double pnl = positionPnL.getPnl() + positionPnL.getCurrentPositionEquity() * (percentMove * 20) / 100;
+              //  double percentPnl = (percentMove + positionPnL.getPercentPnL()) * positionPnL.getConfigurtaion().getLev();
+                //positionPnL.setStrategy(strategyHeaderPanel.getStrategy());
+               // positionPnL.setPnl(pnl);
+                //positionPnL.setPercentPnL(percentPnl);
             });
             model.updateData(positionPnLList);
         } catch (Exception ex)
@@ -173,14 +190,11 @@ public class PnLSimulatorFacad
         }
     }
 
-    private void addPosition(ConfigurationTableModel model, ConfigurationPanel configurationPanel, CapitalPanel capitalPanel, PositionActionsPanel positionActionsPanel)
+    private void addPosition(ConfigurationTableModel model, CapitalPanel capitalPanel, PositionActionsPanel positionActionsPanel)
     {
-
-        Configuration configuraion = configurationPanel.getConfiguration();
-
         OpeningCapital openingCapital = capitalPanel.getOpeningCapital();
 
-        MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
+        //MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
 
        // portfolioPnLService.addPositionPnL(position, configuraion, openingCapital, marketConditions);
 
