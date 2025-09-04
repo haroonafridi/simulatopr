@@ -9,7 +9,7 @@ public class MarketConditions
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
     @Column(name="day_low")
@@ -79,5 +79,11 @@ public class MarketConditions
     public void setPercentMove(Double percentMove)
     {
         this.percentMove = percentMove;
+    }
+
+    @Override
+    public String toString()
+    {
+        return instrument.getName()+ " = low : [" + dayLow + " ] | high ["+dayHigh+"] | percent move ["+percentMove+"]";
     }
 }

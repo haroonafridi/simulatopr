@@ -8,6 +8,9 @@ import com.hkcapital.portoflio.ui.panels.instrument.InstrumentDialogue;
 import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsDialogue;
 import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsPanel;
+import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
+import com.hkcapital.portoflio.ui.panels.position.PositionTableModel;
+import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -59,7 +62,7 @@ public class PnLSimulatorFacad
     public void createApplication()
     {
         List<Position> positionPnLList = new ArrayList<>();
-        ConfigurationTableModel model = new ConfigurationTableModel(positionPnLList);
+        PositionTableModel model = new PositionTableModel(positionPnLList);
         JTable table = new JTable(model);
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -75,9 +78,9 @@ public class PnLSimulatorFacad
         contents.add(buttonsPanel);
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel();
+        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(strategyService);
         CapitalPanel capitalPanel = new CapitalPanel(new OpeningCapital(1, LocalDate.now(), 5000));
-        PositionActionsPanel positionActionsPanel = new PositionActionsPanel();
+        PositionActionsPanel positionActionsPanel = new PositionActionsPanel(instrumentService, marketConditionsService);
         contents.add(strategyHeaderPanel);
 
         contents.add(positionActionsPanel);
@@ -137,7 +140,7 @@ public class PnLSimulatorFacad
     }
 
     private static void simulate(List<Position> positionPnLList, //
-                                 ConfigurationTableModel model, //
+                                 PositionTableModel model, //
                                  JFrame mainFrame,//
                                  PositionActionsPanel positionActionsPanel,
                                  StrategyHeaderPanel strategyHeaderPanel)
@@ -162,7 +165,7 @@ public class PnLSimulatorFacad
         }
     }
 
-    private void removeAllPositions(List<Position> positionPnLList, ConfigurationTableModel model, JFrame mainFrame)
+    private void removeAllPositions(List<Position> positionPnLList, PositionTableModel model, JFrame mainFrame)
     {
         try
         {
@@ -176,7 +179,7 @@ public class PnLSimulatorFacad
         }
     }
 
-    private void removePosition(List<Position> positionPnLList, ConfigurationTableModel model, JTable table, JFrame mainFrame)
+    private void removePosition(List<Position> positionPnLList, PositionTableModel model, JTable table, JFrame mainFrame)
     {
         try
         {
@@ -190,7 +193,7 @@ public class PnLSimulatorFacad
         }
     }
 
-    private void addPosition(ConfigurationTableModel model, CapitalPanel capitalPanel, PositionActionsPanel positionActionsPanel)
+    private void addPosition(PositionTableModel model, CapitalPanel capitalPanel, PositionActionsPanel positionActionsPanel)
     {
         OpeningCapital openingCapital = capitalPanel.getOpeningCapital();
 
