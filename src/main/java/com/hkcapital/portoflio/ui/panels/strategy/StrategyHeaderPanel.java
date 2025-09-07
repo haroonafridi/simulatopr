@@ -1,12 +1,14 @@
 package com.hkcapital.portoflio.ui.panels.strategy;
 
-import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.Strategy;
+import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.StrategyService;
+import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
+
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDateTime;
-
+import java.util.List;
 public class StrategyHeaderPanel extends JPanel
 {
     private final StrategyService strategyService;
@@ -25,10 +27,16 @@ public class StrategyHeaderPanel extends JPanel
     private final JTable strategyTable;
     private final StrategyTableModel<Strategy>  tableModel;
 
+    private PositionActionsPanel positionActionsPanel;
 
-    public StrategyHeaderPanel(final StrategyService strategyService)
+    private final PositionService positionService;
+
+
+    public StrategyHeaderPanel(final StrategyService strategyService, //
+                               final PositionService positionService)
     {
         this.strategyService = strategyService;
+        this.positionService = positionService;
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
@@ -70,10 +78,14 @@ public class StrategyHeaderPanel extends JPanel
         strategyTable.getSelectionModel().addListSelectionListener(e-> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = strategyTable.getSelectedRow();
-                if (selectedRow >= 0) {
+                if (selectedRow >= 0)
+                {
                     // Convert view row index to model index (important if table is sorted)
                     int modelRow = strategyTable.convertRowIndexToModel(selectedRow);
+                    Strategy strategy =   (Strategy)tableModel.getElements().get(selectedRow);
                     setHeaderFieldsFromRow(modelRow);
+                    List<Position> positionList =  positionService.findByStrategyId(strategy.getId());
+                    positionActionsPanel.getModel().updateData(positionList);
                 }
             }
         });
@@ -98,9 +110,7 @@ public class StrategyHeaderPanel extends JPanel
 
     public Strategy getStrategy()
     {
-        Strategy strategy = new Strategy(strategyName.getText(), strategyDescription.getText(), LocalDateTime.now());
-
-        return strategy;
+        return (Strategy) tableModel.getElements().get(strategyTable.getSelectedRow());
     }
 
 
@@ -119,5 +129,11 @@ public class StrategyHeaderPanel extends JPanel
     public void clear() {
        strategyName.setText(null);
        strategyDescription.setText(null);
+    }
+
+
+    public void setPositionActionsPanel(PositionActionsPanel positionActionsPanel)
+    {
+        this.positionActionsPanel = positionActionsPanel;
     }
 }

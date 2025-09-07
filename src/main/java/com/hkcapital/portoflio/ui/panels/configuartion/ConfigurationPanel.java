@@ -3,14 +3,16 @@ package com.hkcapital.portoflio.ui.panels.configuartion;
 import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.service.ConfigurationService;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsSourcePanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ConfigurationPanel extends JPanel {
+public class ConfigurationPanel extends JPanel
+{
 
     private final ConfigurationService configurationService;
-
+    private final ConfigurationSourcePanel configurationSourcePanel;
     private final JLabel percentAllocationAllowedLabel = new JLabel("% Allocation Allowed");
     private final NumberTextField percentAllocationAllowed = new NumberTextField(30);
 
@@ -34,8 +36,12 @@ public class ConfigurationPanel extends JPanel {
     private final JButton closeButton = new JButton("Close");
     private final JButton removeButton = new JButton("Remove");
 
-    public ConfigurationPanel(final ConfigurationService configurationService) {
+    private final JButton selectButton = new JButton("Select");
+
+    public ConfigurationPanel(final ConfigurationService configurationService,
+                              final ConfigurationSourcePanel configurationSourcePanel) {
         this.configurationService = configurationService;
+        this.configurationSourcePanel = configurationSourcePanel;
 
         tableModel = new ConfiguarionTableModel<Configuration>(configurationService.findAll());
 
@@ -96,6 +102,7 @@ public class ConfigurationPanel extends JPanel {
         buttonPanel.add(removeButton);
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
+        buttonPanel.add(selectButton);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -120,6 +127,7 @@ public class ConfigurationPanel extends JPanel {
         cancelButton.addActionListener(e -> remove());
         closeButton.addActionListener(e -> clear());
         removeButton.addActionListener(e -> getGraphics().dispose());
+        selectButton.addActionListener(e-> select());
     }
 
     public JButton getSaveButton() { return saveButton; }
@@ -158,5 +166,24 @@ public class ConfigurationPanel extends JPanel {
         noOfPositionsPerInstrument.setText(null);
         maxPercentAllowedPerInstrument.setText(null);
         lev.setText(null);
+        SwingUtilities.getWindowAncestor(this).dispose();
+    }
+
+
+    public void select() {
+        Configuration configuration = (Configuration) tableModel.getElements().get(configurationTable.getSelectedRow());
+        configurationSourcePanel.getId().setText(configuration.getId().toString());
+        configurationSourcePanel.getLev().setText(configuration.getLev().toString());
+        configurationSourcePanel.getPercentAllocationAllowed().setText(configuration.getPercentAllocationAllowed().toString());
+        configurationSourcePanel.getNoOfInstrument().setText(configuration.getNoOfInsutrments().toString());
+        configurationSourcePanel.getNoOfPositionsPerInstrument().setText(configuration.getNoOfPositionsPerInstruments().toString());
+        configurationSourcePanel.getMaxPercentAllowedPerInstrument().setText(configuration.getMaxPercentAllowedPerInstrument().toString());
+        SwingUtilities.getWindowAncestor(this).dispose();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g)
+    {
+        super.paintComponent(g); // always call super
     }
 }

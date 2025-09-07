@@ -21,7 +21,7 @@ public class ConfigurationPanelTest
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        ConfigurationPanel instrumentPanel = new ConfigurationPanel(configurationService);
+        ConfigurationPanel instrumentPanel = new ConfigurationPanel(configurationService, null);
         mainFrame.add(instrumentPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

@@ -32,10 +32,16 @@ public class MarketConditionsPanel extends JPanel
     private final JButton closeButton = new JButton("Close");
     private final JButton removeButton = new JButton("Remove");
 
+    private final JButton selectionMarketConditionsButton = new JButton("Select");
+
+    private final MarketConditionsSourcePanel marketConditionsSourcePanel;
+
     public MarketConditionsPanel(final MarketConditionsService marketconditionsService,
-                                 final InstrumentService instrumentService)
+                                 final InstrumentService instrumentService,
+                                 final MarketConditionsSourcePanel marketConditionsSourcePanel)
     {
         this.marketconditionsService = marketconditionsService;
+        this.marketConditionsSourcePanel = marketConditionsSourcePanel;
 
         List<Instrument> instrumentList = instrumentService.findAll();
 
@@ -76,6 +82,7 @@ public class MarketConditionsPanel extends JPanel
         buttonPanel.add(removeButton);
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
+        buttonPanel.add(selectionMarketConditionsButton);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -104,6 +111,11 @@ public class MarketConditionsPanel extends JPanel
             // Close the dialog (find top-level window)
             SwingUtilities.getWindowAncestor(this).dispose();
         });
+
+        selectionMarketConditionsButton.addActionListener(e-> {
+            selectConfiguration();
+            SwingUtilities.getWindowAncestor(this).dispose();
+        });
     }
 
     public void save()
@@ -118,6 +130,17 @@ public class MarketConditionsPanel extends JPanel
         percentMove.setText(null);
     }
 
+
+    public void selectConfiguration()
+    {
+        int selectedRow = marketConditionsTableTable.getSelectedRow();
+        MarketConditions marketConditions = (MarketConditions) tableModel.getElements().get(selectedRow);
+        marketConditionsSourcePanel.getPositionId().setText(marketConditions.getId().toString());
+        marketConditionsSourcePanel.getDayHigh().setText(marketConditions.getDayHigh().toString());
+        marketConditionsSourcePanel.getDayLow().setText(marketConditions.getDayLow().toString());
+        marketConditionsSourcePanel.getPercentMove().setText(marketConditions.getPercentMove().toString());
+        marketConditionsSourcePanel.getInstrumentName().setText(marketConditions.getInstrument().getName());
+    }
     public void remove()
     {
         int selectedRow = marketConditionsTableTable.getSelectedRow();

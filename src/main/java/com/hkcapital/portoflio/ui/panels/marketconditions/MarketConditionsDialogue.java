@@ -7,9 +7,10 @@ public class MarketConditionsDialogue extends JDialog
 {
     private final MarketConditionsPanel marketconditionsPanel;
 
-    public MarketConditionsDialogue(Frame owner, final MarketConditionsPanel marketConditionsPanel)
+    public MarketConditionsDialogue(Frame owner, final MarketConditionsPanel marketConditionsPanel
+                                    )
     {
-        super(owner, "Instrument", true);
+        super(owner, "Market conditions", true);
         this.marketconditionsPanel = marketConditionsPanel;
         getContentPane().add(marketConditionsPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

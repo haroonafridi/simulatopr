@@ -7,7 +7,8 @@ public class ConfigurationDialogue extends JDialog
 {
     private final ConfigurationPanel configurationPanel;
 
-    public ConfigurationDialogue(Frame owner, final ConfigurationPanel configurationPanel)
+    public ConfigurationDialogue(Frame owner,
+                                 final ConfigurationPanel configurationPanel)
     {
         super(owner, "Configuration", true);
         this.configurationPanel = configurationPanel;

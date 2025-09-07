@@ -1,20 +1,18 @@
 package com.hkcapital.portoflio.ui.panels.configuartion;
 
 import com.hkcapital.portoflio.model.Configuration;
-import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.ui.TableModel;
 
 import java.util.List;
 
 public class ConfiguarionTableModel<E> extends TableModel
 {
-    final static String[] columnsName = new String[]{"Id", "% Allocation allowed", "No of Instruments", " No of Positions per instruments",
-    "Max % percent allowed per instrument", "Lev"};
+    final static String[] columnsName = ConfigurationTableHeader.labels();
+
     public ConfiguarionTableModel(List<Configuration> elements)
     {
         super(columnsName, elements);
     }
-
 
 
     /**
@@ -28,7 +26,7 @@ public class ConfiguarionTableModel<E> extends TableModel
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        Configuration configuration= (Configuration) getElements().get(rowIndex);
+        Configuration configuration = (Configuration) getElements().get(rowIndex);
 
         switch (columnIndex)
         {

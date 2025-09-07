@@ -12,9 +12,19 @@ public class PositionTableModel extends AbstractTableModel
             "%Pnl", "PnL", "Allowed Fire Power", "Remaining Fire Power", "Capital Remaining Firepower",
             "day low", "day high", "% move",
              "leverage"};
-    private final List<Position> data;
+    private List<Position> data;
 
     public PositionTableModel(List<Position> data)
+    {
+        this.data = data;
+    }
+
+    public List<Position> getData()
+    {
+        return data;
+    }
+
+    public void setData(List<Position> data)
     {
         this.data = data;
     }
