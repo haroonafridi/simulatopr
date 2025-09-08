@@ -8,6 +8,7 @@ import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.List;
 public class StrategyHeaderPanel extends JPanel
 {
@@ -53,7 +54,7 @@ public class StrategyHeaderPanel extends JPanel
         topPanel.add(removeButton);
         add(topPanel, BorderLayout.NORTH);
         strategyTable = new JTable(tableModel);
-        int rowCountToShow = 5;
+        int rowCountToShow = 50;
         int rowHeight = strategyTable.getRowHeight();          // default row height
         int tableHeaderHeight = strategyTable.getTableHeader().getPreferredSize().height;
         int preferredHeight = rowHeight * rowCountToShow + tableHeaderHeight;
@@ -66,7 +67,7 @@ public class StrategyHeaderPanel extends JPanel
         add(scrollPane, BorderLayout.CENTER);
 
         saveStrategy.addActionListener(s ->  {
-            Strategy strategy = getStrategy();
+            Strategy strategy = new Strategy(strategyName.getText(), strategyDescription.getText(), LocalDateTime.now());
             strategyService.addStrategy(strategy);
             strategyName.setText(null);
             strategyDescription.setText(null);

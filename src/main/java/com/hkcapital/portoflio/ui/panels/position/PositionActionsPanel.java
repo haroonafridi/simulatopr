@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.position;
 
+import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.RunningCapital;
 import com.hkcapital.portoflio.service.ConfigurationService;
@@ -11,9 +12,9 @@ import com.hkcapital.portoflio.ui.panels.RunningCapitalPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationSourcePanel;
-import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsSourcePanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsDialogue;
 import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsPanel;
+import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsSourcePanel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 
 import javax.swing.*;
@@ -36,8 +37,7 @@ public class PositionActionsPanel extends JPanel
 
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
     private final NumberTextField positionSize = new NumberTextField(30);
-    private JPanel buttonPanel = new JPanel();
-    private JPanel positionPanel = new JPanel();
+
 
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
 
@@ -47,9 +47,6 @@ public class PositionActionsPanel extends JPanel
     private final ConfigurationService configurationService;
 
     private final PositionService positionService;
-
-    private final MarketConditionsSourcePanel marketConditionsSourcePanel = new MarketConditionsSourcePanel();
-    private final ConfigurationSourcePanel configurationSourcePanel = new ConfigurationSourcePanel();
 
     private StrategyHeaderPanel strategyHeaderPanel;
 
@@ -61,6 +58,29 @@ public class PositionActionsPanel extends JPanel
                                 final ConfigurationService configurationService,
                                 StrategyHeaderPanel strategyHeaderPanel)
     {
+
+        JPanel buttonPanel = new JPanel();
+
+        JPanel positionPanelParametersPanel = new JPanel();
+
+       // positionPanelParametersPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
+
+        //Position Size panel
+        JPanel positionSizePanel = new JPanel();
+        //positionSizePanel.setBorder(BorderFactory.createTitledBorder("Position Size:"));
+        positionSizePanel.add(positionSizeLabel);
+        positionSizePanel.add(positionSize);
+        positionSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3, 0));
+
+        MarketConditionsSourcePanel marketConditionsSourcePanel = new MarketConditionsSourcePanel();
+        marketConditionsSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //marketConditionsSourcePanel.setBorder(BorderFactory.createTitledBorder("Market Conditions:"));
+        ConfigurationSourcePanel configurationSourcePanel = new ConfigurationSourcePanel();
+        configurationSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //configurationSourcePanel.setBorder(BorderFactory.createTitledBorder("Configurations:"));
+
         this.frame = owner;
         this.positionService = positionService;
         this.instrumentService = instrumentService;
@@ -69,42 +89,41 @@ public class PositionActionsPanel extends JPanel
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
         this.strategyHeaderPanel = strategyHeaderPanel;
-        setLayout(new GridLayout(3,0));
-        setBorder(BorderFactory.createTitledBorder("Positions Panel"));
-        buttonPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(BorderFactory.createTitledBorder("Positions "));
+        //buttonPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
-        positionPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
+
         buttonPanel.add(addPosition);
         buttonPanel.add(removePosition);
         buttonPanel.add(removePositionAll);
-        add(positionPanel);
+        add(positionPanelParametersPanel);
         add(buttonPanel);
-        //add(runningCapitalPanel);
-        JPanel positionParams = new JPanel(new GridLayout(1,0));
-        positionParams.add(positionSizeLabel);
-        positionParams.add(positionSize);
-        positionParams.add(marketConditionsButton);
-        positionParams.add(configurationButton);
-        JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3,2));
+
+        marketConditionsSourcePanel.add(marketConditionsButton);
+        configurationSourcePanel.add(configurationButton);
         configurationAndSourcePanel.add(marketConditionsSourcePanel);
         configurationAndSourcePanel.add(configurationSourcePanel);
-        configurationAndSourcePanel.add(positionParams);
-        positionPanel.add(configurationAndSourcePanel);
-        marketConditionsButton.addActionListener(a -> displayMarketConditionDialogue());
-        configurationButton.addActionListener(a -> displayConfigurationDialogue());
+        positionPanelParametersPanel.add(configurationAndSourcePanel);
+        positionPanelParametersPanel.add(positionSizePanel);
+        marketConditionsButton.addActionListener(a -> displayMarketConditionDialogue(marketConditionsSourcePanel));
+        configurationButton.addActionListener(a -> displayConfigurationDialogue(configurationSourcePanel));
+
         add(new JScrollPane(table));
-        addPosition.addActionListener(a->
+        addPosition.addActionListener(a ->
         {
+            MarketConditions marketConditions = marketConditionsService.findById(marketConditionsSourcePanel.getPositionId().getIntValue());
             Position position = new Position();
+            position.setInstrument(marketConditions.getInstrument());
             position.setConfigurtaion(configurationService.findById(configurationSourcePanel.getId().getIntValue()));
-            position.setMarketConditions(marketConditionsService.findById(marketConditionsSourcePanel.getPositionId().getIntValue()));
+            position.setMarketConditions(marketConditions);
             position.setStrategy(strategyHeaderPanel.getStrategy());
             positionService.add(position);
         });
     }
 
 
-    private void displayMarketConditionDialogue()
+    private void displayMarketConditionDialogue(MarketConditionsSourcePanel marketConditionsSourcePanel)
     {
         MarketConditionsDialogue marketConditionsDialogue = //
                 new MarketConditionsDialogue(frame, new MarketConditionsPanel(marketConditionsService, instrumentService,
@@ -113,15 +132,12 @@ public class PositionActionsPanel extends JPanel
     }
 
 
-    private void displayConfigurationDialogue()
+    private void displayConfigurationDialogue(ConfigurationSourcePanel configurationSourcePanel)
     {
         ConfigurationDialogue configurationDialogue = //
                 new ConfigurationDialogue(frame, new ConfigurationPanel(configurationService, configurationSourcePanel));
         configurationDialogue.setVisible(true);
     }
-
-
-
 
     public JButton getAddPosition()
     {
@@ -155,7 +171,6 @@ public class PositionActionsPanel extends JPanel
     {
         return model;
     }
-
 
 
     public void setTable(JTable table)

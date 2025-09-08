@@ -3,8 +3,8 @@ package com.hkcapital.portoflio.ui;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.ui.panels.CapitalPanel;
-import com.hkcapital.portoflio.ui.panels.SimulationActionsPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationDialogue;
+import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.instrument.InstrumentDialogue;
 import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsDialogue;
@@ -17,9 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,71 +48,120 @@ public class PnLSimulatorFacad
         this.positionPnLService = positionPnLService;
     }
 
-    public void createApplication()
-    {
+    public void createApplication() {
+        JFrame mainFrame = new JFrame("Strategy Simulator");
 
-        JFrame mainFrame = new JFrame("PnL Simulator App");
-        JPanel contents = new JPanel();
-        JPanel buttonsPanel = new JPanel();
-        JButton instrumentButton = new JButton("Show Instruments.");
-        JButton configurationButton = new JButton("Show Configuration.");
-        JButton marketConditionsButton = new JButton("Show Market Conditions.");
-        buttonsPanel.add(instrumentButton);
-        buttonsPanel.add(configurationButton);
-        buttonsPanel.add(marketConditionsButton);
-        contents.add(buttonsPanel);
-        contents.setLayout(new GridLayout(3,1));
-        contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
+        // === Root layout ===
+        JPanel rootPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints rootGbc = new GridBagConstraints();
+        rootGbc.fill = GridBagConstraints.BOTH;
+        rootGbc.gridy = 0; // single row in root
+
+        // === LEFT: Navigation Tree (20% width, full height) ===
+        rootGbc.gridx = 0;
+        rootGbc.weightx = 0.2; // 20% of total width
+        rootGbc.weighty = 1.0; // full height
 
 
 
-        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(strategyService,positionPnLService);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Strategy Simulator");
 
-        //CapitalPanel capitalPanel = new CapitalPanel(new OpeningCapital(1, LocalDate.now(), 5000));
+        DefaultMutableTreeNode instruments = new DefaultMutableTreeNode("Instruments");
+        instruments.add(new DefaultMutableTreeNode("Instruments"));
 
-        PositionActionsPanel positionActionsPanel =
-                new PositionActionsPanel(mainFrame, positionPnLService, //
-                        instrumentService, marketConditionsService, configurationService, //
-                        strategyHeaderPanel);
+        DefaultMutableTreeNode configuration = new DefaultMutableTreeNode("Configuration:");
 
+        configuration.add(new DefaultMutableTreeNode("Positions and Leverage"));
+        configuration.add(new DefaultMutableTreeNode("Time Frames"));
+        configuration.add(new DefaultMutableTreeNode("Sessions"));
+
+        DefaultMutableTreeNode marketConditions = new DefaultMutableTreeNode("Market Conditions");
+        marketConditions.add(new DefaultMutableTreeNode("Market Conditions"));
+        marketConditions.add(new DefaultMutableTreeNode("Economic Calendar"));
+
+        root.add(instruments);
+        root.add(configuration);
+        root.add(marketConditions);
+        JTree navigationTree = new JTree(root);
+        JScrollPane treeScrollPane = new JScrollPane(navigationTree);
+        treeScrollPane.setBorder(BorderFactory.createTitledBorder("Navigation"));
+        rootPanel.add(treeScrollPane, rootGbc);
+
+        // === RIGHT: Vertical split with Header + Actions ===
+        rootGbc.gridx = 1;
+        rootGbc.weightx = 0.8; // 80% of total width
+
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints rightGbc = new GridBagConstraints();
+        rightGbc.fill = GridBagConstraints.BOTH;
+        rightGbc.gridx = 0;
+        rightGbc.weightx = 1.0;
+
+        // --- Top: StrategyHeaderPanel (30% height) ---
+        rightGbc.gridy = 0;
+        rightGbc.weighty = 0.3;
+        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(strategyService, positionPnLService);
+        rightPanel.add(strategyHeaderPanel, rightGbc);
+
+        // --- Bottom: PositionActionsPanel (70% height) ---
+        rightGbc.gridy = 1;
+        rightGbc.weighty = 0.7;
+        PositionActionsPanel positionActionsPanel = new PositionActionsPanel(
+                mainFrame,
+                positionPnLService,
+                instrumentService,
+                marketConditionsService,
+                configurationService,
+                strategyHeaderPanel
+        );
         strategyHeaderPanel.setPositionActionsPanel(positionActionsPanel);
+        rightPanel.add(positionActionsPanel, rightGbc);
 
-        contents.add(strategyHeaderPanel);
-        contents.add(positionActionsPanel);
-       // SimulationActionsPanel simulation = new SimulationActionsPanel();
-       // contents.add(simulation);
+        // Add right panel to root
+        rootPanel.add(rightPanel, rootGbc);
 
-        mainFrame.setContentPane(contents);
+        // === Frame settings ===
+        mainFrame.setContentPane(rootPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
         mainFrame.setVisible(true);
 
-       // simulation.getSimulateStrategy().addActionListener(e -> simulate(positionPnLList, model, mainFrame, positionActionsPanel, strategyHeaderPanel));
-        //positionActionsPanel.getRemovePosition().addActionListener(e -> removePosition(positionPnLList, model, table, mainFrame));
-        //positionActionsPanel.getRemoveAllPositions().addActionListener(e -> removeAllPositions(positionPnLList, model, mainFrame));
+        navigationTree.addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode selectedNode =
+                    (DefaultMutableTreeNode) navigationTree.getLastSelectedPathComponent();
 
+            if (selectedNode == null) return; // nothing selected
 
-        instrumentButton.addActionListener(a ->
-        {
-            new InstrumentDialogue(mainFrame, new InstrumentPanel(instrumentService)).setVisible(true);
+            Object nodeObject = selectedNode.getUserObject();
+
+            // Check if it’s a leaf node or your domain object
+            if (nodeObject.toString().equals("Positions and Leverage"))
+            {
+                ConfigurationDialogue configurationDialogue = //
+                        new ConfigurationDialogue(mainFrame, new ConfigurationPanel(configurationService,null));
+                configurationDialogue.setVisible(true);
+
+            }  if (nodeObject.toString().equals("Market Conditions"))
+            {
+                // Optional: handle folders or intermediate nodes
+                MarketConditionsDialogue marketConditionsDialogue = new MarketConditionsDialogue(mainFrame, //
+                        new MarketConditionsPanel(marketConditionsService,instrumentService, //
+                                null));
+                marketConditionsDialogue.setVisible(true);
+            }
+
+            if (nodeObject.toString().equals("Instruments"))
+            {
+                // Optional: handle folders or intermediate nodes
+                InstrumentDialogue instrumentDialogue = new InstrumentDialogue(mainFrame, //
+                        new InstrumentPanel(instrumentService));
+                instrumentDialogue.setVisible(true);
+            }
+
         });
-
-        configurationButton.addActionListener(a ->
-        {
-            new ConfigurationDialogue(mainFrame,
-                    new com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel(configurationService, null)).setVisible(true);
-        });
-
-        marketConditionsButton.addActionListener(a ->
-        {
-            new MarketConditionsDialogue(mainFrame,
-                    new MarketConditionsPanel(marketConditionsService, instrumentService, //
-                            null)).setVisible(true);
-        });
-
-
-
     }
+
+
 
     void saveOrUpdate(List<Position> pnl,
                       Configuration configuration,

@@ -60,30 +60,30 @@ public class PositionTableModel extends AbstractTableModel
             case 2:
                 return position.getInstrument().getName();
             case 3:
-                position.getPercentCapitalDeployed();
+                return position.getPercentCapitalDeployed();
             case 4:
                 //capital
                 // position.getCapitalRemainingFirePower();
             case 5:
-                position.getPercentPnL();
+                return position.getPercentPnL();
             case 6:
-                position.getPnl();
+                return position.getPnl();
             case 7:
-                position.getAllowedFirePower();
+                return position.getAllowedFirePower();
             case 8:
-                position.getRemainingFirepower();
+                return position.getRemainingFirepower();
             case 9:
-                position.getCapitalRemainingFirePower();
+                return position.getCapitalRemainingFirePower();
             case 10:
-                position.getConfigurtaion().getLev();
+                return position.getConfigurtaion().getLev();
             case 11:
-                position.getPortfolioValue();
+                return position.getPortfolioValue();
             case 12:
-                position.getMarketConditions().getDayLow();
+                return position.getMarketConditions().getDayLow();
             case 13:
-                position.getMarketConditions().getDayHigh();
+                return position.getMarketConditions().getDayHigh();
             case 14:
-                position.getMarketConditions().getPercentMove();
+                return position.getMarketConditions().getPercentMove();
             default:
                 return null;
         }

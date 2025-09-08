@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.ui.panels.marketconditions;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class MarketConditionsSourcePanel extends JPanel
 {
@@ -33,6 +34,7 @@ public class MarketConditionsSourcePanel extends JPanel
         add(percentMoveLabel);
         percentMove.setEnabled(false);
         add(percentMove);
+        setLayout(new FlowLayout(FlowLayout.LEFT, 15, 15));
     }
 
 

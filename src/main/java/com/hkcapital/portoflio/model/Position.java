@@ -204,4 +204,9 @@ public class Position implements Serializable
     {
         return percentCapitalDeployed;
     }
+
+    public void setInstrument(Instrument instrument)
+    {
+        this.instrument = instrument;
+    }
 }
