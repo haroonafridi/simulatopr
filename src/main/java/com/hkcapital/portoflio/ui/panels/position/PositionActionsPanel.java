@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.position;
 
+import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.RunningCapital;
@@ -21,6 +22,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.hkcapital.portoflio.service.impl.PositionServiceImpl.calculatePosition;
 
 public class PositionActionsPanel extends JPanel
 {
@@ -72,6 +75,14 @@ public class PositionActionsPanel extends JPanel
         positionSizePanel.add(positionSize);
         positionSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+        //Opening capital panel
+
+        JPanel openingCapitalPanel = new JPanel();
+        JLabel openingCapitalLabel = new JLabel("Opening Capital");
+        JTextField openingCapital = new NumberTextField();
+        openingCapitalPanel.add(openingCapitalLabel);
+        openingCapitalPanel.add(openingCapital);
+
         JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3, 0));
 
         MarketConditionsSourcePanel marketConditionsSourcePanel = new MarketConditionsSourcePanel();
@@ -97,9 +108,10 @@ public class PositionActionsPanel extends JPanel
         buttonPanel.add(addPosition);
         buttonPanel.add(removePosition);
         buttonPanel.add(removePositionAll);
-        add(positionPanelParametersPanel);
-        add(buttonPanel);
 
+        add(positionPanelParametersPanel);
+        add(openingCapitalPanel);
+        add(buttonPanel);
         marketConditionsSourcePanel.add(marketConditionsButton);
         configurationSourcePanel.add(configurationButton);
         configurationAndSourcePanel.add(marketConditionsSourcePanel);
@@ -118,10 +130,29 @@ public class PositionActionsPanel extends JPanel
             position.setConfigurtaion(configurationService.findById(configurationSourcePanel.getId().getIntValue()));
             position.setMarketConditions(marketConditions);
             position.setStrategy(strategyHeaderPanel.getStrategy());
+            PositionParameters positionParameter =  calculatePosition(positionPnLList);
+            position.setAllowedFirePower(positionParameter.allowedFirePower());
+            position.setPercentPnL(positionParameter.percentPnl());
+            position.setPnl(positionParameter.pnl());
+            position.setCapitalRemainingFirePower(positionParameter.remainingCapital());
             positionService.add(position);
+            List<Position> positionList = positionService.findByStrategyId(strategyHeaderPanel.getStrategy().getId());
+            model.updateData(positionList);
+        });
+
+        removePosition.addActionListener(r ->
+        {
+            Position configuration = (Position) getModel().removeRow(table.getSelectedRow());
+            positionService.remove(configuration);
+        });
+
+        removePositionAll.addActionListener(r ->
+        {
+            positionService.removeAll(model.getElements());
+            List<Position> positionList = positionService.findByStrategyId(strategyHeaderPanel.getStrategy().getId());
+            model.updateData(positionList);
         });
     }
-
 
     private void displayMarketConditionDialogue(MarketConditionsSourcePanel marketConditionsSourcePanel)
     {
@@ -177,4 +208,6 @@ public class PositionActionsPanel extends JPanel
     {
         this.table = table;
     }
+
+
 }

@@ -16,9 +16,11 @@ public interface PositionService
 
     List<Position> findAll();
 
-    void removeAll();
 
     List<Position> findByStrategyId(Integer id);
+
+
+    void removeAll(List<Position> positionList);
 
 
 }

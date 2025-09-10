@@ -79,4 +79,5 @@ public abstract class TableModel<E> extends AbstractTableModel
         fireTableDataChanged();
         return element;
     }
+
 }

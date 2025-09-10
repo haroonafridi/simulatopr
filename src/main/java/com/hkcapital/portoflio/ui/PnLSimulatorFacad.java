@@ -48,7 +48,8 @@ public class PnLSimulatorFacad
         this.positionPnLService = positionPnLService;
     }
 
-    public void createApplication() {
+    public void createApplication()
+    {
         JFrame mainFrame = new JFrame("Strategy Simulator");
 
         // === Root layout ===

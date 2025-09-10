@@ -1,12 +1,14 @@
 package com.hkcapital.portoflio.ui.panels.position;
 
+import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.Position;
+import com.hkcapital.portoflio.ui.TableModel;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PositionTableModel extends AbstractTableModel
+public class PositionTableModel  extends TableModel
 {
     private final String[] columns = {"index", "Position Index", "Instrument", "% Capital Deployed", "Capital",
             "%Pnl", "PnL", "Allowed Fire Power", "Remaining Fire Power", "Capital Remaining Firepower",
@@ -14,8 +16,10 @@ public class PositionTableModel extends AbstractTableModel
              "leverage"};
     private List<Position> data;
 
+
     public PositionTableModel(List<Position> data)
     {
+        super(null, data);
         this.data = data;
     }
 
@@ -56,34 +60,33 @@ public class PositionTableModel extends AbstractTableModel
             case 0:
                 return position.getId();
             case 1:
-                position.getRecordIndex();
+                return position.getRecordIndex();
             case 2:
                 return position.getInstrument().getName();
             case 3:
-                return position.getPercentCapitalDeployed();
+                return  position.getPercentCapitalDeployed();
             case 4:
                 //capital
                 // position.getCapitalRemainingFirePower();
+                return 0;
             case 5:
                 return position.getPercentPnL();
             case 6:
                 return position.getPnl();
             case 7:
-                return position.getAllowedFirePower();
+                return  position.getAllowedFirePower();
             case 8:
                 return position.getRemainingFirepower();
             case 9:
                 return position.getCapitalRemainingFirePower();
             case 10:
-                return position.getConfigurtaion().getLev();
-            case 11:
-                return position.getPortfolioValue();
-            case 12:
                 return position.getMarketConditions().getDayLow();
-            case 13:
+            case 11:
                 return position.getMarketConditions().getDayHigh();
-            case 14:
-                return position.getMarketConditions().getPercentMove();
+            case 12:
+                return position.getMarketConditions().getPercentMove();//
+            case 13:
+                return position.getConfigurtaion().getLev();
             default:
                 return null;
         }
@@ -111,4 +114,5 @@ public class PositionTableModel extends AbstractTableModel
         data.addAll(d);
         fireTableDataChanged();
     }
+
 }

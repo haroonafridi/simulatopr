@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.service.impl;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.repository.PositionRepository;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.ui.panels.position.PositionParameters;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,9 +53,9 @@ public class PositionServiceImpl implements PositionService
     }
 
     @Override
-    public void removeAll()
+    public void removeAll(List<Position> positionList)
     {
-        positionPnLRepository.deleteAll();
+        positionPnLRepository.deleteAll(positionList);
     }
 
     @Override
@@ -62,4 +63,11 @@ public class PositionServiceImpl implements PositionService
     {
         return positionPnLRepository.findByStrategyId(id);
     }
+
+
+    public static PositionParameters calculatePosition(List<Position> positionList)
+    {
+        return new  PositionParameters(1d,2d,3d,4d);
+    }
+
 }
