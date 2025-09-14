@@ -1,5 +1,9 @@
 package com.hkcapital.portoflio.ui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.IntelliJTheme;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
@@ -66,8 +70,12 @@ public class PnLSimulatorFacad
         serviceRegistery.putService("TradingSessionsService", this.tradingSessionsService);
     }
 
-    public void createApplication()
+    public void createApplication() throws UnsupportedLookAndFeelException
     {
+        UIManager.setLookAndFeel(new FlatDarkLaf());
+        //FlatDarkLaf.setup();
+       // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
+        UIManager.put("defaultFont", new Font("Roboto Mono", Font.PLAIN, 12));
         JFrame mainFrame = new JFrame("Strategy Simulator");
 
         // === Root layout ===

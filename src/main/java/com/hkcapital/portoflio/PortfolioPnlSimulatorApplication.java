@@ -17,8 +17,15 @@ public class PortfolioPnlSimulatorApplication {
 		System.setProperty("java.awt.headless", "false");
 		ConfigurableApplicationContext context = SpringApplication.run(PortfolioPnlSimulatorApplication.class, args);
 		SwingUtilities.invokeLater(() -> {
+
 			PnLSimulatorFacad simulator = context.getBean(PnLSimulatorFacad.class);
-			simulator.createApplication();
+			try
+			{
+				simulator.createApplication();
+			} catch (UnsupportedLookAndFeelException e)
+			{
+				throw new RuntimeException(e);
+			}
 			//ConfigurationPanelTest instrumentPanelTest = context.getBean(ConfigurationPanelTest.class);
 			//instrumentPanelTest.launch();
 		});
