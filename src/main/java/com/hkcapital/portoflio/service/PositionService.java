@@ -4,7 +4,7 @@ import com.hkcapital.portoflio.model.Position;
 
 import java.util.List;
 
-public interface PositionService
+public interface PositionService extends Service
 {
     Position add(Position positionPnL);
 

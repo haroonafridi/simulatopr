@@ -4,7 +4,7 @@ import com.hkcapital.portoflio.model.*;
 
 import java.util.List;
 
-public interface StrategyService
+public interface StrategyService extends Service
 {
     Strategy addStrategy(Strategy strategy);
 

@@ -4,10 +4,11 @@ import com.hkcapital.portoflio.model.Configuration;
 
 import java.util.List;
 
-public interface ConfigurationService
+public interface ConfigurationService extends Service
 {
     Configuration addConfiguration(Configuration configuration);
-     void removeConfiguration(Configuration configuration);
+
+    void removeConfiguration(Configuration configuration);
 
     Configuration updateConfigration(Configuration configuration);
 

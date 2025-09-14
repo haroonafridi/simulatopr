@@ -2,7 +2,9 @@ package com.hkcapital.portoflio.ui.panels.strategy;
 
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.Strategy;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.service.StrategyService;
 import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
 
@@ -32,12 +34,14 @@ public class StrategyHeaderPanel extends JPanel
 
     private final PositionService positionService;
 
+    private final ServiceRegistery<Service> serviceRegistery;
 
-    public StrategyHeaderPanel(final StrategyService strategyService, //
-                               final PositionService positionService)
+
+    public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
     {
-        this.strategyService = strategyService;
-        this.positionService = positionService;
+        this.serviceRegistery = serviceRegistery;
+        this.strategyService = (StrategyService)serviceRegistery.getService(Service.StrategyService);
+        this.positionService = (PositionService)serviceRegistery.getService(Service.PositionService);
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 

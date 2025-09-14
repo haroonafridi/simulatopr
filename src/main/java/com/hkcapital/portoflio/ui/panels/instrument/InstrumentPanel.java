@@ -1,12 +1,18 @@
 package com.hkcapital.portoflio.ui.panels.instrument;
 
 import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
+import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class InstrumentPanel extends JPanel {
+public class InstrumentPanel extends JPanel
+{
+
+    private final ServiceRegistery<Service> serviceRegistery;
 
     private final InstrumentService instrumentService;
 
@@ -16,18 +22,21 @@ public class InstrumentPanel extends JPanel {
     private final JTable instrumentTable;
     private final InstrumentTableModel tableModel;
 
-    private final JButton saveButton = new JButton("Save");
-    private final JButton cancelButton = new JButton("Cancel");
-    private final JButton closeButton = new JButton("Close");
-    private final JButton removeButton = new JButton("Remove");
+    private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
+    private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
+    private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
+    private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
 
-    public InstrumentPanel(final InstrumentService instrumentService) {
-        this.instrumentService = instrumentService;
+    public InstrumentPanel(final ServiceRegistery serviceRegistery)
+    {
+        this.serviceRegistery = serviceRegistery;
+        this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
 
-        tableModel = new InstrumentTableModel<>(new String[]{"Id", "Instrument Name"}, instrumentService.findAll());
+        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel()}, //
+                instrumentService.findAll());
 
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder("Instrument Panel"));
+        setBorder(BorderFactory.createTitledBorder(Labels.InstrumentPanel.getLabel()));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
 
@@ -72,42 +81,51 @@ public class InstrumentPanel extends JPanel {
         saveButton.addActionListener(e -> save());
         removeButton.addActionListener(e -> remove());
         cancelButton.addActionListener(e -> clear());
-        closeButton.addActionListener(e -> {
+        closeButton.addActionListener(e ->
+        {
             // Close the dialog (find top-level window)
             SwingUtilities.getWindowAncestor(this).dispose();
         });
     }
 
-    public void save() {
+    public void save()
+    {
         String name = instrumentName.getText();
-        if (name != null && !name.trim().isEmpty()) {
+        if (name != null && !name.trim().isEmpty())
+        {
             Instrument instrument = new Instrument(name.trim());
             instrumentService.addInstrument(instrument);
             tableModel.addRow(instrument);
             instrumentName.setText(null);
-        } else {
+        } else
+        {
             JOptionPane.showMessageDialog(this, "Please enter an instrument name.",
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    public void remove() {
+    public void remove()
+    {
         int selectedRow = instrumentTable.getSelectedRow();
-        if (selectedRow >= 0) {
+        if (selectedRow >= 0)
+        {
             Instrument instrument = (Instrument) tableModel.removeRow(selectedRow);
             instrumentService.removeInstrument(instrument);
-        } else {
+        } else
+        {
             JOptionPane.showMessageDialog(this, "Please select an instrument to remove.",
                     "No Selection", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    public void clear() {
+    public void clear()
+    {
         instrumentName.setText(null);
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g)
+    {
         super.paintComponent(g); // always call super
     }
 }

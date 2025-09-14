@@ -2,8 +2,11 @@ package com.hkcapital.portoflio.ui.panels.marketconditions;
 
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.MarketConditions;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.MarketConditionsService;
+import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;
@@ -13,7 +16,9 @@ import java.util.List;
 public class MarketConditionsPanel extends JPanel
 {
 
+    private final ServiceRegistery<Service> serviceRegistery;
     private final MarketConditionsService marketconditionsService;
+    private final InstrumentService instrumentService;
 
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
 
@@ -27,20 +32,21 @@ public class MarketConditionsPanel extends JPanel
     private final JLabel percentMoveLabel = new JLabel("% Move");
     private final NumberTextField percentMove = new NumberTextField(35);
 
-    private final JButton saveButton = new JButton("Save");
-    private final JButton cancelButton = new JButton("Cancel");
-    private final JButton closeButton = new JButton("Close");
-    private final JButton removeButton = new JButton("Remove");
+    private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
+    private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
+    private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
+    private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
 
-    private final JButton selectionMarketConditionsButton = new JButton("Select");
+    private final JButton selectionMarketConditionsButton = new JButton(ButtonLabels.Select.getLabel());
 
     private final MarketConditionsSourcePanel marketConditionsSourcePanel;
 
-    public MarketConditionsPanel(final MarketConditionsService marketconditionsService,
-                                 final InstrumentService instrumentService,
+    public MarketConditionsPanel(final ServiceRegistery<Service> serviceRegistery,
                                  final MarketConditionsSourcePanel marketConditionsSourcePanel)
     {
-        this.marketconditionsService = marketconditionsService;
+        this.serviceRegistery = serviceRegistery;
+        this.instrumentService = (InstrumentService)serviceRegistery.getService("InstrumentService");
+        this.marketconditionsService =  (MarketConditionsService)this.serviceRegistery.getService("MarketConditionsService");
         this.marketConditionsSourcePanel = marketConditionsSourcePanel;
 
         List<Instrument> instrumentList = instrumentService.findAll();

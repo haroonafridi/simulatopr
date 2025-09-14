@@ -1,7 +1,9 @@
 package com.hkcapital.portoflio.ui.panels.marketconditions;
 
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.MarketConditionsService;
+import com.hkcapital.portoflio.service.Service;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -12,11 +14,13 @@ public class MarketConditionsPanelTest
     private final MarketConditionsService marketconditionsService;
     private final InstrumentService instrumentService;
 
-    public MarketConditionsPanelTest(MarketConditionsService marketConditionsService,
-                                     InstrumentService instrumentService)
+    private final ServiceRegistery<Service> serviceRegistery;
+
+    public MarketConditionsPanelTest(ServiceRegistery<Service> serviceRegistery)
     {
-        this.marketconditionsService = marketConditionsService;
-        this.instrumentService = instrumentService;
+        this.serviceRegistery = serviceRegistery;
+        this.marketconditionsService = (MarketConditionsService)this.serviceRegistery.getService("MarketConditionsService");
+        this.instrumentService = (InstrumentService)this.serviceRegistery.getService("InstrumentService");;
     }
 
     public void launch()
@@ -25,7 +29,7 @@ public class MarketConditionsPanelTest
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        MarketConditionsPanel marketConditionsPanel = new MarketConditionsPanel(marketconditionsService, instrumentService, null);
+        MarketConditionsPanel marketConditionsPanel = new MarketConditionsPanel(serviceRegistery, null);
         mainFrame.add(marketConditionsPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

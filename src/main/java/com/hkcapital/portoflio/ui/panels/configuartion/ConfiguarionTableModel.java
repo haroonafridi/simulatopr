@@ -7,7 +7,13 @@ import java.util.List;
 
 public class ConfiguarionTableModel<E> extends TableModel
 {
-    final static String[] columnsName = ConfigurationTableHeader.labels();
+    final static String[] columnsName = new String[]{
+            Labels.Id.getLabel(), Labels.PercentAllowedAllocation.getLabel(),
+            Labels.NoOfInstruments.getLabel(),
+            Labels.NoofPositionsPerinstruments.getLabel(),
+            Labels.MaxPercentAllowedPerPosition.getLabel(),
+            Labels.Lev.getLabel()
+    };
 
     public ConfiguarionTableModel(List<Configuration> elements)
     {

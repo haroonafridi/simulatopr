@@ -1,15 +1,13 @@
 package com.hkcapital.portoflio.ui.panels.position;
 
-import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.RunningCapital;
-import com.hkcapital.portoflio.service.ConfigurationService;
-import com.hkcapital.portoflio.service.InstrumentService;
-import com.hkcapital.portoflio.service.MarketConditionsService;
-import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
-import com.hkcapital.portoflio.ui.panels.RunningCapitalPanel;
+import com.hkcapital.portoflio.ui.panels.capital.CapitalPanel;
+import com.hkcapital.portoflio.ui.panels.capital.RunningCapitalPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationSourcePanel;
@@ -27,6 +25,11 @@ import static com.hkcapital.portoflio.service.impl.PositionServiceImpl.calculate
 
 public class PositionActionsPanel extends JPanel
 {
+    private final ServiceRegistery<Service> serviceRegistery;
+    private MarketConditionsService marketConditionsService;
+    private ConfigurationService configurationService;
+    final private PositionService positionService;
+    final private InstrumentService instrumentService;
     List<Position> positionPnLList = new ArrayList<>();
     PositionTableModel model = new PositionTableModel(positionPnLList);
     JTable table = new JTable(model);
@@ -41,32 +44,27 @@ public class PositionActionsPanel extends JPanel
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
     private final NumberTextField positionSize = new NumberTextField(30);
 
-
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
+    final private StrategyHeaderPanel strategyHeaderPanel;
 
-    private final InstrumentService instrumentService;
-    private final MarketConditionsService marketConditionsService;
-
-    private final ConfigurationService configurationService;
-
-    private final PositionService positionService;
-
-    private StrategyHeaderPanel strategyHeaderPanel;
 
     private final Frame frame;
 
-    public PositionActionsPanel(Frame owner, final PositionService positionService, //
-                                final InstrumentService instrumentService,
-                                final MarketConditionsService marketConditionsService,
-                                final ConfigurationService configurationService,
-                                StrategyHeaderPanel strategyHeaderPanel)
+    public PositionActionsPanel(Frame owner, final ServiceRegistery<Service> serviceRegistery,
+                                final StrategyHeaderPanel strategyHeaderPanel)
     {
+
+        this.serviceRegistery = serviceRegistery;
+        marketConditionsService = (MarketConditionsService) this.serviceRegistery.getService(Service.MarketConditionsService);
+        configurationService = (ConfigurationService) this.serviceRegistery.getService(Service.ConfigurationService);
+        positionService = (PositionService) this.serviceRegistery.getService(Service.PositionService);
+        instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
 
         JPanel buttonPanel = new JPanel();
 
         JPanel positionPanelParametersPanel = new JPanel();
 
-       // positionPanelParametersPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
+        // positionPanelParametersPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
 
         //Position Size panel
         JPanel positionSizePanel = new JPanel();
@@ -77,11 +75,7 @@ public class PositionActionsPanel extends JPanel
 
         //Opening capital panel
 
-        JPanel openingCapitalPanel = new JPanel();
-        JLabel openingCapitalLabel = new JLabel("Opening Capital");
-        JTextField openingCapital = new NumberTextField();
-        openingCapitalPanel.add(openingCapitalLabel);
-        openingCapitalPanel.add(openingCapital);
+        CapitalPanel capitalPanel = new CapitalPanel(serviceRegistery, null);
 
         JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3, 0));
 
@@ -93,10 +87,6 @@ public class PositionActionsPanel extends JPanel
         //configurationSourcePanel.setBorder(BorderFactory.createTitledBorder("Configurations:"));
 
         this.frame = owner;
-        this.positionService = positionService;
-        this.instrumentService = instrumentService;
-        this.marketConditionsService = marketConditionsService;
-        this.configurationService = configurationService;
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
         this.strategyHeaderPanel = strategyHeaderPanel;
@@ -110,7 +100,7 @@ public class PositionActionsPanel extends JPanel
         buttonPanel.add(removePositionAll);
 
         add(positionPanelParametersPanel);
-        add(openingCapitalPanel);
+        add(capitalPanel);
         add(buttonPanel);
         marketConditionsSourcePanel.add(marketConditionsButton);
         configurationSourcePanel.add(configurationButton);
@@ -130,7 +120,7 @@ public class PositionActionsPanel extends JPanel
             position.setConfigurtaion(configurationService.findById(configurationSourcePanel.getId().getIntValue()));
             position.setMarketConditions(marketConditions);
             position.setStrategy(strategyHeaderPanel.getStrategy());
-            PositionParameters positionParameter =  calculatePosition(positionPnLList);
+            PositionParameters positionParameter = calculatePosition(positionPnLList);
             position.setAllowedFirePower(positionParameter.allowedFirePower());
             position.setPercentPnL(positionParameter.percentPnl());
             position.setPnl(positionParameter.pnl());
@@ -157,7 +147,7 @@ public class PositionActionsPanel extends JPanel
     private void displayMarketConditionDialogue(MarketConditionsSourcePanel marketConditionsSourcePanel)
     {
         MarketConditionsDialogue marketConditionsDialogue = //
-                new MarketConditionsDialogue(frame, new MarketConditionsPanel(marketConditionsService, instrumentService,
+                new MarketConditionsDialogue(frame, new MarketConditionsPanel(serviceRegistery,
                         marketConditionsSourcePanel));
         marketConditionsDialogue.setVisible(true);
     }
@@ -166,7 +156,7 @@ public class PositionActionsPanel extends JPanel
     private void displayConfigurationDialogue(ConfigurationSourcePanel configurationSourcePanel)
     {
         ConfigurationDialogue configurationDialogue = //
-                new ConfigurationDialogue(frame, new ConfigurationPanel(configurationService, configurationSourcePanel));
+                new ConfigurationDialogue(frame, new ConfigurationPanel(serviceRegistery, configurationSourcePanel));
         configurationDialogue.setVisible(true);
     }
 

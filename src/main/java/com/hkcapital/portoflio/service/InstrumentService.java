@@ -5,7 +5,7 @@ import com.hkcapital.portoflio.model.Strategy;
 
 import java.util.List;
 
-public interface InstrumentService
+public interface InstrumentService  extends Service
 {
     Instrument addInstrument(Instrument instrument);
 

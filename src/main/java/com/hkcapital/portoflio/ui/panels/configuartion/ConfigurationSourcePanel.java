@@ -11,21 +11,21 @@ import java.awt.*;
 public class ConfigurationSourcePanel extends JPanel
 {
 
-    private final JLabel idLabel = new JLabel("Id");
+    private final JLabel idLabel = new JLabel((Labels.Id.getLabel()));
     private final NumberTextField id = new NumberTextField(30);
-    private final JLabel percentAllocationAllowedLabel = new JLabel("% Allocation Allowed");
+    private final JLabel percentAllocationAllowedLabel = new JLabel(Labels.PercentAllowedAllocation.getLabel());
     private final NumberTextField percentAllocationAllowed = new NumberTextField(30);
 
-    private final JLabel noOfInstrumentsLabel = new JLabel("No Of Instruments");
+    private final JLabel noOfInstrumentsLabel = new JLabel(Labels.NoOfInstruments.getLabel());
     private final NumberTextField noOfInstrument = new NumberTextField(30);
 
-    private final JLabel noOfPositionsPerInstrumentLabel = new JLabel("No Of Position per instrument");
+    private final JLabel noOfPositionsPerInstrumentLabel = new JLabel(Labels.NoofPositionsPerinstruments.getLabel());
     private final NumberTextField noOfPositionsPerInstrument = new NumberTextField(30);
 
-    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max percent allowed per instrument");
+    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel(Labels.MaxPercentAllowedPerPosition.getLabel());
     private final NumberTextField maxPercentAllowedPerInstrument = new NumberTextField(30);
 
-    private final JLabel levLabel = new JLabel("Leverage");
+    private final JLabel levLabel = new JLabel(Labels.Lev.getLabel());
     private final NumberTextField lev = new NumberTextField(30);
 
 

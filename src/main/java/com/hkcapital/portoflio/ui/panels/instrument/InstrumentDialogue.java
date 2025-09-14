@@ -9,7 +9,7 @@ public class InstrumentDialogue extends JDialog
 
     public InstrumentDialogue(Frame owner, final InstrumentPanel instrumentPanel)
     {
-        super(owner, "Instrument", true);
+        super(owner, Labels.Instrument.getLabel(), true);
         this.instrumentPanel = instrumentPanel;
         getContentPane().add(instrumentPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

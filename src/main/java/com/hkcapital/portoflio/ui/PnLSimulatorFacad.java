@@ -1,8 +1,9 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.model.*;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
-import com.hkcapital.portoflio.ui.panels.CapitalPanel;
+import com.hkcapital.portoflio.ui.panels.capital.CapitalPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.instrument.InstrumentDialogue;
@@ -12,9 +13,12 @@ import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
+import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionDialogue;
+import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -27,6 +31,7 @@ public class PnLSimulatorFacad
 {
 
     private static Logger logger = LoggerFactory.getLogger(PnLSimulatorFacad.class);
+    private final ServiceRegistery<Service> serviceRegistery;
     private final ConfigurationService configurationService;
     private final StrategyService strategyService;
     private final MarketConditionsService marketConditionsService;
@@ -34,18 +39,31 @@ public class PnLSimulatorFacad
 
     private final PositionService positionPnLService;
 
+    private final TradingSessionsService<TradingSessions> tradingSessionsService;
+
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
                              StrategyService strategyService,
                              MarketConditionsService marketConditionsService,
                              InstrumentService instrumentService,
-                             PositionService positionPnLService)
+                             PositionService positionPnLService,
+                             TradingSessionsService<TradingSessions> tradingSessionsService,
+                             final ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
         this.strategyService = strategyService;
         this.marketConditionsService = marketConditionsService;
         this.instrumentService = instrumentService;
         this.positionPnLService = positionPnLService;
+        this.tradingSessionsService = tradingSessionsService;
+        this.serviceRegistery = serviceRegistery;
+
+        serviceRegistery.putService("ConfigurationService", this.configurationService);
+        serviceRegistery.putService("StrategyService",  this.strategyService);
+        serviceRegistery.putService("MarketConditionsService", this.marketConditionsService);
+        serviceRegistery.putService("InstrumentService", this.instrumentService);
+        serviceRegistery.putService("PositionService", this.positionPnLService);
+        serviceRegistery.putService("TradingSessionsService", this.tradingSessionsService);
     }
 
     public void createApplication()
@@ -64,11 +82,15 @@ public class PnLSimulatorFacad
         rootGbc.weighty = 1.0; // full height
 
 
-
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Strategy Simulator");
 
         DefaultMutableTreeNode instruments = new DefaultMutableTreeNode("Instruments");
         instruments.add(new DefaultMutableTreeNode("Instruments"));
+
+        DefaultMutableTreeNode brokers = new DefaultMutableTreeNode("Brokers");
+        brokers.add(new DefaultMutableTreeNode("Brokers"));
+        brokers.add(new DefaultMutableTreeNode("Brokers API"));
+        brokers.add(new DefaultMutableTreeNode("Broker Fee Structure"));
 
         DefaultMutableTreeNode configuration = new DefaultMutableTreeNode("Configuration:");
 
@@ -76,11 +98,13 @@ public class PnLSimulatorFacad
         configuration.add(new DefaultMutableTreeNode("Time Frames"));
         configuration.add(new DefaultMutableTreeNode("Sessions"));
 
+
         DefaultMutableTreeNode marketConditions = new DefaultMutableTreeNode("Market Conditions");
         marketConditions.add(new DefaultMutableTreeNode("Market Conditions"));
         marketConditions.add(new DefaultMutableTreeNode("Economic Calendar"));
 
         root.add(instruments);
+        root.add(brokers);
         root.add(configuration);
         root.add(marketConditions);
         JTree navigationTree = new JTree(root);
@@ -101,18 +125,16 @@ public class PnLSimulatorFacad
         // --- Top: StrategyHeaderPanel (30% height) ---
         rightGbc.gridy = 0;
         rightGbc.weighty = 0.3;
-        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(strategyService, positionPnLService);
+        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(serviceRegistery);
         rightPanel.add(strategyHeaderPanel, rightGbc);
 
         // --- Bottom: PositionActionsPanel (70% height) ---
         rightGbc.gridy = 1;
         rightGbc.weighty = 0.7;
-        PositionActionsPanel positionActionsPanel = new PositionActionsPanel(
+        PositionActionsPanel positionActionsPanel = //
+                new PositionActionsPanel(
                 mainFrame,
-                positionPnLService,
-                instrumentService,
-                marketConditionsService,
-                configurationService,
+                serviceRegistery,
                 strategyHeaderPanel
         );
         strategyHeaderPanel.setPositionActionsPanel(positionActionsPanel);
@@ -127,7 +149,8 @@ public class PnLSimulatorFacad
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
         mainFrame.setVisible(true);
 
-        navigationTree.addTreeSelectionListener(e -> {
+        navigationTree.addTreeSelectionListener(e ->
+        {
             DefaultMutableTreeNode selectedNode =
                     (DefaultMutableTreeNode) navigationTree.getLastSelectedPathComponent();
 
@@ -139,14 +162,15 @@ public class PnLSimulatorFacad
             if (nodeObject.toString().equals("Positions and Leverage"))
             {
                 ConfigurationDialogue configurationDialogue = //
-                        new ConfigurationDialogue(mainFrame, new ConfigurationPanel(configurationService,null));
+                        new ConfigurationDialogue(mainFrame, new ConfigurationPanel(serviceRegistery, null));
                 configurationDialogue.setVisible(true);
 
-            }  if (nodeObject.toString().equals("Market Conditions"))
+            }
+            if (nodeObject.toString().equals("Market Conditions"))
             {
                 // Optional: handle folders or intermediate nodes
                 MarketConditionsDialogue marketConditionsDialogue = new MarketConditionsDialogue(mainFrame, //
-                        new MarketConditionsPanel(marketConditionsService,instrumentService, //
+                        new MarketConditionsPanel(serviceRegistery, //
                                 null));
                 marketConditionsDialogue.setVisible(true);
             }
@@ -155,13 +179,20 @@ public class PnLSimulatorFacad
             {
                 // Optional: handle folders or intermediate nodes
                 InstrumentDialogue instrumentDialogue = new InstrumentDialogue(mainFrame, //
-                        new InstrumentPanel(instrumentService));
+                        new InstrumentPanel(serviceRegistery));
+                instrumentDialogue.setVisible(true);
+            }
+
+            if (nodeObject.toString().equals("Sessions"))
+            {
+                // Optional: handle folders or intermediate nodes
+                TradingSessionDialogue instrumentDialogue = new TradingSessionDialogue(mainFrame, //
+                        new TradingSessionPanel(serviceRegistery));
                 instrumentDialogue.setVisible(true);
             }
 
         });
     }
-
 
 
     void saveOrUpdate(List<Position> pnl,

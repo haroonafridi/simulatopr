@@ -1,6 +1,8 @@
 package com.hkcapital.portoflio.ui.panels.configuartion;
 
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.ConfigurationService;
+import com.hkcapital.portoflio.service.Service;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -8,11 +10,13 @@ import javax.swing.*;
 @Component
 public class ConfigurationPanelTest
 {
+    private final ServiceRegistery<Service> serviceRegistery;
     private final ConfigurationService configurationService;
 
-    public ConfigurationPanelTest(ConfigurationService configurationService)
+    public ConfigurationPanelTest(final ServiceRegistery<Service> serviceRegistery)
     {
-        this.configurationService = configurationService;
+        this.serviceRegistery = serviceRegistery;
+        this.configurationService = (ConfigurationService)this.serviceRegistery.getService(Service.ConfigurationService);
     }
 
     public void launch()
@@ -21,7 +25,7 @@ public class ConfigurationPanelTest
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        ConfigurationPanel instrumentPanel = new ConfigurationPanel(configurationService, null);
+        ConfigurationPanel instrumentPanel = new ConfigurationPanel(serviceRegistery, null);
         mainFrame.add(instrumentPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

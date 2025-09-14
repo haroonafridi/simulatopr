@@ -1,9 +1,11 @@
 package com.hkcapital.portoflio.ui.panels.configuartion;
 
 import com.hkcapital.portoflio.model.Configuration;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.ConfigurationService;
+import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
-import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsSourcePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,36 +13,43 @@ import java.awt.*;
 public class ConfigurationPanel extends JPanel
 {
 
+    private final ServiceRegistery<Service> serviceRegister;
     private final ConfigurationService configurationService;
     private final ConfigurationSourcePanel configurationSourcePanel;
-    private final JLabel percentAllocationAllowedLabel = new JLabel("% Allocation Allowed");
+
+    private final JLabel percentAllocationAllowedLabel = new JLabel(Labels.PercentAllowedAllocation.getLabel());
     private final NumberTextField percentAllocationAllowed = new NumberTextField(30);
 
-    private final JLabel noOfInstrumentsLabel = new JLabel("No Of Instruments");
+    private final JLabel noOfInstrumentsLabel = new JLabel(Labels.NoOfInstruments.getLabel());
     private final NumberTextField noOfInstrument = new NumberTextField(30);
 
-    private final JLabel noOfPositionsPerInstrumentLabel = new JLabel("No Of Position per instrument");
+    private final JLabel noOfPositionsPerInstrumentLabel = new JLabel(Labels.NoofPositionsPerinstruments.getLabel());
     private final NumberTextField noOfPositionsPerInstrument = new NumberTextField(30);
 
-    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max percent allowed per position");
+    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel(Labels.MaxPercentAllowedPerPosition.getLabel());
     private final NumberTextField maxPercentAllowedPerInstrument = new NumberTextField(30);
 
-    private final JLabel levLabel = new JLabel("Leverage");
+    private final JLabel levLabel = new JLabel(Labels.Lev.getLabel());
     private final NumberTextField lev = new NumberTextField(30);
 
     private final JTable configurationTable;
     private final ConfiguarionTableModel tableModel;
 
-    private final JButton saveButton = new JButton("Save");
-    private final JButton cancelButton = new JButton("Cancel");
-    private final JButton closeButton = new JButton("Close");
-    private final JButton removeButton = new JButton("Remove");
+    private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
+    private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
+    private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
+    private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
 
-    private final JButton selectButton = new JButton("Select");
+    private final JButton selectButton = new JButton(ButtonLabels.Select.getLabel());
 
-    public ConfigurationPanel(final ConfigurationService configurationService,
-                              final ConfigurationSourcePanel configurationSourcePanel) {
-        this.configurationService = configurationService;
+    public ConfigurationPanel(final ServiceRegistery<Service> serviceRegistery,
+                              final ConfigurationSourcePanel configurationSourcePanel)
+    {
+
+        this.serviceRegister = serviceRegistery;
+
+        this.configurationService = (ConfigurationService) serviceRegister.getService(Service.ConfigurationService);
+
         this.configurationSourcePanel = configurationSourcePanel;
 
         tableModel = new ConfiguarionTableModel<Configuration>(configurationService.findAll());
@@ -127,15 +136,31 @@ public class ConfigurationPanel extends JPanel
         cancelButton.addActionListener(e -> remove());
         closeButton.addActionListener(e -> clear());
         removeButton.addActionListener(e -> getGraphics().dispose());
-        selectButton.addActionListener(e-> select());
+        selectButton.addActionListener(e -> select());
     }
 
-    public JButton getSaveButton() { return saveButton; }
-    public JButton getCancelButton() { return cancelButton; }
-    public JButton getCloseButton() { return closeButton; }
-    public JButton getRemoveButton() { return removeButton; }
+    public JButton getSaveButton()
+    {
+        return saveButton;
+    }
 
-    public void save() {
+    public JButton getCancelButton()
+    {
+        return cancelButton;
+    }
+
+    public JButton getCloseButton()
+    {
+        return closeButton;
+    }
+
+    public JButton getRemoveButton()
+    {
+        return removeButton;
+    }
+
+    public void save()
+    {
         Configuration configuration = new Configuration(
                 percentAllocationAllowed.getDoubleValue(),
                 noOfInstrument.getIntValue(),
@@ -155,12 +180,14 @@ public class ConfigurationPanel extends JPanel
         tableModel.addRow(configuration);
     }
 
-    public void remove() {
+    public void remove()
+    {
         Configuration configuration = (Configuration) tableModel.removeRow(configurationTable.getSelectedRow());
         configurationService.removeConfiguration(configuration);
     }
 
-    public void clear() {
+    public void clear()
+    {
         percentAllocationAllowed.setText(null);
         noOfInstrument.setText(null);
         noOfPositionsPerInstrument.setText(null);
@@ -170,7 +197,8 @@ public class ConfigurationPanel extends JPanel
     }
 
 
-    public void select() {
+    public void select()
+    {
         Configuration configuration = (Configuration) tableModel.getElements().get(configurationTable.getSelectedRow());
         configurationSourcePanel.getId().setText(configuration.getId().toString());
         configurationSourcePanel.getLev().setText(configuration.getLev().toString());

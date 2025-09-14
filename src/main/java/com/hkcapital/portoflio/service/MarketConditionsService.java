@@ -5,7 +5,7 @@ import com.hkcapital.portoflio.model.Strategy;
 
 import java.util.List;
 
-public interface MarketConditionsService
+public interface MarketConditionsService extends Service
 {
     MarketConditions addMarketCondition(MarketConditions marketCondition);
 
