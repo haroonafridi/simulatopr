@@ -1,7 +1,8 @@
-package com.hkcapital.portoflio.ui.panels.configuartion;
+package com.hkcapital.portoflio.ui.panels.configuartion.tablemodels;
 
 import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.ui.TableModel;
+import com.hkcapital.portoflio.ui.panels.configuartion.labels.Labels;
 
 import java.util.List;
 

@@ -1,4 +1,6 @@
-package com.hkcapital.portoflio.ui.panels.configuartion;
+package com.hkcapital.portoflio.ui.panels.configuartion.dialogues;
+
+import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
 
 import javax.swing.*;
 import java.awt.*;

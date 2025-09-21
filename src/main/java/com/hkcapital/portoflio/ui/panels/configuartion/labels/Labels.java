@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.configuartion;
+package com.hkcapital.portoflio.ui.panels.configuartion.labels;
 
 public enum Labels
 {

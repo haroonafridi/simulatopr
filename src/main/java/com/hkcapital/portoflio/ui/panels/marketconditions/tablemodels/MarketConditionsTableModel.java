@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.marketconditions;
+package com.hkcapital.portoflio.ui.panels.marketconditions.tablemodels;
 
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.MarketConditions;

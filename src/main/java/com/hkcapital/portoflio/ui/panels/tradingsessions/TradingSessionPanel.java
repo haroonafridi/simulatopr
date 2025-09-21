@@ -6,12 +6,13 @@ import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.ConfigurationService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.service.TradingSessionsService;
+import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class TradingSessionPanel extends JPanel
+public class TradingSessionPanel extends UIBag
 {
 
     private final ServiceRegistery<Service> serviceRegistery;
@@ -40,6 +41,7 @@ public class TradingSessionPanel extends JPanel
 
     public TradingSessionPanel(final ServiceRegistery<Service> serviceRegistery)
     {
+        super(TradingSessionPanel.class);
         this.serviceRegistery = serviceRegistery;
         this.tradingSessionsService = (TradingSessionsService) this.serviceRegistery.getService(Service.TradingSessionsService);
 

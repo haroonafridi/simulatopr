@@ -1,4 +1,7 @@
-package com.hkcapital.portoflio.ui.panels.marketconditions;
+package com.hkcapital.portoflio.ui.panels.marketconditions.dialogues;
+
+import com.hkcapital.portoflio.ui.panels.marketconditions.labels.Labels;
+import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +13,7 @@ public class MarketConditionsDialogue extends JDialog
     public MarketConditionsDialogue(Frame owner, final MarketConditionsPanel marketConditionsPanel
                                     )
     {
-        super(owner, "Market conditions", true);
+        super(owner, Labels.MarketConditions.getLabel(), true);
         this.marketconditionsPanel = marketConditionsPanel;
         getContentPane().add(marketConditionsPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.instrument;
+package com.hkcapital.portoflio.ui.panels.instrument.tablemodels;
 
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.InstrumentService;

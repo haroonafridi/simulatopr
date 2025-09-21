@@ -1,16 +1,19 @@
-package com.hkcapital.portoflio.ui.panels.configuartion;
+package com.hkcapital.portoflio.ui.panels.configuartion.panels;
 
 import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.ConfigurationService;
 import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.configuartion.labels.Labels;
+import com.hkcapital.portoflio.ui.panels.configuartion.tablemodels.ConfiguarionTableModel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ConfigurationPanel extends JPanel
+public class ConfigurationPanel extends UIBag
 {
 
     private final ServiceRegistery<Service> serviceRegister;
@@ -42,10 +45,11 @@ public class ConfigurationPanel extends JPanel
 
     private final JButton selectButton = new JButton(ButtonLabels.Select.getLabel());
 
+
     public ConfigurationPanel(final ServiceRegistery<Service> serviceRegistery,
                               final ConfigurationSourcePanel configurationSourcePanel)
     {
-
+        super(ConfigurationPanel.class);
         this.serviceRegister = serviceRegistery;
 
         this.configurationService = (ConfigurationService) serviceRegister.getService(Service.ConfigurationService);

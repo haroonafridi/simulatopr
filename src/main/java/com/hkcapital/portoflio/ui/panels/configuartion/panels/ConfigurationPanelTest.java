@@ -1,8 +1,9 @@
-package com.hkcapital.portoflio.ui.panels.configuartion;
+package com.hkcapital.portoflio.ui.panels.configuartion.panels;
 
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.ConfigurationService;
 import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;

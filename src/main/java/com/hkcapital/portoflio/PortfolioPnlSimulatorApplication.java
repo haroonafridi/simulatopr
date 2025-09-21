@@ -1,9 +1,6 @@
 package com.hkcapital.portoflio;
 
 import com.hkcapital.portoflio.ui.PnLSimulatorFacad;
-import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanelTest;
-import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanelTest;
-import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsPanelTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -26,8 +23,6 @@ public class PortfolioPnlSimulatorApplication {
 			{
 				throw new RuntimeException(e);
 			}
-			//ConfigurationPanelTest instrumentPanelTest = context.getBean(ConfigurationPanelTest.class);
-			//instrumentPanelTest.launch();
 		});
 	}
 

@@ -1,9 +1,6 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.time.LocalDate;
 
 @Entity

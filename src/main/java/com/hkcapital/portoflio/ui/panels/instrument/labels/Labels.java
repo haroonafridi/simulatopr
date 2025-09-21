@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.instrument;
+package com.hkcapital.portoflio.ui.panels.instrument.labels;
 
 public enum Labels
 {

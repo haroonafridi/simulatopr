@@ -1,25 +1,30 @@
-package com.hkcapital.portoflio.ui.panels.marketconditions;
+package com.hkcapital.portoflio.ui.panels.marketconditions.panels;
 
+import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.marketconditions.labels.Labels;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MarketConditionsSourcePanel extends JPanel
+public class MarketConditionsSourcePanel extends UIBag
 {
-    private final JLabel positionSizIdLabel = new JLabel("Id");
-    private  NumberTextField positionId = new NumberTextField(30);
-    private final JLabel instrumentLabel = new JLabel("Instrument");
-    private  NumberTextField instrumentName = new NumberTextField(80);
+    private final JLabel positionSizIdLabel = new JLabel(Labels.Id.getLabel());
+    private NumberTextField positionId = new NumberTextField(30);
+    private final JLabel instrumentLabel = new JLabel(Labels.InstrumentName.getLabel());
+    private NumberTextField instrumentName = new NumberTextField(80);
 
-    private final JLabel dayLowLabel = new JLabel("Day Low");
-    private  NumberTextField dayLow = new NumberTextField(80 );
-    private final JLabel dayHighLabel = new JLabel("Day High");
-    private  NumberTextField dayHigh = new NumberTextField(80 );
-    private final JLabel percentMoveLabel = new JLabel("% Move");
-    private  NumberTextField percentMove = new NumberTextField(80 );
-    public MarketConditionsSourcePanel() {
-       add(positionSizIdLabel);
+    private final JLabel dayLowLabel = new JLabel(Labels.DayLow.getLabel());
+    private NumberTextField dayLow = new NumberTextField(80);
+    private final JLabel dayHighLabel = new JLabel(Labels.DayHigh.getLabel());
+    private NumberTextField dayHigh = new NumberTextField(80);
+    private final JLabel percentMoveLabel = new JLabel(Labels.PercentMove.getLabel());
+    private NumberTextField percentMove = new NumberTextField(80);
+
+    public MarketConditionsSourcePanel()
+    {
+        super(MarketConditionsSourcePanel.class);
+        add(positionSizIdLabel);
         positionId.setEnabled(false);
         add(positionId);
         add(instrumentLabel);

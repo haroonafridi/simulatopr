@@ -45,8 +45,18 @@ public class NumberTextField extends JTextField
         {
             throw new NumberFormatException("Value cannot be null");
         }
+
+        if("".equals(value))
+        {
+            return null;
+        }
+
         return Integer.valueOf(value);
     }
 
+
+    public Integer intValue() {
+     return   getIntValue();
+    }
 
 }

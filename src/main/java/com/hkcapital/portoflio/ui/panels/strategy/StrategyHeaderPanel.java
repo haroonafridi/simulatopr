@@ -6,13 +6,16 @@ import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.service.StrategyService;
-import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
+import com.hkcapital.portoflio.ui.UIBag;
+import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
+import com.hkcapital.portoflio.ui.panels.strategy.listners.RemoveStrategyButtonListener;
+import com.hkcapital.portoflio.ui.panels.strategy.listners.SaveStrategyButtonListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.List;
-public class StrategyHeaderPanel extends JPanel
+public class StrategyHeaderPanel extends UIBag
 {
     private final StrategyService strategyService;
     private final JLabel strategyNameLabel = new JLabel("Strategy Name:");
@@ -39,6 +42,7 @@ public class StrategyHeaderPanel extends JPanel
 
     public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
     {
+        super(StrategyHeaderPanel.class);
         this.serviceRegistery = serviceRegistery;
         this.strategyService = (StrategyService)serviceRegistery.getService(Service.StrategyService);
         this.positionService = (PositionService)serviceRegistery.getService(Service.PositionService);
@@ -67,18 +71,8 @@ public class StrategyHeaderPanel extends JPanel
         strategyTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         strategyTable.setPreferredScrollableViewportSize(new Dimension(500, preferredHeight));
         JScrollPane scrollPane = new JScrollPane(strategyTable);
-
         add(scrollPane, BorderLayout.CENTER);
-
-        saveStrategy.addActionListener(s ->  {
-            Strategy strategy = new Strategy(strategyName.getText(), strategyDescription.getText(), LocalDateTime.now());
-            strategyService.addStrategy(strategy);
-            strategyName.setText(null);
-            strategyDescription.setText(null);
-            tableModel.addRow(strategy);
-            tableModel.fireTableDataChanged();
-        });
-
+        saveStrategy.addActionListener(new SaveStrategyButtonListener(strategyService, tableModel, this));
         strategyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         strategyTable.getSelectionModel().addListSelectionListener(e-> {
             if (!e.getValueIsAdjusting()) {
@@ -95,7 +89,7 @@ public class StrategyHeaderPanel extends JPanel
             }
         });
 
-        removeButton.addActionListener(e -> remove());
+        removeButton.addActionListener(new RemoveStrategyButtonListener(strategyTable, tableModel, strategyService, this));
         cancelButton.addActionListener(e -> clear());
 
     }
@@ -118,19 +112,6 @@ public class StrategyHeaderPanel extends JPanel
         return (Strategy) tableModel.getElements().get(strategyTable.getSelectedRow());
     }
 
-
-    public void remove() {
-        int selectedRow = strategyTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            Strategy strategy = (Strategy) tableModel.removeRow(selectedRow);
-            strategyService.removeStrategy(strategy);
-            clear();
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select an instrument to remove.",
-                    "No Selection", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
     public void clear() {
        strategyName.setText(null);
        strategyDescription.setText(null);
@@ -140,5 +121,17 @@ public class StrategyHeaderPanel extends JPanel
     public void setPositionActionsPanel(PositionActionsPanel positionActionsPanel)
     {
         this.positionActionsPanel = positionActionsPanel;
+    }
+
+
+    public Strategy createStrategy() {
+        Strategy strategy = new Strategy(strategyName.getText(),
+                strategyDescription.getText(),
+                LocalDateTime.now());
+        strategyService.addStrategy(strategy);
+        strategyName.setText(null);
+        strategyDescription.setText(null);
+
+        return  strategy;
     }
 }

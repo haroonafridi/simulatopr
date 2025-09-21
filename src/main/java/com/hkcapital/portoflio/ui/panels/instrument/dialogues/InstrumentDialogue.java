@@ -1,4 +1,7 @@
-package com.hkcapital.portoflio.ui.panels.instrument;
+package com.hkcapital.portoflio.ui.panels.instrument.dialogues;
+
+import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
+import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
 
 import javax.swing.*;
 import java.awt.*;

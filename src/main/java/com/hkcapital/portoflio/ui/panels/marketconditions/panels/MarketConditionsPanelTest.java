@@ -1,7 +1,6 @@
-package com.hkcapital.portoflio.ui.panels.marketconditions;
+package com.hkcapital.portoflio.ui.panels.marketconditions.panels;
 
 import com.hkcapital.portoflio.repository.ServiceRegistery;
-import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.MarketConditionsService;
 import com.hkcapital.portoflio.service.Service;
 import org.springframework.stereotype.Component;
@@ -12,15 +11,13 @@ import javax.swing.*;
 public class MarketConditionsPanelTest
 {
     private final MarketConditionsService marketconditionsService;
-    private final InstrumentService instrumentService;
 
     private final ServiceRegistery<Service> serviceRegistery;
 
     public MarketConditionsPanelTest(ServiceRegistery<Service> serviceRegistery)
     {
         this.serviceRegistery = serviceRegistery;
-        this.marketconditionsService = (MarketConditionsService)this.serviceRegistery.getService("MarketConditionsService");
-        this.instrumentService = (InstrumentService)this.serviceRegistery.getService("InstrumentService");;
+        this.marketconditionsService = (MarketConditionsService)this.serviceRegistery.getService(Service.MarketConditionsService);
     }
 
     public void launch()

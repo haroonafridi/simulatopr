@@ -1,21 +1,18 @@
 package com.hkcapital.portoflio.ui;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.IntelliJTheme;
+import com.hkcapital.portoflio.DataObject;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.ui.panels.capital.CapitalPanel;
-import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationDialogue;
-import com.hkcapital.portoflio.ui.panels.configuartion.ConfigurationPanel;
-import com.hkcapital.portoflio.ui.panels.instrument.InstrumentDialogue;
-import com.hkcapital.portoflio.ui.panels.instrument.InstrumentPanel;
-import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsDialogue;
-import com.hkcapital.portoflio.ui.panels.marketconditions.MarketConditionsPanel;
-import com.hkcapital.portoflio.ui.panels.position.PositionActionsPanel;
-import com.hkcapital.portoflio.ui.panels.position.PositionTableModel;
+import com.hkcapital.portoflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
+import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
+import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentDialogue;
+import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
+import com.hkcapital.portoflio.ui.panels.marketconditions.dialogues.MarketConditionsDialogue;
+import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsPanel;
+import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
+import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionDialogue;
 import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionPanel;
@@ -25,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
@@ -44,6 +42,8 @@ public class PnLSimulatorFacad
     private final PositionService positionPnLService;
 
     private final TradingSessionsService<TradingSessions> tradingSessionsService;
+
+    private DataObject<String, String> dataObject = new DataObject<>();
 
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
@@ -72,7 +72,7 @@ public class PnLSimulatorFacad
 
     public void createApplication() throws UnsupportedLookAndFeelException
     {
-        UIManager.setLookAndFeel(new FlatDarkLaf());
+        UIManager.setLookAndFeel(new MetalLookAndFeel());
         //FlatDarkLaf.setup();
        // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
         UIManager.put("defaultFont", new Font("Roboto Mono", Font.PLAIN, 12));
@@ -143,6 +143,7 @@ public class PnLSimulatorFacad
                 new PositionActionsPanel(
                 mainFrame,
                 serviceRegistery,
+                        dataObject,
                 strategyHeaderPanel
         );
         strategyHeaderPanel.setPositionActionsPanel(positionActionsPanel);

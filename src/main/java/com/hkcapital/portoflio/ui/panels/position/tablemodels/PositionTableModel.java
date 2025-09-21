@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.position;
+package com.hkcapital.portoflio.ui.panels.position.tablemodels;
 
 import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.Position;

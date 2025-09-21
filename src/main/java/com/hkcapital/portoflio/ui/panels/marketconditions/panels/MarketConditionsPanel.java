@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.marketconditions;
+package com.hkcapital.portoflio.ui.panels.marketconditions.panels;
 
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.MarketConditions;
@@ -6,14 +6,18 @@ import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.MarketConditionsService;
 import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.marketconditions.tablemodels.MarketConditionsTableModel;
+import com.hkcapital.portoflio.ui.panels.marketconditions.labels.Labels;
+import com.hkcapital.portoflio.ui.panels.marketconditions.messages.MessagesLabel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class MarketConditionsPanel extends JPanel
+public class MarketConditionsPanel extends UIBag
 {
 
     private final ServiceRegistery<Service> serviceRegistery;
@@ -44,9 +48,10 @@ public class MarketConditionsPanel extends JPanel
     public MarketConditionsPanel(final ServiceRegistery<Service> serviceRegistery,
                                  final MarketConditionsSourcePanel marketConditionsSourcePanel)
     {
+        super(MarketConditionsPanel.class);
         this.serviceRegistery = serviceRegistery;
-        this.instrumentService = (InstrumentService)serviceRegistery.getService("InstrumentService");
-        this.marketconditionsService =  (MarketConditionsService)this.serviceRegistery.getService("MarketConditionsService");
+        this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
+        this.marketconditionsService = (MarketConditionsService) this.serviceRegistery.getService(Service.MarketConditionsService);
         this.marketConditionsSourcePanel = marketConditionsSourcePanel;
 
         List<Instrument> instrumentList = instrumentService.findAll();
@@ -56,11 +61,13 @@ public class MarketConditionsPanel extends JPanel
             this.instrumentList.addItem(instrument);
         }
 
-        tableModel = new MarketConditionsTableModel(new String[]{"Id", "Instrument Name", "Day low",
-        "Day high", "% move"}, marketconditionsService.findAll());
+        tableModel = new MarketConditionsTableModel(new String[]{Labels.Id.getLabel(),
+                Labels.InstrumentName.getLabel(), Labels.DayLow.getLabel(),
+                Labels.DayHigh.getLabel(), Labels.PercentMove.getLabel()}, //
+                marketconditionsService.findAll());
 
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder("Instrument Panel"));
+        setBorder(BorderFactory.createTitledBorder(Labels.InstrumentPanel.getLabel()));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
 
@@ -118,7 +125,8 @@ public class MarketConditionsPanel extends JPanel
             SwingUtilities.getWindowAncestor(this).dispose();
         });
 
-        selectionMarketConditionsButton.addActionListener(e-> {
+        selectionMarketConditionsButton.addActionListener(e ->
+        {
             selectConfiguration();
             SwingUtilities.getWindowAncestor(this).dispose();
         });
@@ -147,6 +155,7 @@ public class MarketConditionsPanel extends JPanel
         marketConditionsSourcePanel.getPercentMove().setText(marketConditions.getPercentMove().toString());
         marketConditionsSourcePanel.getInstrumentName().setText(marketConditions.getInstrument().getName());
     }
+
     public void remove()
     {
         int selectedRow = marketConditionsTableTable.getSelectedRow();
@@ -156,8 +165,9 @@ public class MarketConditionsPanel extends JPanel
             marketconditionsService.removeMarketCondition(marketCondition);
         } else
         {
-            JOptionPane.showMessageDialog(this, "Please select an instrument to remove.",
-                    "No Selection", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, MessagesLabel.NoInstrumentSelected.getMessage(), //
+                    MessagesLabel.NoInstrumentSelected.getTitle(),  //
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
