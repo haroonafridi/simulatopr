@@ -41,12 +41,14 @@ public class PositionActionsPanel extends UIBag
     private final JButton configurationButton = new JButton("Add Configuration");
 
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
-    private final NumberTextField positionSize = new NumberTextField(30);
+    private final NumberTextField positionSizeInPercent = new NumberTextField(30);
 
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
     final private StrategyHeaderPanel strategyHeaderPanel;
 
     final ConfigurationSourcePanel configurationSourcePanel;
+
+    final  CapitalPanel capitalPanel;
 
 
     private final Frame frame;
@@ -73,7 +75,7 @@ public class PositionActionsPanel extends UIBag
         JPanel positionSizePanel = new JPanel();
         //positionSizePanel.setBorder(BorderFactory.createTitledBorder("Position Size:"));
         positionSizePanel.add(positionSizeLabel);
-        positionSizePanel.add(positionSize);
+        positionSizePanel.add(positionSizeInPercent);
         positionSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         //Opening capital panel
@@ -87,7 +89,7 @@ public class PositionActionsPanel extends UIBag
         configurationSourcePanel = new ConfigurationSourcePanel(configurationService);
         configurationSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         //configurationSourcePanel.setBorder(BorderFactory.createTitledBorder("Configurations:"));
-        CapitalPanel capitalPanel = new CapitalPanel(serviceRegistery);
+        capitalPanel = new CapitalPanel(serviceRegistery);
         this.frame = owner;
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -115,7 +117,7 @@ public class PositionActionsPanel extends UIBag
         add(new JScrollPane(table));
         addPosition.addActionListener(new AddPositionsButtonListener(marketConditionsService, marketConditionsSourcePanel, configurationService,
                 configurationSourcePanel, strategyHeaderPanel, //
-                positionPnLList, positionService, model));
+                positionPnLList, positionService, model, this));
         removePosition.addActionListener(new RemovePositionButtonListener(positionService, model, table));
         removePositionAll.addActionListener(new RemoveAllPositionsButtonListener(positionService, model, strategyHeaderPanel));
     }
@@ -170,4 +172,18 @@ public class PositionActionsPanel extends UIBag
         return Optional.empty();
     }
 
+    public Double getPositionSizeInPercent()
+    {
+        if(positionSizeInPercent.getText() != null)
+        {
+            return positionSizeInPercent.getDoubleValue();
+        }
+        return null;
+    }
+
+
+    public CapitalPanel getCapitalPanel()
+    {
+        return capitalPanel;
+    }
 }

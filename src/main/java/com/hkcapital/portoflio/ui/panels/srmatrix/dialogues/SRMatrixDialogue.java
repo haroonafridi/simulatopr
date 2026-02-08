@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.instrument.dialogues;
+package com.hkcapital.portoflio.ui.panels.srmatrix.dialogues;
 
 import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
@@ -6,11 +6,11 @@ import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
 import javax.swing.*;
 import java.awt.*;
 
-public class InstrumentDialogue extends JDialog
+public class SRMatrixDialogue extends JDialog
 {
     private final InstrumentPanel instrumentPanel;
 
-    public InstrumentDialogue(Frame owner, final InstrumentPanel instrumentPanel)
+    public SRMatrixDialogue(Frame owner, final InstrumentPanel instrumentPanel)
     {
         super(owner, Labels.Instrument.getLabel(), false);
         this.instrumentPanel = instrumentPanel;

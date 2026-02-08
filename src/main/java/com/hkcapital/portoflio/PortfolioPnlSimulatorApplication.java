@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio;
 
 import com.hkcapital.portoflio.ui.PnLSimulatorFacad;
+import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixPanelTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -14,7 +15,6 @@ public class PortfolioPnlSimulatorApplication {
 		System.setProperty("java.awt.headless", "false");
 		ConfigurableApplicationContext context = SpringApplication.run(PortfolioPnlSimulatorApplication.class, args);
 		SwingUtilities.invokeLater(() -> {
-
 			PnLSimulatorFacad simulator = context.getBean(PnLSimulatorFacad.class);
 			try
 			{

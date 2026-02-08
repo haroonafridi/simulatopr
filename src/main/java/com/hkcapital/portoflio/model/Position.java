@@ -205,6 +205,11 @@ public class Position implements Serializable
         return percentCapitalDeployed;
     }
 
+    public void setPercentCapitalDeployed(Double percentCapitalDeployed)
+    {
+        this.percentCapitalDeployed = percentCapitalDeployed;
+    }
+
     public void setInstrument(Instrument instrument)
     {
         this.instrument = instrument;

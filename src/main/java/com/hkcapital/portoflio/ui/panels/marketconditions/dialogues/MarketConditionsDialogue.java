@@ -13,7 +13,7 @@ public class MarketConditionsDialogue extends JDialog
     public MarketConditionsDialogue(Frame owner, final MarketConditionsPanel marketConditionsPanel
                                     )
     {
-        super(owner, Labels.MarketConditions.getLabel(), true);
+        super(owner, Labels.MarketConditions.getLabel(), false);
         this.marketconditionsPanel = marketConditionsPanel;
         getContentPane().add(marketConditionsPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

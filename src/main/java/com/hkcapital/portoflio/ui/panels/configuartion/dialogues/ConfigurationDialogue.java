@@ -12,7 +12,7 @@ public class ConfigurationDialogue extends JDialog
     public ConfigurationDialogue(Frame owner,
                                  final ConfigurationPanel configurationPanel)
     {
-        super(owner, "Configuration", true);
+        super(owner, "Configuration", false);
         this.configurationPanel = configurationPanel;
         getContentPane().add(configurationPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

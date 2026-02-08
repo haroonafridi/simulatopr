@@ -45,6 +45,7 @@ public class ConfigurationPanel extends UIBag
 
     private final JButton selectButton = new JButton(ButtonLabels.Select.getLabel());
 
+    private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
 
     public ConfigurationPanel(final ServiceRegistery<Service> serviceRegistery,
                               final ConfigurationSourcePanel configurationSourcePanel)
@@ -116,6 +117,7 @@ public class ConfigurationPanel extends UIBag
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
         buttonPanel.add(selectButton);
+        buttonPanel.add(readButton);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -141,6 +143,7 @@ public class ConfigurationPanel extends UIBag
         closeButton.addActionListener(e -> clear());
         removeButton.addActionListener(e -> getGraphics().dispose());
         selectButton.addActionListener(e -> select());
+        readButton.addActionListener(e-> configurationService.removeAll());
     }
 
     public JButton getSaveButton()

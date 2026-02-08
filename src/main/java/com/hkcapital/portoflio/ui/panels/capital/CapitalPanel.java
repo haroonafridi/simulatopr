@@ -78,6 +78,16 @@ public class CapitalPanel extends UIBag
     }
 
 
+    public Double getAllocatedCapital()
+    {
+        return allocatedCapital.getDoubleValue();
+    }
+
+
+    public Double getOpeningCapitalValue()
+    {
+        return openingCapital.getDoubleValue();
+    }
 }
 
 

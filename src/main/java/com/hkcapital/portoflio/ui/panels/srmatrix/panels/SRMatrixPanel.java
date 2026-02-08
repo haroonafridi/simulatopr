@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.ui.panels.instrument.panels;
+package com.hkcapital.portoflio.ui.panels.srmatrix.panels;
 
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
@@ -6,13 +6,13 @@ import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
-import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.instrument.tablemodels.InstrumentTableModel;
+import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class InstrumentPanel extends UIBag
+public class SRMatrixPanel extends UIBag
 {
 
     private final ServiceRegistery<Service> serviceRegistery;
@@ -32,9 +32,9 @@ public class InstrumentPanel extends UIBag
 
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
 
-    public InstrumentPanel(final ServiceRegistery serviceRegistery)
+    public SRMatrixPanel(final ServiceRegistery serviceRegistery)
     {
-        super(InstrumentPanel.class);
+        super(SRMatrixPanel.class);
         this.serviceRegistery = serviceRegistery;
         this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
 

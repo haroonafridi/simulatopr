@@ -1,5 +1,7 @@
 package com.hkcapital.portoflio.service.impl;
 
+import com.hkcapital.portoflio.model.Configuration;
+import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.repository.PositionRepository;
 import com.hkcapital.portoflio.service.PositionService;
@@ -65,9 +67,26 @@ public class PositionServiceImpl implements PositionService
     }
 
 
-    public static PositionParameters calculatePosition(List<Position> positionList)
+    public static PositionParameters calculatePosition(List<Position> positionList, Configuration configuration,
+                                                       MarketConditions marketConditions,
+                                                       Double positionSizeInPercent,
+                                                       Double openingCapital,
+                                                       Double allocatedCapital)
     {
-        return new  PositionParameters(1d,2d,3d,4d);
+
+        Double capital = allocatedCapital * positionSizeInPercent / 100;
+        Double percentCapitalDeployed = (capital / openingCapital) * 100;
+        Double percentPnl = 0d;
+        Double pnl = 0d;
+        Double allowedFirePower = allocatedCapital;
+        Double remainingCapital = openingCapital - capital;
+
+        Double remainingFirePower = allowedFirePower - capital;
+
+        System.out.println("percentCapitalDeployed => "+percentCapitalDeployed+ "capital:  "+capital+ " remainingCapital => "+remainingCapital);
+
+        return new PositionParameters(percentCapitalDeployed, capital, pnl, percentPnl, allowedFirePower,
+                remainingFirePower , remainingCapital);
     }
 
 }

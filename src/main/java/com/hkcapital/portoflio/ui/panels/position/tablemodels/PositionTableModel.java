@@ -10,10 +10,20 @@ import java.util.List;
 
 public class PositionTableModel  extends TableModel
 {
-    private final String[] columns = {"index", "Position Index", "Instrument", "% Capital Deployed", "Capital",
-            "%Pnl", "PnL", "Allowed Fire Power", "Remaining Fire Power", "Capital Remaining Firepower",
-            "day low", "day high", "% move",
-             "leverage"};
+    private final String[] columns = {"index",
+            "Position Index",
+            "Instrument",
+            "% Capital Deployed",
+            "Capital",
+            "%Pnl", "PnL",
+            "Allowed Fire Power",
+            "Remaining Fire Power",
+            "Capital Remaining Firepower",
+            "day low",
+            "day high",
+            "% move",
+             "leverage"
+    };
     private List<Position> data;
 
 

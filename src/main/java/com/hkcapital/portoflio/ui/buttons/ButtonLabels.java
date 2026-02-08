@@ -13,7 +13,9 @@ public enum ButtonLabels
 
     Select("Select"),
 
-    RemoveAll("Remove All");
+    RemoveAll("Remove All"),
+
+    Refresh("Read");
 
     private String label;
 

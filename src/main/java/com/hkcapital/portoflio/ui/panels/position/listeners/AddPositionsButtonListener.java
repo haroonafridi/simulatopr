@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
+import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.service.ConfigurationService;
@@ -8,6 +9,7 @@ import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsSourcePanel;
 import com.hkcapital.portoflio.ui.panels.position.PositionParameters;
+import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 
@@ -33,6 +35,8 @@ public class AddPositionsButtonListener implements ActionListener
 
     private final PositionTableModel model;
 
+    final PositionActionsPanel positionActionsPanel;
+
     public AddPositionsButtonListener(final MarketConditionsService marketConditionsService,
                                       final MarketConditionsSourcePanel marketConditionsSourcePanel,
                                       final ConfigurationService configurationService,
@@ -40,7 +44,8 @@ public class AddPositionsButtonListener implements ActionListener
                                       final StrategyHeaderPanel strategyHeaderPanel,
                                       final  List<Position> positionPnLList,
                                       final PositionService positionService,
-                                      final PositionTableModel model)
+                                      final PositionTableModel model,
+                                      final PositionActionsPanel positionActionsPanel)
     {
         this.marketConditionsService = marketConditionsService;
         this.marketConditionsSourcePanel = marketConditionsSourcePanel;
@@ -50,6 +55,7 @@ public class AddPositionsButtonListener implements ActionListener
         this.positionPnLList = positionPnLList;
         this.positionService = positionService;
         this.model = model;
+        this.positionActionsPanel = positionActionsPanel;
     }
 
     /**
@@ -63,16 +69,24 @@ public class AddPositionsButtonListener implements ActionListener
         MarketConditions marketConditions = marketConditionsService.findById(marketConditionsSourcePanel.getPositionId().getIntValue());
         Position position = new Position();
         position.setInstrument(marketConditions.getInstrument());
-        position.setConfigurtaion(configurationService.findById(configurationSourcePanel.getId().getIntValue()));
+        Configuration configuration = configurationService.findById(configurationSourcePanel.getId().getIntValue());
+        position.setConfigurtaion(configuration);
         position.setMarketConditions(marketConditions);
         position.setStrategy(strategyHeaderPanel.getStrategy());
-        PositionParameters positionParameter = calculatePosition(positionPnLList);
+        PositionParameters positionParameter = calculatePosition(positionPnLList,configuration, marketConditions,
+                positionActionsPanel.getPositionSizeInPercent(),
+                positionActionsPanel.getCapitalPanel().getOpeningCapitalValue(),
+                positionActionsPanel.getCapitalPanel().getAllocatedCapital());
         position.setAllowedFirePower(positionParameter.allowedFirePower());
+        position.setRemainingFirepower(positionParameter.remainingFirePower());
         position.setPercentPnL(positionParameter.percentPnl());
         position.setPnl(positionParameter.pnl());
         position.setCapitalRemainingFirePower(positionParameter.remainingCapital());
+        position.setPercentCapitalDeployed(positionParameter.percentCapitalDeployed());
         positionService.add(position);
         List<Position> positionList = positionService.findByStrategyId(strategyHeaderPanel.getStrategy().getId());
         model.updateData(positionList);
     }
+
+
 }

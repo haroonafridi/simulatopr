@@ -110,11 +110,15 @@ public class PnLSimulatorFacad
         DefaultMutableTreeNode marketConditions = new DefaultMutableTreeNode("Market Conditions");
         marketConditions.add(new DefaultMutableTreeNode("Market Conditions"));
         marketConditions.add(new DefaultMutableTreeNode("Economic Calendar"));
+        DefaultMutableTreeNode models = new DefaultMutableTreeNode("Models");
+        models.add(new DefaultMutableTreeNode("SR-Matrix"));
+        models.add(new DefaultMutableTreeNode("BRP-Model"));
 
         root.add(instruments);
         root.add(brokers);
         root.add(configuration);
         root.add(marketConditions);
+        root.add(models);
         JTree navigationTree = new JTree(root);
         JScrollPane treeScrollPane = new JScrollPane(navigationTree);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Navigation"));
