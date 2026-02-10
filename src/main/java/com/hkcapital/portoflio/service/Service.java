@@ -10,4 +10,6 @@ public interface Service
     String StrategyService = "StrategyService";
     String TradingSessionsService = "TradingSessionsService";
     String TradingTimeFramesService = "TradingTimeFramesService";
+    String EtoroCandleService = "EtoroCandleService";
+
 }

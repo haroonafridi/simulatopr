@@ -14,22 +14,21 @@ public class EtoroTradeManager
         EtoroInstrumentCandleData etoroInstrumentCandleData = new EtoroInstrumentCandleData();
 
         String intervalData = etoroInstrumentCandleData.getInstrumentCandleData(Instruments.GOLD.getInstrumentId(), "desc",
-                TimeFrame.FifteenMinutes,
-                360);
+                TimeFrame.OneDay.name(),
+                30);
 
         ObjectMapper mapper = new ObjectMapper();
 
         CandleResponse response =
                 mapper.readValue(intervalData, CandleResponse.class);
 
-        response.getCandles().forEach(ic ->
-        {
-            int count = 0;
-            for (Candle c : ic.getCandles())
-            {
-                count++;
-                System.out.println(count+" "+c.toString());
-            }
-        });
+//        response.getCandles().forEach(ic ->
+//        {
+//            int count = 0;
+//            for (Candle c : ic.getCandles())
+//            {
+//               Candle candle = new Candle(c);
+//            }
+//        });
     }
 }

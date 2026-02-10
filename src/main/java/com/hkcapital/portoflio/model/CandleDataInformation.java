@@ -8,7 +8,7 @@ public class CandleDataInformation
 {
 
     @JsonProperty("instrumentID")
-    private int instrumentId;
+    private int instrumentID;
 
     private String fromDate;
     private double open;
@@ -16,14 +16,19 @@ public class CandleDataInformation
     private double low;
     private double close;
     private double volume;
+
+    private String interval;
     public CandleDataInformation() {}
 
-    public int getInstrumentId() {
-        return instrumentId;
+
+    public int getInstrumentID()
+    {
+        return instrumentID;
     }
 
-    public void setInstrumentId(int instrumentId) {
-        this.instrumentId = instrumentId;
+    public void setInstrumentID(int instrumentID)
+    {
+        this.instrumentID = instrumentID;
     }
 
     public String getFromDate() {
@@ -74,18 +79,28 @@ public class CandleDataInformation
         this.volume = volume;
     }
 
+    public String getInterval()
+    {
+        return interval;
+    }
+
+    public void setInterval(String interval)
+    {
+        this.interval = interval;
+    }
+
     @Override
     public String toString()
     {
-        return "Candle: " +
-                "{" +
-                "instrumentId=" + instrumentId +
+        return "CandleDataInformation{" +
+                "instrumentID=" + instrumentID +
                 ", fromDate='" + fromDate + '\'' +
                 ", open=" + open +
                 ", high=" + high +
                 ", low=" + low +
                 ", close=" + close +
                 ", volume=" + volume +
+                ", interval='" + interval + '\'' +
                 '}';
     }
 }

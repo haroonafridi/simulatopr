@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.DataObject;
+import com.hkcapital.portoflio.etoro.TimeFrame;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
@@ -19,7 +20,6 @@ import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -42,6 +42,7 @@ public class PnLSimulatorFacad
     private final PositionService positionPnLService;
 
     private final TradingSessionsService<TradingSessions> tradingSessionsService;
+    private final EtoroCandleService etoroCandleService;
 
     private DataObject<String, String> dataObject = new DataObject<>();
 
@@ -52,6 +53,7 @@ public class PnLSimulatorFacad
                              InstrumentService instrumentService,
                              PositionService positionPnLService,
                              TradingSessionsService<TradingSessions> tradingSessionsService,
+                             EtoroCandleService etoroCandleService,
                              final ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -61,20 +63,22 @@ public class PnLSimulatorFacad
         this.positionPnLService = positionPnLService;
         this.tradingSessionsService = tradingSessionsService;
         this.serviceRegistery = serviceRegistery;
+        this.etoroCandleService = etoroCandleService;
 
         serviceRegistery.putService("ConfigurationService", this.configurationService);
-        serviceRegistery.putService("StrategyService",  this.strategyService);
+        serviceRegistery.putService("StrategyService", this.strategyService);
         serviceRegistery.putService("MarketConditionsService", this.marketConditionsService);
         serviceRegistery.putService("InstrumentService", this.instrumentService);
         serviceRegistery.putService("PositionService", this.positionPnLService);
         serviceRegistery.putService("TradingSessionsService", this.tradingSessionsService);
+        serviceRegistery.putService("EtoroCandleService", this.tradingSessionsService);
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
     {
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         //FlatDarkLaf.setup();
-       // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
+        // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
         UIManager.put("defaultFont", new Font("Roboto Mono", Font.PLAIN, 12));
         JFrame mainFrame = new JFrame("Strategy Simulator");
 
@@ -145,11 +149,11 @@ public class PnLSimulatorFacad
         rightGbc.weighty = 0.7;
         PositionActionsPanel positionActionsPanel = //
                 new PositionActionsPanel(
-                mainFrame,
-                serviceRegistery,
+                        mainFrame,
+                        serviceRegistery,
                         dataObject,
-                strategyHeaderPanel
-        );
+                        strategyHeaderPanel
+                );
         strategyHeaderPanel.setPositionActionsPanel(positionActionsPanel);
         rightPanel.add(positionActionsPanel, rightGbc);
 
@@ -205,6 +209,15 @@ public class PnLSimulatorFacad
             }
 
         });
+        this.etoroCandleService.getCandleInformation(TimeFrame.OneMinute);
+        this.etoroCandleService.getCandleInformation(TimeFrame.FiveMinutes);
+        this.etoroCandleService.getCandleInformation(TimeFrame.TenMinutes);
+        this.etoroCandleService.getCandleInformation(TimeFrame.FifteenMinutes);
+        this.etoroCandleService.getCandleInformation(TimeFrame.ThirtyMinutes);
+        this.etoroCandleService.getCandleInformation(TimeFrame.OneHour);
+        this.etoroCandleService.getCandleInformation(TimeFrame.FourHours);
+        this.etoroCandleService.getCandleInformation(TimeFrame.OneDay);
+        this.etoroCandleService.getCandleInformation(TimeFrame.OneWeek);
     }
 
 
