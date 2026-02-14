@@ -2,15 +2,20 @@ package com.hkcapital.portoflio.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.etoro.CandleResponse;
-import com.hkcapital.portoflio.etoro.EtoroInstrumentCandleData;
-import com.hkcapital.portoflio.etoro.Instruments;
-import com.hkcapital.portoflio.etoro.TimeFrame;
+import com.hkcapital.portoflio.etoro.dto.CandleResponseDto;
+import com.hkcapital.portoflio.etoro.managers.EtoroInstrumentCandleData;
+import com.hkcapital.portoflio.etoro.master.Instruments;
+import com.hkcapital.portoflio.etoro.master.TimeFrame;
 import com.hkcapital.portoflio.model.Candle;
 import com.hkcapital.portoflio.model.InstrumentCandles;
 import com.hkcapital.portoflio.repository.CandleRepository;
 import com.hkcapital.portoflio.service.EtoroCandleService;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EtoroCandleServiceImpl implements EtoroCandleService
@@ -32,17 +37,29 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
         ObjectMapper mapper = new ObjectMapper();
         try
         {
-            CandleResponse response =
-                    mapper.readValue(intervalData, CandleResponse.class);
+            CandleResponseDto response =
+                    mapper.readValue(intervalData, CandleResponseDto.class);
+
+            List<Candle> candleList = new ArrayList<>();
 
             for(InstrumentCandles instrumentCandles : response.getCandles())
             {
                 instrumentCandles.getCandles().forEach(c-> {
-                c.setTimeFrame(timeFrame.name());
-                candleRepository.save(c);
+                    Candle candl =  new Candle();
+                    candl.setCreationDateTime(LocalDateTime.now());
+                    candl.setTimeFrame(timeFrame.name());
+                    candl.setClose(c.getClose());
+                    candl.setHigh(c.getHigh());
+                    candl.setLow(c.getLow());
+                    candl.setVolume(c.getVolume());
+                    candl.setInstrumentID(c.getInstrumentID());
+                    candl.setVolume(c.getVolume());
+                    candl.setFromDate(Instant.parse(c.getFromDate()));
+                    candleList.add(candl);
                 });
-
             }
+
+            candleRepository.saveAll(candleList);
         } catch (JsonProcessingException e)
         {
             throw new RuntimeException(e);

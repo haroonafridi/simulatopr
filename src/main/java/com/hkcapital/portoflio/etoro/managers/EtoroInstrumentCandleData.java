@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.etoro;
+package com.hkcapital.portoflio.etoro.managers;
 
 import com.hkcapital.portoflio.ui.InstrumentDataManager;
 import com.mashape.unirest.http.HttpResponse;
@@ -7,8 +7,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.util.UUID;
 
-import static com.hkcapital.portoflio.etoro.EtoroAPIInformation.*;
-import static com.hkcapital.portoflio.etoro.EtoroAPIInformation.INSTRUMENT_CANDLE_DATA;
+import static com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformation.*;
+import static com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformation.INSTRUMENT_CANDLE_DATA;
 
 public class EtoroInstrumentCandleData implements InstrumentDataManager
 {

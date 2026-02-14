@@ -1,7 +1,6 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.DataObject;
-import com.hkcapital.portoflio.etoro.TimeFrame;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
@@ -27,6 +26,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.hkcapital.portoflio.etoro.master.TimeFrame.*;
 
 @Component
 public class PnLSimulatorFacad
@@ -209,15 +210,15 @@ public class PnLSimulatorFacad
             }
 
         });
-        this.etoroCandleService.getCandleInformation(TimeFrame.OneMinute);
-        this.etoroCandleService.getCandleInformation(TimeFrame.FiveMinutes);
-        this.etoroCandleService.getCandleInformation(TimeFrame.TenMinutes);
-        this.etoroCandleService.getCandleInformation(TimeFrame.FifteenMinutes);
-        this.etoroCandleService.getCandleInformation(TimeFrame.ThirtyMinutes);
-        this.etoroCandleService.getCandleInformation(TimeFrame.OneHour);
-        this.etoroCandleService.getCandleInformation(TimeFrame.FourHours);
-        this.etoroCandleService.getCandleInformation(TimeFrame.OneDay);
-        this.etoroCandleService.getCandleInformation(TimeFrame.OneWeek);
+        this.etoroCandleService.getCandleInformation(OneMinute);
+        this.etoroCandleService.getCandleInformation(FiveMinutes);
+        this.etoroCandleService.getCandleInformation(TenMinutes);
+        this.etoroCandleService.getCandleInformation(FifteenMinutes);
+        this.etoroCandleService.getCandleInformation(ThirtyMinutes);
+        this.etoroCandleService.getCandleInformation(OneHour);
+        this.etoroCandleService.getCandleInformation(FourHours);
+        this.etoroCandleService.getCandleInformation(OneDay);
+        this.etoroCandleService.getCandleInformation(OneWeek);
     }
 
 

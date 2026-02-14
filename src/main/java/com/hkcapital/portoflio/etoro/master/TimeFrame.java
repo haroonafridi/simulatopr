@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.etoro;
+package com.hkcapital.portoflio.etoro.master;
 
 public enum TimeFrame
 {

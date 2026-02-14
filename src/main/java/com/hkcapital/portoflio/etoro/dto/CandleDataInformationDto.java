@@ -1,10 +1,10 @@
-package com.hkcapital.portoflio.model;
+package com.hkcapital.portoflio.etoro.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CandleDataInformation
+public class CandleDataInformationDto
 {
 
     @JsonProperty("instrumentID")
@@ -16,9 +16,8 @@ public class CandleDataInformation
     private double low;
     private double close;
     private double volume;
-
     private String interval;
-    public CandleDataInformation() {}
+    public CandleDataInformationDto() {}
 
 
     public int getInstrumentID()

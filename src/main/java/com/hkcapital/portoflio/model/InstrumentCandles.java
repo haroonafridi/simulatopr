@@ -1,18 +1,22 @@
 package com.hkcapital.portoflio.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.hkcapital.portoflio.etoro.dto.CandleDto;
+
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstrumentCandles {
 
     private int instrumentId;
-    private List<Candle> candles;
+    private List<CandleDto> candles;
 
     private double rangeOpen;
     private double rangeClose;
     private double rangeHigh;
     private double rangeLow;
     private double volume;
+
+    private String fromDate;
 
     public InstrumentCandles() {}
 
@@ -24,11 +28,11 @@ public class InstrumentCandles {
         this.instrumentId = instrumentId;
     }
 
-    public List<Candle> getCandles() {
+    public List<CandleDto> getCandles() {
         return candles;
     }
 
-    public void setCandles(List<Candle> candles) {
+    public void setCandles(List<CandleDto> candles) {
         this.candles = candles;
     }
 
@@ -70,5 +74,15 @@ public class InstrumentCandles {
 
     public void setVolume(double volume) {
         this.volume = volume;
+    }
+
+    public String getFromDate()
+    {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate)
+    {
+        this.fromDate = fromDate;
     }
 }

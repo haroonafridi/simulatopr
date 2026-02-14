@@ -1,16 +1,17 @@
-package com.hkcapital.portoflio.etoro;
+package com.hkcapital.portoflio.etoro.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hkcapital.portoflio.model.InstrumentCandles;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CandleResponse {
+public class CandleResponseDto
+{
 
     private String interval;
     private List<InstrumentCandles> candles;
 
-    public CandleResponse() {}
+    public CandleResponseDto() {}
 
     public String getInterval() {
         return interval;

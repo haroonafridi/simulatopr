@@ -1,0 +1,11 @@
+{
+  "InstrumentID": "$InstrumentID",
+  "IsBuy": "$IsBuy",
+  "Leverage": "$Leverage",
+  "Amount": "$Amount",
+  "StopLossRate": "$StopLossRate",
+  "TakeProfitRate": "$TakeProfitRate",
+  "IsTslEnabled": "$IsTslEnabled",
+  "IsNoStopLoss": "$IsNoStopLoss",
+  "IsNoTakeProfit": "$IsNoTakeProfit"
+}

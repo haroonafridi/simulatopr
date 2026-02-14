@@ -1,8 +1,10 @@
 package com.hkcapital.portoflio.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hkcapital.portoflio.etoro.dto.CandleDataInformationDto;
 import jakarta.persistence.*;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "candle")
@@ -14,7 +16,7 @@ public class Candle {
     @Column(name = "instrument_id", nullable = false)
     private int instrumentID;
 
-    private String fromDate;
+    private Instant  fromDate;
     private double open;
     private double high;
     private double low;
@@ -23,28 +25,22 @@ public class Candle {
 
     private String timeFrame;
 
+
+    private LocalDateTime creationDateTime;
+
     public Candle() {}
 
-    public Candle(CandleDataInformation candleDataInformation) {
-        System.out.println("Instrument id => "+candleDataInformation.getInstrumentID());
+    public Candle(CandleDataInformationDto candleDataInformation)
+    {
         this.instrumentID =candleDataInformation.getInstrumentID();
-        this.fromDate = candleDataInformation.getFromDate();
+        this.fromDate = Instant.parse(candleDataInformation.getFromDate());
         this.open = candleDataInformation.getOpen();
         this.high = candleDataInformation.getHigh();
         this.low = candleDataInformation.getLow();
         this.close = candleDataInformation.getClose();
         this.volume = candleDataInformation.getVolume();
         this.timeFrame = candleDataInformation.getInterval();
-
-    }
-
-
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(String fromDate) {
-        this.fromDate = fromDate;
+        this.creationDateTime = LocalDateTime.now();
     }
 
     public double getOpen() {
@@ -123,13 +119,34 @@ public class Candle {
         return "Candle{" +
                 "id=" + id +
                 ", instrumentID=" + instrumentID +
-                ", fromDate='" + fromDate + '\'' +
+                ", fromDate=" + fromDate +
                 ", open=" + open +
                 ", high=" + high +
                 ", low=" + low +
                 ", close=" + close +
                 ", volume=" + volume +
                 ", timeFrame='" + timeFrame + '\'' +
+                ", creationDateTime=" + creationDateTime +
                 '}';
+    }
+
+    public Instant getFromDate()
+    {
+        return fromDate;
+    }
+
+    public void setFromDate(Instant fromDate)
+    {
+        this.fromDate = fromDate;
+    }
+
+    public LocalDateTime getCreationDateTime()
+    {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(LocalDateTime creationDateTime)
+    {
+        this.creationDateTime = creationDateTime;
     }
 }
