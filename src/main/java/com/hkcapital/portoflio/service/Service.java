@@ -12,4 +12,8 @@ public interface Service
     String TradingTimeFramesService = "TradingTimeFramesService";
     String EtoroCandleService = "EtoroCandleService";
 
+    String EtoroAPIInformationService = "EtoroAPIInformationService";
+
+    String OrderManagerService = "OrderManagerService";
+
 }

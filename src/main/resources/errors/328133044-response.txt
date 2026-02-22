@@ -1,0 +1,20 @@
+{
+  "orderForOpen": {
+    "instrumentID": 219000,
+    "amount": 500.0,
+    "isBuy": true,
+    "leverage": 1,
+    "stopLossRate": 0.0,
+    "takeProfitRate": 0.0,
+    "isTslEnabled": false,
+    "mirrorID": 0,
+    "totalExternalCosts": 0.0,
+    "orderID": 328133044,
+    "orderType": 17,
+    "statusID": 1,
+    "CID": 15126196,
+    "openDateTime": "2026-02-15T11:51:13.5380722Z",
+    "lastUpdate": "2026-02-15T11:51:13.5380722Z"
+  },
+  "token": "c30f2743-98d1-4645-a407-f20f87518316"
+}

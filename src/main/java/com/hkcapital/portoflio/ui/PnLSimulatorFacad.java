@@ -1,6 +1,9 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.DataObject;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
+import com.hkcapital.portoflio.service.impl.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
@@ -25,9 +28,10 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static com.hkcapital.portoflio.etoro.master.TimeFrame.*;
 
 @Component
 public class PnLSimulatorFacad
@@ -41,9 +45,12 @@ public class PnLSimulatorFacad
     private final InstrumentService instrumentService;
 
     private final PositionService positionPnLService;
+    private final EtoroOrderManagerServiceImpl etoroOrderManagerService;
 
     private final TradingSessionsService<TradingSessions> tradingSessionsService;
     private final EtoroCandleService etoroCandleService;
+
+    private final EtoroAPIInformationService etoroApiInformationService;
 
     private DataObject<String, String> dataObject = new DataObject<>();
 
@@ -55,7 +62,9 @@ public class PnLSimulatorFacad
                              PositionService positionPnLService,
                              TradingSessionsService<TradingSessions> tradingSessionsService,
                              EtoroCandleService etoroCandleService,
-                             final ServiceRegistery<Service> serviceRegistery)
+                             EtoroOrderManagerServiceImpl etoroOrderManager,
+                             EtoroAPIInformationService apiInformationService,
+                             ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
         this.strategyService = strategyService;
@@ -63,8 +72,10 @@ public class PnLSimulatorFacad
         this.instrumentService = instrumentService;
         this.positionPnLService = positionPnLService;
         this.tradingSessionsService = tradingSessionsService;
+        this.etoroOrderManagerService = etoroOrderManager;
         this.serviceRegistery = serviceRegistery;
         this.etoroCandleService = etoroCandleService;
+        this.etoroApiInformationService = apiInformationService;
 
         serviceRegistery.putService("ConfigurationService", this.configurationService);
         serviceRegistery.putService("StrategyService", this.strategyService);
@@ -72,11 +83,17 @@ public class PnLSimulatorFacad
         serviceRegistery.putService("InstrumentService", this.instrumentService);
         serviceRegistery.putService("PositionService", this.positionPnLService);
         serviceRegistery.putService("TradingSessionsService", this.tradingSessionsService);
-        serviceRegistery.putService("EtoroCandleService", this.tradingSessionsService);
+        serviceRegistery.putService("EtoroCandleService", this.etoroCandleService);
+        serviceRegistery.putService("OrderManagerService", this.etoroOrderManagerService);
+        serviceRegistery.putService("EtoroAPIInformationService", this.etoroApiInformationService);
+
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
     {
+        if(this.etoroApiInformationService.toString().contains("PRO")) {
+
+        }
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         //FlatDarkLaf.setup();
         // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
@@ -210,18 +227,29 @@ public class PnLSimulatorFacad
             }
 
         });
-        this.etoroCandleService.getCandleInformation(OneMinute);
-        this.etoroCandleService.getCandleInformation(FiveMinutes);
-        this.etoroCandleService.getCandleInformation(TenMinutes);
-        this.etoroCandleService.getCandleInformation(FifteenMinutes);
-        this.etoroCandleService.getCandleInformation(ThirtyMinutes);
-        this.etoroCandleService.getCandleInformation(OneHour);
-        this.etoroCandleService.getCandleInformation(FourHours);
-        this.etoroCandleService.getCandleInformation(OneDay);
-        this.etoroCandleService.getCandleInformation(OneWeek);
+//        this.etoroCandleService.getCandleInformation(OneMinute);
+//        this.etoroCandleService.getCandleInformation(FiveMinutes);
+//        this.etoroCandleService.getCandleInformation(TenMinutes);
+//        this.etoroCandleService.getCandleInformation(FifteenMinutes);
+//        this.etoroCandleService.getCandleInformation(ThirtyMinutes);
+//        this.etoroCandleService.getCandleInformation(OneHour);
+//        this.etoroCandleService.getCandleInformation(FourHours);
+//        this.etoroCandleService.getCandleInformation(OneDay);
+//        this.etoroCandleService.getCandleInformation(OneWeek);
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                logger.info("Executing background orders...");
+//                etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderGold());
+//                etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderNasdaq100());
+//                etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderBtc());
+            } catch (Exception e) {
+                logger.error("Error in background task", e);
+            }
+        }, 0, 5, TimeUnit.MINUTES);
+
     }
-
-
     void saveOrUpdate(List<Position> pnl,
                       Configuration configuration,
                       MarketConditions marketCondition,

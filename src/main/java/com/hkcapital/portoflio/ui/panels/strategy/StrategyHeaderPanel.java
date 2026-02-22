@@ -1,20 +1,26 @@
 package com.hkcapital.portoflio.ui.panels.strategy;
 
+import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
+import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.Strategy;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.service.StrategyService;
+import com.hkcapital.portoflio.service.impl.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.RemoveStrategyButtonListener;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.SaveStrategyButtonListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
 public class StrategyHeaderPanel extends UIBag
 {
     private final StrategyService strategyService;
@@ -30,6 +36,8 @@ public class StrategyHeaderPanel extends UIBag
     private final JButton closeButton = new JButton("Close");
     private final JButton removeButton = new JButton("Remove");
 
+    private final JButton manualOrderButton = new JButton("Create Market Order");
+
     private final JTable strategyTable;
     private final StrategyTableModel<Strategy>  tableModel;
 
@@ -39,6 +47,8 @@ public class StrategyHeaderPanel extends UIBag
 
     private final ServiceRegistery<Service> serviceRegistery;
 
+    private final OrderManagerService orderManagerService;
+
 
     public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
     {
@@ -46,6 +56,7 @@ public class StrategyHeaderPanel extends UIBag
         this.serviceRegistery = serviceRegistery;
         this.strategyService = (StrategyService)serviceRegistery.getService(Service.StrategyService);
         this.positionService = (PositionService)serviceRegistery.getService(Service.PositionService);
+        this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
@@ -60,6 +71,7 @@ public class StrategyHeaderPanel extends UIBag
         topPanel.add(strategyDescription);
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
+        topPanel.add(manualOrderButton);
         add(topPanel, BorderLayout.NORTH);
         strategyTable = new JTable(tableModel);
         int rowCountToShow = 50;
@@ -91,7 +103,26 @@ public class StrategyHeaderPanel extends UIBag
 
         removeButton.addActionListener(new RemoveStrategyButtonListener(strategyTable, tableModel, strategyService, this));
         cancelButton.addActionListener(e -> clear());
+        manualOrderButton.addActionListener(m -> createMarketOrder());
 
+    }
+
+    @Transactional
+    public void createMarketOrder()
+    {
+        StrategyService strategyService=  (StrategyService)serviceRegistery.getService("StrategyService");
+        Strategy  strategy = strategyService.findById(12);
+        List<Position> positionList =  positionService.findByStrategyId(strategy.getId());
+        EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
+                true, //
+                1, //
+                positionList.stream().findFirst().get().getAllowedFirePower(), //
+                null, //
+                null, //
+                null, //
+                null, //
+                null);
+        orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 
     private void setHeaderFieldsFromRow(int rowIndex) {

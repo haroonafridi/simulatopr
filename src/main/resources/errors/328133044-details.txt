@@ -1,0 +1,15 @@
+{
+  "orderID": 328133044,
+  "CID": 15126196,
+  "referenceID": "00000000-0000-0000-0000-000000000000",
+  "statusID": 4,
+  "orderType": 17,
+  "openActionType": 0,
+  "errorCode": 2021,
+  "errorMessage": "Error - Order type validation failure, requested order type: 17, allowed OrderType ORDER_FOR_EXECUTION_BY_UNITS (18)",
+  "instrumentID": 219000,
+  "amount": 500.0,
+  "units": 0.0,
+  "requestOccurred": "2026-02-15T11:51:13.537Z",
+  "token": "c781e340-4b78-4749-bdc7-c6548dd5a6ea"
+}

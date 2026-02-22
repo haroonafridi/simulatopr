@@ -2,8 +2,9 @@ package com.hkcapital.portoflio.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.etoro.dto.CandleResponseDto;
-import com.hkcapital.portoflio.etoro.managers.EtoroInstrumentCandleData;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.etoro.dto.candle.CandleResponseDto;
+import com.hkcapital.portoflio.etoro.managers.EtoroInstrumentCandleDataServiceImpl;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.etoro.master.TimeFrame;
 import com.hkcapital.portoflio.model.Candle;
@@ -21,16 +22,18 @@ import java.util.List;
 public class EtoroCandleServiceImpl implements EtoroCandleService
 {
     private final CandleRepository candleRepository;
+    private final EtoroAPIInformationService apiInformationService;
 
-    public EtoroCandleServiceImpl(CandleRepository candleRepository)
+    public EtoroCandleServiceImpl(final CandleRepository candleRepository, final EtoroAPIInformationService apiInformationService)
     {
         this.candleRepository = candleRepository;
+        this.apiInformationService = apiInformationService;
     }
 
     @Override
     public Candle getCandleInformation(TimeFrame timeFrame)
     {
-        EtoroInstrumentCandleData etoroInstrumentCandleData = new EtoroInstrumentCandleData();
+        EtoroInstrumentCandleDataServiceImpl etoroInstrumentCandleData = new EtoroInstrumentCandleDataServiceImpl(apiInformationService);
         String intervalData = etoroInstrumentCandleData.getInstrumentCandleData(Instruments.GOLD.getInstrumentId(), "desc",
                 timeFrame.name(),
                 30);

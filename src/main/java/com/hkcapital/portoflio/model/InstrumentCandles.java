@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.hkcapital.portoflio.etoro.dto.CandleDto;
+import com.hkcapital.portoflio.etoro.dto.candle.CandleDto;
 
 import java.util.List;
 

@@ -1,0 +1,11 @@
+{
+  "InstrumentID": 219000,
+  "IsBuy": true,
+  "Leverage": 1,
+  "Amount": 500.0,
+  "StopLossRate": null,
+  "TakeProfitRate": null,
+  "IsTslEnabled": null,
+  "IsNoStopLoss": null,
+  "IsNoTakeProfit": null
+}

@@ -2,8 +2,9 @@ package com.hkcapital.portoflio.etoro.master;
 
 public enum Instruments
 {
-    BTC(219000),
-    GOLD(207010);
+    BTC(100000),
+    GOLD(18),
+    NASDAQ1100(28);
 
     private Integer instrumentId;
 
