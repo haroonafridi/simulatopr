@@ -1,0 +1,10 @@
+{
+  "messages": [
+    {
+      "topic": "instrument:100000",
+      "content": "{\"InstrumentID\":\"100000\",\"Ask\":\"67541.86\",\"Bid\":\"67541.85\",\"LastExecution\":\"67541.85\",\"ConversionRateAsk\":\"1\",\"ConversionRateBid\":\"1\",\"Date\":\"2026-02-26T19:19:26.5783656Z\",\"NewUnitMargin\":\"67541.85\",\"UnitMarginAsk\":\"67541.86\",\"UnitMarginBid\":\"67541.85\",\"PriceRateID\":\"133779086650\",\"BidDiscounted\":\"67541.85\",\"AskDiscounted\":\"67541.86\",\"UnitMarginBidDiscounted\":\"67541.85\",\"UnitMarginAskDiscounted\":\"67541.86\",\"IsInstrumentActive\":\"true\",\"OfficialClosingPrice\":\"69038.55\",\"IsMarketOpen\":\"true\",\"AllowBuy\":\"true\",\"AllowSell\":\"true\",\"MaxPositionUnits\":\"32\",\"IsExchangeOpen\":\"false\",\"DelayedAsk\":\"0\",\"DelayedBid\":\"0\",\"AvailabilityReason\":\"2\",\"InstrumentId\":\"100000\",\"ClosingPrices\":\"{\\\"Daily\\\":69038.55,\\\"Weekly\\\":68368.94,\\\"Monthly\\\":78067.66}\",\"IsOfficialClosingPrice\":\"false\"}",
+      "id": "0754792d-f2ae-48ee-9bd6-a1b64af06fc0",
+      "type": "Snapshot"
+    }
+  ]
+}

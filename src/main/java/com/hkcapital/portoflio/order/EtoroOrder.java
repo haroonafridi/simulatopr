@@ -37,6 +37,8 @@ public class EtoroOrder
 
     private String openDateTime;
 
+    private String oderType;
+
     public int getId()
     {
         return id;
@@ -210,5 +212,15 @@ public class EtoroOrder
     public void setDateTime(LocalDateTime dateTime)
     {
         this.dateTime = dateTime;
+    }
+
+    public String getOderType()
+    {
+        return oderType;
+    }
+
+    public void setOderType(String oderType)
+    {
+        this.oderType = oderType;
     }
 }

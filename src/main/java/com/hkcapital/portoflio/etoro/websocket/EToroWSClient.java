@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
 import com.hkcapital.portoflio.etoro.master.Instruments;
@@ -12,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
@@ -23,6 +25,10 @@ public class EToroWSClient implements WebSocket.Listener //
     private final Set<String> subscribedTopics = new HashSet<>();
     private final CountDownLatch latch = new CountDownLatch(1);
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private LivePriceResponseWrapper livePriceResponseWrapper;
+
+    private LiveInstrumentRate liveInstrumentRate;
 
     public static void main(String[] args) throws InterruptedException {
         EtoroAPIInformationService apiInformation = new EtoroAPIInformationDemoServiceImpl();
@@ -72,7 +78,6 @@ public class EToroWSClient implements WebSocket.Listener //
                                      CharSequence data,
                                      boolean last) {
         String message = data.toString();
-        logger.info("Message recieved [{}]", message);
         try {
             JsonNode node = objectMapper.readTree(message);
 
@@ -106,6 +111,15 @@ public class EToroWSClient implements WebSocket.Listener //
                 JsonNode tickData = node.get("data");
                 System.out.println("Tick for " + topic + " → " + tickData.toString());
             }
+
+            livePriceResponseWrapper = objectMapper.readValue(message, LivePriceResponseWrapper.class);
+
+            if (livePriceResponseWrapper.getMessages() != null && livePriceResponseWrapper.getMessages().size() > 0)
+            {
+                 liveInstrumentRate = objectMapper.readValue(livePriceResponseWrapper.getMessages().get(0).getContent(), //
+                        LiveInstrumentRate.class);
+            }
+
 
         } catch (Exception e) {
            throw new RuntimeException(e.getMessage());
@@ -146,5 +160,15 @@ public class EToroWSClient implements WebSocket.Listener //
         webSocket.sendText(subscribeMessage, true);
         subscribedTopics.add(instrumentId);
         logger.info("Subscribe request sent for instrument:" + instrumentId);
+    }
+
+    public LivePriceResponseWrapper getLivePriceResponseWrapper()
+    {
+        return livePriceResponseWrapper;
+    }
+
+    public LiveInstrumentRate getLiveInstrumentRate()
+    {
+        return liveInstrumentRate;
     }
 }

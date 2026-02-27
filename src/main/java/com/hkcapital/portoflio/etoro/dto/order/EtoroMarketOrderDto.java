@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.etoro.dto.order;
 
+import com.hkcapital.portoflio.etoro.CalcUtils;
 import com.hkcapital.portoflio.etoro.JSON;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 
@@ -17,11 +18,14 @@ public class EtoroMarketOrderDto implements JSON
 
     private Boolean isNoTakeProfit;
 
+    private String orderType;
+
     public EtoroMarketOrderDto(Integer instrumentId, Boolean isBuy, Integer leverage, //
                                Double amount, Double stopLossRate, //
                                Double takeProfitRate, Boolean isTslEnabled, //
                                Boolean isNoStopLoss, //
-                               Boolean isNoTakeProfit)
+                               Boolean isNoTakeProfit,
+                               String orderType)
     {
         this.instrumentId = instrumentId;
         this.isBuy = isBuy;
@@ -32,6 +36,7 @@ public class EtoroMarketOrderDto implements JSON
         this.isTslEnabled = isTslEnabled;
         this.isNoStopLoss = isNoStopLoss;
         this.isNoTakeProfit = isNoTakeProfit;
+        this.orderType = orderType;
     }
 
     public Integer getInstrumentId()
@@ -149,7 +154,7 @@ public class EtoroMarketOrderDto implements JSON
                 "\"Leverage\": " + leverage + ",\n" +
                 "\"Amount\": " + amount + ",\n" +
                 "\"StopLossRate\": " + stopLossRate + ",\n" +
-                "\"TakeProfitRate\": " + takeProfitRate + ",\n" +
+                "\"TakeProfitRate\": " + takeProfitRate+ ",\n" +//CalcUtils.calculateTargetPrice(24950, 20, 50, 2) + ",\n" +
                 "\"IsTslEnabled\": " + isTslEnabled + ",\n" +
                 "\"IsNoStopLoss\": " + isNoStopLoss + ",\n" +
                 "\"IsNoTakeProfit\": " + isNoTakeProfit + "\n" +
@@ -166,7 +171,8 @@ public class EtoroMarketOrderDto implements JSON
                 null, //
                 null, //
                 null, //
-                null);
+                null,
+                "AUTO");
     }
 
     public static EtoroMarketOrderDto createDummyOrderNasdaq100()
@@ -179,10 +185,15 @@ public class EtoroMarketOrderDto implements JSON
                 null, //
                 null, //
                 null, //
-                null);
+                null,
+                "AUTO");
     }
 
 
+    public String getOrderType()
+    {
+        return orderType;
+    }
 
     public static EtoroMarketOrderDto createDummyOrderGold()
     {
@@ -194,7 +205,10 @@ public class EtoroMarketOrderDto implements JSON
                 5090d, //
                 true, //
                 null, //
-                null);
+                null,
+                "AUTO");
     }
+
+
 
 }

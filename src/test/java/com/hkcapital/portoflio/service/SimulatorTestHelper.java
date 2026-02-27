@@ -54,7 +54,6 @@ public class SimulatorTestHelper
 
     public void cleanDb() {
         strategyService.removeAll();
-        positionService.removeAll();
         marketConditionsService.removeAll();
         configurationService.removeAll();
         instrumentService.removeAll();

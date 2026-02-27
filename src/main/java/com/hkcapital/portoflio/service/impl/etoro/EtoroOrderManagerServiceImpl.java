@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.service.impl;
+package com.hkcapital.portoflio.service.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,13 +11,9 @@ import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetailsResponseDTO;
 import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
-import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.model.Strategy;
 import com.hkcapital.portoflio.order.EtoroOrder;
 import com.hkcapital.portoflio.repository.OrderRepository;
-import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.OrderManagerService;
-import com.hkcapital.portoflio.service.StrategyService;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -36,11 +32,15 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final OrderRepository orderRepository;
     private final EtoroAPIInformationService apiInformationService;
 
+    private final ObjectMapper objectMapper;
+
     public EtoroOrderManagerServiceImpl(final OrderRepository orderRepository, //
-                                        final EtoroAPIInformationService apiInformationService)
+                                        final EtoroAPIInformationService apiInformationService,
+                                        final ObjectMapper objectMapper)
     {
         this.orderRepository = orderRepository;
         this.apiInformationService = apiInformationService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -51,13 +51,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             logger.info("Running profile = {}", apiInformationService);
             logger.info("Fetching portfolio information");
             EtoroPortfolioResponseDTO portfolioResponseDTO = etoroPortfolio();
-            List<Long> openPositions = portfolioResponseDTO.getClientPortfolio()
-                    .getPositions().stream()
-                    .filter(p -> p.getInstrumentId().intValue()
-                            == etoroMarketOrderDto.getInstrumentId())
-                    .collect(Collectors.toList())
-                    .stream().map(o -> o.getOrderId())
-                    .collect(Collectors.toList());
+            List<Long> openPositions = getOpenPositions(etoroMarketOrderDto, portfolioResponseDTO);
             logger.info("Portfolio information successfully fetched: No of open positions found {}", openPositions.size());
             if (openPositions.size() > 0)
             {
@@ -71,7 +65,8 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             {
                 logger.info("Market Order in etoro [ {} ]", response.getBody());
                 return response.getBody().toString();
-            } else
+            }//
+            else
             {
                 logger.error("No order found exiting ");
                 return null;
@@ -79,9 +74,20 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
 
         } catch (UnirestException e)
         {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    private static List<Long> getOpenPositions(EtoroMarketOrderDto etoroMarketOrderDto, EtoroPortfolioResponseDTO portfolioResponseDTO)
+    {
+        List<Long> openPositions = portfolioResponseDTO.getClientPortfolio()
+                .getPositions().stream()
+                .filter(p -> p.getInstrumentId().intValue()
+                        == etoroMarketOrderDto.getInstrumentId())
+                .collect(Collectors.toList())
+                .stream().map(o -> o.getOrderId())
+                .collect(Collectors.toList());
+        return openPositions;
     }
 
     @Override
@@ -103,9 +109,9 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     {
 
         HttpResponse<String> response = Unirest.post(url)
-                .header("x-request-id", UUID.randomUUID().toString())//
-                .header("x-api-key", apiInformationService.getApiKey())//
-                .header("x-user-key", apiInformationService.getUserKey())//
+                .header(apiInformationService.getXRequestId(), UUID.randomUUID().toString())//
+                .header(apiInformationService.getXApIKey(), apiInformationService.getApiKey())//
+                .header(apiInformationService.getXUserKey(), apiInformationService.getUserKey())//
                 .header("Content-Type", "application/json")//
                 .body(order.toJson())//
                 .asString();
@@ -133,26 +139,33 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     @Override
     public EtoroOrder createAndSaveMarketOrder(EtoroMarketOrderDto etoroMarketOrderDto)
     {
-
-        EtoroOrder etoroOrder = new EtoroOrder();
         final String order = createMarketOrder(etoroMarketOrderDto);
         if (order != null)
         {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             try
             {
-                EtoroOrderDetailsResponseDTO orderResponse = mapper.readValue(order, EtoroOrderDetailsResponseDTO.class);
+                EtoroOrderDetailsResponseDTO orderResponse = objectMapper.readValue(order, EtoroOrderDetailsResponseDTO.class);
                 EtoroOrderDetails orderDetails = orderResponse.getOrderForOpen();
-                etoroOrder.fill(orderDetails);
-                etoroOrder.setStatus("SENT");
-                etoroOrder.setTokenId(orderResponse.getToken());
-                orderRepository.save(etoroOrder);
+                return saveOrder(etoroMarketOrderDto,orderDetails,orderResponse.getToken());
             } catch (JsonProcessingException e)
             {
                 throw new RuntimeException(e);
             }
         }
+        return null;
+    }
+
+    @Override
+    public EtoroOrder saveOrder(EtoroMarketOrderDto etoroMarketOrderDto,
+                                EtoroOrderDetails orderDetails,
+                                String etoroOrderToken)
+    {
+        EtoroOrder etoroOrder = new EtoroOrder();
+        etoroOrder.setStatus("SENT");
+        etoroOrder.setOderType(etoroMarketOrderDto.getOrderType());
+        etoroOrder.fill(orderDetails);
+        etoroOrder.setTokenId(etoroOrderToken);
+        orderRepository.save(etoroOrder);
         return etoroOrder;
     }
 
@@ -173,10 +186,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             {
                 throw new RuntimeException(e);
             }
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule());
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return mapper.readValue(response.getBody(), EtoroPortfolioResponseDTO.class);
+            return objectMapper.readValue(response.getBody(), EtoroPortfolioResponseDTO.class);
 
         } catch (JsonProcessingException e)
         {

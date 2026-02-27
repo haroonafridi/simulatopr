@@ -1,0 +1,22 @@
+package com.hkcapital.portoflio.etoro;
+
+public class CalcUtils
+{
+    public static double calculateTargetPrice(double openPrice, int leverage, double investment, double tpAmount) {
+        // The amount of price movement needed to reach the profit goal
+        double priceMove = (tpAmount / (investment * leverage)) * openPrice;
+
+        return openPrice + priceMove;
+    }
+
+    public static void main(String[] args)
+    {
+        double open = 24952.53;
+        int lev = 20;
+        double inv = 50.0;
+        double tp = 4;
+        double result = Math.round(calculateTargetPrice(open, lev, inv, tp));
+        // Asserting with a small delta for rounding
+        System.out.println(result);
+    }
+}

@@ -1,12 +1,18 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.DataObject;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
-import com.hkcapital.portoflio.service.impl.EtoroOrderManagerServiceImpl;
+import com.hkcapital.portoflio.etoro.master.Instruments;
+import com.hkcapital.portoflio.etoro.websocket.EToroWSClient;
+import com.hkcapital.portoflio.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portoflio.model.*;
+import com.hkcapital.portoflio.order.OderTypes;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
+import com.hkcapital.portoflio.service.impl.etoro.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portoflio.ui.panels.capital.CapitalPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
@@ -32,6 +38,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.hkcapital.portoflio.etoro.CalcUtils.calculateTargetPrice;
 
 @Component
 public class PnLSimulatorFacad
@@ -91,7 +99,8 @@ public class PnLSimulatorFacad
 
     public void createApplication() throws UnsupportedLookAndFeelException
     {
-        if(this.etoroApiInformationService.toString().contains("PRO")) {
+        if (this.etoroApiInformationService.toString().contains("PRO"))
+        {
 
         }
         UIManager.setLookAndFeel(new MetalLookAndFeel());
@@ -117,6 +126,9 @@ public class PnLSimulatorFacad
         DefaultMutableTreeNode instruments = new DefaultMutableTreeNode("Instruments");
         instruments.add(new DefaultMutableTreeNode("Instruments"));
 
+        DefaultMutableTreeNode settings = new DefaultMutableTreeNode("Settings");
+        settings.add(new DefaultMutableTreeNode("Profile"));
+
         DefaultMutableTreeNode brokers = new DefaultMutableTreeNode("Brokers");
         brokers.add(new DefaultMutableTreeNode("Brokers"));
         brokers.add(new DefaultMutableTreeNode("Brokers API"));
@@ -136,6 +148,7 @@ public class PnLSimulatorFacad
         models.add(new DefaultMutableTreeNode("SR-Matrix"));
         models.add(new DefaultMutableTreeNode("BRP-Model"));
 
+        root.add(settings);
         root.add(instruments);
         root.add(brokers);
         root.add(configuration);
@@ -236,20 +249,56 @@ public class PnLSimulatorFacad
 //        this.etoroCandleService.getCandleInformation(FourHours);
 //        this.etoroCandleService.getCandleInformation(OneDay);
 //        this.etoroCandleService.getCandleInformation(OneWeek);
+        EToroWSClient eToroWSClient = new EToroWSClient();
+        ScheduledExecutorService schedulerWs = Executors.newSingleThreadScheduledExecutor();
+        schedulerWs.submit(() ->
+        {
+            try
+            {
+                eToroWSClient.start(new EtoroAPIInformationDemoServiceImpl());
+
+            } catch (InterruptedException e)
+            {
+                throw new RuntimeException(e);
+            }
+            logger.error("Cannot subscribe to etoro WS");
+        });
+
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-        scheduler.scheduleAtFixedRate(() -> {
-            try {
+        scheduler.scheduleAtFixedRate(() ->
+        {
+            try
+            {
                 logger.info("Executing background orders...");
-//                etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderGold());
-//                etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderNasdaq100());
-//                etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderBtc());
-            } catch (Exception e) {
+                LiveInstrumentRate instrumentRate= eToroWSClient.getLiveInstrumentRate();
+                if(instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
+                {
+                    logger.info("Instrument price recieved bid = [{}] , ask = [{}]"+instrumentRate.getBid() , instrumentRate.getAsk());
+                    Double tp = (calculateTargetPrice(Double.parseDouble(instrumentRate.getAsk()), 20, 50d, 2d));
+                    EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
+                            true, //
+                            1, //
+                            50d, //
+                            null, //
+                            null, //
+                            null, //
+                            null, //
+                            null,
+                            OderTypes.AUTO.getOrderType());
+                    etoroOrderManagerService.createAndSaveMarketOrder((etoroMarketOrderDto));
+                }
+                //etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderGold());
+            //    etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderNasdaq100());
+             //   etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderBtc());
+            } catch (Exception e)
+            {
                 logger.error("Error in background task", e);
             }
-        }, 0, 5, TimeUnit.MINUTES);
+        }, 0, 1, TimeUnit.MINUTES);
 
     }
+
     void saveOrUpdate(List<Position> pnl,
                       Configuration configuration,
                       MarketConditions marketCondition,

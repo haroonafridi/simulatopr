@@ -4,12 +4,12 @@ import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.Strategy;
+import com.hkcapital.portoflio.order.OderTypes;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.service.StrategyService;
-import com.hkcapital.portoflio.service.impl.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.RemoveStrategyButtonListener;
@@ -121,7 +121,8 @@ public class StrategyHeaderPanel extends UIBag
                 null, //
                 null, //
                 null, //
-                null);
+                null,
+                OderTypes.MANUAL.getOrderType());
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 

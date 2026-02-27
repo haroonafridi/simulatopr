@@ -21,6 +21,12 @@ public class EtoroPortfolioPositionDTO
     private double takeProfitRate;
     @JsonProperty("stopLossRate")
     private double stopLossRate;
+
+    @JsonProperty("mirrorID")
+    private Integer mirrorId;
+
+    @JsonProperty("parentPositionID")
+    private Integer parentPositionID;
     @JsonProperty("amount")
     private double amount;
     @JsonProperty("leverage")
@@ -402,43 +408,66 @@ public class EtoroPortfolioPositionDTO
         this.lotCount = lotCount;
     }
 
+    public Integer getMirrorId()
+    {
+        return mirrorId;
+    }
+
+    public void setMirrorId(Integer mirrorId)
+    {
+        this.mirrorId = mirrorId;
+    }
+
+    public Integer getParentPositionID()
+    {
+        return parentPositionID;
+    }
+
+    public void setParentPositionID(Integer parentPositionID)
+    {
+        this.parentPositionID = parentPositionID;
+    }
+
     @Override
     public String toString()
     {
-        return "EtoroPortfolioPositionDTO{" +
-                "\n positionId=" + positionId +
-                "\n , cid=" + cid +
-                "\n, openDateTime=" + openDateTime +
-                "\n , openRate=" + openRate +
-                "\n , instrumentId=" + instrumentId +
-                "\n , isBuy=" + isBuy +
-                "\n , takeProfitRate=" + takeProfitRate +
-                "\n , stopLossRate=" + stopLossRate +
-                "\n , amount=" + amount +
-                "\n , leverage=" + leverage +
-                "\n , orderId=" + orderId +
-                "\n, orderType=" + orderType +
-                "\n, units=" + units +
-                "\n , totalFees=" + totalFees +
-                "\n , initialAmountInDollars=" + initialAmountInDollars +
-                "\n , isTslEnabled=" + isTslEnabled +
-                "\n , stopLossVersion=" + stopLossVersion +
-                "\n , isSettled=" + isSettled +
-                "\n , redeemStatusId=" + redeemStatusId +
-                "\n , initialUnits=" + initialUnits +
-                "\n , isPartiallyAltered=" + isPartiallyAltered +
-                "\n , unitsBaseValueDollars=" + unitsBaseValueDollars +
-                "\n , isDiscounted=" + isDiscounted +
-                "\n , openPositionActionType=" + openPositionActionType +
-                "\n , settlementTypeId=" + settlementTypeId +
-                "\n , isDetached=" + isDetached +
-                "\n , openConversionRate=" + openConversionRate +
-                "\n , pnlVersion=" + pnlVersion +
-                "\n , totalExternalFees=" + totalExternalFees +
-                "\n , totalExternalTaxes=" + totalExternalTaxes +
-                "\n , isNoTakeProfit=" + isNoTakeProfit +
-                "\n , isNoStopLoss=" + isNoStopLoss +
-                "\n , lotCount=" + lotCount +
+        return "EtoroPortfolioPositionDTO" +
+                "{" +
+                "positionId=" + positionId +
+                ", cid=" + cid +
+                ", openDateTime=" + openDateTime +
+                ", openRate=" + openRate +
+                ", instrumentId=" + instrumentId +
+                ", isBuy=" + isBuy +
+                ", takeProfitRate=" + takeProfitRate +
+                ", stopLossRate=" + stopLossRate +
+                ", mirrorId=" + mirrorId +
+                ", parentPositionID=" + parentPositionID +
+                ", amount=" + amount +
+                ", leverage=" + leverage +
+                ", orderId=" + orderId +
+                ", orderType=" + orderType +
+                ", units=" + units +
+                ", totalFees=" + totalFees +
+                ", initialAmountInDollars=" + initialAmountInDollars +
+                ", isTslEnabled=" + isTslEnabled +
+                ", stopLossVersion=" + stopLossVersion +
+                ", isSettled=" + isSettled +
+                ", redeemStatusId=" + redeemStatusId +
+                ", initialUnits=" + initialUnits +
+                ", isPartiallyAltered=" + isPartiallyAltered +
+                ", unitsBaseValueDollars=" + unitsBaseValueDollars +
+                ", isDiscounted=" + isDiscounted +
+                ", openPositionActionType=" + openPositionActionType +
+                ", settlementTypeId=" + settlementTypeId +
+                ", isDetached=" + isDetached +
+                ", openConversionRate=" + openConversionRate +
+                ", pnlVersion=" + pnlVersion +
+                ", totalExternalFees=" + totalExternalFees +
+                ", totalExternalTaxes=" + totalExternalTaxes +
+                ", isNoTakeProfit=" + isNoTakeProfit +
+                ", isNoStopLoss=" + isNoStopLoss +
+                ", lotCount=" + lotCount +
                 '}';
     }
 }
