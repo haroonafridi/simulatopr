@@ -1,20 +1,20 @@
 package com.hkcapital.portoflio.ui.panels.srmatrix.dialogues;
 
-import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
-import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
+import com.hkcapital.portoflio.ui.panels.srmatrix.labels.Labels;
+import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class SRMatrixDialogue extends JDialog
 {
-    private final InstrumentPanel instrumentPanel;
+    private final SRMatrixPanel srMatrixPanel;
 
-    public SRMatrixDialogue(Frame owner, final InstrumentPanel instrumentPanel)
+    public SRMatrixDialogue(Frame owner, final SRMatrixPanel srMatrixPanel)
     {
-        super(owner, Labels.Instrument.getLabel(), false);
-        this.instrumentPanel = instrumentPanel;
-        getContentPane().add(instrumentPanel);
+        super(owner, Labels.SRMatrix.getLabel(), false);
+        this.srMatrixPanel = srMatrixPanel;
+        getContentPane().add(srMatrixPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(owner);
         pack();

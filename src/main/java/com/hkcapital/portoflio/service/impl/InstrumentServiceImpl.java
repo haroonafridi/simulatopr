@@ -62,4 +62,10 @@ public class InstrumentServiceImpl implements InstrumentService
     {
         instrumentRepository.findById(id).ifPresent(instrument -> instrumentRepository.delete(instrument));
     }
+
+    @Override
+    public Instrument findByEtoroInstrumentId(Integer id)
+    {
+        return null;
+    }
 }

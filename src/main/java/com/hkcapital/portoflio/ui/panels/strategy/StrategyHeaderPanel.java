@@ -122,7 +122,11 @@ public class StrategyHeaderPanel extends UIBag
                 null, //
                 null, //
                 null,
-                OderTypes.MANUAL.getOrderType());
+                OderTypes.MANUAL.getOrderType(),
+                null,
+                null,
+                null,
+                null);
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 

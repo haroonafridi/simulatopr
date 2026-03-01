@@ -1,29 +1,40 @@
 package com.hkcapital.portoflio.ui.panels.srmatrix.panels;
 
 import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
+import com.hkcapital.portoflio.service.SRMatrixService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
-import com.hkcapital.portoflio.ui.panels.instrument.tablemodels.InstrumentTableModel;
-import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
+import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.srmatrix.labels.Labels;
+import com.hkcapital.portoflio.ui.panels.srmatrix.tablemodels.SRMatrixTableModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class SRMatrixPanel extends UIBag
 {
-
     private final ServiceRegistery<Service> serviceRegistery;
+    private final SRMatrixService srMatrixService;
+    private final JLabel supportLabel = new JLabel("Support");
+    private final NumberTextField support = new NumberTextField(40);
+    private final JLabel resistenceLabel = new JLabel("Resistence");
+    private final NumberTextField resistence = new NumberTextField(40);
 
-    private final InstrumentService instrumentService;
+    private final JLabel timeFrameLabel = new JLabel("Timeframe");
+    private final NumberTextField timeFrame = new NumberTextField(40);
 
-    private final JLabel instrumentLabel = new JLabel("Instrument Name:");
-    private final JTextField instrumentName = new JTextField(30);
+    JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{"MINUTE", "HOUR", "DAY", "WEEK"});
 
-    private final JTable instrumentTable;
-    private final InstrumentTableModel tableModel;
+    private JComboBox<Instrument> instrumentList = new JComboBox<>();
+
+    private final JTable srMatrixTable;
+    private final SRMatrixTableModel tableModel;
 
     private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
     private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
@@ -32,31 +43,48 @@ public class SRMatrixPanel extends UIBag
 
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
 
+    private final InstrumentService instrumentService;
+
     public SRMatrixPanel(final ServiceRegistery serviceRegistery)
     {
         super(SRMatrixPanel.class);
         this.serviceRegistery = serviceRegistery;
-        this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
+        this.srMatrixService = (SRMatrixService) this.serviceRegistery.getService(Service.SRMatrixService);
+        this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
 
-        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel()}, //
-                instrumentService.findAll());
+        List<Instrument> instrumentList = instrumentService.findAll();
+
+        for (Instrument instrument : instrumentList)
+        {
+            this.instrumentList.addItem(instrument);
+        }
+
+        tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
+                "Support" ,"Resistance","Time Frame","TimeFrame Unite"
+        }, //
+                srMatrixService.findAll());
 
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder(Labels.InstrumentPanel.getLabel()));
+        setBorder(BorderFactory.createTitledBorder(Labels.SRMatrix.getLabel()));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
 
         // Row 0: Instrument label + text field
-        JPanel instrumentInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        instrumentInputPanel.add(instrumentLabel);
-        instrumentInputPanel.add(instrumentName);
-
+        JPanel srMatrixInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        srMatrixInputPanel.add(this.instrumentList);
+        srMatrixInputPanel.add(supportLabel);
+        srMatrixInputPanel.add(support);
+        srMatrixInputPanel.add(resistenceLabel);
+        srMatrixInputPanel.add(resistence);
+        srMatrixInputPanel.add(timeFrameLabel);
+        srMatrixInputPanel.add(timeFrame);
+        srMatrixInputPanel.add(timeFrameUnit);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(instrumentInputPanel, gbc);
+        add(srMatrixInputPanel, gbc);
 
         // Row 1: Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -75,8 +103,8 @@ public class SRMatrixPanel extends UIBag
         add(buttonPanel, gbc);
 
         // Row 2: Table inside scroll pane
-        instrumentTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(instrumentTable);
+        srMatrixTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(srMatrixTable);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -87,7 +115,7 @@ public class SRMatrixPanel extends UIBag
         add(scrollPane, gbc);
         saveButton.addActionListener(e -> save());
         removeButton.addActionListener(e -> remove());
-        readButton.addActionListener(e -> instrumentService.findAll());
+        readButton.addActionListener(e -> srMatrixService.findAll());
         cancelButton.addActionListener(e -> clear());
         closeButton.addActionListener(e ->
         {
@@ -98,37 +126,35 @@ public class SRMatrixPanel extends UIBag
 
     public void save()
     {
-        String name = instrumentName.getText();
-        if (name != null && !name.trim().isEmpty())
-        {
-            Instrument instrument = new Instrument(name.trim());
-            instrumentService.addInstrument(instrument);
-            tableModel.addRow(instrument);
-            instrumentName.setText(null);
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Please enter an instrument name.",
-                    "Validation Error", JOptionPane.WARNING_MESSAGE);
-        }
+
+        SRMatrix srMatrix = new SRMatrix(LocalDateTime.now(), //
+                this.timeFrame.getIntValue(), //
+                this.timeFrameUnit.getSelectedItem().toString(), //
+                (Instrument) this.instrumentList.getModel().getSelectedItem(), //
+                this.support.getDoubleValue(), //
+                this.resistence.getDoubleValue());
+
+        srMatrixService.addSRMatrix(srMatrix);
+        tableModel.addRow(srMatrix);
     }
 
     public void remove()
     {
-        int selectedRow = instrumentTable.getSelectedRow();
+        int selectedRow = srMatrixTable.getSelectedRow();
         if (selectedRow >= 0)
         {
-            Instrument instrument = (Instrument) tableModel.removeRow(selectedRow);
-            instrumentService.removeInstrument(instrument);
+            SRMatrix srMatrix = (SRMatrix) tableModel.removeRow(selectedRow);
+            srMatrixService.removeSRMatrix(srMatrix);
         } else
         {
-            JOptionPane.showMessageDialog(this, "Please select an instrument to remove.",
+            JOptionPane.showMessageDialog(this, "Please select an SRMatrix to remove.",
                     "No Selection", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     public void clear()
     {
-        instrumentName.setText(null);
+        //instrumentName.setText(null);
     }
 
 

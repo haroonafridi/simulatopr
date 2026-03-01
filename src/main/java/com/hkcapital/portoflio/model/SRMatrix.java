@@ -17,14 +17,33 @@ public class SRMatrix
     private Integer timeFrame;
     @Column(name = "time_frame_unit")
     private String timeFrameUnit;
-    @Column(name = "instrument")
-    private String instrument;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "instrument_id", referencedColumnName = "id")
+    private Instrument instrument;
 
     @Column(name = "support")
     private Double support;
 
     @Column(name = "resistance")
     private Double resistance;
+
+    public SRMatrix() {
+
+    }
+    public SRMatrix( LocalDateTime creationDate, //
+                     Integer timeFrame, //
+                     String timeFrameUnit, //
+                     Instrument instrument, //
+                     Double support, //
+                     Double resistance)
+    {
+        this.creationDate = creationDate;
+        this.timeFrame = timeFrame;
+        this.timeFrameUnit = timeFrameUnit;
+        this.instrument = instrument;
+        this.support = support;
+        this.resistance = resistance;
+    }
 
     public Integer getId()
     {
@@ -66,16 +85,6 @@ public class SRMatrix
         this.timeFrameUnit = timeFrameUnit;
     }
 
-    public String getInstrument()
-    {
-        return instrument;
-    }
-
-    public void setInstrument(String instrument)
-    {
-        this.instrument = instrument;
-    }
-
     public Double getSupport()
     {
         return support;
@@ -95,4 +104,16 @@ public class SRMatrix
     {
         this.resistance = resistance;
     }
+
+    public Instrument getInstrument()
+    {
+        return instrument;
+    }
+
+    public void setInstrument(Instrument instrument)
+    {
+        this.instrument = instrument;
+    }
+
+
 }

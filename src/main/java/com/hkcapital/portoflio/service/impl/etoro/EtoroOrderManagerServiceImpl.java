@@ -165,6 +165,10 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         etoroOrder.setOderType(etoroMarketOrderDto.getOrderType());
         etoroOrder.fill(orderDetails);
         etoroOrder.setTokenId(etoroOrderToken);
+        etoroOrder.setBid(etoroMarketOrderDto.getBid());
+        etoroOrder.setAsk(etoroMarketOrderDto.getAsk());
+        etoroOrder.setMaxAllowedSlippage(etoroMarketOrderDto.getMaxAllowedSlippage());
+        etoroOrder.setEtoroSlippage(etoroMarketOrderDto.getEtoroSlippage());
         orderRepository.save(etoroOrder);
         return etoroOrder;
     }

@@ -12,6 +12,12 @@ public class Instrument
     @Column(name = "instrument_name")
     private String name;
 
+    @Column(name = "etoro_instrument_id")
+    private Integer etoroInstrumentId;
+
+    @Column(name = "max_slippage")
+    private Double maxSlippage;
+
     public Instrument () {
 
     }
@@ -44,5 +50,25 @@ public class Instrument
     public String toString()
     {
         return name;
+    }
+
+    public Integer getEtoroInstrumentId()
+    {
+        return etoroInstrumentId;
+    }
+
+    public void setEtoroInstrumentId(Integer etoroInstrumentId)
+    {
+        this.etoroInstrumentId = etoroInstrumentId;
+    }
+
+    public Double getMaxSlippage()
+    {
+        return maxSlippage;
+    }
+
+    public void setMaxSlippage(Double maxSlippage)
+    {
+        this.maxSlippage = maxSlippage;
     }
 }

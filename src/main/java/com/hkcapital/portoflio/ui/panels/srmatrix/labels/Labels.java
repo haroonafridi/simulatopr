@@ -3,9 +3,9 @@ package com.hkcapital.portoflio.ui.panels.srmatrix.labels;
 public enum Labels
 {
     Id("Id"),
-    Instrument("Instrument"),
+    SRMatrix("SRMatrix"),
     Name("Name"),
-    InstrumentPanel("Instrument Panel");
+    SRMatrixPanel("SRMatrix Panel");
 
     private String label;
 

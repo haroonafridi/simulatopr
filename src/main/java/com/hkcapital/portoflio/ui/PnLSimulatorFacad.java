@@ -22,6 +22,8 @@ import com.hkcapital.portoflio.ui.panels.marketconditions.dialogues.MarketCondit
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
+import com.hkcapital.portoflio.ui.panels.srmatrix.dialogues.SRMatrixDialogue;
+import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixPanel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionDialogue;
 import com.hkcapital.portoflio.ui.panels.tradingsessions.TradingSessionPanel;
@@ -58,6 +60,10 @@ public class PnLSimulatorFacad
     private final TradingSessionsService<TradingSessions> tradingSessionsService;
     private final EtoroCandleService etoroCandleService;
 
+    private final EtoroWebSocketManagerService etoroWebSocketManagerService;
+
+    private final SRMatrixService srMatrixService;
+
     private final EtoroAPIInformationService etoroApiInformationService;
 
     private DataObject<String, String> dataObject = new DataObject<>();
@@ -72,6 +78,8 @@ public class PnLSimulatorFacad
                              EtoroCandleService etoroCandleService,
                              EtoroOrderManagerServiceImpl etoroOrderManager,
                              EtoroAPIInformationService apiInformationService,
+                             EtoroWebSocketManagerService etoroWebSocketManagerService,
+                             SRMatrixService srMatrixService,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -84,16 +92,20 @@ public class PnLSimulatorFacad
         this.serviceRegistery = serviceRegistery;
         this.etoroCandleService = etoroCandleService;
         this.etoroApiInformationService = apiInformationService;
+        this.etoroWebSocketManagerService = etoroWebSocketManagerService;
+        this.srMatrixService = srMatrixService;
 
-        serviceRegistery.putService("ConfigurationService", this.configurationService);
-        serviceRegistery.putService("StrategyService", this.strategyService);
-        serviceRegistery.putService("MarketConditionsService", this.marketConditionsService);
-        serviceRegistery.putService("InstrumentService", this.instrumentService);
-        serviceRegistery.putService("PositionService", this.positionPnLService);
-        serviceRegistery.putService("TradingSessionsService", this.tradingSessionsService);
-        serviceRegistery.putService("EtoroCandleService", this.etoroCandleService);
-        serviceRegistery.putService("OrderManagerService", this.etoroOrderManagerService);
-        serviceRegistery.putService("EtoroAPIInformationService", this.etoroApiInformationService);
+        serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
+        serviceRegistery.putService(Service.StrategyService, this.strategyService);
+        serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
+        serviceRegistery.putService(Service.InstrumentService, this.instrumentService);
+        serviceRegistery.putService(Service.PositionService, this.positionPnLService);
+        serviceRegistery.putService(Service.TradingSessionsService, this.tradingSessionsService);
+        serviceRegistery.putService(Service.EtoroCandleService, this.etoroCandleService);
+        serviceRegistery.putService(Service.OrderManagerService, this.etoroOrderManagerService);
+        serviceRegistery.putService(Service.EtoroAPIInformationService, this.etoroApiInformationService);
+        serviceRegistery.putService(Service.EtoroWebSocketManagerService, this.etoroApiInformationService);
+        serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
 
     }
 
@@ -239,7 +251,19 @@ public class PnLSimulatorFacad
                 instrumentDialogue.setVisible(true);
             }
 
+            if (nodeObject.toString().equals("SR-Matrix"))
+            {
+                // Optional: handle folders or intermediate nodes
+                SRMatrixDialogue srMatrixPanel = new SRMatrixDialogue(mainFrame, //
+                        new SRMatrixPanel(serviceRegistery));
+                srMatrixPanel.setVisible(true);
+            }
+
+
         });
+
+        etoroWebSocketManagerService.subscribeAndSchedule();
+
 //        this.etoroCandleService.getCandleInformation(OneMinute);
 //        this.etoroCandleService.getCandleInformation(FiveMinutes);
 //        this.etoroCandleService.getCandleInformation(TenMinutes);
@@ -249,53 +273,6 @@ public class PnLSimulatorFacad
 //        this.etoroCandleService.getCandleInformation(FourHours);
 //        this.etoroCandleService.getCandleInformation(OneDay);
 //        this.etoroCandleService.getCandleInformation(OneWeek);
-        EToroWSClient eToroWSClient = new EToroWSClient();
-        ScheduledExecutorService schedulerWs = Executors.newSingleThreadScheduledExecutor();
-        schedulerWs.submit(() ->
-        {
-            try
-            {
-                eToroWSClient.start(new EtoroAPIInformationDemoServiceImpl());
-
-            } catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
-            logger.error("Cannot subscribe to etoro WS");
-        });
-
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
-        scheduler.scheduleAtFixedRate(() ->
-        {
-            try
-            {
-                logger.info("Executing background orders...");
-                LiveInstrumentRate instrumentRate= eToroWSClient.getLiveInstrumentRate();
-                if(instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
-                {
-                    logger.info("Instrument price recieved bid = [{}] , ask = [{}]"+instrumentRate.getBid() , instrumentRate.getAsk());
-                    Double tp = (calculateTargetPrice(Double.parseDouble(instrumentRate.getAsk()), 20, 50d, 2d));
-                    EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
-                            true, //
-                            1, //
-                            50d, //
-                            null, //
-                            null, //
-                            null, //
-                            null, //
-                            null,
-                            OderTypes.AUTO.getOrderType());
-                    etoroOrderManagerService.createAndSaveMarketOrder((etoroMarketOrderDto));
-                }
-                //etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderGold());
-            //    etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderNasdaq100());
-             //   etoroOrderManagerService.createAndSaveMarketOrder(EtoroMarketOrderDto.createDummyOrderBtc());
-            } catch (Exception e)
-            {
-                logger.error("Error in background task", e);
-            }
-        }, 0, 1, TimeUnit.MINUTES);
 
     }
 

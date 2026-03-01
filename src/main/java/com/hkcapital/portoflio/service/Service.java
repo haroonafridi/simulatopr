@@ -16,4 +16,8 @@ public interface Service
 
     String OrderManagerService = "OrderManagerService";
 
+    String EtoroWebSocketManagerService = "EtoroWebSocketManagerService";
+
+    String SRMatrixService = "SRMatrixService";
+
 }

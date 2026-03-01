@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "sr_matrix")
+@Table(name = "brp_model")
 public class BRPModel
 {
     @Id

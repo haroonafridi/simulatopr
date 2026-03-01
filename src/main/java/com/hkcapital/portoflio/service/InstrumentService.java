@@ -21,5 +21,7 @@ public interface InstrumentService  extends Service
 
     void removeById(Integer id);
 
+    Instrument findByEtoroInstrumentId(Integer id);
+
 
 }

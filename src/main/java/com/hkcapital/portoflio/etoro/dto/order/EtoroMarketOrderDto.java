@@ -20,12 +20,25 @@ public class EtoroMarketOrderDto implements JSON
 
     private String orderType;
 
+    private Double bid;
+
+    private Double ask;
+
+    private Double maxAllowedSlippage;
+    private Double etoroSlippage;
+
+
+
     public EtoroMarketOrderDto(Integer instrumentId, Boolean isBuy, Integer leverage, //
                                Double amount, Double stopLossRate, //
                                Double takeProfitRate, Boolean isTslEnabled, //
                                Boolean isNoStopLoss, //
                                Boolean isNoTakeProfit,
-                               String orderType)
+                               String orderType,
+                               Double bid,
+                               Double ask,
+                               Double maxAllowedSlippage,
+                               Double etoroSlippage)
     {
         this.instrumentId = instrumentId;
         this.isBuy = isBuy;
@@ -37,6 +50,10 @@ public class EtoroMarketOrderDto implements JSON
         this.isNoStopLoss = isNoStopLoss;
         this.isNoTakeProfit = isNoTakeProfit;
         this.orderType = orderType;
+        this.bid = bid;
+        this.ask = ask;
+        this.maxAllowedSlippage = maxAllowedSlippage;
+        this.etoroSlippage =etoroSlippage;
     }
 
     public Integer getInstrumentId()
@@ -129,6 +146,52 @@ public class EtoroMarketOrderDto implements JSON
         isNoTakeProfit = noTakeProfit;
     }
 
+
+    public void setOrderType(String orderType)
+    {
+        this.orderType = orderType;
+    }
+
+    public Double getBid()
+    {
+        return bid;
+    }
+
+    public void setBid(Double bid)
+    {
+        this.bid = bid;
+    }
+
+    public Double getAsk()
+    {
+        return ask;
+    }
+
+    public void setAsk(Double ask)
+    {
+        this.ask = ask;
+    }
+
+    public Double getMaxAllowedSlippage()
+    {
+        return maxAllowedSlippage;
+    }
+
+    public void setMaxAllowedSlippage(Double maxAllowedSlippage)
+    {
+        this.maxAllowedSlippage = maxAllowedSlippage;
+    }
+
+    public Double getEtoroSlippage()
+    {
+        return etoroSlippage;
+    }
+
+    public void setEtoroSlippage(Double etoroSlippage)
+    {
+        this.etoroSlippage = etoroSlippage;
+    }
+
     @Override
     public String toString()
     {
@@ -172,7 +235,11 @@ public class EtoroMarketOrderDto implements JSON
                 null, //
                 null, //
                 null,
-                "AUTO");
+                "AUTO",
+                67000d,
+                67010d,
+                10d,
+                5d);
     }
 
     public static EtoroMarketOrderDto createDummyOrderNasdaq100()
@@ -186,7 +253,11 @@ public class EtoroMarketOrderDto implements JSON
                 null, //
                 null, //
                 null,
-                "AUTO");
+                "AUTO",
+                25000d,
+                24700d,
+                10d,
+                5d);
     }
 
 
@@ -206,8 +277,14 @@ public class EtoroMarketOrderDto implements JSON
                 true, //
                 null, //
                 null,
-                "AUTO");
+                "AUTO",
+                5400d,
+                5390d,
+                10d,
+                5d);
     }
+
+
 
 
 

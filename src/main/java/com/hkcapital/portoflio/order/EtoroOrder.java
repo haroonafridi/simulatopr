@@ -39,6 +39,10 @@ public class EtoroOrder
 
     private String oderType;
 
+    private Double maxAllowedSlippage;
+
+    private Double etoroSlippage;
+
     public int getId()
     {
         return id;
@@ -222,5 +226,25 @@ public class EtoroOrder
     public void setOderType(String oderType)
     {
         this.oderType = oderType;
+    }
+
+    public Double getMaxAllowedSlippage()
+    {
+        return maxAllowedSlippage;
+    }
+
+    public void setMaxAllowedSlippage(Double maxAllowedSlippage)
+    {
+        this.maxAllowedSlippage = maxAllowedSlippage;
+    }
+
+    public Double getEtoroSlippage()
+    {
+        return etoroSlippage;
+    }
+
+    public void setEtoroSlippage(Double etoroSlippage)
+    {
+        this.etoroSlippage = etoroSlippage;
     }
 }
