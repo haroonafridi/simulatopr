@@ -33,6 +33,9 @@ public class SRMatrixPanel extends UIBag
 
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
 
+    private final JLabel activeLable = new JLabel("Active");
+    private final JCheckBox active = new JCheckBox();
+
     private final JTable srMatrixTable;
     private final SRMatrixTableModel tableModel;
 
@@ -60,7 +63,7 @@ public class SRMatrixPanel extends UIBag
         }
 
         tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
-                "Support" ,"Resistance","Time Frame","TimeFrame Unite"
+                "Support" ,"Resistance","Time Frame","TimeFrame Unite" ,"Active"
         }, //
                 srMatrixService.findAll());
 
@@ -79,6 +82,8 @@ public class SRMatrixPanel extends UIBag
         srMatrixInputPanel.add(timeFrameLabel);
         srMatrixInputPanel.add(timeFrame);
         srMatrixInputPanel.add(timeFrameUnit);
+        srMatrixInputPanel.add(activeLable);
+        srMatrixInputPanel.add(active);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -132,7 +137,8 @@ public class SRMatrixPanel extends UIBag
                 this.timeFrameUnit.getSelectedItem().toString(), //
                 (Instrument) this.instrumentList.getModel().getSelectedItem(), //
                 this.support.getDoubleValue(), //
-                this.resistence.getDoubleValue());
+                this.resistence.getDoubleValue(),
+                this.active.isSelected());
 
         srMatrixService.addSRMatrix(srMatrix);
         tableModel.addRow(srMatrix);

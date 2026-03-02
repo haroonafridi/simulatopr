@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.ui.panels.srmatrix.tablemodels;
 import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.ui.TableModel;
 
+import javax.swing.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -59,6 +60,11 @@ public class SRMatrixTableModel<E> extends TableModel
             case 6:
             {
                 return srMatrix.getTimeFrameUnit();
+            }
+
+            case 7:
+            {
+                return  srMatrix.getActive();
             }
             default:
             {

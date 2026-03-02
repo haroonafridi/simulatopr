@@ -6,11 +6,14 @@ import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
+import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentEditDialogue;
 import com.hkcapital.portoflio.ui.panels.instrument.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.instrument.tablemodels.InstrumentTableModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class InstrumentPanel extends UIBag
 {
@@ -38,7 +41,8 @@ public class InstrumentPanel extends UIBag
         this.serviceRegistery = serviceRegistery;
         this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
 
-        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel()}, //
+        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(),
+        Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Active.getLabel()}, //
                 instrumentService.findAll());
 
         setLayout(new GridBagLayout());
@@ -91,9 +95,31 @@ public class InstrumentPanel extends UIBag
         cancelButton.addActionListener(e -> clear());
         closeButton.addActionListener(e ->
         {
-            // Close the dialog (find top-level window)
             SwingUtilities.getWindowAncestor(this).dispose();
         });
+
+        instrumentTable.addMouseListener(new MouseAdapter()
+        {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                super.mouseClicked(e);
+
+                if (e.getClickCount() == 2)
+                {
+                    Integer instrumentId = (Integer) instrumentTable.getModel() //
+                            .getValueAt(instrumentTable.getSelectedRow(), 0);
+                    InstrumentEditDialogue instrumentEditDialogue = //
+                            new InstrumentEditDialogue(instrumentService, instrumentId);
+                }
+            }
+        });
+
     }
 
     public void save()

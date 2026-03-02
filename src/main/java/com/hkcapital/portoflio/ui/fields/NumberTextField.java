@@ -13,13 +13,13 @@ public class NumberTextField extends JTextField
     public NumberTextField(int width, Double value)
     {
         setPreferredSize(new Dimension(width, 20));
-        setText(value.toString());
+        setText(value != null ? value.toString() : null);
     }
 
     public NumberTextField(int width, Integer value)
     {
         setPreferredSize(new Dimension(width, 20));
-        setText(value.toString());
+        setText(value != null ? value.toString() : null);
     }
 
     public NumberTextField(int width)

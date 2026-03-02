@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.strategy;
 
+import com.hkcapital.portoflio.etoro.Configuration;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Position;
@@ -25,10 +26,10 @@ public class StrategyHeaderPanel extends UIBag
 {
     private final StrategyService strategyService;
     private final JLabel strategyNameLabel = new JLabel("Strategy Name:");
-    private  final JTextField strategyName = new JTextField(20);
+    private final JTextField strategyName = new JTextField(20);
     private final JLabel strategyDescriptionLabel = new JLabel("Strategy Description:");
 
-    private  final JTextField strategyDescription = new JTextField(40);
+    private final JTextField strategyDescription = new JTextField(40);
 
     private final JButton saveStrategy = new JButton("Save Strategy");
 
@@ -38,8 +39,10 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JButton manualOrderButton = new JButton("Create Market Order");
 
+    private final JButton automaticTrading = new JButton("Activate Auto Trading");
+
     private final JTable strategyTable;
-    private final StrategyTableModel<Strategy>  tableModel;
+    private final StrategyTableModel<Strategy> tableModel;
 
     private PositionActionsPanel positionActionsPanel;
 
@@ -54,13 +57,13 @@ public class StrategyHeaderPanel extends UIBag
     {
         super(StrategyHeaderPanel.class);
         this.serviceRegistery = serviceRegistery;
-        this.strategyService = (StrategyService)serviceRegistery.getService(Service.StrategyService);
-        this.positionService = (PositionService)serviceRegistery.getService(Service.PositionService);
+        this.strategyService = (StrategyService) serviceRegistery.getService(Service.StrategyService);
+        this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
         this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
-        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name" ,
+        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name",
                 "Description:"}, strategyService.findAll());
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -72,6 +75,7 @@ public class StrategyHeaderPanel extends UIBag
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
         topPanel.add(manualOrderButton);
+        topPanel.add(automaticTrading);
         add(topPanel, BorderLayout.NORTH);
         strategyTable = new JTable(tableModel);
         int rowCountToShow = 50;
@@ -86,16 +90,18 @@ public class StrategyHeaderPanel extends UIBag
         add(scrollPane, BorderLayout.CENTER);
         saveStrategy.addActionListener(new SaveStrategyButtonListener(strategyService, tableModel, this));
         strategyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        strategyTable.getSelectionModel().addListSelectionListener(e-> {
-            if (!e.getValueIsAdjusting()) {
+        strategyTable.getSelectionModel().addListSelectionListener(e ->
+        {
+            if (!e.getValueIsAdjusting())
+            {
                 int selectedRow = strategyTable.getSelectedRow();
                 if (selectedRow >= 0)
                 {
                     // Convert view row index to model index (important if table is sorted)
                     int modelRow = strategyTable.convertRowIndexToModel(selectedRow);
-                    Strategy strategy =   (Strategy)tableModel.getElements().get(selectedRow);
+                    Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
                     setHeaderFieldsFromRow(modelRow);
-                    List<Position> positionList =  positionService.findByStrategyId(strategy.getId());
+                    List<Position> positionList = positionService.findByStrategyId(strategy.getId());
                     positionActionsPanel.getModel().updateData(positionList);
                 }
             }
@@ -104,15 +110,27 @@ public class StrategyHeaderPanel extends UIBag
         removeButton.addActionListener(new RemoveStrategyButtonListener(strategyTable, tableModel, strategyService, this));
         cancelButton.addActionListener(e -> clear());
         manualOrderButton.addActionListener(m -> createMarketOrder());
+        automaticTrading.addActionListener(a ->
+        {
+            if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
+            {
+                Configuration.ACTIVATE_AUTOMATIC_TRADING = Boolean.FALSE;
+                automaticTrading.setText("Activate Auto Trading");
+            } else
+            {
+                Configuration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
+                automaticTrading.setText("Deactivate Auto Trading");
+            }
+        });
 
     }
 
     @Transactional
     public void createMarketOrder()
     {
-        StrategyService strategyService=  (StrategyService)serviceRegistery.getService("StrategyService");
-        Strategy  strategy = strategyService.findById(12);
-        List<Position> positionList =  positionService.findByStrategyId(strategy.getId());
+        StrategyService strategyService = (StrategyService) serviceRegistery.getService("StrategyService");
+        Strategy strategy = strategyService.findById(12);
+        List<Position> positionList = positionService.findByStrategyId(strategy.getId());
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
                 true, //
                 1, //
@@ -130,7 +148,8 @@ public class StrategyHeaderPanel extends UIBag
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 
-    private void setHeaderFieldsFromRow(int rowIndex) {
+    private void setHeaderFieldsFromRow(int rowIndex)
+    {
 
         Object id = tableModel.getValueAt(rowIndex, 0);       // Column 0
 
@@ -148,9 +167,10 @@ public class StrategyHeaderPanel extends UIBag
         return (Strategy) tableModel.getElements().get(strategyTable.getSelectedRow());
     }
 
-    public void clear() {
-       strategyName.setText(null);
-       strategyDescription.setText(null);
+    public void clear()
+    {
+        strategyName.setText(null);
+        strategyDescription.setText(null);
     }
 
 
@@ -160,7 +180,8 @@ public class StrategyHeaderPanel extends UIBag
     }
 
 
-    public Strategy createStrategy() {
+    public Strategy createStrategy()
+    {
         Strategy strategy = new Strategy(strategyName.getText(),
                 strategyDescription.getText(),
                 LocalDateTime.now());
@@ -168,6 +189,6 @@ public class StrategyHeaderPanel extends UIBag
         strategyName.setText(null);
         strategyDescription.setText(null);
 
-        return  strategy;
+        return strategy;
     }
 }

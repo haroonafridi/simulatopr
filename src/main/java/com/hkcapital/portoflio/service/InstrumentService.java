@@ -11,7 +11,7 @@ public interface InstrumentService  extends Service
 
     void removeInstrument(Instrument instrument);
 
-    Strategy updateInstrument(Instrument instrument);
+    Instrument updateInstrument(Instrument instrument);
 
     List<Instrument> findAll();
 

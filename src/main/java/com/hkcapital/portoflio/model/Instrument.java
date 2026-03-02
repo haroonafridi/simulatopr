@@ -18,6 +18,9 @@ public class Instrument
     @Column(name = "max_slippage")
     private Double maxSlippage;
 
+    @Column(name = "active")
+    private Boolean active;
+
     public Instrument () {
 
     }
@@ -70,5 +73,15 @@ public class Instrument
     public void setMaxSlippage(Double maxSlippage)
     {
         this.maxSlippage = maxSlippage;
+    }
+
+    public Boolean isActive()
+    {
+        return active;
+    }
+
+    public void setActive(Boolean active)
+    {
+        this.active = active;
     }
 }

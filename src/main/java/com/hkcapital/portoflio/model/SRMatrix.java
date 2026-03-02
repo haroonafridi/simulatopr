@@ -27,6 +27,8 @@ public class SRMatrix
     @Column(name = "resistance")
     private Double resistance;
 
+    private Boolean active;
+
     public SRMatrix() {
 
     }
@@ -35,7 +37,8 @@ public class SRMatrix
                      String timeFrameUnit, //
                      Instrument instrument, //
                      Double support, //
-                     Double resistance)
+                     Double resistance,
+                     Boolean active)
     {
         this.creationDate = creationDate;
         this.timeFrame = timeFrame;
@@ -43,6 +46,7 @@ public class SRMatrix
         this.instrument = instrument;
         this.support = support;
         this.resistance = resistance;
+        this.active = active;
     }
 
     public Integer getId()
@@ -115,5 +119,13 @@ public class SRMatrix
         this.instrument = instrument;
     }
 
+    public Boolean getActive()
+    {
+        return active;
+    }
 
+    public void setActive(Boolean active)
+    {
+        this.active = active;
+    }
 }

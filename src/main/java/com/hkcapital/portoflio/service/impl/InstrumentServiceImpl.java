@@ -33,9 +33,9 @@ public class InstrumentServiceImpl implements InstrumentService
     }
 
     @Override
-    public Strategy updateInstrument(Instrument instrument)
+    public Instrument updateInstrument(Instrument instrument)
     {
-        return null;
+        return instrumentRepository.save(instrument);
     }
 
     @Override

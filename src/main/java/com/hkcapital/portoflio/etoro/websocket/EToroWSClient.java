@@ -1,11 +1,12 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
-import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.etoro.master.Instruments;
+import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.service.InstrumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
+
 
 public class EToroWSClient implements WebSocket.Listener //
 {
@@ -30,7 +33,21 @@ public class EToroWSClient implements WebSocket.Listener //
 
     private LiveInstrumentRate liveInstrumentRate;
 
-    public static void main(String[] args) throws InterruptedException {
+    private InstrumentService instrumentService;
+
+    public EToroWSClient()
+    {
+
+    }
+
+    public EToroWSClient(final InstrumentService instrumentService)
+    {
+        this.instrumentService = instrumentService;
+    }
+
+
+    public static void main(String[] args) throws InterruptedException
+    {
         EtoroAPIInformationService apiInformation = new EtoroAPIInformationDemoServiceImpl();
         new EToroWSClient().start(apiInformation);
     }
@@ -40,14 +57,16 @@ public class EToroWSClient implements WebSocket.Listener //
         HttpClient.newHttpClient()
                 .newWebSocketBuilder()
                 .buildAsync(URI.create("wss://ws.etoro.com/ws"), this)
-                .thenAccept(ws -> {
+                .thenAccept(ws ->
+                {
                     logger.info("Connection request sent to etoro websocket!");
-                    performAuth(ws,apiInformation);
+                    performAuth(ws, apiInformation);
                 });
         latch.await(); // Keep the program alive
     }
 
-    private void performAuth(WebSocket ws, EtoroAPIInformationService apiInformation) {
+    private void performAuth(WebSocket ws, EtoroAPIInformationService apiInformation)
+    {
         String authMessage = """
                 {
                   "id": "%s",
@@ -63,7 +82,7 @@ public class EToroWSClient implements WebSocket.Listener //
                 apiInformation.getApiKey()
         );
         ws.sendText(authMessage, true);
-      logger.info("Authentication sent");
+        logger.info("Authentication sent");
     }
 
     @Override
@@ -76,37 +95,64 @@ public class EToroWSClient implements WebSocket.Listener //
     @Override
     public CompletionStage<?> onText(WebSocket webSocket,
                                      CharSequence data,
-                                     boolean last) {
+                                     boolean last)
+    {
         String message = data.toString();
-        try {
+        try
+        {
             JsonNode node = objectMapper.readTree(message);
 
             // 1️⃣ Check if auth succeeded
             if (node.has("operation") &&
                     "Authenticate".equals(node.get("operation").asText()) &&
-                    node.path("success").asBoolean(false)) {
+                    node.path("success").asBoolean(false))
+            {
 
                 System.out.println("Authentication successful");
-                subscribeInstrument(webSocket, Instruments.BTC.getInstrumentId().toString());
-                //subscribeInstrument(webSocket, Instruments.GOLD.getInstrumentId().toString());
+
+                if (instrumentService != null)
+                {
+                    List<Instrument> instrumentList = instrumentService.findAll()//
+                            .stream()//
+                            .filter(instrument -> instrument != null && instrument.isActive()).collect(Collectors.toList());
+                    instrumentList.stream().forEach(instrument ->
+                    {
+                        Instruments[] etoroInstruments = Instruments.values();
+
+                        for (Instruments inst : etoroInstruments)
+                        {
+                            if (instrument != null && instrument.isActive() && //
+                                    instrument.getEtoroInstrumentId().intValue() == inst.getInstrumentId().intValue())
+                            {
+                                subscribeInstrument(webSocket, "" + inst.getInstrumentId().intValue());
+                            }
+                        }
+                    });
+                }
             }
 
             if (node.has("operation") &&
-                    "Subscribe".equals(node.get("operation").asText())) {
+                    "Subscribe".equals(node.get("operation").asText()))
+            {
 
-                if (node.path("success").asBoolean(false)) {
+                if (node.path("success").asBoolean(false))
+                {
                     System.out.println("Subscription successful for topics: " +
                             node.path("data").path("topics").toString());
-                } else {
+                } else
+                {
                     String code = node.path("errorCode").asText();
-                    if ("TopicAlreadySubscribed".equals(code)) {
+                    if ("TopicAlreadySubscribed".equals(code))
+                    {
                         System.out.println("Already subscribed — skipping");
-                    } else {
+                    } else
+                    {
                         System.err.println("Subscription error: " + node.path("errorMessage").asText());
                     }
                 }
             }
-            if (node.has("topic") && node.get("topic").asText().startsWith("instrument:")) {
+            if (node.has("topic") && node.get("topic").asText().startsWith("instrument:"))
+            {
                 String topic = node.get("topic").asText();
                 JsonNode tickData = node.get("data");
                 System.out.println("Tick for " + topic + " → " + tickData.toString());
@@ -116,31 +162,38 @@ public class EToroWSClient implements WebSocket.Listener //
 
             if (livePriceResponseWrapper.getMessages() != null && livePriceResponseWrapper.getMessages().size() > 0)
             {
-                 liveInstrumentRate = objectMapper.readValue(livePriceResponseWrapper.getMessages().get(0).getContent(), //
+                liveInstrumentRate = objectMapper.readValue(livePriceResponseWrapper.getMessages().get(0).getContent(), //
                         LiveInstrumentRate.class);
             }
 
 
-        } catch (Exception e) {
-           throw new RuntimeException(e.getMessage());
+        } catch (Exception e)
+        {
+            throw new RuntimeException(e.getMessage());
         }
         return WebSocket.Listener.super.onText(webSocket, data, last);
     }
+
     @Override
-    public void onError(WebSocket webSocket, Throwable error) {
+    public void onError(WebSocket webSocket, Throwable error)
+    {
         logger.error("Error recieved [{}]", error.getMessage());
         error.printStackTrace();
     }
+
     @Override
     public CompletionStage<?> onClose(WebSocket webSocket,
                                       int statusCode,
-                                      String reason) {
+                                      String reason)
+    {
         logger.error("Disconnected  [{}]", reason);
         return WebSocket.Listener.super.onClose(webSocket, statusCode, reason);
     }
 
-    private void subscribeInstrument(WebSocket webSocket, String instrumentId) {
-        if (subscribedTopics.contains(instrumentId)) {
+    private void subscribeInstrument(WebSocket webSocket, String instrumentId)
+    {
+        if (subscribedTopics.contains(instrumentId))
+        {
             System.out.println("Already subscribed to " + instrumentId);
             return;
         }

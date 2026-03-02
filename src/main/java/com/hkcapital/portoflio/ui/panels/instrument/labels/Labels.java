@@ -5,6 +5,9 @@ public enum Labels
     Id("Id"),
     Instrument("Instrument"),
     Name("Name"),
+    MaxSlippage("Max Slippage"),
+    EtoroInstrumentId("Etoro Instrument Id"),
+    Active("Active"),
     InstrumentPanel("Instrument Panel");
 
     private String label;

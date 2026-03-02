@@ -38,6 +38,19 @@ public class InstrumentTableModel<E> extends TableModel
             {
                 return inst.getName();
             }
+            case 2:
+            {
+                return inst.getMaxSlippage();
+            }
+            case 3:
+            {
+                return inst.getEtoroInstrumentId();
+            }
+
+            case 4:
+            {
+                return inst.isActive();
+            }
             default:
             {
                 return null;
