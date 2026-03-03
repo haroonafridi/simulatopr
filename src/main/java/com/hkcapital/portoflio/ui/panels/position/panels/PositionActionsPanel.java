@@ -14,6 +14,7 @@ import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourc
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsSourcePanel;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.position.listeners.*;
+import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixSourcePanel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 
 import javax.swing.*;
@@ -38,6 +39,10 @@ public class PositionActionsPanel extends UIBag
     private final JButton removePositionAll = new JButton("Remove All Positions");
 
     private final JButton marketConditionsButton = new JButton("Add Market conditions");
+    private final JButton updateMarketConditions = new JButton("Update Market Conditions");
+
+    private final JButton srMatrixButton = new JButton("Add SR Matrix");
+    private final JButton updateSrMatrixButton = new JButton("Update SR Matrix");
     private final JButton configurationButton = new JButton("Add Configuration");
 
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
@@ -85,10 +90,15 @@ public class PositionActionsPanel extends UIBag
 
         MarketConditionsSourcePanel marketConditionsSourcePanel = new MarketConditionsSourcePanel();
         marketConditionsSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        //marketConditionsSourcePanel.setBorder(BorderFactory.createTitledBorder("Market Conditions:"));
+
         configurationSourcePanel = new ConfigurationSourcePanel(configurationService);
         configurationSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         //configurationSourcePanel.setBorder(BorderFactory.createTitledBorder("Configurations:"));
+
+        SRMatrixSourcePanel srMatrixAndSourcePanel = new SRMatrixSourcePanel();
+        srMatrixAndSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+
         capitalPanel = new CapitalPanel(serviceRegistery);
         this.frame = owner;
         table.setRowHeight(25);
@@ -107,13 +117,18 @@ public class PositionActionsPanel extends UIBag
         add(capitalPanel);
         add(buttonPanel);
         marketConditionsSourcePanel.add(marketConditionsButton);
+        marketConditionsSourcePanel.add(updateMarketConditions);
+        srMatrixAndSourcePanel.add(srMatrixButton);
+        srMatrixAndSourcePanel.add(updateSrMatrixButton);
         configurationSourcePanel.add(configurationButton);
         configurationAndSourcePanel.add(marketConditionsSourcePanel);
+        configurationAndSourcePanel.add(srMatrixAndSourcePanel);
         configurationAndSourcePanel.add(configurationSourcePanel);
         positionPanelParametersPanel.add(configurationAndSourcePanel);
         positionPanelParametersPanel.add(positionSizePanel);
         marketConditionsButton.addActionListener(new OpenMarketConditionsDialogueListener(marketConditionsSourcePanel, serviceRegistery, frame));
         configurationButton.addActionListener(new OpenConfigurationDialogueListener(configurationSourcePanel, serviceRegistery, frame));
+        srMatrixButton.addActionListener(new OpenSRMatrixDialogueListener(srMatrixAndSourcePanel,serviceRegistery,frame));
         add(new JScrollPane(table));
         addPosition.addActionListener(new AddPositionsButtonListener(marketConditionsService, marketConditionsSourcePanel, configurationService,
                 configurationSourcePanel, strategyHeaderPanel, //

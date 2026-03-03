@@ -40,35 +40,6 @@ public class PortfolioPnLServiceImpl
         marketConditions.add(m);
     }
 
-//    public List<PositionPnL> simulate()
-//    {
-//        int index = 0;
-//
-//        MarketConditions mc = marketConditions.stream().findAny().get();
-//
-//        for (Position p : positionList)
-//        {
-//            index++;
-//
-//            double positionPercent = p.getPercentCapitalDeployed();
-//
-//            double amountInvested = openingCapital.getCapital() * positionPercent / 100;
-//
-//            double pnl = amountInvested * configuraion.getLev() * (mc.getPercentMove() / 100);
-//
-//            PositionPnL positionPnl = new PositionPnL(index, configuraion, //
-//                    mc, null, null, configuraion.getLev() * (mc.getPercentMove() / 100),
-//                    pnl,
-//                    amountInvested,
-//                    openingCapital.getCapital() + pnl,
-//                    1d,
-//                    1d,
-//                    1d);
-//
-//            positionPnLList.add(positionPnl);
-//        }
-//        return positionPnLList;
-//    }
 
     public void addInstrument(Instrument i)
     {
@@ -117,10 +88,11 @@ public class PortfolioPnLServiceImpl
         int index = getPositionPnLList().size() + 1;
         double percentPnl = Math.round(marketConditions.getPercentMove() * configuraion.getLev());
         double pnl = capital * (percentPnl / 100);
-        positionPnLList.add(new Position(index,null, configuraion,
-                marketConditions, null, null, percentPnl, pnl, capital, allowedFirepower,
-                remainingFirepower,
-                capitalRemainingFirePower, calculateTotalPnl()));
+
+//        positionPnLList.add(new Position(index,null, configuraion,
+//                marketConditions, null, null, percentPnl, pnl, capital, allowedFirepower,
+//                remainingFirepower,
+//                capitalRemainingFirePower, calculateTotalPnl()));
 
     }
 

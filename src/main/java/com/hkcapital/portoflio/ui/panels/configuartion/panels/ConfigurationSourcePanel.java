@@ -34,6 +34,7 @@ public class ConfigurationSourcePanel extends UIBag
     {
         super(ConfigurationSourcePanel.class);
         this.configurationService = configurationService;
+        setBorder(BorderFactory.createTitledBorder(Labels.Configuration.getLabel()));
         add(idLabel);
         add(id);
         id.setEnabled(false);
@@ -88,14 +89,13 @@ public class ConfigurationSourcePanel extends UIBag
     public Configuration getConfiguration()
     {
 
-        if(id != null && id.getText() != "" && id.intValue() != null)
+        if (id != null && id.getText() != "" && id.intValue() != null)
         {
             return configurationService.findById(id.intValue());
         }
 
         return null;
     }
-
 
 
 }

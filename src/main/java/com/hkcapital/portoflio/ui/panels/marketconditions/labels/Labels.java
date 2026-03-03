@@ -5,10 +5,10 @@ public enum Labels
     Id("Id"),
     MarketConditions("Market conditions"),
     InstrumentName("Instrument Name"),
-    DayLow("Day low"),
-    DayHigh("Day High"),
+    DayLow("On Close Day low"),
+    DayHigh("On Close Day High"),
 
-   PercentMove("Percent Move"),
+   PercentMove("On Close Percent Move"),
     InstrumentPanel("Instrument Panel");
 
 

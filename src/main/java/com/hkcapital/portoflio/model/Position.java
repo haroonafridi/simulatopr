@@ -24,6 +24,11 @@ public class Position implements Serializable
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "sr_matrix_id", referencedColumnName = "id")
+    private SRMatrix srMatrix;
+
     @Column(name = "percent_capital_deployed")
     private Double percentCapitalDeployed;
 
@@ -46,6 +51,7 @@ public class Position implements Serializable
     @Column(name = "portfolio_value")
     private Double portfolioValue;
 
+
     public Position()
     {
     }
@@ -55,6 +61,7 @@ public class Position implements Serializable
                     Configuration configuraion, //
                     MarketConditions marketConditions,
                     Instrument instrument,
+                    SRMatrix srMatrix,
                     Double percentPnL, //
                     Double percentCapitalDeployed,
                     Double pnl, Double currentPositionEquity, //
@@ -65,6 +72,7 @@ public class Position implements Serializable
         this.configurtaion = configuraion;
         this.marketConditions = marketConditions;
         this.instrument = instrument;
+        this.srMatrix = srMatrix;
         this.percentCapitalDeployed = percentCapitalDeployed;
         this.percentPnL = percentPnL;
         this.pnl = pnl;
@@ -213,5 +221,15 @@ public class Position implements Serializable
     public void setInstrument(Instrument instrument)
     {
         this.instrument = instrument;
+    }
+
+    public SRMatrix getSrMatrix()
+    {
+        return srMatrix;
+    }
+
+    public void setSrMatrix(SRMatrix srMatrix)
+    {
+        this.srMatrix = srMatrix;
     }
 }

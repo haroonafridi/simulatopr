@@ -19,15 +19,15 @@ public class SRMatrixPanelTest
 
     public void launch()
     {
-        JFrame mainFrame = new JFrame("PnL Simulator App");
-        JPanel contents = new JPanel();
-        contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
-        contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        SRMatrixPanel instrumentPanel = new SRMatrixPanel(this.serviceRegistery);
-        mainFrame.add(instrumentPanel);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        mainFrame.setVisible(true);
+//        JFrame mainFrame = new JFrame("PnL Simulator App");
+//        JPanel contents = new JPanel();
+//        contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
+//        contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
+//        //SRMatrixPanel instrumentPanel = new SRMatrixPanel(this.serviceRegistery);
+//        mainFrame.add(instrumentPanel);
+//        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//        mainFrame.setVisible(true);
     }
     
 

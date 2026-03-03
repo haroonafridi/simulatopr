@@ -255,7 +255,7 @@ public class PnLSimulatorFacad
             {
                 // Optional: handle folders or intermediate nodes
                 SRMatrixDialogue srMatrixPanel = new SRMatrixDialogue(mainFrame, //
-                        new SRMatrixPanel(serviceRegistery));
+                        new SRMatrixPanel(serviceRegistery, null));
                 srMatrixPanel.setVisible(true);
             }
 
@@ -263,16 +263,6 @@ public class PnLSimulatorFacad
         });
 
         etoroWebSocketManagerService.subscribeAndSchedule();
-
-//        this.etoroCandleService.getCandleInformation(OneMinute);
-//        this.etoroCandleService.getCandleInformation(FiveMinutes);
-//        this.etoroCandleService.getCandleInformation(TenMinutes);
-//        this.etoroCandleService.getCandleInformation(FifteenMinutes);
-//        this.etoroCandleService.getCandleInformation(ThirtyMinutes);
-//        this.etoroCandleService.getCandleInformation(OneHour);
-//        this.etoroCandleService.getCandleInformation(FourHours);
-//        this.etoroCandleService.getCandleInformation(OneDay);
-//        this.etoroCandleService.getCandleInformation(OneWeek);
 
     }
 

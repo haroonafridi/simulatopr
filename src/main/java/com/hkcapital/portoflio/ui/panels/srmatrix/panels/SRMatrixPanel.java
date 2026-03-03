@@ -9,6 +9,7 @@ import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
 import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentEditDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.dialogues.SRMatrixEditDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.labels.Labels;
@@ -51,10 +52,12 @@ public class SRMatrixPanel extends UIBag
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
 
     private final InstrumentService instrumentService;
+    final SRMatrixSourcePanel srMatrixSourcePanel;
 
-    public SRMatrixPanel(final ServiceRegistery serviceRegistery)
+    public SRMatrixPanel(final ServiceRegistery serviceRegistery,  final SRMatrixSourcePanel srMatrixSourcePanel)
     {
         super(SRMatrixPanel.class);
+        this.srMatrixSourcePanel = srMatrixSourcePanel;
         this.serviceRegistery = serviceRegistery;
         this.srMatrixService = (SRMatrixService) this.serviceRegistery.getService(Service.SRMatrixService);
         this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);

@@ -24,6 +24,7 @@ public class MarketConditionsSourcePanel extends UIBag
     public MarketConditionsSourcePanel()
     {
         super(MarketConditionsSourcePanel.class);
+        setBorder(BorderFactory.createTitledBorder(Labels.MarketConditions.getLabel()));
         add(positionSizIdLabel);
         positionId.setEnabled(false);
         add(positionId);
