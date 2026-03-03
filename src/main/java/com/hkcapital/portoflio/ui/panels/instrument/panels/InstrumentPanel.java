@@ -98,29 +98,32 @@ public class InstrumentPanel extends UIBag
             SwingUtilities.getWindowAncestor(this).dispose();
         });
 
-        instrumentTable.addMouseListener(new MouseAdapter()
-        {
-            /**
-             * {@inheritDoc}
-             *
-             * @param e
-             */
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                super.mouseClicked(e);
-
-                if (e.getClickCount() == 2)
-                {
-                    Integer instrumentId = (Integer) instrumentTable.getModel() //
-                            .getValueAt(instrumentTable.getSelectedRow(), 0);
-                    InstrumentEditDialogue instrumentEditDialogue = //
-                            new InstrumentEditDialogue(instrumentService, instrumentId);
-                }
-            }
-        });
+        instrumentTable.addMouseListener(new MouseClickHandler(this));
 
     }
+
+    public class MouseClickHandler extends  MouseAdapter {
+
+        private JPanel frame;
+        public MouseClickHandler(JPanel frame) {
+           this.frame = frame;
+        }
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {
+            super.mouseClicked(e);
+            super.mouseClicked(e);
+
+            if (e.getClickCount() == 2)
+            {
+                Integer instrumentId = (Integer) instrumentTable.getModel() //
+                        .getValueAt(instrumentTable.getSelectedRow(), 0);
+                InstrumentEditDialogue instrumentEditDialogue = //
+                        new InstrumentEditDialogue(frame, instrumentService, instrumentId);
+            }
+        }
+    }
+
 
     public void save()
     {

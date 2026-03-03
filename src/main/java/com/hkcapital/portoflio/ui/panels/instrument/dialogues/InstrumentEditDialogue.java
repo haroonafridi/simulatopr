@@ -26,7 +26,7 @@ public class InstrumentEditDialogue extends JDialog
     JButton save = new JButton("Save");
     JButton cancel = new JButton("Cancel");
 
-    public InstrumentEditDialogue(InstrumentService instrumentService, Integer instrumentId)
+    public InstrumentEditDialogue(JPanel owner ,InstrumentService instrumentService, Integer instrumentId)
     {
         this.instrumentService = instrumentService;
         this.instrumentId = instrumentId;
@@ -52,7 +52,7 @@ public class InstrumentEditDialogue extends JDialog
             SwingUtilities.getWindowAncestor(this).dispose();
         });
         dialog.setSize(400, 230);
-        dialog.setLocationRelativeTo(null);
+        dialog.setContentPane(owner);
         dialog.setVisible(true);
         dialog.pack();
 

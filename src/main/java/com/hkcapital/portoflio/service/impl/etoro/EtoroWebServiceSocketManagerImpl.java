@@ -181,6 +181,6 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
             {
                 logger.error("Error in background task", e);
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 0, 5, TimeUnit.MINUTES);
     }
 }

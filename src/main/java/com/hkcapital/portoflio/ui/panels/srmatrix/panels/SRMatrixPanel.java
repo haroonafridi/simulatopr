@@ -9,11 +9,15 @@ import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentEditDialogue;
+import com.hkcapital.portoflio.ui.panels.srmatrix.dialogues.SRMatrixEditDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.srmatrix.tablemodels.SRMatrixTableModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -124,9 +128,34 @@ public class SRMatrixPanel extends UIBag
         cancelButton.addActionListener(e -> clear());
         closeButton.addActionListener(e ->
         {
-            // Close the dialog (find top-level window)
             SwingUtilities.getWindowAncestor(this).dispose();
         });
+
+        srMatrixTable.addMouseListener(new SRMatrixEditDialogueMouseClickHandler());
+
+    }
+
+
+    public class SRMatrixEditDialogueMouseClickHandler extends  MouseAdapter {
+
+
+        public SRMatrixEditDialogueMouseClickHandler()
+        {
+
+        }
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {
+            super.mouseClicked(e);
+            if (e.getClickCount() == 2) //
+            {
+
+                Integer srMatrixId = (Integer) srMatrixTable.getModel() //
+                        .getValueAt(srMatrixTable.getSelectedRow(), 0);
+               // Frame frame = (Frame) SwingUtilities.getWindowAncestor(null);
+                new SRMatrixEditDialogue( srMatrixService, srMatrixId);
+            }
+        }
     }
 
     public void save()

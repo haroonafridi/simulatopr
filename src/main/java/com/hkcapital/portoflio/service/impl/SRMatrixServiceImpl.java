@@ -35,7 +35,7 @@ public class SRMatrixServiceImpl implements SRMatrixService
     @Override
     public SRMatrix updateSRMatrix(SRMatrix sRMatrix)
     {
-        return null;
+        return srMatrixRepository.save(sRMatrix);
     }
 
     @Override
