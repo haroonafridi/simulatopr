@@ -9,8 +9,6 @@ import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
-import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
-import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentEditDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.dialogues.SRMatrixEditDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.srmatrix.tablemodels.SRMatrixTableModel;
@@ -50,6 +48,8 @@ public class SRMatrixPanel extends UIBag
     private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
 
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
+
+    private final JButton selectSrMatrix = new JButton(ButtonLabels.Select.getLabel());
 
     private final InstrumentService instrumentService;
     final SRMatrixSourcePanel srMatrixSourcePanel;
@@ -105,6 +105,7 @@ public class SRMatrixPanel extends UIBag
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
         buttonPanel.add(readButton);
+        buttonPanel.add(selectSrMatrix);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -129,6 +130,8 @@ public class SRMatrixPanel extends UIBag
         removeButton.addActionListener(e -> remove());
         readButton.addActionListener(e -> srMatrixService.findAll());
         cancelButton.addActionListener(e -> clear());
+        selectSrMatrix.addActionListener(e->selectSrMatrix());
+
         closeButton.addActionListener(e ->
         {
             SwingUtilities.getWindowAncestor(this).dispose();
@@ -199,6 +202,20 @@ public class SRMatrixPanel extends UIBag
     @Override
     protected void paintComponent(Graphics g)
     {
-        super.paintComponent(g); // always call super
+        super.paintComponent(g);
+    }
+
+
+    public void selectSrMatrix()
+    {
+        int selectedRow = srMatrixTable.getSelectedRow();
+        SRMatrix srMatrix = (SRMatrix) tableModel.getElements().get(selectedRow);
+        srMatrixSourcePanel.getId().setText(srMatrix.getId().toString());
+        srMatrixSourcePanel.getSupport().setText(srMatrix.getSupport().toString());
+        srMatrixSourcePanel.getResistence().setText(srMatrix.getResistance().toString());
+        srMatrixSourcePanel.getTimeFrame().setText(srMatrix.getTimeFrame().toString());
+        srMatrixSourcePanel.getTimeFrameUnit().setText(srMatrix.getTimeFrameUnit());
+        srMatrixSourcePanel.getActive().setSelected(srMatrix.getActive());
+        SwingUtilities.getWindowAncestor(this).dispose();
     }
 }

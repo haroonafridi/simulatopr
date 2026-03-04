@@ -29,6 +29,7 @@ public class PositionActionsPanel extends UIBag
     private final ServiceRegistery<Service> serviceRegistery;
     private MarketConditionsService marketConditionsService;
     private ConfigurationService configurationService;
+    private SRMatrixService srMatrixService;
     final private PositionService positionService;
     List<Position> positionPnLList = new ArrayList<>();
     PositionTableModel model = new PositionTableModel(positionPnLList);
@@ -67,14 +68,10 @@ public class PositionActionsPanel extends UIBag
         this.serviceRegistery = serviceRegistery;
         marketConditionsService = (MarketConditionsService) this.serviceRegistery.getService(Service.MarketConditionsService);
         configurationService = (ConfigurationService) this.serviceRegistery.getService(Service.ConfigurationService);
+        srMatrixService = (SRMatrixService) this.serviceRegistery.getService(Service.SRMatrixService);
         positionService = (PositionService) this.serviceRegistery.getService(Service.PositionService);
-        InstrumentService instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
-
         JPanel buttonPanel = new JPanel();
-
         JPanel positionPanelParametersPanel = new JPanel();
-
-        // positionPanelParametersPanel.setBorder(BorderFactory.createTitledBorder("Position Parameters:"));
 
         //Position Size panel
         JPanel positionSizePanel = new JPanel();
@@ -93,7 +90,6 @@ public class PositionActionsPanel extends UIBag
 
         configurationSourcePanel = new ConfigurationSourcePanel(configurationService);
         configurationSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        //configurationSourcePanel.setBorder(BorderFactory.createTitledBorder("Configurations:"));
 
         SRMatrixSourcePanel srMatrixAndSourcePanel = new SRMatrixSourcePanel();
         srMatrixAndSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -131,7 +127,7 @@ public class PositionActionsPanel extends UIBag
         srMatrixButton.addActionListener(new OpenSRMatrixDialogueListener(srMatrixAndSourcePanel,serviceRegistery,frame));
         add(new JScrollPane(table));
         addPosition.addActionListener(new AddPositionsButtonListener(marketConditionsService, marketConditionsSourcePanel, configurationService,
-                configurationSourcePanel, strategyHeaderPanel, //
+                configurationSourcePanel, strategyHeaderPanel, srMatrixAndSourcePanel,srMatrixService,
                 positionPnLList, positionService, model, this));
         removePosition.addActionListener(new RemovePositionButtonListener(positionService, model, table));
         removePositionAll.addActionListener(new RemoveAllPositionsButtonListener(positionService, model, strategyHeaderPanel));

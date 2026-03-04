@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.marketconditions.panels;
 
+import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
@@ -40,6 +41,8 @@ public class MarketConditionsPanel extends UIBag
     private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
     private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
     private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
+
+
 
     private final JButton selectionMarketConditionsButton = new JButton(ButtonLabels.Select.getLabel());
 
@@ -127,7 +130,7 @@ public class MarketConditionsPanel extends UIBag
 
         selectionMarketConditionsButton.addActionListener(e ->
         {
-            selectConfiguration();
+            selectMarketCondistion();
             SwingUtilities.getWindowAncestor(this).dispose();
         });
     }
@@ -145,7 +148,7 @@ public class MarketConditionsPanel extends UIBag
     }
 
 
-    public void selectConfiguration()
+    public void selectMarketCondistion()
     {
         int selectedRow = marketConditionsTableTable.getSelectedRow();
         MarketConditions marketConditions = (MarketConditions) tableModel.getElements().get(selectedRow);

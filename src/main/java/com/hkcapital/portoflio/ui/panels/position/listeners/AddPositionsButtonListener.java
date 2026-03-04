@@ -3,14 +3,17 @@ package com.hkcapital.portoflio.ui.panels.position.listeners;
 import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
+import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.service.ConfigurationService;
 import com.hkcapital.portoflio.service.MarketConditionsService;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.SRMatrixService;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsSourcePanel;
 import com.hkcapital.portoflio.ui.panels.position.PositionParameters;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
+import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixSourcePanel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 
 import java.awt.event.ActionEvent;
@@ -33,6 +36,9 @@ public class AddPositionsButtonListener implements ActionListener
 
     private final PositionService positionService;
 
+    final SRMatrixSourcePanel srMatrixSourcePanel;
+    final SRMatrixService srMatrixService;
+
     private final PositionTableModel model;
 
     final PositionActionsPanel positionActionsPanel;
@@ -42,6 +48,8 @@ public class AddPositionsButtonListener implements ActionListener
                                       final ConfigurationService configurationService,
                                       final ConfigurationSourcePanel configurationSourcePanel,
                                       final StrategyHeaderPanel strategyHeaderPanel,
+                                      final SRMatrixSourcePanel srMatrixSourcePanel,
+                                      final SRMatrixService srMatrixService,
                                       final  List<Position> positionPnLList,
                                       final PositionService positionService,
                                       final PositionTableModel model,
@@ -54,6 +62,8 @@ public class AddPositionsButtonListener implements ActionListener
         this.strategyHeaderPanel = strategyHeaderPanel;
         this.positionPnLList = positionPnLList;
         this.positionService = positionService;
+        this.srMatrixService = srMatrixService;
+        this.srMatrixSourcePanel = srMatrixSourcePanel;
         this.model = model;
         this.positionActionsPanel = positionActionsPanel;
     }
@@ -70,8 +80,10 @@ public class AddPositionsButtonListener implements ActionListener
         Position position = new Position();
         position.setInstrument(marketConditions.getInstrument());
         Configuration configuration = configurationService.findById(configurationSourcePanel.getId().getIntValue());
+        SRMatrix srMatrix = srMatrixService.findById(srMatrixSourcePanel.getId().intValue());
         position.setConfigurtaion(configuration);
         position.setMarketConditions(marketConditions);
+        position.setSrMatrix(srMatrix);
         position.setStrategy(strategyHeaderPanel.getStrategy());
         PositionParameters positionParameter = calculatePosition(positionPnLList,configuration, marketConditions,
                 positionActionsPanel.getPositionSizeInPercent(),

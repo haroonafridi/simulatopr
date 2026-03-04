@@ -2,10 +2,16 @@ package com.hkcapital.portoflio.ui.panels.srmatrix.labels;
 
 public enum Labels
 {
-    Id("Id"),
-    SRMatrix("SRMatrix"),
+    Id("Id:"),
+    SRMatrix("SRMatrix:"),
     Name("Name"),
-    SRMatrixPanel("SRMatrix Panel");
+    Support("Support:"),
+    Resistance("Resistence:"),
+    TimeFrame("TimeFrame:"),
+    TimeFrameUnit("TimeFrame Unit:"),
+
+    Active("Active:"),
+    SRMatrixPanel("SRMatrix Panel:");
 
     private String label;
 

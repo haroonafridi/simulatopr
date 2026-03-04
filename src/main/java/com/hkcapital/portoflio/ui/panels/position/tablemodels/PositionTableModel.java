@@ -1,28 +1,33 @@
 package com.hkcapital.portoflio.ui.panels.position.tablemodels;
 
-import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.ui.TableModel;
 
-import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PositionTableModel  extends TableModel
+public class PositionTableModel extends TableModel
 {
     private final String[] columns = {"index",
             "Position Index",
-            "Instrument",
-            "% Capital Deployed",
+            "Instrument Name",
+            "Allowed Slippage",
+            "Etoro Instrument Id",
+            "% Capital Deploye:",
             "Capital",
-            "%Pnl", "PnL",
+            "%Pnl",
+            "PnL",
             "Allowed Fire Power",
-            "Remaining Fire Power",
-            "Capital Remaining Firepower",
+            "Remaining Fire Power:",
+            "Capital Remaining Firepower:",
             "day low",
             "day high",
             "% move",
-             "leverage"
+            "Support",
+            "Resistance",
+            "Time Frame",
+            "Time Frame Unite",
+            "leverage"
     };
     private List<Position> data;
 
@@ -74,28 +79,38 @@ public class PositionTableModel  extends TableModel
             case 2:
                 return position.getInstrument().getName();
             case 3:
-                return  position.getPercentCapitalDeployed();
+                return position.getInstrument().getMaxSlippage();
             case 4:
-                //capital
-                // position.getCapitalRemainingFirePower();
-                return 0;
+                return position.getInstrument().getEtoroInstrumentId();
             case 5:
-                return position.getPercentPnL();
+                return position.getPercentCapitalDeployed();
             case 6:
-                return position.getPnl();
+                return 0;
             case 7:
-                return  position.getAllowedFirePower();
+                return position.getPercentPnL();
             case 8:
-                return position.getRemainingFirepower();
+                return position.getPnl();
             case 9:
-                return position.getCapitalRemainingFirePower();
+                return position.getAllowedFirePower();
             case 10:
-                return position.getMarketConditions().getDayLow();
+                return position.getRemainingFirepower();
             case 11:
-                return position.getMarketConditions().getDayHigh();
+                return position.getCapitalRemainingFirePower();
             case 12:
-                return position.getMarketConditions().getPercentMove();//
+                return position.getMarketConditions().getDayLow();
             case 13:
+                return position.getMarketConditions().getDayHigh();
+            case 14:
+                return position.getMarketConditions().getPercentMove();//
+            case 15:
+                return position.getSrMatrix().getSupport();//
+            case 16:
+                return position.getSrMatrix().getResistance();//
+            case 17:
+                return position.getSrMatrix().getTimeFrame();//
+            case 18:
+                return position.getSrMatrix().getTimeFrameUnit();//
+            case 19:
                 return position.getConfigurtaion().getLev();
             default:
                 return null;
