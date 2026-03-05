@@ -20,6 +20,7 @@ public class TradingSessions
 
     @Column(name = "end_time")
     private String endTime;
+    
 
     public TradingSessions()
     {

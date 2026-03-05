@@ -29,6 +29,10 @@ public class Position implements Serializable
     @JoinColumn(name = "sr_matrix_id", referencedColumnName = "id")
     private SRMatrix srMatrix;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "trading_session_id", referencedColumnName = "id")
+    private TradingSessions tradingSessions;
+
     @Column(name = "percent_capital_deployed")
     private Double percentCapitalDeployed;
 
@@ -62,17 +66,20 @@ public class Position implements Serializable
                     MarketConditions marketConditions,
                     Instrument instrument,
                     SRMatrix srMatrix,
+                    TradingSessions tradingSessions,
                     Double percentPnL, //
                     Double percentCapitalDeployed,
                     Double pnl, Double currentPositionEquity, //
                     Double allowedFirePower, Double remainingFirepower, //
-                    Double capitalRemainingFirePower, Double portfolioValue)
+                    Double capitalRemainingFirePower, //
+                    Double portfolioValue)
     {
         this.recordIndex = recordIndex;
         this.configurtaion = configuraion;
         this.marketConditions = marketConditions;
         this.instrument = instrument;
         this.srMatrix = srMatrix;
+        this.tradingSessions = tradingSessions;
         this.percentCapitalDeployed = percentCapitalDeployed;
         this.percentPnL = percentPnL;
         this.pnl = pnl;
@@ -231,5 +238,15 @@ public class Position implements Serializable
     public void setSrMatrix(SRMatrix srMatrix)
     {
         this.srMatrix = srMatrix;
+    }
+
+    public TradingSessions getTradingSessions()
+    {
+        return tradingSessions;
+    }
+
+    public void setTradingSessions(TradingSessions tradingSessions)
+    {
+        this.tradingSessions = tradingSessions;
     }
 }
