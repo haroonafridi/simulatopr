@@ -29,7 +29,12 @@ public class StrategyTableModel<E> extends TableModel
             }
             case 2:
             {
-                return strategy.getName();
+                return strategy.getDescription();
+            }
+
+            case 3:
+            {
+                return strategy.getActive();
             }
 
             default:

@@ -52,7 +52,7 @@ public class InstrumentEditDialogue extends JDialog
             SwingUtilities.getWindowAncestor(this).dispose();
         });
         dialog.setSize(400, 230);
-        dialog.setContentPane(owner);
+       // dialog.setContentPane(owner);
         dialog.setVisible(true);
         dialog.pack();
 
@@ -78,7 +78,6 @@ public class InstrumentEditDialogue extends JDialog
     {
         instrument.setName(instrumentName.getText());
         instrument.setActive(active.isSelected());
-
         if (maxSlippage.getText() == null)
         {
             instrument.setMaxSlippage(null);
@@ -89,7 +88,6 @@ public class InstrumentEditDialogue extends JDialog
         {
             instrument.setMaxSlippage(Double.parseDouble(maxSlippage.getText()));
         }
-
         if (etoroInstrumentId.getText() == null)
         {
             instrument.setEtoroInstrumentId(null);
@@ -100,7 +98,6 @@ public class InstrumentEditDialogue extends JDialog
         {
             instrument.setEtoroInstrumentId(Integer.parseInt(etoroInstrumentId.getText()));
         }
-
         instrumentService.updateInstrument(instrument);
         SwingUtilities.getWindowAncestor(this).dispose();
     }

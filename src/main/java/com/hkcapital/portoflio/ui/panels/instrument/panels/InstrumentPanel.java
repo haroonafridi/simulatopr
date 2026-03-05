@@ -111,9 +111,6 @@ public class InstrumentPanel extends UIBag
         @Override
         public void mouseClicked(MouseEvent e)
         {
-            super.mouseClicked(e);
-            super.mouseClicked(e);
-
             if (e.getClickCount() == 2)
             {
                 Integer instrumentId = (Integer) instrumentTable.getModel() //

@@ -32,8 +32,8 @@ public class PositionActionsPanel extends UIBag
     private SRMatrixService srMatrixService;
     final private PositionService positionService;
     List<Position> positionPnLList = new ArrayList<>();
-    PositionTableModel model = new PositionTableModel(positionPnLList);
-    JTable table = new JTable(model);
+    PositionTableModel positionTableModel = new PositionTableModel(positionPnLList);
+    JTable positionTable = new JTable(positionTableModel);
 
     private final JButton addPosition = new JButton("Add Position");
     private final JButton removePosition = new JButton("Remove Position");
@@ -97,8 +97,8 @@ public class PositionActionsPanel extends UIBag
 
         capitalPanel = new CapitalPanel(serviceRegistery);
         this.frame = owner;
-        table.setRowHeight(25);
-        table.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        positionTable.setRowHeight(25);
+        positionTable.setFont(new Font("SansSerif", Font.PLAIN, 14));
         this.strategyHeaderPanel = strategyHeaderPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Positions "));
@@ -125,12 +125,13 @@ public class PositionActionsPanel extends UIBag
         marketConditionsButton.addActionListener(new OpenMarketConditionsDialogueListener(marketConditionsSourcePanel, serviceRegistery, frame));
         configurationButton.addActionListener(new OpenConfigurationDialogueListener(configurationSourcePanel, serviceRegistery, frame));
         srMatrixButton.addActionListener(new OpenSRMatrixDialogueListener(srMatrixAndSourcePanel,serviceRegistery,frame));
-        add(new JScrollPane(table));
+        add(new JScrollPane(positionTable));
         addPosition.addActionListener(new AddPositionsButtonListener(marketConditionsService, marketConditionsSourcePanel, configurationService,
                 configurationSourcePanel, strategyHeaderPanel, srMatrixAndSourcePanel,srMatrixService,
-                positionPnLList, positionService, model, this));
-        removePosition.addActionListener(new RemovePositionButtonListener(positionService, model, table));
-        removePositionAll.addActionListener(new RemoveAllPositionsButtonListener(positionService, model, strategyHeaderPanel));
+                positionPnLList, positionService, positionTableModel, this));
+        removePosition.addActionListener(new RemovePositionButtonListener(positionService, positionTableModel, positionTable));
+        removePositionAll.addActionListener(new RemoveAllPositionsButtonListener(positionService, positionTableModel, strategyHeaderPanel));
+        positionTable.addMouseListener(new PositionEditDialogueMouseHandler(positionTableModel, positionTable, positionService));
     }
 
 
@@ -162,15 +163,15 @@ public class PositionActionsPanel extends UIBag
     }
 
 
-    public PositionTableModel getModel()
+    public PositionTableModel getPositionTableModel()
     {
-        return model;
+        return positionTableModel;
     }
 
 
-    public void setTable(JTable table)
+    public void setPositionTable(JTable positionTable)
     {
-        this.table = table;
+        this.positionTable = positionTable;
     }
 
 

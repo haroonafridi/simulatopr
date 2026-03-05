@@ -15,6 +15,7 @@ import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.RemoveStrategyButtonListener;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.SaveStrategyButtonListener;
+import com.hkcapital.portoflio.ui.panels.strategy.listners.StrategyEditDialogueMouseHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.*;
@@ -30,6 +31,8 @@ public class StrategyHeaderPanel extends UIBag
     private final JLabel strategyDescriptionLabel = new JLabel("Strategy Description:");
 
     private final JTextField strategyDescription = new JTextField(40);
+
+    private final JCheckBox active = new JCheckBox();
 
     private final JButton saveStrategy = new JButton("Save Strategy");
 
@@ -64,13 +67,14 @@ public class StrategyHeaderPanel extends UIBag
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
         tableModel = new StrategyTableModel<>(new String[]{"Id", "Name",
-                "Description:"}, strategyService.findAll());
+                "Description:","Active:"}, strategyService.findAll());
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         topPanel.add(strategyNameLabel);
         topPanel.add(strategyName);
         topPanel.add(strategyDescriptionLabel);
+        topPanel.add(active);
         topPanel.add(strategyDescription);
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
@@ -100,14 +104,15 @@ public class StrategyHeaderPanel extends UIBag
                     // Convert view row index to model index (important if table is sorted)
                     int modelRow = strategyTable.convertRowIndexToModel(selectedRow);
                     Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
-                    setHeaderFieldsFromRow(modelRow);
+                    setHeaderFieldsFromRow(strategy);
                     List<Position> positionList = positionService.findByStrategyId(strategy.getId());
-                    positionActionsPanel.getModel().updateData(positionList);
+                    positionActionsPanel.getPositionTableModel().updateData(positionList);
                 }
             }
         });
 
-        removeButton.addActionListener(new RemoveStrategyButtonListener(strategyTable, tableModel, strategyService, this));
+        removeButton.addActionListener(new RemoveStrategyButtonListener(strategyTable, tableModel,
+                strategyService, this));
         cancelButton.addActionListener(e -> clear());
         manualOrderButton.addActionListener(m -> createMarketOrder());
         automaticTrading.addActionListener(a ->
@@ -123,6 +128,7 @@ public class StrategyHeaderPanel extends UIBag
             }
         });
 
+        strategyTable.addMouseListener(new StrategyEditDialogueMouseHandler(tableModel, strategyTable, strategyService));
     }
 
     @Transactional
@@ -148,20 +154,12 @@ public class StrategyHeaderPanel extends UIBag
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 
-    private void setHeaderFieldsFromRow(int rowIndex)
+    private void setHeaderFieldsFromRow(Strategy strategy)
     {
-
-        Object id = tableModel.getValueAt(rowIndex, 0);       // Column 0
-
-        Object name = tableModel.getValueAt(rowIndex, 1);     // Column 1
-
-        Object description = tableModel.getValueAt(rowIndex, 2); // Column 2
-
-        strategyName.setText(name != null ? name.toString() : "");
-
-        strategyDescription.setText(description != null ? description.toString() : "");
+        active.setSelected(strategy.getActive());
+        strategyName.setText(strategy.getName());
+        strategyDescription.setText(strategy.getName());
     }
-
     public Strategy getStrategy()
     {
         return (Strategy) tableModel.getElements().get(strategyTable.getSelectedRow());
@@ -171,6 +169,7 @@ public class StrategyHeaderPanel extends UIBag
     {
         strategyName.setText(null);
         strategyDescription.setText(null);
+        positionActionsPanel.getPositionTableModel().updateData(null);
     }
 
 
@@ -185,6 +184,7 @@ public class StrategyHeaderPanel extends UIBag
         Strategy strategy = new Strategy(strategyName.getText(),
                 strategyDescription.getText(),
                 LocalDateTime.now());
+        strategy.setActive(active.isSelected());
         strategyService.addStrategy(strategy);
         strategyName.setText(null);
         strategyDescription.setText(null);

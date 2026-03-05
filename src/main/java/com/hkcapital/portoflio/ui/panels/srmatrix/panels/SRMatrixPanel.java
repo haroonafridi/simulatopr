@@ -54,7 +54,7 @@ public class SRMatrixPanel extends UIBag
     private final InstrumentService instrumentService;
     final SRMatrixSourcePanel srMatrixSourcePanel;
 
-    public SRMatrixPanel(final ServiceRegistery serviceRegistery,  final SRMatrixSourcePanel srMatrixSourcePanel)
+    public SRMatrixPanel(final ServiceRegistery serviceRegistery, final SRMatrixSourcePanel srMatrixSourcePanel)
     {
         super(SRMatrixPanel.class);
         this.srMatrixSourcePanel = srMatrixSourcePanel;
@@ -70,7 +70,7 @@ public class SRMatrixPanel extends UIBag
         }
 
         tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
-                "Support" ,"Resistance","Time Frame","TimeFrame Unite" ,"Active"
+                "Support", "Resistance", "Time Frame", "TimeFrame Unite", "Active"
         }, //
                 srMatrixService.findAll());
 
@@ -130,7 +130,7 @@ public class SRMatrixPanel extends UIBag
         removeButton.addActionListener(e -> remove());
         readButton.addActionListener(e -> srMatrixService.findAll());
         cancelButton.addActionListener(e -> clear());
-        selectSrMatrix.addActionListener(e->selectSrMatrix());
+        selectSrMatrix.addActionListener(e -> selectSrMatrix());
 
         closeButton.addActionListener(e ->
         {
@@ -142,13 +142,15 @@ public class SRMatrixPanel extends UIBag
     }
 
 
-    public class SRMatrixEditDialogueMouseClickHandler extends  MouseAdapter {
+    public class SRMatrixEditDialogueMouseClickHandler extends MouseAdapter
+    {
 
 
         public SRMatrixEditDialogueMouseClickHandler()
         {
 
         }
+
         @Override
         public void mouseClicked(MouseEvent e)
         {
@@ -158,8 +160,8 @@ public class SRMatrixPanel extends UIBag
 
                 Integer srMatrixId = (Integer) srMatrixTable.getModel() //
                         .getValueAt(srMatrixTable.getSelectedRow(), 0);
-               // Frame frame = (Frame) SwingUtilities.getWindowAncestor(null);
-                new SRMatrixEditDialogue( srMatrixService, srMatrixId);
+                // Frame frame = (Frame) SwingUtilities.getWindowAncestor(null);
+                new SRMatrixEditDialogue(srMatrixService, srMatrixId);
             }
         }
     }

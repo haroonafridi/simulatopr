@@ -21,6 +21,8 @@ public class Strategy
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Column(name = "active")
+    private Boolean active;
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Position> positionPnLList;
 
@@ -83,5 +85,15 @@ public class Strategy
     public void setPositionPnLList(List<Position> positionPnLList)
     {
         this.positionPnLList = positionPnLList;
+    }
+
+    public Boolean getActive()
+    {
+        return active;
+    }
+
+    public void setActive(Boolean active)
+    {
+        this.active = active;
     }
 }

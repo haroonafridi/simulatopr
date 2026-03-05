@@ -6,7 +6,7 @@ import com.hkcapital.portoflio.ui.TableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PositionTableModel extends TableModel
+public class PositionTableModel<E> extends TableModel
 {
     private final String[] columns = {"index",
             "Position Index",
@@ -134,9 +134,15 @@ public class PositionTableModel extends TableModel
 
     public void updateData(List<Position> newData)
     {
-        List<Position> d = new ArrayList<>(newData);
-        data.clear();
-        data.addAll(d);
+        if (newData != null && newData.size() > 0) {
+            List<Position> d = new ArrayList<>(newData);
+            data.clear();
+            data.addAll(d);
+        }
+        else
+        {
+            data.clear();
+        }
         fireTableDataChanged();
     }
 
