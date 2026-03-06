@@ -12,8 +12,9 @@ import com.hkcapital.portoflio.ui.panels.capital.CapitalPanel;
 import com.hkcapital.portoflio.ui.panels.capital.RunningCapitalPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsSourcePanel;
-import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.position.listeners.*;
+import com.hkcapital.portoflio.ui.panels.position.popupmenu.BuySellMenu;
+import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixSourcePanel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
 
@@ -54,7 +55,7 @@ public class PositionActionsPanel extends UIBag
 
     final ConfigurationSourcePanel configurationSourcePanel;
 
-    final  CapitalPanel capitalPanel;
+    final CapitalPanel capitalPanel;
 
 
     private final Frame frame;
@@ -124,14 +125,28 @@ public class PositionActionsPanel extends UIBag
         positionPanelParametersPanel.add(positionSizePanel);
         marketConditionsButton.addActionListener(new OpenMarketConditionsDialogueListener(marketConditionsSourcePanel, serviceRegistery, frame));
         configurationButton.addActionListener(new OpenConfigurationDialogueListener(configurationSourcePanel, serviceRegistery, frame));
-        srMatrixButton.addActionListener(new OpenSRMatrixDialogueListener(srMatrixAndSourcePanel,serviceRegistery,frame));
+        srMatrixButton.addActionListener(new OpenSRMatrixDialogueListener(srMatrixAndSourcePanel, serviceRegistery, frame));
         add(new JScrollPane(positionTable));
         addPosition.addActionListener(new AddPositionsButtonListener(marketConditionsService, marketConditionsSourcePanel, configurationService,
-                configurationSourcePanel, strategyHeaderPanel, srMatrixAndSourcePanel,srMatrixService,
+                configurationSourcePanel, strategyHeaderPanel, srMatrixAndSourcePanel, srMatrixService,
                 positionPnLList, positionService, positionTableModel, this));
         removePosition.addActionListener(new RemovePositionButtonListener(positionService, positionTableModel, positionTable));
         removePositionAll.addActionListener(new RemoveAllPositionsButtonListener(positionService, positionTableModel, strategyHeaderPanel));
         positionTable.addMouseListener(new PositionEditDialogueMouseHandler(positionTableModel, positionTable, positionService));
+        JMenuItem buy = new JMenuItem("Buy");
+        JMenuItem sell = new JMenuItem("Sell");
+
+        JMenuItem placeBuyOrder = new JMenuItem("Place buy order immediately");
+        JMenuItem placeSellOrder = new JMenuItem("Place sell order immediately");
+
+        positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
+                new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder})));
+        buy.addActionListener(new BuyActionListener(positionTableModel, positionService, positionTable));
+        sell.addActionListener(new SellActionListener(positionTableModel, positionService, positionTable));
+
+        placeBuyOrder.addActionListener(new ImmediateBuyOrderActionListener(positionTableModel, positionService, positionTable));
+        placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, positionService, positionTable));
+
     }
 
 
@@ -186,7 +201,7 @@ public class PositionActionsPanel extends UIBag
 
     public Double getPositionSizeInPercent()
     {
-        if(positionSizeInPercent.getText() != null)
+        if (positionSizeInPercent.getText() != null)
         {
             return positionSizeInPercent.getDoubleValue();
         }

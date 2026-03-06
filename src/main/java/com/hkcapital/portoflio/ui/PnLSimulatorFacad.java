@@ -1,5 +1,7 @@
 package com.hkcapital.portoflio.ui;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.hkcapital.portoflio.DataObject;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
@@ -33,6 +35,8 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.multi.MultiLookAndFeel;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
@@ -118,7 +122,9 @@ public class PnLSimulatorFacad
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         //FlatDarkLaf.setup();
         // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
-        UIManager.put("defaultFont", new Font("Roboto Mono", Font.PLAIN, 12));
+
+
+        UIManager.put("defaultFont", new Font("Roboto Mono", Font.BOLD, 14));
         JFrame mainFrame = new JFrame("Strategy Simulator");
 
         // === Root layout ===

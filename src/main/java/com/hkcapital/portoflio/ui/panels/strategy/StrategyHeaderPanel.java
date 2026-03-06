@@ -34,7 +34,7 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JCheckBox active = new JCheckBox();
 
-    private final JButton saveStrategy = new JButton("Save Strategy");
+    private final JButton saveStrategy = new JButton();
 
     private final JButton cancelButton = new JButton("Cancel");
     private final JButton closeButton = new JButton("Close");
