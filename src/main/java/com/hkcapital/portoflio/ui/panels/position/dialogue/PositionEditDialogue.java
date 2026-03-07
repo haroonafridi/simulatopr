@@ -65,7 +65,6 @@ public class PositionEditDialogue extends JDialog
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        setModal(true);
         setResizable(true);
 
     }

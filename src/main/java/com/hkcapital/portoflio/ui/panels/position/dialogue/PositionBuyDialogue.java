@@ -52,6 +52,8 @@ public class PositionBuyDialogue extends JDialog
     private final JButton buy = new JButton("Place Buy Order");
     private final JButton cancel = new JButton("Cancel");
 
+    private final JLabel positionSizeLabel = new JLabel("Position size:");
+    private final JTextField positionSize = new JTextField(20);
     private final ServiceRegistery<Service> serviceRegistery;
 
     private OrderManagerService orderManagerService;
@@ -71,7 +73,6 @@ public class PositionBuyDialogue extends JDialog
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        setModal(true);
         setResizable(true);
     }
 
@@ -92,6 +93,7 @@ public class PositionBuyDialogue extends JDialog
         noOfInstrument.setText("" + position.getConfigurtaion().getNoOfInsutrments());
         noOfPositionsPerInstrument.setText("" + position.getConfigurtaion().getNoOfPositionsPerInstruments());
         maxPercentAllowedPerInstrument.setText("" + position.getConfigurtaion().getMaxPercentAllowedPerInstrument());
+        positionSize.setText("" + position.getRemainingFirepower());
         leverage.setText("" + position.getConfigurtaion().getLev());
 
     }
@@ -124,6 +126,7 @@ public class PositionBuyDialogue extends JDialog
         }
         JPanel configurationPanel = new JPanel(new GridLayout(3,2));
         configurationPanel.setBorder(BorderFactory.createTitledBorder("Configuration:"));
+
         configurationPanel.add(percentAllocatedLabel);
         configurationPanel.add(percentAllocated);
         percentAllocated.setEditable(false);
@@ -140,7 +143,10 @@ public class PositionBuyDialogue extends JDialog
         configurationPanel.add(maxPercentAllowedPerInstrumentLabel);
         configurationPanel.add(maxPercentAllowedPerInstrument);
         maxPercentAllowedPerInstrument.setEditable(false);
-
+        configurationPanel.add(positionSizeLabel);
+        configurationPanel.add(positionSize);
+        positionSize.setEditable(false);
+        positionSize.setBackground(Color.red);
         configurationPanel.add(leverageLabel);
         configurationPanel.add(leverage);
         leverage.setEditable(false);
@@ -179,7 +185,6 @@ public class PositionBuyDialogue extends JDialog
     private void createBuyOrder()
     {
         createMarketOrder();
-        dispose();
     }
 
 

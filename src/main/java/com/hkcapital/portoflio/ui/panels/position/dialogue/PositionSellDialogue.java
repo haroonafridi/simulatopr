@@ -49,6 +49,9 @@ public class PositionSellDialogue extends JDialog
     private final JTextField noOfPositionsPerInstrument = new JTextField(20);
 
     private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max Percent Allowed Per instrument:");
+
+    private final JLabel positionSizeLabel = new JLabel("Position size:");
+    private final JTextField positionSize = new JTextField(20);
     private final JTextField maxPercentAllowedPerInstrument = new JTextField(20);
     private final JLabel leverageLabel = new JLabel("Leverage:");
     private final JTextField leverage = new JTextField(20);
@@ -73,7 +76,6 @@ public class PositionSellDialogue extends JDialog
         setLocationRelativeTo(null);
         setVisible(true);
         setLocationRelativeTo(null);
-        setModal(true);
         setResizable(true);
     }
 
@@ -94,6 +96,7 @@ public class PositionSellDialogue extends JDialog
         noOfInstrument.setText("" + position.getConfigurtaion().getNoOfInsutrments());
         noOfPositionsPerInstrument.setText("" + position.getConfigurtaion().getNoOfPositionsPerInstruments());
         maxPercentAllowedPerInstrument.setText("" + position.getConfigurtaion().getMaxPercentAllowedPerInstrument());
+        positionSize.setText("" + position.getRemainingFirepower());
         leverage.setText("" + position.getConfigurtaion().getLev());
 
     }
@@ -139,7 +142,10 @@ public class PositionSellDialogue extends JDialog
         configurationPanel.add(maxPercentAllowedPerInstrumentLabel);
         configurationPanel.add(maxPercentAllowedPerInstrument);
         maxPercentAllowedPerInstrument.setEditable(false);
-
+        configurationPanel.add(positionSizeLabel);
+        configurationPanel.add(positionSize);
+        positionSize.setEditable(false);
+        positionSize.setBackground(Color.red);
         configurationPanel.add(leverageLabel);
         configurationPanel.add(leverage);
         leverage.setEditable(false);
@@ -178,7 +184,6 @@ public class PositionSellDialogue extends JDialog
     private void createSellOrder()
     {
         createMarketOrder();
-        dispose();
     }
 
 
