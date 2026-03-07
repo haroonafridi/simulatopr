@@ -1,7 +1,12 @@
 package com.hkcapital.portoflio.ui.panels.position.dialogue;
 
+import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.model.Position;
+import com.hkcapital.portoflio.order.OderTypes;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.Service;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +15,11 @@ public class PositionSellDialogue extends JDialog
 {
 
     private final PositionService positionService;
-    private final Integer id;
+    private final Integer positionId;
+
+    private final ServiceRegistery<Service> serviceRegistery;
+
+    private OrderManagerService orderManagerService;
 
     private final JLabel nameLabel = new JLabel("Instrument:");
     private final JTextField name = new JTextField(20);
@@ -23,18 +32,18 @@ public class PositionSellDialogue extends JDialog
     private final JLabel percentMoveLabel = new JLabel("% Move:");
     private final JTextField percentMove = new JTextField(20);
 
-    private final JLabel  supportLabel = new JLabel("Support:");
+    private final JLabel supportLabel = new JLabel("Support:");
     private final JTextField support = new JTextField(20);
-    private final JLabel  resistenceLabel = new JLabel("Resistance:");
+    private final JLabel resistenceLabel = new JLabel("Resistance:");
     private final JTextField resistence = new JTextField(20);
-    private final JLabel  timeFrameLabel = new JLabel("Timeframe:");
+    private final JLabel timeFrameLabel = new JLabel("Timeframe:");
     private final JTextField timeFrame = new JTextField(20);
-    private final JLabel  timeFrameUnitLabel = new JLabel("Timeframe:");
+    private final JLabel timeFrameUnitLabel = new JLabel("Timeframe:");
     private final JTextField timeFrameUnit = new JTextField(20);
-    private final JLabel  percentAllocatedLabel = new JLabel("% Allocated:");
+    private final JLabel percentAllocatedLabel = new JLabel("% Allocated:");
     private final JTextField percentAllocated = new JTextField(20);
     private final JLabel noOfInstrumentLabel = new JLabel("No of Instruments:");
-    private final JTextField  noOfInstrument = new JTextField(20);
+    private final JTextField noOfInstrument = new JTextField(20);
 
     private final JLabel noOfPositionsPerInstrumentLabel = new JLabel("No Of Positions per Instrument:");
     private final JTextField noOfPositionsPerInstrument = new JTextField(20);
@@ -42,40 +51,44 @@ public class PositionSellDialogue extends JDialog
     private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max Percent Allowed Per instrument:");
     private final JTextField maxPercentAllowedPerInstrument = new JTextField(20);
     private final JLabel leverageLabel = new JLabel("Leverage:");
-    private final JTextField   leverage = new JTextField(20);
+    private final JTextField leverage = new JTextField(20);
 
 
-    private final JButton buy = new JButton("Place Sell Order");
+    private final JButton sell = new JButton("Place Sell Order");
     private final JButton cancel = new JButton("Cancel");
 
-    public PositionSellDialogue(PositionService positionService,
+    public PositionSellDialogue(final ServiceRegistery<Service> serviceRegistery,
                                 Integer positionId)
     {
 
-        this.positionService = positionService;
-        this.id = positionId;
+        this.serviceRegistery = serviceRegistery;
+        this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
+        this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
+        this.positionId = positionId;
         Position position = positionService.findById(positionId);
         initializeFields(position);
         buildUI(position);
-        setTitle("Placing  ["+position.getInstrument().getName()+"] sell order!");
+        setTitle("Placing  [" + position.getInstrument().getName() + "] sell order!");
         pack();
         setLocationRelativeTo(null);
-        setResizable(true);
         setVisible(true);
+        setLocationRelativeTo(null);
+        setModal(true);
+        setResizable(true);
     }
 
     private void initializeFields(Position position)
     {
         //Market Conditions
         name.setText(position.getInstrument().getName());
-        dayLow.setText(""+position.getMarketConditions().getDayLow());
-        dayHigh.setText(""+position.getMarketConditions().getDayHigh());
-        percentMove.setText(""+position.getMarketConditions().getPercentMove());
+        dayLow.setText("" + position.getMarketConditions().getDayLow());
+        dayHigh.setText("" + position.getMarketConditions().getDayHigh());
+        percentMove.setText("" + position.getMarketConditions().getPercentMove());
         //SR-Matrix
-        support.setText(""+position.getSrMatrix().getSupport());
-        resistence.setText(""+position.getSrMatrix().getResistance());
-        timeFrame.setText(""+position.getSrMatrix().getTimeFrame());
-        timeFrameUnit.setText(""+position.getSrMatrix().getTimeFrameUnit());
+        support.setText("" + position.getSrMatrix().getSupport());
+        resistence.setText("" + position.getSrMatrix().getResistance());
+        timeFrame.setText("" + position.getSrMatrix().getTimeFrame());
+        timeFrameUnit.setText("" + position.getSrMatrix().getTimeFrameUnit());
         //Configuration
         percentAllocated.setText("" + position.getConfigurtaion().getPercentAllocationAllowed());
         noOfInstrument.setText("" + position.getConfigurtaion().getNoOfInsutrments());
@@ -90,89 +103,102 @@ public class PositionSellDialogue extends JDialog
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-        JPanel marketConditionsPanel = new JPanel();
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Manual Sell Order Screen : [" + position.getInstrument().getName() + "]"));
+        JPanel marketConditionsPanel = new JPanel(new GridLayout(2, 2));
         marketConditionsPanel.setBorder(BorderFactory.createTitledBorder("Market Conditions:"));
         marketConditionsPanel.add(nameLabel);
         marketConditionsPanel.add(name);
-        name.setEnabled(false);
+        name.setEditable(false);
         marketConditionsPanel.add(dayLowLabel);
         marketConditionsPanel.add(dayLow);
-        dayLow.setEnabled(false);
+        dayLow.setEditable(false);
         marketConditionsPanel.add(dayHighLabel);
         marketConditionsPanel.add(dayHigh);
-        dayHigh.setEnabled(false);
+        dayHigh.setEditable(false);
         marketConditionsPanel.add(percentMoveLabel);
         marketConditionsPanel.add(percentMove);
-        percentMove.setEnabled(false);
-        JPanel configurationPanel = new JPanel();
+        percentMove.setEditable(false);
+        if (position.getMarketConditions().getPercentMove() > 0)
+        {
+            percentMove.setBackground(Color.green);
+        } else
+        {
+            percentMove.setBackground(Color.red);
+        }
+        JPanel configurationPanel = new JPanel(new GridLayout(3, 2));
+        configurationPanel.setBorder(BorderFactory.createTitledBorder("Configuration:"));
         configurationPanel.add(percentAllocatedLabel);
         configurationPanel.add(percentAllocated);
-        percentAllocated.setEnabled(false);
-
+        percentAllocated.setEditable(false);
         configurationPanel.add(noOfInstrumentLabel);
         configurationPanel.add(noOfInstrument);
-        noOfInstrument.setEnabled(false);
-
-
+        noOfInstrument.setEditable(false);
         configurationPanel.add(noOfPositionsPerInstrumentLabel);
         configurationPanel.add(noOfPositionsPerInstrument);
-        noOfPositionsPerInstrument.setEnabled(false);
-
+        noOfPositionsPerInstrument.setEditable(false);
         configurationPanel.add(maxPercentAllowedPerInstrumentLabel);
         configurationPanel.add(maxPercentAllowedPerInstrument);
-        maxPercentAllowedPerInstrument.setEnabled(false);
+        maxPercentAllowedPerInstrument.setEditable(false);
 
         configurationPanel.add(leverageLabel);
         configurationPanel.add(leverage);
-        leverage.setEnabled(false);
-        JPanel srMatrixPanel = new JPanel();
+        leverage.setEditable(false);
+        JPanel srMatrixPanel = new JPanel(new GridLayout(2, 2));
         srMatrixPanel.setBorder(BorderFactory.createTitledBorder("SR-Matrix:"));
         srMatrixPanel.add(supportLabel);
         srMatrixPanel.add(support);
-        support.setEnabled(false);
+        support.setEditable(false);
+        support.setBackground(new Color(230, 240, 255));
         srMatrixPanel.add(resistenceLabel);
         srMatrixPanel.add(resistence);
-        resistence.setEnabled(false);
+        resistence.setEditable(false);
+        resistence.setBackground(new Color(255, 235, 235));
         srMatrixPanel.add(timeFrameLabel);
         srMatrixPanel.add(timeFrame);
-        timeFrame.setEnabled(false);
+        timeFrame.setEditable(false);
         srMatrixPanel.add(timeFrameUnitLabel);
         srMatrixPanel.add(timeFrameUnit);
-        timeFrameUnit.setEnabled(false);
+        timeFrameUnit.setEditable(false);
 
         mainPanel.add(marketConditionsPanel);
         mainPanel.add(srMatrixPanel);
         mainPanel.add(configurationPanel);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(buy);
+        buttonPanel.add(sell);
         buttonPanel.add(cancel);
         mainPanel.add(buttonPanel);
-        buy.addActionListener(e -> save());
+        sell.addActionListener(e -> createSellOrder());
         cancel.addActionListener(e -> dispose());
+        sell.setBackground(new Color(200, 60, 60));
+        sell.setForeground(Color.WHITE);
         setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    private void save()
+    private void createSellOrder()
     {
-        try
-        {
-//            strategy.setActive(active.isSelected());
-//            strategy.setName(name.getText());
-//            strategy.setDescription(description.getText());
-//            serviceRegistry.updateStrategy(strategy);
-            dispose();
+        createMarketOrder();
+        dispose();
+    }
 
-        } catch (NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please enter valid numeric values.",
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
+
+    public void createMarketOrder()
+    {
+        Position position = positionService.findById(positionId);
+        EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
+                false, //
+                position.getConfigurtaion().getLev(), //
+                position.getAllowedFirePower(), //
+                null, //
+                null, //
+                null, //
+                null, //
+                null,
+                OderTypes.MANUAL.getOrderType(),
+                null,
+                null,
+                null,
+                null);
+        orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 }

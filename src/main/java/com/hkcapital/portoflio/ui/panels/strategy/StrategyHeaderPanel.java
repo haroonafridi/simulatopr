@@ -101,8 +101,6 @@ public class StrategyHeaderPanel extends UIBag
                 int selectedRow = strategyTable.getSelectedRow();
                 if (selectedRow >= 0)
                 {
-                    // Convert view row index to model index (important if table is sorted)
-                    int modelRow = strategyTable.convertRowIndexToModel(selectedRow);
                     Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
                     setHeaderFieldsFromRow(strategy);
                     List<Position> positionList = positionService.findByStrategyId(strategy.getId());

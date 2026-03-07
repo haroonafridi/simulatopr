@@ -1,17 +1,8 @@
 package com.hkcapital.portoflio.ui;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.hkcapital.portoflio.DataObject;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
-import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
-import com.hkcapital.portoflio.etoro.master.Instruments;
-import com.hkcapital.portoflio.etoro.websocket.EToroWSClient;
-import com.hkcapital.portoflio.etoro.websocket.LiveInstrumentRate;
-import com.hkcapital.portoflio.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portoflio.model.*;
-import com.hkcapital.portoflio.order.OderTypes;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.service.impl.etoro.EtoroOrderManagerServiceImpl;
@@ -35,17 +26,10 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.multi.MultiLookAndFeel;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static com.hkcapital.portoflio.etoro.CalcUtils.calculateTargetPrice;
 
 @Component
 public class PnLSimulatorFacad
@@ -115,18 +99,9 @@ public class PnLSimulatorFacad
 
     public void createApplication() throws UnsupportedLookAndFeelException
     {
-        if (this.etoroApiInformationService.toString().contains("PRO"))
-        {
-
-        }
         UIManager.setLookAndFeel(new MetalLookAndFeel());
-        //FlatDarkLaf.setup();
-        // IntelliJTheme.install(PnLSimulatorFacad.class.getResourceAsStream("D:/portfolio-pnl-simulator/src/main/resources/dark-theme.properties"));
-
-
         UIManager.put("defaultFont", new Font("Roboto Mono", Font.BOLD, 14));
         JFrame mainFrame = new JFrame("Strategy Simulator");
-
         // === Root layout ===
         JPanel rootPanel = new JPanel(new GridBagLayout());
         GridBagConstraints rootGbc = new GridBagConstraints();
@@ -269,114 +244,6 @@ public class PnLSimulatorFacad
         });
 
         etoroWebSocketManagerService.subscribeAndSchedule();
-
     }
 
-    void saveOrUpdate(List<Position> pnl,
-                      Configuration configuration,
-                      MarketConditions marketCondition,
-                      Instrument instrument,
-                      Strategy str)
-    {
-        Configuration conf = configurationService.addConfiguration(configuration);
-        MarketConditions marketCon = marketConditionsService.addMarketCondition(marketCondition);
-        Instrument inst = instrumentService.addInstrument(instrument);
-        pnl.forEach(pos ->
-        {
-            // Position position = positionService.addPosition(pos.getPosition());
-            //position.setInstrument(null);
-            //pos.setPosition(position);
-            //pos.setStrategy(str);
-            pos.setConfigurtaion(conf);
-            pos.setMarketConditions(marketCon);
-
-        });
-        strategyService.addStrategy(str);
-    }
-
-    private static void simulate(List<Position> positionPnLList, //
-                                 PositionTableModel model, //
-                                 JFrame mainFrame,//
-                                 PositionActionsPanel positionActionsPanel,
-                                 StrategyHeaderPanel strategyHeaderPanel)
-    {
-        try
-        {
-            positionPnLList.forEach(positionPnL ->
-            {
-                //double percentMove = positionActionsPanel.getMarketConditions().getPercentMove();
-                // double pnl = positionPnL.getPnl() + positionPnL.getCurrentPositionEquity() * (percentMove * 20) / 100;
-                //  double percentPnl = (percentMove + positionPnL.getPercentPnL()) * positionPnL.getConfigurtaion().getLev();
-                //positionPnL.setStrategy(strategyHeaderPanel.getStrategy());
-                // positionPnL.setPnl(pnl);
-                //positionPnL.setPercentPnL(percentPnl);
-            });
-            model.updateData(positionPnLList);
-        } catch (Exception ex)
-        {
-            JOptionPane.showMessageDialog(mainFrame, ex.getMessage(),
-                    "Configuration Error!",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void removeAllPositions(List<Position> positionPnLList, PositionTableModel model, JFrame mainFrame)
-    {
-        try
-        {
-            positionPnLList.clear();
-            model.updateData(positionPnLList);
-            // portfolioPnLService.updatePositionPnL(positionPnLList);
-        } catch (Exception ex)
-        {
-            logger.error("Error while removing a row => {} ", ex.getMessage());
-            JOptionPane.showMessageDialog(mainFrame, "Please choose a position to delete!", "Delete Row!", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void removePosition(List<Position> positionPnLList, PositionTableModel model, JTable table, JFrame mainFrame)
-    {
-        try
-        {
-            positionPnLList.remove(table.getSelectedRow());
-            model.updateData(positionPnLList);
-            //portfolioPnLService.updatePositionPnL(positionPnLList);
-        } catch (Exception ex)
-        {
-            logger.error("Error while removing a row => {} ", ex.getMessage());
-            JOptionPane.showMessageDialog(mainFrame, "Please choose a position to delete!", "Delete Row!", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void addPosition(PositionTableModel model, CapitalPanel capitalPanel, PositionActionsPanel positionActionsPanel)
-    {
-        OpeningCapital openingCapital = capitalPanel.getOpeningCapital();
-
-        //MarketConditions marketConditions = positionActionsPanel.getMarketConditions();
-
-        // portfolioPnLService.addPositionPnL(position, configuraion, openingCapital, marketConditions);
-
-        // model.updateData(portfolioPnLService.getPositionPnLList());
-
-        //  double totalPnl = portfolioPnLService.calculateTotalPnl();
-
-        // positionActionsPanel.getRunningCapitalPanel().getRunningCapital().setText(Double.toString(totalPnl));
-    }
-
-    public void simulate(MarketConditions marketConditions, List<Position> positionPnLList)
-    {
-        List<Position> instrumentPositions = //
-                positionPnLList.stream().filter(positionPnL -> //
-                                positionPnL.getInstrument().getName().equals(marketConditions.getInstrument().getName())) //
-                        .collect(Collectors.toList());
-
-        for (Position instrumentPosition : instrumentPositions)
-        {
-            double capitalDeployed = instrumentPosition.getPercentCapitalDeployed();
-            double pnl = instrumentPosition.getPnl();
-            double pnlPercent = instrumentPosition.getPercentPnL();
-            double lev = instrumentPosition.getConfigurtaion().getLev();
-        }
-
-    }
 }

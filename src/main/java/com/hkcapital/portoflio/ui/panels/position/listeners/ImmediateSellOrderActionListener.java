@@ -1,7 +1,12 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
+import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.model.Position;
+import com.hkcapital.portoflio.order.OderTypes;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 
 import javax.swing.*;
@@ -19,14 +24,20 @@ public class ImmediateSellOrderActionListener implements ActionListener
 
     private final PositionService positionService;
 
+    private final OrderManagerService orderManagerService;
+
+    private final ServiceRegistery<Service> serviceRegistery;
+
     private final JTable positionTableTable;
 
     public ImmediateSellOrderActionListener(PositionTableModel<Position> tableModel, //
-                                            PositionService positionService, //
+                                            final ServiceRegistery<Service> serviceRegistery,
                                             JTable positionTableTable)
     {
         this.tableModel = tableModel;
-        this.positionService = positionService;
+        this.positionService = (PositionService)serviceRegistery.getService(Service.PositionService);
+        this.orderManagerService = (OrderManagerService)serviceRegistery.getService(Service.OrderManagerService);
+        this.serviceRegistery = serviceRegistery;
         this.positionTableTable = positionTableTable;
     }
 
@@ -37,15 +48,34 @@ public class ImmediateSellOrderActionListener implements ActionListener
         int result = JOptionPane.showConfirmDialog(
                 null,
                 "Are you sure you want to place sell order!",
-                "Confirm",
+                "Confirm sell order",
                 JOptionPane.YES_NO_OPTION
         );
         if (result == JOptionPane.YES_OPTION)
         {
-            System.out.println("Placing sell order");
+            createMarketOrder(id);
         } else
         {
             System.out.println("Placing sell order cancelled");
         }
+    }
+    public void createMarketOrder(Integer positionId)
+    {
+        Position position = positionService.findById(positionId);
+        EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
+                false, //
+                position.getConfigurtaion().getLev(), //
+                position.getAllowedFirePower(), //
+                null, //
+                null, //
+                null, //
+                null, //
+                null,
+                OderTypes.MANUAL.getOrderType(),
+                null,
+                null,
+                null,
+                null);
+        orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 }

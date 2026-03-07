@@ -1,7 +1,9 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
 import com.hkcapital.portoflio.model.Position;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.panels.position.dialogue.PositionSellDialogue;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 
@@ -18,16 +20,16 @@ public class SellActionListener implements ActionListener
      */
     private PositionTableModel<Position> tableModel;
 
-    private final PositionService positionService;
+    private final ServiceRegistery<Service> serviceRegistery;
 
     private final JTable positionTableTable;
 
     public SellActionListener(PositionTableModel<Position> tableModel, //
-                              PositionService positionService, //
+                              ServiceRegistery<Service> serviceRegistery, //
                               JTable positionTableTable)
     {
         this.tableModel = tableModel;
-        this.positionService = positionService;
+        this.serviceRegistery = serviceRegistery;
         this.positionTableTable = positionTableTable;
     }
 
@@ -36,6 +38,6 @@ public class SellActionListener implements ActionListener
     public void actionPerformed(ActionEvent e)
     {
         Integer id = (Integer) tableModel.getValueAt(positionTableTable.getSelectedRow(), 0);
-        new PositionSellDialogue(positionService, id);
+        new PositionSellDialogue(serviceRegistery, id);
     }
 }

@@ -141,11 +141,11 @@ public class PositionActionsPanel extends UIBag
 
         positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
                 new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder})));
-        buy.addActionListener(new BuyActionListener(positionTableModel, positionService, positionTable));
-        sell.addActionListener(new SellActionListener(positionTableModel, positionService, positionTable));
+        buy.addActionListener(new BuyActionListener(positionTableModel, serviceRegistery, positionTable));
+        sell.addActionListener(new SellActionListener(positionTableModel, serviceRegistery, positionTable));
 
-        placeBuyOrder.addActionListener(new ImmediateBuyOrderActionListener(positionTableModel, positionService, positionTable));
-        placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, positionService, positionTable));
+        placeBuyOrder.addActionListener(new ImmediateBuyOrderActionListener(positionTableModel, serviceRegistery, positionTable));
+        placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, serviceRegistery, positionTable));
 
     }
 

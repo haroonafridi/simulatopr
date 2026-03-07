@@ -64,8 +64,10 @@ public class PositionEditDialogue extends JDialog
         setTitle("Change SR-Matrix and Configuration:");
         pack();
         setLocationRelativeTo(null);
-        setResizable(true);
         setVisible(true);
+        setModal(true);
+        setResizable(true);
+
     }
 
     private void initializeFields(Position position)
@@ -95,61 +97,74 @@ public class PositionEditDialogue extends JDialog
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Change positions details for instrument ["+position.getInstrument().getName()+"]"));
 
-        JPanel marketConditionsPanel = new JPanel();
+        JPanel marketConditionsPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+        JPanel marketConditionsPanelButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT,5,5));
+        JPanel marketConditionsInputsPanel = new JPanel(new GridLayout(2,3));
         marketConditionsPanel.setBorder(BorderFactory.createTitledBorder("Market Conditions:"));
-        marketConditionsPanel.add(nameLabel);
-        marketConditionsPanel.add(name);
-        name.setEnabled(false);
-        marketConditionsPanel.add(dayLowLabel);
-        marketConditionsPanel.add(dayLow);
-        dayLow.setEnabled(false);
-        marketConditionsPanel.add(dayHighLabel);
-        marketConditionsPanel.add(dayHigh);
-        dayHigh.setEnabled(false);
-        marketConditionsPanel.add(percentMoveLabel);
-        marketConditionsPanel.add(percentMove);
-        percentMove.setEnabled(false);
-        marketConditionsPanel.add(chooseMarketConditions);
+        marketConditionsInputsPanel.add(nameLabel);
+        marketConditionsInputsPanel.add(name);
+        name.setEditable(false);
+        marketConditionsInputsPanel.add(dayLowLabel);
+        marketConditionsInputsPanel.add(dayLow);
+        dayLow.setEditable(false);
+        marketConditionsInputsPanel.add(dayHighLabel);
+        marketConditionsInputsPanel.add(dayHigh);
+        dayHigh.setEditable(false);
+        marketConditionsInputsPanel.add(percentMoveLabel);
+        marketConditionsInputsPanel.add(percentMove);
+        percentMove.setEditable(false);
+        if(position.getMarketConditions().getPercentMove() > 0) {
+            percentMove.setBackground(Color.green);
+        } else
+        {
+            percentMove.setBackground(Color.red);
+        }
+        marketConditionsPanelButtonPanel.add(chooseMarketConditions);
+        marketConditionsPanel.add(marketConditionsInputsPanel, BorderLayout.CENTER);
+        marketConditionsPanel.add(marketConditionsPanelButtonPanel, BorderLayout.SOUTH);
 
-        JPanel configurationPanel = new JPanel();
+        JPanel configurationPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+        configurationPanel.setBorder(BorderFactory.createTitledBorder("Configuration:"));
         configurationPanel.add(percentAllocatedLabel);
         configurationPanel.add(percentAllocated);
-        percentAllocated.setEnabled(false);
+        percentAllocated.setEditable(false);
 
         configurationPanel.add(noOfInstrumentLabel);
         configurationPanel.add(noOfInstrument);
-        noOfInstrument.setEnabled(false);
+        noOfInstrument.setEditable(false);
 
 
         configurationPanel.add(noOfPositionsPerInstrumentLabel);
         configurationPanel.add(noOfPositionsPerInstrument);
-        noOfPositionsPerInstrument.setEnabled(false);
+        noOfPositionsPerInstrument.setEditable(false);
 
         configurationPanel.add(maxPercentAllowedPerInstrumentLabel);
         configurationPanel.add(maxPercentAllowedPerInstrument);
-        maxPercentAllowedPerInstrument.setEnabled(false);
+        maxPercentAllowedPerInstrument.setEditable(false);
 
         configurationPanel.add(leverageLabel);
         configurationPanel.add(leverage);
-        leverage.setEnabled(false);
+        leverage.setEditable(false);
         configurationPanel.add(chooseConfiguration);
 
-        JPanel srMatrixPanel = new JPanel();
+        JPanel srMatrixPanel = new JPanel(new GridLayout(2,2));
         srMatrixPanel.setBorder(BorderFactory.createTitledBorder("SR-Matrix:"));
         srMatrixPanel.add(supportLabel);
         srMatrixPanel.add(support);
-        support.setEnabled(false);
+        support.setEditable(false);
+        support.setBackground(new Color(230, 240, 255));
         srMatrixPanel.add(resistenceLabel);
         srMatrixPanel.add(resistence);
-        resistence.setEnabled(false);
+        resistence.setEditable(false);
+        resistence.setBackground(new Color(255, 235, 235));
         srMatrixPanel.add(timeFrameLabel);
         srMatrixPanel.add(timeFrame);
-        timeFrame.setEnabled(false);
+        timeFrame.setEditable(false);
         srMatrixPanel.add(timeFrameUnitLabel);
         srMatrixPanel.add(timeFrameUnit);
-        timeFrameUnit.setEnabled(false);
+        timeFrameUnit.setEditable(false);
         srMatrixPanel.add(chooseSRMatrix);
 
         mainPanel.add(marketConditionsPanel);

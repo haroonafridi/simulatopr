@@ -1,7 +1,13 @@
 package com.hkcapital.portoflio.ui.panels.position.dialogue;
 
+import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
+import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Position;
+import com.hkcapital.portoflio.order.OderTypes;
+import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.Service;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +16,7 @@ public class PositionBuyDialogue extends JDialog
 {
 
     private final PositionService positionService;
-    private final Integer id;
+    private final Integer positionId;
 
     private final JLabel nameLabel = new JLabel("Instrument:");
     private final JTextField name = new JTextField(20);
@@ -46,20 +52,27 @@ public class PositionBuyDialogue extends JDialog
     private final JButton buy = new JButton("Place Buy Order");
     private final JButton cancel = new JButton("Cancel");
 
-    public PositionBuyDialogue(PositionService positionService,
+    private final ServiceRegistery<Service> serviceRegistery;
+
+    private OrderManagerService orderManagerService;
+
+    public PositionBuyDialogue(final ServiceRegistery<Service> serviceRegistery,
                                Integer positionId)
     {
 
-        this.positionService = positionService;
-        this.id = positionId;
+        this.serviceRegistery = serviceRegistery;
+        this.positionService = (PositionService)serviceRegistery.getService(Service.PositionService);
+        this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
+        this.positionId = positionId;
         Position position = positionService.findById(positionId);
         initializeFields(position);
         buildUI(position);
         setTitle("Placing  ["+position.getInstrument().getName()+"] buy order!");
         pack();
         setLocationRelativeTo(null);
-        setResizable(true);
         setVisible(true);
+        setModal(true);
+        setResizable(true);
     }
 
     private void initializeFields(Position position)
@@ -88,58 +101,65 @@ public class PositionBuyDialogue extends JDialog
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-        JPanel marketConditionsPanel = new JPanel();
+        //mainPanel.setBorder(BorderFactory.createTitledBorder("Manual Sell Order Screen : ["+position.getInstrument().getName()+"]"));
+        JPanel marketConditionsPanel = new JPanel(new GridLayout(2,2));
         marketConditionsPanel.setBorder(BorderFactory.createTitledBorder("Market Conditions:"));
         marketConditionsPanel.add(nameLabel);
         marketConditionsPanel.add(name);
-        name.setEnabled(false);
+        name.setEditable(false);
         marketConditionsPanel.add(dayLowLabel);
         marketConditionsPanel.add(dayLow);
-        dayLow.setEnabled(false);
+        dayLow.setEditable(false);
         marketConditionsPanel.add(dayHighLabel);
         marketConditionsPanel.add(dayHigh);
-        dayHigh.setEnabled(false);
+        dayHigh.setEditable(false);
         marketConditionsPanel.add(percentMoveLabel);
         marketConditionsPanel.add(percentMove);
-        percentMove.setEnabled(false);
-
-        JPanel configurationPanel = new JPanel();
+        percentMove.setEditable(false);
+        if(position.getMarketConditions().getPercentMove() > 0) {
+            percentMove.setBackground(Color.green);
+        } else
+        {
+            percentMove.setBackground(Color.red);
+        }
+        JPanel configurationPanel = new JPanel(new GridLayout(3,2));
+        configurationPanel.setBorder(BorderFactory.createTitledBorder("Configuration:"));
         configurationPanel.add(percentAllocatedLabel);
         configurationPanel.add(percentAllocated);
-        percentAllocated.setEnabled(false);
+        percentAllocated.setEditable(false);
 
         configurationPanel.add(noOfInstrumentLabel);
         configurationPanel.add(noOfInstrument);
-        noOfInstrument.setEnabled(false);
+        noOfInstrument.setEditable(false);
 
 
         configurationPanel.add(noOfPositionsPerInstrumentLabel);
         configurationPanel.add(noOfPositionsPerInstrument);
-        noOfPositionsPerInstrument.setEnabled(false);
+        noOfPositionsPerInstrument.setEditable(false);
 
         configurationPanel.add(maxPercentAllowedPerInstrumentLabel);
         configurationPanel.add(maxPercentAllowedPerInstrument);
-        maxPercentAllowedPerInstrument.setEnabled(false);
+        maxPercentAllowedPerInstrument.setEditable(false);
 
         configurationPanel.add(leverageLabel);
         configurationPanel.add(leverage);
-        leverage.setEnabled(false);
-        JPanel srMatrixPanel = new JPanel();
+        leverage.setEditable(false);
+        JPanel srMatrixPanel = new JPanel(new GridLayout(2,3));
         srMatrixPanel.setBorder(BorderFactory.createTitledBorder("SR-Matrix:"));
         srMatrixPanel.add(supportLabel);
         srMatrixPanel.add(support);
-        support.setEnabled(false);
+        support.setEditable(false);
+        support.setBackground(new Color(230, 240, 255));
         srMatrixPanel.add(resistenceLabel);
         srMatrixPanel.add(resistence);
-        resistence.setEnabled(false);
+        resistence.setEditable(false);
+        resistence.setBackground(new Color(255, 235, 235));
         srMatrixPanel.add(timeFrameLabel);
         srMatrixPanel.add(timeFrame);
-        timeFrame.setEnabled(false);
+        timeFrame.setEditable(false);
         srMatrixPanel.add(timeFrameUnitLabel);
         srMatrixPanel.add(timeFrameUnit);
-        timeFrameUnit.setEnabled(false);
+        timeFrameUnit.setEditable(false);
 
         mainPanel.add(marketConditionsPanel);
         mainPanel.add(srMatrixPanel);
@@ -148,30 +168,38 @@ public class PositionBuyDialogue extends JDialog
         buttonPanel.add(buy);
         buttonPanel.add(cancel);
         mainPanel.add(buttonPanel);
-        buy.addActionListener(e -> save());
+        buy.addActionListener(e -> createBuyOrder());
         cancel.addActionListener(e -> dispose());
+        buy.setBackground(new Color(200,60,60));
+        buy.setForeground(Color.WHITE);
         setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    private void save()
+    private void createBuyOrder()
     {
-        try
-        {
-//            strategy.setActive(active.isSelected());
-//            strategy.setName(name.getText());
-//            strategy.setDescription(description.getText());
-//            serviceRegistry.updateStrategy(strategy);
-            dispose();
+        createMarketOrder();
+        dispose();
+    }
 
-        } catch (NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please enter valid numeric values.",
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
+
+    public void createMarketOrder()
+    {
+        Position position = positionService.findById(positionId);
+        EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
+                true, //
+                position.getConfigurtaion().getLev(), //
+                position.getAllowedFirePower(), //
+                null, //
+                null, //
+                null, //
+                null, //
+                null,
+                OderTypes.MANUAL.getOrderType(),
+                null,
+                null,
+                null,
+                null);
+        orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 }
