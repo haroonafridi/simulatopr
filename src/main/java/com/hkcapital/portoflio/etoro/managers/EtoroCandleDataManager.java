@@ -3,8 +3,9 @@ package com.hkcapital.portoflio.etoro.managers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationProdServiceImpl;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationProdServiceImpl;
 import com.hkcapital.portoflio.etoro.dto.candle.CandleResponseDto;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.etoro.master.TimeFrame;
@@ -15,7 +16,7 @@ public class EtoroCandleDataManager
 {
     public static void main(String args[]) throws JsonProcessingException
     {
-        EtoroAPIInformationService apiInformation = new EtoroAPIInformationDemoServiceImpl();
+        EtoroAPIInformationService apiInformation = new EtoroAPIInformationProdServiceImpl();
 
         EtoroInstrumentCandleDataServiceImpl etoroInstrumentCandleData = new EtoroInstrumentCandleDataServiceImpl(apiInformation);
 

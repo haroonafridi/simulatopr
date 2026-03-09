@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.etoro.websocket;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationProdServiceImpl;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Instrument;
@@ -48,7 +49,7 @@ public class EToroWSClient implements WebSocket.Listener //
 
     public static void main(String[] args) throws InterruptedException
     {
-        EtoroAPIInformationService apiInformation = new EtoroAPIInformationDemoServiceImpl();
+        EtoroAPIInformationService apiInformation = new EtoroAPIInformationProdServiceImpl();
         new EToroWSClient().start(apiInformation);
     }
 

@@ -2,6 +2,7 @@ package com.hkcapital.portoflio.service.impl.etoro;
 
 import com.hkcapital.portoflio.etoro.Configuration;
 import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
+import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationProdServiceImpl;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.etoro.websocket.EToroWSClient;
@@ -60,7 +61,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
         {
             try
             {
-                eToroWSClient.start(new EtoroAPIInformationDemoServiceImpl());
+                eToroWSClient.start(new EtoroAPIInformationProdServiceImpl());
 
             } catch (InterruptedException e)
             {
