@@ -132,6 +132,10 @@ public class StrategyHeaderPanel extends UIBag
     @Transactional
     public void createMarketOrder()
     {
+
+        if(true) {
+            throw new RuntimeException("Not Yet implemented");
+        }
         StrategyService strategyService = (StrategyService) serviceRegistery.getService("StrategyService");
         Strategy strategy = strategyService.findById(12);
         List<Position> positionList = positionService.findByStrategyId(strategy.getId());

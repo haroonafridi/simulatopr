@@ -56,7 +56,7 @@ public class PositionServiceTest
 
         final Instrument posInstrument = position1.getInstrument();
         final Strategy posStrategy = position1.getStrategy();
-        final Configuration posConfiguration = position1.getConfigurtaion();
+        final Configuration posConfiguration = position1.getConfiguration();
         final MarketConditions posMarketConditions = position1.getMarketConditions();
 
         Assertions.assertEquals(1, position1.getRecordIndex());

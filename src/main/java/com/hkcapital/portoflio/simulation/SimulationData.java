@@ -28,7 +28,5 @@ public class SimulationData
     public static final MarketConditions MARKET_CONDITION= new MarketConditions( new Instrument( SimulationData.GOLD), 3372d
             , 3354d, -1d);
 
-    public static  final Position POSITION_PN_L =  new Position(4,  null, CONFIGURAION,  MARKET_CONDITION,null, null,null, null, 100d, 100d,
-   100d, 100d, 1d,1d , 1d);
 
 }

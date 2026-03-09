@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Primary
 public class EtoroAPIInformationDemoServiceImpl implements EtoroAPIInformationService
 {
-
     private Logger logger = LoggerFactory.getLogger(EtoroAPIInformationDemoServiceImpl.class);
     private static final String X_REQUEST_ID = "x-request-id";
     private static final String X_API_KEY = "x-api-key";
@@ -17,11 +16,11 @@ public class EtoroAPIInformationDemoServiceImpl implements EtoroAPIInformationSe
     private static final String API_KEY = "sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf";
     private static final String USER_KEY = "eyJjaSI6IjYwY2FiYjBiLTU1OTctNDQ4NS04ZjYzLTdlOWUwNTZlMGJiOCIsImVhbiI6IlVucmVnaXN0ZXJlZEFwcGxpY2F0aW9uIiwiZWsiOiJManAzOVFoNkM3cnNGeUh5ekd0NkpkMVMtcnN1cERzaUhLWS0xMUFwLldVVTJtRWlWMi03WHBuWUx6ZHdFQnMxUE1mSmo4ck91emhHNUZpRUZWOGNNakJWQjFORUtUWG5FSEtSTFBmeGJ1a18ifQ__";
     private static final String CONTENT = "application/json";
-    private static final String LIMIT_ORDER = "https://public-api.etoro.com/api/v1/trading/execution/demo/limit-orders";
-    private static final String MARKET_ORDER = "https://public-api.etoro.com/api/v1/trading/execution/demo/market-open-orders/by-amount";
+    private static final String LIMIT_ORDER = "https://public-api.etoro.com/api/v1/trading/execution/limit-orders";
+    private static final String MARKET_ORDER = "https://public-api.etoro.com/api/v1/trading/execution/market-open-orders/by-amount";
     private static final String INSTRUMENT_CANDLE_DATA = "https://public-api.etoro.com/api/v1/market-data/instruments/";
-    private static final String ORDER_INFORMATION = "https://public-api.etoro.com/api/v1/trading/info/demo/orders/";
-    private static final String PORTFOLIO_INFORMATION = "https://public-api.etoro.com/api/v1/trading/info/demo/portfolio";
+    private static final String ORDER_INFORMATION = "https://public-api.etoro.com/api/v1/trading/info/real/orders/";
+    private static final String PORTFOLIO_INFORMATION = "https://public-api.etoro.com/api/v1/trading/info/portfolio";
 
     public EtoroAPIInformationDemoServiceImpl() {
         logger.info("Development profile activated!!!");

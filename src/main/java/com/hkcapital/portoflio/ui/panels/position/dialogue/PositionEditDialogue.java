@@ -83,11 +83,11 @@ public class PositionEditDialogue extends JDialog
         timeFrameUnit.setText(""+position.getSrMatrix().getTimeFrameUnit());
         //Configuration
 
-        percentAllocated.setText("" + position.getConfigurtaion().getPercentAllocationAllowed());
-        noOfInstrument.setText("" + position.getConfigurtaion().getNoOfInsutrments());
-        noOfPositionsPerInstrument.setText("" + position.getConfigurtaion().getNoOfPositionsPerInstruments());
-        maxPercentAllowedPerInstrument.setText("" + position.getConfigurtaion().getMaxPercentAllowedPerInstrument());
-        leverage.setText("" + position.getConfigurtaion().getLev());
+        percentAllocated.setText("" + position.getConfiguration().getPercentAllocationAllowed());
+        noOfInstrument.setText("" + position.getConfiguration().getNoOfInsutrments());
+        noOfPositionsPerInstrument.setText("" + position.getConfiguration().getNoOfPositionsPerInstruments());
+        maxPercentAllowedPerInstrument.setText("" + position.getConfiguration().getMaxPercentAllowedPerInstrument());
+        leverage.setText("" + position.getConfiguration().getLev());
 
     }
 

@@ -53,58 +53,5 @@ public class PortfolioPnLServiceImpl
     }
 
 
-    public void addPositionPnL(
-                               Configuration configuraion,
-                               OpeningCapital openingCapital,
-                               MarketConditions marketConditions)
-    {
-        double capital = 2;//Math.round(openingCapital.getCapital() * (getPercentCapitalDeployed() / 100));
-        double allowedFirepower = openingCapital.getCapital() * (configuraion.getMaxPercentAllowedPerInstrument() / 100);
-        double capitalRemainingFirePower = (openingCapital.getCapital() * configuraion.getPercentAllocationAllowed() / 100) - capital;
-        double remainingFirepower = 0;
-
-        double capitalInvestedPerInsrument = 0;
-
-        double totalRemainingFirePower = 0;
-
-        if (getPositionPnLList().size() == 0)
-        {
-            remainingFirepower = allowedFirepower - capital;
-
-        } else
-        {
-            capitalInvestedPerInsrument = getPositionPnLList().stream()
-                    .filter(pnl -> pnl.getInstrument().getName().equals(pnl.getInstrument().getName()))
-                    .mapToDouble(pnl -> pnl.getCurrentPositionEquity()).sum();
-
-            remainingFirepower = allowedFirepower - capitalInvestedPerInsrument - capital;
-
-            totalRemainingFirePower = getPositionPnLList().stream()
-                    .mapToDouble(pnl -> pnl.getCurrentPositionEquity()).sum();
-
-            capitalRemainingFirePower = capitalRemainingFirePower - totalRemainingFirePower;
-
-        }
-        int index = getPositionPnLList().size() + 1;
-        double percentPnl = Math.round(marketConditions.getPercentMove() * configuraion.getLev());
-        double pnl = capital * (percentPnl / 100);
-
-//        positionPnLList.add(new Position(index,null, configuraion,
-//                marketConditions, null, null, percentPnl, pnl, capital, allowedFirepower,
-//                remainingFirepower,
-//                capitalRemainingFirePower, calculateTotalPnl()));
-
-    }
-
-    public double calculateTotalPnl()
-    {
-        return positionPnLList.stream().mapToDouble(p -> p.getPnl()).sum() + openingCapital.getCapital();
-    }
-
-    public void updatePositionPnL(List<Position> pnl)
-    {
-        positionPnLList.clear();
-        positionPnLList.addAll(pnl);
-    }
 
 }

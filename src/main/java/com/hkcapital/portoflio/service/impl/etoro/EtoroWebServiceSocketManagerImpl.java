@@ -22,8 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.hkcapital.portoflio.etoro.CalcUtils.calculateTargetPrice;
-
 @Service
 public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerService
 {
@@ -115,7 +113,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
 
                         Instrument inst = position.getInstrument();
 
-                        Integer leverage = position.getConfigurtaion().getLev();
+                        Integer leverage = position.getConfiguration().getLev();
 
                         Optional<SRMatrix> srMatrix = this.srMatrixService.findAll()
                                 .stream()

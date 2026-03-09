@@ -92,12 +92,12 @@ public class PositionSellDialogue extends JDialog
         timeFrame.setText("" + position.getSrMatrix().getTimeFrame());
         timeFrameUnit.setText("" + position.getSrMatrix().getTimeFrameUnit());
         //Configuration
-        percentAllocated.setText("" + position.getConfigurtaion().getPercentAllocationAllowed());
-        noOfInstrument.setText("" + position.getConfigurtaion().getNoOfInsutrments());
-        noOfPositionsPerInstrument.setText("" + position.getConfigurtaion().getNoOfPositionsPerInstruments());
-        maxPercentAllowedPerInstrument.setText("" + position.getConfigurtaion().getMaxPercentAllowedPerInstrument());
+        percentAllocated.setText("" + position.getConfiguration().getPercentAllocationAllowed());
+        noOfInstrument.setText("" + position.getConfiguration().getNoOfInsutrments());
+        noOfPositionsPerInstrument.setText("" + position.getConfiguration().getNoOfPositionsPerInstruments());
+        maxPercentAllowedPerInstrument.setText("" + position.getConfiguration().getMaxPercentAllowedPerInstrument());
         positionSize.setText("" + position.getRemainingFirepower());
-        leverage.setText("" + position.getConfigurtaion().getLev());
+        leverage.setText("" + position.getConfiguration().getLev());
 
     }
 
@@ -192,8 +192,8 @@ public class PositionSellDialogue extends JDialog
         Position position = positionService.findById(positionId);
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
                 false, //
-                position.getConfigurtaion().getLev(), //
-                position.getAllowedFirePower(), //
+                position.getConfiguration().getLev(), //
+                position.getCurrentPositionEquity(), //
                 null, //
                 null, //
                 null, //

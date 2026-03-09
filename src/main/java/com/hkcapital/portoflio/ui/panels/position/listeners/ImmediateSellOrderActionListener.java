@@ -64,8 +64,8 @@ public class ImmediateSellOrderActionListener implements ActionListener
         Position position = positionService.findById(positionId);
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
                 false, //
-                position.getConfigurtaion().getLev(), //
-                position.getAllowedFirePower(), //
+                position.getConfiguration().getLev(), //
+                position.getCurrentPositionEquity(), //
                 null, //
                 null, //
                 null, //

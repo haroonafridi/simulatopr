@@ -81,7 +81,7 @@ public class AddPositionsButtonListener implements ActionListener
         position.setInstrument(marketConditions.getInstrument());
         Configuration configuration = configurationService.findById(configurationSourcePanel.getId().getIntValue());
         SRMatrix srMatrix = srMatrixService.findById(srMatrixSourcePanel.getId().intValue());
-        position.setConfigurtaion(configuration);
+        position.setConfiguration(configuration);
         position.setMarketConditions(marketConditions);
         position.setSrMatrix(srMatrix);
         position.setStrategy(strategyHeaderPanel.getStrategy());
@@ -91,10 +91,10 @@ public class AddPositionsButtonListener implements ActionListener
                 positionActionsPanel.getCapitalPanel().getAllocatedCapital());
         position.setAllowedFirePower(positionParameter.allowedFirePower());
         position.setRemainingFirepower(positionParameter.remainingFirePower());
-        position.setPercentPnL(positionParameter.percentPnl());
-        position.setPnl(positionParameter.pnl());
         position.setCapitalRemainingFirePower(positionParameter.remainingCapital());
         position.setPercentCapitalDeployed(positionParameter.percentCapitalDeployed());
+        position.setCurrentPositionEquity(positionParameter.capital());
+        position.setLeverage(positionParameter.leverage());
         positionService.add(position);
         List<Position> positionList = positionService.findByStrategyId(strategyHeaderPanel.getStrategy().getId());
         model.updateData(positionList);

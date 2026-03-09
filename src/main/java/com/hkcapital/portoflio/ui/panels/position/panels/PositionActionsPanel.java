@@ -135,7 +135,6 @@ public class PositionActionsPanel extends UIBag
         positionTable.addMouseListener(new PositionEditDialogueMouseHandler(positionTableModel, positionTable, positionService));
         JMenuItem buy = new JMenuItem("Buy");
         JMenuItem sell = new JMenuItem("Sell");
-
         JMenuItem placeBuyOrder = new JMenuItem("Place buy order immediately");
         JMenuItem placeSellOrder = new JMenuItem("Place sell order immediately");
 

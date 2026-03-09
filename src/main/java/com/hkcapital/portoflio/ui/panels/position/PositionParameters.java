@@ -5,9 +5,9 @@ public record PositionParameters(Double percentCapitalDeployed,
                                  Double percentPnl,
                                  Double pnl,
                                  Double allowedFirePower,
-
                                  Double remainingFirePower,
-                                 Double remainingCapital)
+                                 Double remainingCapital,
+                                 Integer leverage)
 {
 
 }

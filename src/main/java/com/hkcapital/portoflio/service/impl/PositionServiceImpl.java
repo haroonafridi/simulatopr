@@ -78,7 +78,9 @@ public class PositionServiceImpl implements PositionService
         Double percentCapitalDeployed = (capital / openingCapital) * 100;
         Double percentPnl = 0d;
         Double pnl = 0d;
+
         Double allowedFirePower = allocatedCapital;
+
         Double remainingCapital = openingCapital - capital;
 
         Double remainingFirePower = allowedFirePower - capital;
@@ -86,7 +88,7 @@ public class PositionServiceImpl implements PositionService
         System.out.println("percentCapitalDeployed => "+percentCapitalDeployed+ "capital:  "+capital+ " remainingCapital => "+remainingCapital);
 
         return new PositionParameters(percentCapitalDeployed, capital, pnl, percentPnl, allowedFirePower,
-                remainingFirePower , remainingCapital);
+                remainingFirePower , remainingCapital, configuration.getLev());
     }
 
 }

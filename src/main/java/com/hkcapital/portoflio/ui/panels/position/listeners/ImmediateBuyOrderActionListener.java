@@ -7,7 +7,6 @@ import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.Service;
-import com.hkcapital.portoflio.ui.panels.position.dialogue.PositionBuyDialogue;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 
 import javax.swing.*;
@@ -68,8 +67,8 @@ public class ImmediateBuyOrderActionListener implements ActionListener
         Position position = positionService.findById(positionId);
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
                 true, //
-                position.getConfigurtaion().getLev(), //
-                position.getAllowedFirePower(), //
+                position.getConfiguration().getLev(), //
+                position.getCurrentPositionEquity(), //
                 null, //
                 null, //
                 null, //

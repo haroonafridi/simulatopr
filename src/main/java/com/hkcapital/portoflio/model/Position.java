@@ -16,7 +16,7 @@ public class Position implements Serializable
     private Integer recordIndex;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "configuration_id", referencedColumnName = "id")
-    private Configuration configurtaion;
+    private Configuration configuration;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "market_condition_id", referencedColumnName = "id")
     private MarketConditions marketConditions;
@@ -39,10 +39,6 @@ public class Position implements Serializable
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "strategy_id")
     private Strategy strategy;
-    @Column(name = "percent_pnl")
-    private Double percentPnL;
-    @Column(name = "pnl")
-    private Double pnl;
     @Column(name = "current_position_equity")
     private Double currentPositionEquity;
     @Column(name = "allowed_fire_power")
@@ -56,6 +52,11 @@ public class Position implements Serializable
     private Double portfolioValue;
 
 
+    @Column(name = "leverage")
+    private Integer leverage;
+
+
+
     public Position()
     {
     }
@@ -67,28 +68,27 @@ public class Position implements Serializable
                     Instrument instrument,
                     SRMatrix srMatrix,
                     TradingSessions tradingSessions,
-                    Double percentPnL, //
                     Double percentCapitalDeployed,
-                    Double pnl, Double currentPositionEquity, //
+                    Double currentPositionEquity, //
                     Double allowedFirePower, Double remainingFirepower, //
                     Double capitalRemainingFirePower, //
-                    Double portfolioValue)
+                    Double portfolioValue,
+                    Integer leverage)
     {
         this.recordIndex = recordIndex;
-        this.configurtaion = configuraion;
+        this.configuration = configuraion;
         this.marketConditions = marketConditions;
         this.instrument = instrument;
         this.srMatrix = srMatrix;
         this.tradingSessions = tradingSessions;
         this.percentCapitalDeployed = percentCapitalDeployed;
-        this.percentPnL = percentPnL;
-        this.pnl = pnl;
         this.currentPositionEquity = currentPositionEquity;
         this.allowedFirePower = allowedFirePower;
         this.remainingFirepower = remainingFirepower;
         this.capitalRemainingFirePower = capitalRemainingFirePower;
         this.portfolioValue = portfolioValue;
         this.strategy = strategy;
+        this.leverage = leverage;
     }
 
     public Integer getId()
@@ -100,14 +100,14 @@ public class Position implements Serializable
     {
         this.id = id;
     }
-    public Configuration getConfigurtaion()
+    public Configuration getConfiguration()
     {
-        return configurtaion;
+        return configuration;
     }
 
-    public void setConfigurtaion(Configuration configurtaion)
+    public void setConfiguration(Configuration configuration)
     {
-        this.configurtaion = configurtaion;
+        this.configuration = configuration;
     }
 
     public MarketConditions getMarketConditions()
@@ -118,26 +118,6 @@ public class Position implements Serializable
     public void setMarketConditions(MarketConditions marketConditions)
     {
         this.marketConditions = marketConditions;
-    }
-
-    public Double getPercentPnL()
-    {
-        return percentPnL;
-    }
-
-    public void setPercentPnL(Double percentPnL)
-    {
-        this.percentPnL = percentPnL;
-    }
-
-    public Double getPnl()
-    {
-        return pnl;
-    }
-
-    public void setPnl(Double pnl)
-    {
-        this.pnl = pnl;
     }
 
     public Double getCurrentPositionEquity()
@@ -248,5 +228,15 @@ public class Position implements Serializable
     public void setTradingSessions(TradingSessions tradingSessions)
     {
         this.tradingSessions = tradingSessions;
+    }
+
+    public Integer getLeverage()
+    {
+        return leverage;
+    }
+
+    public void setLeverage(Integer leverage)
+    {
+        this.leverage = leverage;
     }
 }
