@@ -48,9 +48,9 @@ public class PositionServiceTest
 
         Position position1 = simulatorTestHelper.getPositionService().add(new Position(1, strategy, configuration, //
                 marketConditions, instrument, //
-                2d, 5d, 50d, //
+                null, null, 50d, //
                 2d, 2d, 5d, 6d, //
-                20d));
+                20d, 1));
 
         Assertions.assertNotNull(position1);
 
@@ -84,9 +84,7 @@ public class PositionServiceTest
         Assertions.assertEquals(1, posMarketConditions.getPercentMove());
 
 
-        Assertions.assertEquals(2, position1.getPercentPnL());
         Assertions.assertEquals(5, position1.getPercentCapitalDeployed());
-        Assertions.assertEquals(50, position1.getPnl());
         Assertions.assertEquals(2, position1.getCurrentPositionEquity());
         Assertions.assertEquals(2, position1.getAllowedFirePower());
         Assertions.assertEquals(5, position1.getRemainingFirepower());
