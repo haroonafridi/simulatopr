@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.etoro.managers;
 
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.ui.InstrumentDataService;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -19,12 +19,12 @@ public class EtoroInstrumentCandleDataServiceImpl implements InstrumentDataServi
     private static final Logger logger = LoggerFactory.getLogger(EtoroInstrumentCandleDataServiceImpl.class);
     private static final String FORWARD_SLASH = "/";
     private static final String HISTORY_CANDLES = "history/candles/";
-    private final EtoroAPIInformationService apiInformation;
+    private final EtoroApiConfiguration etoroApiInformation;
 
 
-    public EtoroInstrumentCandleDataServiceImpl(EtoroAPIInformationService apiInformation)
+    public EtoroInstrumentCandleDataServiceImpl(EtoroApiConfiguration etoroApiInformation)
     {
-        this.apiInformation = apiInformation;
+        this.etoroApiInformation = etoroApiInformation;
     }
 
     @Override
@@ -36,13 +36,13 @@ public class EtoroInstrumentCandleDataServiceImpl implements InstrumentDataServi
         logger.info("Requesting candle data: instrument = [{}] timeframe = [{}]  ", instrument, timeInterval);
         try
         {
-            final String url = apiInformation.getInstrumentCandle().concat(instrument.toString()).concat(FORWARD_SLASH)//
+            final String url = etoroApiInformation.getInstrumentCandleDataUrl().concat(instrument.toString()).concat(FORWARD_SLASH)//
                     .concat(HISTORY_CANDLES).concat(sortOrder).concat(FORWARD_SLASH)
                     .concat(timeInterval).concat(FORWARD_SLASH).concat(pages.toString());
             HttpResponse<String> response = Unirest.get(url)
-                    .header(apiInformation.getXRequestId(), UUID.randomUUID().toString())
-                    .header(apiInformation.getXApIKey(), apiInformation.getApiKey())
-                    .header(apiInformation.getXUserKey(), apiInformation.getUserKey())
+                    .header(etoroApiInformation.getXRequestId(), UUID.randomUUID().toString())
+                    .header(etoroApiInformation.getXApiKey(), etoroApiInformation.getApiKey())
+                    .header(etoroApiInformation.getXUserKey(), etoroApiInformation.getUserKey())
                     .asString();
             return response.getBody();
         } catch (UnirestException e)

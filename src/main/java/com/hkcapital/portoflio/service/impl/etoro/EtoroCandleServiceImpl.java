@@ -2,7 +2,7 @@ package com.hkcapital.portoflio.service.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.dto.candle.CandleResponseDto;
 import com.hkcapital.portoflio.etoro.managers.EtoroInstrumentCandleDataServiceImpl;
 import com.hkcapital.portoflio.etoro.master.Instruments;
@@ -22,9 +22,9 @@ import java.util.List;
 public class EtoroCandleServiceImpl implements EtoroCandleService
 {
     private final CandleRepository candleRepository;
-    private final EtoroAPIInformationService apiInformationService;
+    private final EtoroApiConfiguration apiInformationService;
 
-    public EtoroCandleServiceImpl(final CandleRepository candleRepository, final EtoroAPIInformationService apiInformationService)
+    public EtoroCandleServiceImpl(final CandleRepository candleRepository, final EtoroApiConfiguration apiInformationService)
     {
         this.candleRepository = candleRepository;
         this.apiInformationService = apiInformationService;

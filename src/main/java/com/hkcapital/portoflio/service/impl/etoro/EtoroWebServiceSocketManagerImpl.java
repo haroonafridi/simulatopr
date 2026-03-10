@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.service.impl.etoro;
 
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.Configuration;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.etoro.websocket.EToroWSClient;
@@ -36,19 +36,23 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
 
     private final PositionService positionService;
 
+    private final EtoroApiConfiguration etoroApiConfiguration;
+
 
 
     public EtoroWebServiceSocketManagerImpl(final SRMatrixService srMatrixService,
                                             final OrderManagerService orderManagerService,
                                             final InstrumentService instrumentService,
                                             final StrategyService strategyService,
-                                            final PositionService positionService)
+                                            final PositionService positionService,
+                                            final EtoroApiConfiguration etoroApiConfiguration)
     {
         this.srMatrixService = srMatrixService;
         this.orderManagerService = orderManagerService;
         this.instrumentService = instrumentService;
         this.strategyService = strategyService;
         this.positionService = positionService;
+        this.etoroApiConfiguration = etoroApiConfiguration;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
         {
             try
             {
-                eToroWSClient.start(new EtoroAPIInformationDemoServiceImpl());
+                eToroWSClient.start(etoroApiConfiguration);
 
             } catch (InterruptedException e)
             {

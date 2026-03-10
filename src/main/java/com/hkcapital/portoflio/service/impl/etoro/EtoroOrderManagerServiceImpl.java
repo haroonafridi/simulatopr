@@ -1,11 +1,9 @@
 package com.hkcapital.portoflio.service.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.JSON;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroLimitOrderDto;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
@@ -30,16 +28,16 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
 {
     private static final Logger logger = LoggerFactory.getLogger(EtoroOrderManagerServiceImpl.class);
     private final OrderRepository orderRepository;
-    private final EtoroAPIInformationService apiInformationService;
+    private final EtoroApiConfiguration etoroApiConfiguration;
 
     private final ObjectMapper objectMapper;
 
     public EtoroOrderManagerServiceImpl(final OrderRepository orderRepository, //
-                                        final EtoroAPIInformationService apiInformationService,
+                                        final EtoroApiConfiguration etoroApiConfiguration,
                                         final ObjectMapper objectMapper)
     {
         this.orderRepository = orderRepository;
-        this.apiInformationService = apiInformationService;
+        this.etoroApiConfiguration = etoroApiConfiguration;
         this.objectMapper = objectMapper;
     }
 
@@ -48,7 +46,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     {
         try
         {
-            logger.info("Running profile = {}", apiInformationService);
             logger.info("Fetching portfolio information");
             EtoroPortfolioResponseDTO portfolioResponseDTO = etoroPortfolio();
             List<Long> openPositions = getOpenPositions(etoroMarketOrderDto, portfolioResponseDTO);
@@ -60,7 +57,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             }
 
             logger.info("Creating market Order [{}]", etoroMarketOrderDto.toJson());
-            HttpResponse<String> response = createOrder(etoroMarketOrderDto, apiInformationService.getMarketOrder());
+            HttpResponse<String> response = createOrder(etoroMarketOrderDto, etoroApiConfiguration.getMarketOrderUrl());
             if (response != null)
             {
                 logger.info("Market Order in etoro [ {} ]", response.getBody());
@@ -96,7 +93,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         try
         {
             logger.info("Creating limit Order [{}]", etoroLimitOrderDto.toJson());
-            HttpResponse<String> response = createOrder(etoroLimitOrderDto, apiInformationService.getLimitOrder());
+            HttpResponse<String> response = createOrder(etoroLimitOrderDto, etoroApiConfiguration.getLimitOrderUrl());
             logger.info("Limit Order in etoro [{}]", response.getBody());
             return response.getBody().toString();
         } catch (UnirestException e)
@@ -108,10 +105,14 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     public HttpResponse<String> createOrder(JSON order, String url) throws UnirestException
     {
 
+        System.out.println("url "+url);
+        System.out.println("api key "+etoroApiConfiguration.getApiKey());
+        System.out.println("user key "+etoroApiConfiguration.getUserKey());
+
         HttpResponse<String> response = Unirest.post(url)
-                .header(apiInformationService.getXRequestId(), UUID.randomUUID().toString())//
-                .header(apiInformationService.getXApIKey(), apiInformationService.getApiKey())//
-                .header(apiInformationService.getXUserKey(), apiInformationService.getUserKey())//
+                .header(etoroApiConfiguration.getXRequestId(), UUID.randomUUID().toString())//
+                .header(etoroApiConfiguration.getXApiKey(), etoroApiConfiguration.getApiKey())//
+                .header(etoroApiConfiguration.getXUserKey(), etoroApiConfiguration.getUserKey())//
                 .header("Content-Type", "application/json")//
                 .body(order.toJson())//
                 .asString();
@@ -123,10 +124,10 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     {
         try
         {
-            HttpResponse<String> response = Unirest.get(apiInformationService.getOrderInformation().concat(orderId.toString()))//
+            HttpResponse<String> response = Unirest.get(etoroApiConfiguration.getOrderInformationUrl().concat(orderId.toString()))//
                     .header("x-request-id", UUID.randomUUID().toString())//
-                    .header("x-api-key", apiInformationService.getApiKey())//
-                    .header("x-user-key", apiInformationService.getUserKey())//
+                    .header("x-api-key", etoroApiConfiguration.getApiKey())//
+                    .header("x-user-key", etoroApiConfiguration.getUserKey())//
                     .asString();
             logger.info("Order details [{}]", orderId, response.getBody());
             return response.getBody();
@@ -181,10 +182,13 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         {
             try
             {
-                response = Unirest.get(apiInformationService.getPortfolioInformation())//
-                        .header(apiInformationService.getXRequestId(), UUID.randomUUID().toString())//
-                        .header(apiInformationService.getXApIKey(), apiInformationService.getApiKey())//
-                        .header(apiInformationService.getXUserKey(), apiInformationService.getUserKey()).asString();
+                System.out.println("url = "+etoroApiConfiguration.getPortfolioInformationUrl());
+                System.out.println("api key = "+ etoroApiConfiguration.getApiKey());
+                System.out.println("user key = "+  etoroApiConfiguration.getUserKey());
+                response = Unirest.get(etoroApiConfiguration.getPortfolioInformationUrl())//
+                        .header(etoroApiConfiguration.getXRequestId(), UUID.randomUUID().toString())//
+                        .header(etoroApiConfiguration.getXApiKey(), etoroApiConfiguration.getApiKey())//
+                        .header(etoroApiConfiguration.getXUserKey(), etoroApiConfiguration.getUserKey()).asString();
                 logger.info("portfolio response = [{}]", response.getBody());
             } catch (UnirestException e)
             {

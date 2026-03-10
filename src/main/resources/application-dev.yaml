@@ -1,0 +1,8 @@
+etoro:
+    api-key : sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf
+    user-key : eyJjaSI6IjYwY2FiYjBiLTU1OTctNDQ4NS04ZjYzLTdlOWUwNTZlMGJiOCIsImVhbiI6IlVucmVnaXN0ZXJlZEFwcGxpY2F0aW9uIiwiZWsiOiJManAzOVFoNkM3cnNGeUh5ekd0NkpkMVMtcnN1cERzaUhLWS0xMUFwLldVVTJtRWlWMi03WHBuWUx6ZHdFQnMxUE1mSmo4ck91emhHNUZpRUZWOGNNakJWQjFORUtUWG5FSEtSTFBmeGJ1a18ifQ__
+    limit-order-url : https://public-api.etoro.com/api/v1/trading/execution/demo/limit-orders
+    market-order-url : https://public-api.etoro.com/api/v1/trading/execution/demo/market-open-orders/by-amount
+    instrument-candle-data-url : https://public-api.etoro.com/api/v1/market-data/instruments/
+    order-information-url : https://public-api.etoro.com/api/v1/trading/info/demo/orders/
+    portfolio-information-url : https://public-api.etoro.com/api/v1/trading/info/demo/portfolio

@@ -2,13 +2,14 @@ package com.hkcapital.portoflio.etoro.websocket;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationDemoServiceImpl;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.InstrumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -48,11 +49,15 @@ public class EToroWSClient implements WebSocket.Listener //
 
     public static void main(String[] args) throws InterruptedException
     {
-        EtoroAPIInformationService apiInformation = new EtoroAPIInformationDemoServiceImpl();
+        ConfigurableApplicationContext context =
+                SpringApplication.run(EToroWSClient.class, args);
+
+        EtoroApiConfiguration apiInformation = context.getBean(EtoroApiConfiguration.class);
+        ;
         new EToroWSClient().start(apiInformation);
     }
 
-    public void start(EtoroAPIInformationService apiInformation) throws InterruptedException //
+    public void start(EtoroApiConfiguration apiInformation) throws InterruptedException //
     {
         HttpClient.newHttpClient()
                 .newWebSocketBuilder()
@@ -65,7 +70,7 @@ public class EToroWSClient implements WebSocket.Listener //
         latch.await(); // Keep the program alive
     }
 
-    private void performAuth(WebSocket ws, EtoroAPIInformationService apiInformation)
+    private void performAuth(WebSocket ws, EtoroApiConfiguration apiInformation)
     {
         String authMessage = """
                 {

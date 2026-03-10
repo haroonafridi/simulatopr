@@ -1,12 +1,11 @@
 package com.hkcapital.portoflio.ui;
 
 import com.hkcapital.portoflio.DataObject;
-import com.hkcapital.portoflio.etoro.apiinformation.EtoroAPIInformationService;
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.model.*;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.service.impl.etoro.EtoroOrderManagerServiceImpl;
-import com.hkcapital.portoflio.ui.panels.capital.CapitalPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentDialogue;
@@ -14,7 +13,6 @@ import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.dialogues.MarketConditionsDialogue;
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsPanel;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
-import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.srmatrix.dialogues.SRMatrixDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixPanel;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyHeaderPanel;
@@ -28,8 +26,6 @@ import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PnLSimulatorFacad
@@ -52,9 +48,11 @@ public class PnLSimulatorFacad
 
     private final SRMatrixService srMatrixService;
 
-    private final EtoroAPIInformationService etoroApiInformationService;
+    private final EtoroApiConfiguration etoroApiInformationService;
 
     private DataObject<String, String> dataObject = new DataObject<>();
+
+    private final EtoroApiConfiguration etoroApiConfiguration;
 
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
@@ -65,9 +63,10 @@ public class PnLSimulatorFacad
                              TradingSessionsService<TradingSessions> tradingSessionsService,
                              EtoroCandleService etoroCandleService,
                              EtoroOrderManagerServiceImpl etoroOrderManager,
-                             EtoroAPIInformationService apiInformationService,
+                             EtoroApiConfiguration apiInformationService,
                              EtoroWebSocketManagerService etoroWebSocketManagerService,
                              SRMatrixService srMatrixService,
+                             EtoroApiConfiguration etoroApiConfiguration,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -82,6 +81,7 @@ public class PnLSimulatorFacad
         this.etoroApiInformationService = apiInformationService;
         this.etoroWebSocketManagerService = etoroWebSocketManagerService;
         this.srMatrixService = srMatrixService;
+        this.etoroApiConfiguration = etoroApiConfiguration;
 
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
@@ -91,7 +91,7 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.TradingSessionsService, this.tradingSessionsService);
         serviceRegistery.putService(Service.EtoroCandleService, this.etoroCandleService);
         serviceRegistery.putService(Service.OrderManagerService, this.etoroOrderManagerService);
-        serviceRegistery.putService(Service.EtoroAPIInformationService, this.etoroApiInformationService);
+        serviceRegistery.putService(Service.EtoroAPIConfiguration, this.etoroApiInformationService);
         serviceRegistery.putService(Service.EtoroWebSocketManagerService, this.etoroApiInformationService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
 
@@ -242,7 +242,7 @@ public class PnLSimulatorFacad
 
 
         });
-
+        System.out.println("limit order url => "+etoroApiConfiguration.getMarketOrderUrl());
         etoroWebSocketManagerService.subscribeAndSchedule();
     }
 
