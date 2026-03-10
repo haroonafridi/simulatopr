@@ -239,10 +239,7 @@ public class PnLSimulatorFacad
                         new SRMatrixPanel(serviceRegistery, null));
                 srMatrixPanel.setVisible(true);
             }
-
-
         });
-        System.out.println("limit order url => "+etoroApiConfiguration.getMarketOrderUrl());
         etoroWebSocketManagerService.subscribeAndSchedule();
     }
 

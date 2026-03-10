@@ -2,7 +2,7 @@ package com.hkcapital.portoflio.ui.panels.position.dialogue;
 
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.order.OderTypes;
+import com.hkcapital.portoflio.order.OrderTypes;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.OrderManagerService;
 import com.hkcapital.portoflio.service.PositionService;
@@ -199,7 +199,7 @@ public class PositionSellDialogue extends JDialog
                 null, //
                 null, //
                 null,
-                OderTypes.MANUAL.getOrderType(),
+                OrderTypes.MANUAL.getOrderType(),
                 null,
                 null,
                 null,

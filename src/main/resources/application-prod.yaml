@@ -1,8 +1,19 @@
 etoro:
-    api-key : sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf
-    user-key : eyJjaSI6IjYwY2FiYjBiLTU1OTctNDQ4NS04ZjYzLTdlOWUwNTZlMGJiOCIsImVhbiI6IlVucmVnaXN0ZXJlZEFwcGxpY2F0aW9uIiwiZWsiOiI3Qklqekp6a0lvamtYb2ZrTlJ5a21MSE1FSTUta0hKU2dFYklyaW56MjZ5QjIyZTdzUkFEUllkWHlQbDR4TGxRZXJhYlA3aHZ5NndXeHBBN0pmY2NiamJURTdEclh4WFVOWlhyR3ZmaEVkRV8ifQ__
-    limit-order-url : https://public-api.etoro.com/api/v1/trading/execution/limit-orders
-    market-order-url : https://public-api.etoro.com/api/v1/trading/execution/market-open-orders/by-amount
-    instrument-candle-data-url : https://public-api.etoro.com/api/v1/market-data/instruments/
-    order-information-url : https://public-api.etoro.com/api/v1/trading/info/real/orders/
-    portfolio-information-url : https://public-api.etoro.com/api/v1/trading/info/portfolio
+  api-key: sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf
+  user-key: eyJjaSI6IjYwY2FiYjBiLTU1OTctNDQ4NS04ZjYzLTdlOWUwNTZlMGJiOCIsImVhbiI6IlVucmVnaXN0ZXJlZEFwcGxpY2F0aW9uIiwiZWsiOiJTMFhjNW1XUjkxVjhxTGlCTFVSVnE5cXQ1YVNraEZwZjVhY0FHWk90aFhad29ROE1NNlEyYTZUa3E0NFhQc1NSbnpXbFh1MzhMQ1JiTW8xYVEtbmloSDNxLUV0TTdOUG5WSTUtMWtNUlpxVV8ifQ__
+  limit-order-url: https://public-api.etoro.com/api/v1/trading/execution/limit-orders
+  market-order-url: https://public-api.etoro.com/api/v1/trading/execution/market-open-orders/by-amount
+  instrument-candle-data-url: https://public-api.etoro.com/api/v1/market-data/instruments/
+  order-information-url: https://public-api.etoro.com/api/v1/trading/info/real/orders/
+  portfolio-information-url: https://public-api.etoro.com/api/v1/trading/info/portfolio
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/strategy-prod
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

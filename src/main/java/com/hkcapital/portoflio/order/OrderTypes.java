@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.order;
 
-public enum OderTypes
+public enum OrderTypes
 {
     MANUAL("MANUAL"),
 
@@ -8,7 +8,7 @@ public enum OderTypes
 
     private String orderType;
 
-    OderTypes(String orderType)
+    OrderTypes(String orderType)
     {
         this.orderType = orderType;
     }

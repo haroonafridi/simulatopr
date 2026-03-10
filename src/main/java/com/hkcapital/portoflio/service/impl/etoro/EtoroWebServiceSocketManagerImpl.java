@@ -10,7 +10,7 @@ import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.model.Strategy;
-import com.hkcapital.portoflio.order.OderTypes;
+import com.hkcapital.portoflio.order.OrderTypes;
 import com.hkcapital.portoflio.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +142,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                                     null, //
                                     null, //
                                     null,
-                                    OderTypes.AUTO.getOrderType(),
+                                    OrderTypes.AUTO.getOrderType(),
                                     bid,
                                     ask,
                                     maxSlippage,
@@ -162,7 +162,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                                     null, //
                                     null, //
                                     null,
-                                    OderTypes.AUTO.getOrderType(),
+                                    OrderTypes.AUTO.getOrderType(),
                                     bid,
                                     ask,
                                     maxSlippage,

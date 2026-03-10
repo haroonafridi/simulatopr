@@ -8,8 +8,6 @@ import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.InstrumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -44,17 +42,6 @@ public class EToroWSClient implements WebSocket.Listener //
     public EToroWSClient(final InstrumentService instrumentService)
     {
         this.instrumentService = instrumentService;
-    }
-
-
-    public static void main(String[] args) throws InterruptedException
-    {
-        ConfigurableApplicationContext context =
-                SpringApplication.run(EToroWSClient.class, args);
-
-        EtoroApiConfiguration apiInformation = context.getBean(EtoroApiConfiguration.class);
-        ;
-        new EToroWSClient().start(apiInformation);
     }
 
     public void start(EtoroApiConfiguration apiInformation) throws InterruptedException //

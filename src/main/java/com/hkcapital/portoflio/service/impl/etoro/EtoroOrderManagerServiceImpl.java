@@ -10,6 +10,7 @@ import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetailsResponseDTO;
 import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import com.hkcapital.portoflio.order.EtoroOrder;
+import com.hkcapital.portoflio.order.OrderTypes;
 import com.hkcapital.portoflio.repository.OrderRepository;
 import com.hkcapital.portoflio.service.OrderManagerService;
 import com.mashape.unirest.http.HttpResponse;
@@ -50,7 +51,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             EtoroPortfolioResponseDTO portfolioResponseDTO = etoroPortfolio();
             List<Long> openPositions = getOpenPositions(etoroMarketOrderDto, portfolioResponseDTO);
             logger.info("Portfolio information successfully fetched: No of open positions found {}", openPositions.size());
-            if (openPositions.size() > 0)
+            if (openPositions.size() > 0 && OrderTypes.AUTO.getOrderType().equals(etoroMarketOrderDto.getOrderType()))
             {
                 logger.info("Cannot open order, orders for instrument {} found", etoroMarketOrderDto.getInstrumentId(), openPositions);
                 return null;
@@ -104,11 +105,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
 
     public HttpResponse<String> createOrder(JSON order, String url) throws UnirestException
     {
-
-        System.out.println("url "+url);
-        System.out.println("api key "+etoroApiConfiguration.getApiKey());
-        System.out.println("user key "+etoroApiConfiguration.getUserKey());
-
         HttpResponse<String> response = Unirest.post(url)
                 .header(etoroApiConfiguration.getXRequestId(), UUID.randomUUID().toString())//
                 .header(etoroApiConfiguration.getXApiKey(), etoroApiConfiguration.getApiKey())//
