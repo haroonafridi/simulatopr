@@ -41,10 +41,9 @@ public class InstrumentPanel extends UIBag
         this.serviceRegistery = serviceRegistery;
         this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
 
-        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(),
-        Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Active.getLabel()}, //
+        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(),Labels.Ticker.getLabel(), Labels.Name.getLabel(),
+        Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(), Labels.Active.getLabel()}, //
                 instrumentService.findAll());
-
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(Labels.InstrumentPanel.getLabel()));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -128,6 +127,10 @@ public class InstrumentPanel extends UIBag
         if (name != null && !name.trim().isEmpty())
         {
             Instrument instrument = new Instrument(name.trim());
+            if(instrument.isActive() == null) //
+            {
+                instrument.setActive(false);
+            }
             instrumentService.addInstrument(instrument);
             tableModel.addRow(instrument);
             instrumentName.setText(null);

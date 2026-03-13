@@ -12,6 +12,17 @@ public class Instrument
     @Column(name = "instrument_name")
     private String name;
 
+    @Column(name = "url")
+    private String url;
+
+    @Column(name = "instrument_ticker")
+    private String instrumentTicker;
+
+
+    @Lob
+    @Column(name = "instrument_desc" , columnDefinition = "TEXT")
+    private String instrumentDesc;
+
     @Column(name = "etoro_instrument_id")
     private Integer etoroInstrumentId;
 
@@ -83,5 +94,35 @@ public class Instrument
     public void setActive(Boolean active)
     {
         this.active = active;
+    }
+
+    public String getInstrumentTicker()
+    {
+        return instrumentTicker;
+    }
+
+    public void setInstrumentTicker(String instrumentTicker)
+    {
+        this.instrumentTicker = instrumentTicker;
+    }
+
+    public String getInstrumentDesc()
+    {
+        return instrumentDesc;
+    }
+
+    public void setInstrumentDesc(String instrumentDesc)
+    {
+        this.instrumentDesc = instrumentDesc;
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
     }
 }

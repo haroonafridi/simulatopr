@@ -31,4 +31,5 @@ public abstract class UIBag extends JPanel
         }
         return type.cast(c);
     }
+
 }
