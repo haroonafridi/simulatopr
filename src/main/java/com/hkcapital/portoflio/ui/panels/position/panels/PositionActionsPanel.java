@@ -41,10 +41,7 @@ public class PositionActionsPanel extends UIBag
     private final JButton removePositionAll = new JButton("Remove All Positions");
 
     private final JButton marketConditionsButton = new JButton("Add Market conditions");
-    private final JButton updateMarketConditions = new JButton("Update Market Conditions");
-
     private final JButton srMatrixButton = new JButton("Add SR Matrix");
-    private final JButton updateSrMatrixButton = new JButton("Update SR Matrix");
     private final JButton configurationButton = new JButton("Add Configuration");
 
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
@@ -114,9 +111,7 @@ public class PositionActionsPanel extends UIBag
         add(capitalPanel);
         add(buttonPanel);
         marketConditionsSourcePanel.add(marketConditionsButton);
-        marketConditionsSourcePanel.add(updateMarketConditions);
         srMatrixAndSourcePanel.add(srMatrixButton);
-        srMatrixAndSourcePanel.add(updateSrMatrixButton);
         configurationSourcePanel.add(configurationButton);
         configurationAndSourcePanel.add(marketConditionsSourcePanel);
         configurationAndSourcePanel.add(srMatrixAndSourcePanel);
@@ -138,13 +133,24 @@ public class PositionActionsPanel extends UIBag
         JMenuItem placeBuyOrder = new JMenuItem("Place buy order immediately");
         JMenuItem placeSellOrder = new JMenuItem("Place sell order immediately");
 
+        JMenuItem updateSrMatrix = new JMenuItem("Update SR-Matrix");
+        JMenuItem updateMarketConditions = new JMenuItem("Update Market Conditions");
+
         positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
-                new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder})));
+                new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions})));
+
         buy.addActionListener(new BuyActionListener(positionTableModel, serviceRegistery, positionTable));
         sell.addActionListener(new SellActionListener(positionTableModel, serviceRegistery, positionTable));
 
         placeBuyOrder.addActionListener(new ImmediateBuyOrderActionListener(positionTableModel, serviceRegistery, positionTable));
+
         placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, serviceRegistery, positionTable));
+
+        updateSrMatrix.addActionListener(new UpdateSRMatrixOrderActionListener(positionTableModel, serviceRegistery, //
+                positionTable , strategyHeaderPanel));
+        updateMarketConditions.addActionListener(new UpdateMarketConditionsActionListener(positionTableModel, serviceRegistery, positionTable,
+                strategyHeaderPanel));
+
 
     }
 

@@ -1,18 +1,20 @@
 package com.hkcapital.portoflio.ui.panels.marketconditions.panels;
 
-import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.MarketConditions;
+import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.service.MarketConditionsService;
+import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
-import com.hkcapital.portoflio.ui.panels.marketconditions.tablemodels.MarketConditionsTableModel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.marketconditions.messages.MessagesLabel;
+import com.hkcapital.portoflio.ui.panels.marketconditions.tablemodels.MarketConditionsTableModel;
+import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +26,8 @@ public class MarketConditionsPanel extends UIBag
     private final ServiceRegistery<Service> serviceRegistery;
     private final MarketConditionsService marketconditionsService;
     private final InstrumentService instrumentService;
+
+    private final PositionService positionService;
 
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
 
@@ -43,10 +47,25 @@ public class MarketConditionsPanel extends UIBag
     private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
 
 
-
     private final JButton selectionMarketConditionsButton = new JButton(ButtonLabels.Select.getLabel());
 
     private final MarketConditionsSourcePanel marketConditionsSourcePanel;
+
+    private Integer positionId;
+    private Integer strategyId;
+
+    private PositionTableModel positionTableModel;
+
+    public MarketConditionsPanel(final ServiceRegistery<Service> serviceRegistery,
+                                 final MarketConditionsSourcePanel marketConditionsSourcePanel, PositionTableModel positionTableModel, //
+                                 Integer positionId, Integer strategyId) //
+    {
+        this(serviceRegistery, marketConditionsSourcePanel);
+        this.positionTableModel = positionTableModel;
+        this.positionId = positionId;
+        this.strategyId = strategyId;
+
+    }
 
     public MarketConditionsPanel(final ServiceRegistery<Service> serviceRegistery,
                                  final MarketConditionsSourcePanel marketConditionsSourcePanel)
@@ -56,6 +75,7 @@ public class MarketConditionsPanel extends UIBag
         this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
         this.marketconditionsService = (MarketConditionsService) this.serviceRegistery.getService(Service.MarketConditionsService);
         this.marketConditionsSourcePanel = marketConditionsSourcePanel;
+        this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
 
         List<Instrument> instrumentList = instrumentService.findAll();
 
@@ -130,7 +150,7 @@ public class MarketConditionsPanel extends UIBag
 
         selectionMarketConditionsButton.addActionListener(e ->
         {
-            selectMarketCondistion();
+            selectMarketConditions();
             SwingUtilities.getWindowAncestor(this).dispose();
         });
     }
@@ -148,15 +168,28 @@ public class MarketConditionsPanel extends UIBag
     }
 
 
-    public void selectMarketCondistion()
+    public void selectMarketConditions()
     {
         int selectedRow = marketConditionsTableTable.getSelectedRow();
         MarketConditions marketConditions = (MarketConditions) tableModel.getElements().get(selectedRow);
-        marketConditionsSourcePanel.getPositionId().setText(marketConditions.getId().toString());
-        marketConditionsSourcePanel.getDayHigh().setText(marketConditions.getDayHigh().toString());
-        marketConditionsSourcePanel.getDayLow().setText(marketConditions.getDayLow().toString());
-        marketConditionsSourcePanel.getPercentMove().setText(marketConditions.getPercentMove().toString());
-        marketConditionsSourcePanel.getInstrumentName().setText(marketConditions.getInstrument().getName());
+        if (positionId != null)
+        {
+            MarketConditions mkrConditions = marketconditionsService.getReferenceById(marketConditions.getId());
+            Position position = positionService.findById(positionId);
+            position.setMarketConditions(mkrConditions);
+            positionService.updatePosition(position);
+            List<Position> positionList = positionService.findByStrategyId(strategyId);
+            positionTableModel.updateData(positionList);
+
+        } else
+        {
+            marketConditionsSourcePanel.getPositionId().setText(marketConditions.getId().toString());
+            marketConditionsSourcePanel.getDayHigh().setText(marketConditions.getDayHigh().toString());
+            marketConditionsSourcePanel.getDayLow().setText(marketConditions.getDayLow().toString());
+            marketConditionsSourcePanel.getPercentMove().setText(marketConditions.getPercentMove().toString());
+            marketConditionsSourcePanel.getInstrumentName().setText(marketConditions.getInstrument().getName());
+        }
+
     }
 
     public void remove()
@@ -172,6 +205,8 @@ public class MarketConditionsPanel extends UIBag
                     MessagesLabel.NoInstrumentSelected.getTitle(),  //
                     JOptionPane.WARNING_MESSAGE);
         }
+        SwingUtilities.getWindowAncestor(this).dispose();
+
     }
 
     public void clear()

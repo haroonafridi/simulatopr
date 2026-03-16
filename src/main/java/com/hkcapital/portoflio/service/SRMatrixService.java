@@ -21,4 +21,6 @@ public interface SRMatrixService extends Service
 
     void removeAll();
 
+    SRMatrix getReferenceById(Integer id);
+
 }

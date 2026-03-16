@@ -9,8 +9,7 @@ import java.util.List;
 public class PositionTableModel<E> extends TableModel
 {
     private final String[] columns = {
-            "index",
-            "Position Index",
+            "Position Id",
             "Instrument Name",
             "Allowed Slippage",
             "Etoro Instrument Id",
@@ -75,40 +74,38 @@ public class PositionTableModel<E> extends TableModel
             case 0:
                 return position.getId();
             case 1:
-                return position.getRecordIndex();
-            case 2:
                 return position.getInstrument().getName();
-            case 3:
+            case 2:
                 return position.getInstrument().getMaxSlippage();
-            case 4:
+            case 3:
                 return position.getInstrument().getEtoroInstrumentId();
-            case 5:
+            case 4:
                 return position.getPercentCapitalDeployed();
-            case 6:
+            case 5:
                 return position.getCurrentPositionEquity();
-            case 7:
+            case 6:
                 return position.getCurrentPositionEquity() * position.getConfiguration().getLev();
-            case 8:
+            case 7:
                 return position.getAllowedFirePower();
-            case 9:
+            case 8:
                 return position.getRemainingFirepower();
-            case 10:
+            case 9:
                 return position.getCapitalRemainingFirePower();
-            case 11:
+            case 10:
                 return position.getMarketConditions().getDayLow();
-            case 12:
+            case 11:
                 return position.getMarketConditions().getDayHigh();
-            case 13:
+            case 12:
                 return position.getMarketConditions().getPercentMove();//
-            case 14:
+            case 13:
                 return position.getSrMatrix().getSupport();//
-            case 15:
+            case 14:
                 return position.getSrMatrix().getResistance();//
-            case 16:
+            case 15:
                 return position.getSrMatrix().getTimeFrame();//
-            case 17:
+            case 16:
                 return position.getSrMatrix().getTimeFrameUnit();//
-            case 18:
+            case 17:
                 return position.getConfiguration().getLev();
             default:
                 return null;

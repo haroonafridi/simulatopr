@@ -1,14 +1,17 @@
 package com.hkcapital.portoflio.ui.panels.srmatrix.panels;
 
 import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.InstrumentService;
+import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.SRMatrixService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
+import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 import com.hkcapital.portoflio.ui.panels.srmatrix.dialogues.SRMatrixEditDialogue;
 import com.hkcapital.portoflio.ui.panels.srmatrix.labels.Labels;
 import com.hkcapital.portoflio.ui.panels.srmatrix.tablemodels.SRMatrixTableModel;
@@ -54,13 +57,32 @@ public class SRMatrixPanel extends UIBag
     private final InstrumentService instrumentService;
     final SRMatrixSourcePanel srMatrixSourcePanel;
 
-    public SRMatrixPanel(final ServiceRegistery serviceRegistery, final SRMatrixSourcePanel srMatrixSourcePanel)
+    final PositionService positionService;
+
+    private Integer positionId;
+    private Integer strategyId;
+
+    private PositionTableModel positionTableModel;
+
+    public SRMatrixPanel(final ServiceRegistery serviceRegistery,
+                         final SRMatrixSourcePanel srMatrixSourcePanel, PositionTableModel positionTableModel, //
+                         Integer positionId, Integer strategyId) //
+    {
+        this(serviceRegistery, srMatrixSourcePanel);
+        this.positionId = positionId;
+        this.strategyId = strategyId;
+        this.positionTableModel = positionTableModel;
+    }
+
+    public SRMatrixPanel(final ServiceRegistery serviceRegistery,
+                         final SRMatrixSourcePanel srMatrixSourcePanel)
     {
         super(SRMatrixPanel.class);
         this.srMatrixSourcePanel = srMatrixSourcePanel;
         this.serviceRegistery = serviceRegistery;
         this.srMatrixService = (SRMatrixService) this.serviceRegistery.getService(Service.SRMatrixService);
         this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
+        this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
 
         List<Instrument> instrumentList = instrumentService.findAll();
 
@@ -212,12 +234,24 @@ public class SRMatrixPanel extends UIBag
     {
         int selectedRow = srMatrixTable.getSelectedRow();
         SRMatrix srMatrix = (SRMatrix) tableModel.getElements().get(selectedRow);
-        srMatrixSourcePanel.getId().setText(srMatrix.getId().toString());
-        srMatrixSourcePanel.getSupport().setText(srMatrix.getSupport().toString());
-        srMatrixSourcePanel.getResistence().setText(srMatrix.getResistance().toString());
-        srMatrixSourcePanel.getTimeFrame().setText(srMatrix.getTimeFrame().toString());
-        srMatrixSourcePanel.getTimeFrameUnit().setText(srMatrix.getTimeFrameUnit());
-        srMatrixSourcePanel.getActive().setSelected(srMatrix.getActive());
+        if (positionId != null)
+        {
+            Position position = positionService.findById(positionId);
+            SRMatrix srm = srMatrixService.getReferenceById(srMatrix.getId());
+            position.setSrMatrix(srm);
+            positionService.updatePosition(position);
+            List<Position> positionList = positionService.findByStrategyId(strategyId);
+            positionTableModel.updateData(positionList);
+        } else
+        {
+            srMatrixSourcePanel.getId().setText(srMatrix.getId().toString());
+            srMatrixSourcePanel.getSupport().setText(srMatrix.getSupport().toString());
+            srMatrixSourcePanel.getResistence().setText(srMatrix.getResistance().toString());
+            srMatrixSourcePanel.getTimeFrame().setText(srMatrix.getTimeFrame().toString());
+            srMatrixSourcePanel.getTimeFrameUnit().setText(srMatrix.getTimeFrameUnit());
+            srMatrixSourcePanel.getActive().setSelected(srMatrix.getActive());
+        }
+
         SwingUtilities.getWindowAncestor(this).dispose();
     }
 }

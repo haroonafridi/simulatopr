@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.service;
 
 import com.hkcapital.portoflio.model.MarketConditions;
+import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.model.Strategy;
 
 import java.util.List;
@@ -19,5 +20,7 @@ public interface MarketConditionsService extends Service
 
     MarketConditions findById(Integer id);
     void removeAll();
+
+    MarketConditions getReferenceById(Integer id);
 
 }

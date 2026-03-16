@@ -1,9 +1,11 @@
 package com.hkcapital.portoflio.service.impl;
 
 import com.hkcapital.portoflio.model.MarketConditions;
+import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.model.Strategy;
 import com.hkcapital.portoflio.repository.MarketconditionsRepository;
 import com.hkcapital.portoflio.service.MarketConditionsService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +49,7 @@ public class MarketConditionsServiceImpl implements MarketConditionsService
     @Override
     public List<MarketConditions> findAll()
     {
-        return marketconditionsRepository.findAll();
+        return marketconditionsRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     @Override
@@ -61,5 +63,11 @@ public class MarketConditionsServiceImpl implements MarketConditionsService
     public void removeAll()
     {
         marketconditionsRepository.deleteAll();
+    }
+
+    @Override
+    public MarketConditions getReferenceById(Integer id) //
+    {
+        return marketconditionsRepository.getReferenceById(id);
     }
 }
