@@ -58,24 +58,12 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
     @Override
     public void subscribeAndSchedule()
     {
+
+
         EToroWSClient eToroWSClient = new EToroWSClient(instrumentService);
-        ScheduledExecutorService schedulerWs = Executors.newSingleThreadScheduledExecutor();
-        schedulerWs.submit(() ->
-        {
-            try
-            {
-                eToroWSClient.start(etoroApiConfiguration);
-
-            } catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
-            logger.error("Cannot subscribe to etoro WS");
-        });
-
-
+        StartWebSocket startWebSocket = new StartWebSocket(eToroWSClient,etoroApiConfiguration);
+        new Thread(startWebSocket).start();
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
         scheduler.scheduleAtFixedRate(() ->
         {
             try
@@ -86,9 +74,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                         .filter(e -> e.getEtoroInstrumentId() != null && e.getEtoroInstrumentId().intValue() == Instruments.GOLD.getInstrumentId()//
                                 .intValue()).findAny()//
                         .get();
-
                 Double maxSlippage = instrument.getMaxSlippage();
-
                 if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
                 {
                     if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
@@ -97,19 +83,16 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                         Double ask = Double.parseDouble(instrumentRate.getAsk());
                         Double bid = Double.parseDouble(instrumentRate.getBid());
                         Double slippage = ask - bid;
-
                         if (slippage > maxSlippage)
                         {
                             logger.info("Unusual price received, Order rejected due to high slippage,  bid = [{}] , ask = [{}], slippage = [{}] , maxSlippage = [{}]"
                                     , bid, ask, slippage, maxSlippage);
                             return;
                         }
-
                         logger.info("Instrument price received bid = [{}] , ask = [{}] slippage = [{}] , maxSlippage = [{}] sending order for execution",
                                 bid, ask, slippage, maxSlippage);
 
-
-                        Strategy strategy = strategyService.findById(6);
+                        Strategy strategy = strategyService.findById(23);
 
                         List<Position> positionList = positionService.findByStrategyId(strategy.getId());
 
@@ -184,5 +167,37 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                 logger.error("Error in background task", e);
             }
         }, 0, 5, TimeUnit.MINUTES);
+    }
+}
+
+class StartWebSocket implements Runnable
+{
+
+    private EToroWSClient eToroWSClient;
+
+    private final EtoroApiConfiguration etoroApiConfiguration;
+    StartWebSocket (EToroWSClient eToroWSClient ,
+                    EtoroApiConfiguration etoroApiConfiguration) {
+        this.eToroWSClient = eToroWSClient;
+        this.etoroApiConfiguration = etoroApiConfiguration;
+    }
+    /**
+     * Runs this operation.
+     */
+    @Override
+    public void run()
+    {
+        try
+        {
+            eToroWSClient.start(this.etoroApiConfiguration);
+        } catch (InterruptedException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public EToroWSClient geteToroWSClient()
+    {
+        return eToroWSClient;
     }
 }

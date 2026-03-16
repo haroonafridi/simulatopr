@@ -90,6 +90,7 @@ public class EToroWSClient implements WebSocket.Listener //
                                      boolean last)
     {
         String message = data.toString();
+        logger.info("Started recieving data : {}" , message);
         try
         {
             JsonNode node = objectMapper.readTree(message);
