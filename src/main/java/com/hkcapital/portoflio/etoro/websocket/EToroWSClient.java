@@ -108,18 +108,14 @@ public class EToroWSClient implements WebSocket.Listener //
                     List<Instrument> instrumentList = instrumentService.findAll()//
                             .stream()//
                             .filter(instrument -> instrument != null && instrument.isActive()).collect(Collectors.toList());
+
                     instrumentList.stream().forEach(instrument ->
                     {
-                        Instruments[] etoroInstruments = Instruments.values();
-
-                        for (Instruments inst : etoroInstruments)
-                        {
                             if (instrument != null && instrument.isActive() && //
-                                    instrument.getEtoroInstrumentId().intValue() == inst.getInstrumentId().intValue())
+                                    instrument.getEtoroInstrumentId() != null)
                             {
-                                subscribeInstrument(webSocket, "" + inst.getInstrumentId().intValue());
+                                subscribeInstrument(webSocket, "" + instrument.getEtoroInstrumentId());
                             }
-                        }
                     });
                 }
             }

@@ -224,68 +224,8 @@ public class EtoroMarketOrderDto implements JSON
                 "\n}";
     }
 
-    public static EtoroMarketOrderDto createDummyOrderBtc()
-    {
-        return new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
-                true, //
-                1, //
-                50d, //
-                null, //
-                null, //
-                null, //
-                null, //
-                null,
-                "AUTO",
-                67000d,
-                67010d,
-                10d,
-                5d);
-    }
-
-    public static EtoroMarketOrderDto createDummyOrderNasdaq100()
-    {
-        return new EtoroMarketOrderDto(Instruments.NASDAQ1100.getInstrumentId(),
-                true, //
-                20, //
-                50d, //
-                null, //
-                null, //
-                null, //
-                null, //
-                null,
-                "AUTO",
-                25000d,
-                24700d,
-                10d,
-                5d);
-    }
-
-
     public String getOrderType()
     {
         return orderType;
     }
-
-    public static EtoroMarketOrderDto createDummyOrderGold()
-    {
-        return new EtoroMarketOrderDto(Instruments.GOLD.getInstrumentId(),
-                true, //
-                20, //
-                50d, //
-                5079d, //
-                5090d, //
-                true, //
-                null, //
-                null,
-                "AUTO",
-                5400d,
-                5390d,
-                10d,
-                5d);
-    }
-
-
-
-
-
 }

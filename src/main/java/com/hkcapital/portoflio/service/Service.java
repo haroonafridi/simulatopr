@@ -20,4 +20,6 @@ public interface Service
 
     String SRMatrixService = "SRMatrixService";
 
+    String ProfileService = "ProfileService";
+
 }

@@ -82,6 +82,12 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>3.2</version> <!-- latest stable version -->
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -128,6 +134,24 @@
 						</goals>
 						<configuration>
 							<outputDirectory>D:/hk-prod</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}</directory>
+									<includes>
+										<include>${project.build.finalName}.jar</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-jar-to-dev</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>D:/hk-dev</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${project.build.directory}</directory>

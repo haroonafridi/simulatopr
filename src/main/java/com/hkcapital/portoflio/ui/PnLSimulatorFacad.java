@@ -1,8 +1,10 @@
 package com.hkcapital.portoflio.ui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.hkcapital.portoflio.DataObject;
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
-import com.hkcapital.portoflio.model.*;
+import com.hkcapital.portoflio.model.TradingSessions;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
 import com.hkcapital.portoflio.service.impl.etoro.EtoroOrderManagerServiceImpl;
@@ -47,6 +49,7 @@ public class PnLSimulatorFacad
     private final EtoroWebSocketManagerService etoroWebSocketManagerService;
 
     private final SRMatrixService srMatrixService;
+    private final ProfileService profileService;
 
     private final EtoroApiConfiguration etoroApiInformationService;
 
@@ -66,6 +69,7 @@ public class PnLSimulatorFacad
                              EtoroApiConfiguration apiInformationService,
                              EtoroWebSocketManagerService etoroWebSocketManagerService,
                              SRMatrixService srMatrixService,
+                             ProfileService profileService,
                              EtoroApiConfiguration etoroApiConfiguration,
                              ServiceRegistery<Service> serviceRegistery)
     {
@@ -81,6 +85,7 @@ public class PnLSimulatorFacad
         this.etoroApiInformationService = apiInformationService;
         this.etoroWebSocketManagerService = etoroWebSocketManagerService;
         this.srMatrixService = srMatrixService;
+        this.profileService = profileService;
         this.etoroApiConfiguration = etoroApiConfiguration;
 
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
@@ -94,14 +99,24 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.EtoroAPIConfiguration, this.etoroApiInformationService);
         serviceRegistery.putService(Service.EtoroWebSocketManagerService, this.etoroApiInformationService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
+        serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
+        serviceRegistery.putService(Service.ProfileService, this.profileService);
 
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
     {
-        UIManager.setLookAndFeel(new MetalLookAndFeel());
-        UIManager.put("defaultFont", new Font("Roboto Mono", Font.BOLD, 14));
-        JFrame mainFrame = new JFrame("Strategy Simulator");
+        String activeProfile = profileService.getActiveProfile();
+        LookAndFeel looAndFeel = new FlatDarkLaf();
+        Font font = new Font("Roboto Mono", Font.PLAIN, 12);
+        if ("dev".equals(activeProfile))
+        {
+            looAndFeel = new MetalLookAndFeel();
+            font =  new Font("Roboto Mono", Font.PLAIN, 12);
+        }
+        UIManager.setLookAndFeel(looAndFeel);
+        UIManager.put("defaultFont", font);
+        JFrame mainFrame = new JFrame("HK-Capital [" + activeProfile + "]");
         // === Root layout ===
         JPanel rootPanel = new JPanel(new GridBagLayout());
         GridBagConstraints rootGbc = new GridBagConstraints();
