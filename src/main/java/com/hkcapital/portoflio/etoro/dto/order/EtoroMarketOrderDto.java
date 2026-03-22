@@ -1,9 +1,9 @@
 package com.hkcapital.portoflio.etoro.dto.order;
 
-import com.hkcapital.portoflio.etoro.CalcUtils;
 import com.hkcapital.portoflio.etoro.JSON;
-import com.hkcapital.portoflio.etoro.master.Instruments;
+import lombok.Builder;
 
+@Builder
 public class EtoroMarketOrderDto implements JSON
 {
     private Integer instrumentId;
@@ -26,7 +26,6 @@ public class EtoroMarketOrderDto implements JSON
 
     private Double maxAllowedSlippage;
     private Double etoroSlippage;
-
 
 
     public EtoroMarketOrderDto(Integer instrumentId, Boolean isBuy, Integer leverage, //
@@ -53,7 +52,7 @@ public class EtoroMarketOrderDto implements JSON
         this.bid = bid;
         this.ask = ask;
         this.maxAllowedSlippage = maxAllowedSlippage;
-        this.etoroSlippage =etoroSlippage;
+        this.etoroSlippage = etoroSlippage;
     }
 
     public Integer getInstrumentId()
@@ -217,7 +216,7 @@ public class EtoroMarketOrderDto implements JSON
                 "\"Leverage\": " + leverage + ",\n" +
                 "\"Amount\": " + amount + ",\n" +
                 "\"StopLossRate\": " + stopLossRate + ",\n" +
-                "\"TakeProfitRate\": " + takeProfitRate+ ",\n" +//CalcUtils.calculateTargetPrice(24950, 20, 50, 2) + ",\n" +
+                "\"TakeProfitRate\": " + takeProfitRate + ",\n" +//CalcUtils.calculateTargetPrice(24950, 20, 50, 2) + ",\n" +
                 "\"IsTslEnabled\": " + isTslEnabled + ",\n" +
                 "\"IsNoStopLoss\": " + isNoStopLoss + ",\n" +
                 "\"IsNoTakeProfit\": " + isNoTakeProfit + "\n" +

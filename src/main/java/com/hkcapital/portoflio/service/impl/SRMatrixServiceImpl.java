@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.service.impl;
 
+import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.model.Strategy;
 import com.hkcapital.portoflio.repository.SRMatrixRepository;
@@ -67,6 +68,12 @@ public class SRMatrixServiceImpl implements SRMatrixService
     @Override
     public SRMatrix getReferenceById(Integer id) {
        return srMatrixRepository.getReferenceById(id);
+    }
+
+    @Override
+    public List<SRMatrix> findByTimeFrameAndTimeFrameUnitAndInstrument(Integer timeFrame, String timeFrameUnit, Instrument instrument)
+    {
+        return srMatrixRepository.findByTimeFrameAndTimeFrameUnitAndInstrument(timeFrame, timeFrameUnit, instrument);
     }
 
 }

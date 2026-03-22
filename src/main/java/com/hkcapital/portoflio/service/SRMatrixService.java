@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.service;
 
+import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.model.Strategy;
 
@@ -22,5 +23,8 @@ public interface SRMatrixService extends Service
     void removeAll();
 
     SRMatrix getReferenceById(Integer id);
+
+    List<SRMatrix> findByTimeFrameAndTimeFrameUnitAndInstrument(Integer timeFrame, String timeFrameUnit,
+                                                                Instrument instrument);
 
 }

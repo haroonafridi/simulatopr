@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerService
@@ -37,7 +38,6 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
     private final PositionService positionService;
 
     private final EtoroApiConfiguration etoroApiConfiguration;
-
 
 
     public EtoroWebServiceSocketManagerImpl(final SRMatrixService srMatrixService,
@@ -58,10 +58,8 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
     @Override
     public void subscribeAndSchedule()
     {
-
-
         EToroWSClient eToroWSClient = new EToroWSClient(instrumentService);
-        StartWebSocket startWebSocket = new StartWebSocket(eToroWSClient,etoroApiConfiguration);
+        StartWebSocket startWebSocket = new StartWebSocket(eToroWSClient, etoroApiConfiguration);
         new Thread(startWebSocket).start();
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() ->
@@ -69,12 +67,17 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
             try
             {
                 logger.info("Executing background orders...");
+
                 LiveInstrumentRate instrumentRate = eToroWSClient.getLiveInstrumentRate();
+
                 Instrument instrument = instrumentService.findAll().stream()
-                        .filter(e -> e.getEtoroInstrumentId() != null && e.getEtoroInstrumentId().intValue() == Instruments.GOLD.getInstrumentId()//
+                        .filter(e -> e.getEtoroInstrumentId() != null && e.getEtoroInstrumentId().intValue() //
+                                == Instruments.GOLD.getInstrumentId()//
                                 .intValue()).findAny()//
                         .get();
+
                 Double maxSlippage = instrument.getMaxSlippage();
+
                 if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
                 {
                     if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
@@ -92,73 +95,85 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                         logger.info("Instrument price received bid = [{}] , ask = [{}] slippage = [{}] , maxSlippage = [{}] sending order for execution",
                                 bid, ask, slippage, maxSlippage);
 
-                        Strategy strategy = strategyService.findById(23);
+                        List<Strategy> strategies = //
+                                strategyService.findAll()//
+                                        .stream()//
+                                        .filter(Strategy::getActive)//
+                                        .collect(Collectors.toList());
 
-                        List<Position> positionList = positionService.findByStrategyId(strategy.getId());
-
-                        Position position =  positionList.get(0);
-
-                        Instrument inst = position.getInstrument();
-
-                        Integer leverage = position.getConfiguration().getLev();
-
-                        Optional<SRMatrix> srMatrix = this.srMatrixService.findAll()
-                                .stream()
-                                .filter(matrix -> matrix.getActive() && "MINUTE".equals(matrix.getTimeFrameUnit())  &&
-                                        matrix.getTimeFrame()==15).findAny();
-
-                        if(!srMatrix.isPresent())
+                        for (Strategy strategy : strategies)
                         {
-                            logger.info("No SR-Matrix found, please check SR-Matrix!");
-                            return;
-                        }
+                            List<Position> positions = positionService.findByStrategyId(strategy.getId());
 
-                        if (ask <= srMatrix.get().getSupport()) //
-                        {
-                            logger.info("Sending buy order instrument = {} ", inst.getEtoroInstrumentId());
-                            EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(inst.getEtoroInstrumentId(),
-                                    true, //
-                                    leverage, //
-                                    position.getCurrentPositionEquity(), //
-                                    null, //
-                                    srMatrix.get().getResistance(), //
-                                    null, //
-                                    null, //
-                                    null,
-                                    OrderTypes.AUTO.getOrderType(),
-                                    bid,
-                                    ask,
-                                    maxSlippage,
-                                    slippage);
-                            orderManagerService.createAndSaveMarketOrder((etoroMarketOrderDto));
-                        }
+                            for (Position position : positions)
+                            {
+                                Instrument inst = position.getInstrument();
 
-                        else if(ask >= srMatrix.get().getResistance())
-                        {
-                            logger.info("Sending sell order order instrument = {} ", inst.getEtoroInstrumentId());
-                            EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(inst.getEtoroInstrumentId(),
-                                    false, //
-                                    leverage, //
-                                    position.getCurrentPositionEquity(), //
-                                    null, //
-                                    srMatrix.get().getSupport(), //
-                                    null, //
-                                    null, //
-                                    null,
-                                    OrderTypes.AUTO.getOrderType(),
-                                    bid,
-                                    ask,
-                                    maxSlippage,
-                                    slippage);
-                            orderManagerService.createAndSaveMarketOrder((etoroMarketOrderDto));
-                        }
+                                Integer leverage = position.getConfiguration().getLev();
 
+                                Optional<SRMatrix> srMatrix = this.srMatrixService.findAll()
+                                        .stream()
+                                        .filter(matrix -> matrix.getActive() && "MINUTE".equals(matrix.getTimeFrameUnit()) &&
+                                                matrix.getTimeFrame() == 5).findAny();
+
+                                if (!srMatrix.isPresent())
+                                {
+                                    logger.info("No SR-Matrix found, please check SR-Matrix!");
+                                    return;
+                                }
+
+                                if (ask <= srMatrix.get().getSupport()) //
+                                {
+                                    logger.info("Sending buy order instrument = {} ", inst.getEtoroInstrumentId());
+
+                                    EtoroMarketOrderDto etoroMarketBuyOrder =
+                                            EtoroMarketOrderDto.builder()
+                                                    .instrumentId(inst.getEtoroInstrumentId())
+                                                    .isBuy(true)
+                                                    .leverage(leverage)
+                                                    .amount(position.getCurrentPositionEquity())
+                                                    .stopLossRate(null)
+                                                    .takeProfitRate(srMatrix.get().getResistance())
+                                                    .isTslEnabled(null)
+                                                    .isNoTakeProfit(null)
+                                                    .isNoStopLoss(null)
+                                                    .orderType(OrderTypes.AUTO.getOrderType())
+                                                    .bid(bid)
+                                                    .ask(ask)
+                                                    .maxAllowedSlippage(maxSlippage)
+                                                    .etoroSlippage(slippage)
+                                                    .build();
+                                    orderManagerService.createAndSaveMarketOrder((etoroMarketBuyOrder));
+                                } else if (ask >= srMatrix.get().getResistance())
+                                {
+                                    logger.info("Sending sell order order instrument = {} ", inst.getEtoroInstrumentId());
+
+                                    EtoroMarketOrderDto etoroMarketSellOrder =
+                                            EtoroMarketOrderDto.builder()
+                                                    .instrumentId(inst.getEtoroInstrumentId())
+                                                    .isBuy(false)
+                                                    .leverage(leverage)
+                                                    .amount(position.getCurrentPositionEquity())
+                                                    .stopLossRate(null)
+                                                    .takeProfitRate(srMatrix.get().getSupport())
+                                                    .isTslEnabled(null)
+                                                    .isNoTakeProfit(null)
+                                                    .isNoStopLoss(null)
+                                                    .orderType(OrderTypes.AUTO.getOrderType())
+                                                    .bid(bid)
+                                                    .ask(ask)
+                                                    .maxAllowedSlippage(maxSlippage)
+                                                    .etoroSlippage(slippage)
+                                                    .build();
+                                    orderManagerService.createAndSaveMarketOrder((etoroMarketSellOrder));
+                                } else
+                                {
+                                    logger.info("Automatic trading is not yet activated!");
+                                }
+                            }
 //                        Double tp = (calculateTargetPrice(Double.parseDouble(instrumentRate.getAsk()), position.getConfigurtaion().getLev(),
 //                                position.getCurrentPositionEquity(), 0.50));
-
-                    } else
-                    {
-                        logger.info("Automatic trading is not yet activated!");
+                        }
                     }
 
                 }
@@ -166,7 +181,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
             {
                 logger.error("Error in background task", e);
             }
-        }, 0, 5, TimeUnit.MINUTES);
+        }, 0, 1, TimeUnit.MINUTES);
     }
 }
 
@@ -176,11 +191,14 @@ class StartWebSocket implements Runnable
     private EToroWSClient eToroWSClient;
 
     private final EtoroApiConfiguration etoroApiConfiguration;
-    StartWebSocket (EToroWSClient eToroWSClient ,
-                    EtoroApiConfiguration etoroApiConfiguration) {
+
+    StartWebSocket(EToroWSClient eToroWSClient,
+                   EtoroApiConfiguration etoroApiConfiguration)
+    {
         this.eToroWSClient = eToroWSClient;
         this.etoroApiConfiguration = etoroApiConfiguration;
     }
+
     /**
      * Runs this operation.
      */
