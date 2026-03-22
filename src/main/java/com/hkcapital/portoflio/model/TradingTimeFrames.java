@@ -1,9 +1,15 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "trading_sessions")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class TradingTimeFrames
 {
     @Id
@@ -14,11 +20,6 @@ public class TradingTimeFrames
 
     @Column(name = "unit")
     private String unit;
-
-    public TradingTimeFrames()
-    {
-
-    }
 
     public TradingTimeFrames(Integer value, String unit)
     {

@@ -1,11 +1,17 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Entity
 @Table(name = "position")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Position implements Serializable
 {
     @Id
@@ -55,12 +61,6 @@ public class Position implements Serializable
     @Column(name = "leverage")
     private Integer leverage;
 
-
-
-    public Position()
-    {
-    }
-
     public Position(Integer recordIndex,
                     Strategy strategy,
                     Configuration configuraion, //
@@ -88,155 +88,6 @@ public class Position implements Serializable
         this.capitalRemainingFirePower = capitalRemainingFirePower;
         this.portfolioValue = portfolioValue;
         this.strategy = strategy;
-        this.leverage = leverage;
-    }
-
-    public Integer getId()
-    {
-        return id;
-    }
-
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
-    public Configuration getConfiguration()
-    {
-        return configuration;
-    }
-
-    public void setConfiguration(Configuration configuration)
-    {
-        this.configuration = configuration;
-    }
-
-    public MarketConditions getMarketConditions()
-    {
-        return marketConditions;
-    }
-
-    public void setMarketConditions(MarketConditions marketConditions)
-    {
-        this.marketConditions = marketConditions;
-    }
-
-    public Double getCurrentPositionEquity()
-    {
-        return currentPositionEquity;
-    }
-
-    public void setCurrentPositionEquity(Double currentPositionEquity)
-    {
-        this.currentPositionEquity = currentPositionEquity;
-    }
-
-    public Double getAllowedFirePower()
-    {
-        return allowedFirePower;
-    }
-
-    public void setAllowedFirePower(Double allowedFirePower)
-    {
-        this.allowedFirePower = allowedFirePower;
-    }
-
-    public Double getRemainingFirepower()
-    {
-        return remainingFirepower;
-    }
-
-    public void setRemainingFirepower(Double remainingFirepower)
-    {
-        this.remainingFirepower = remainingFirepower;
-    }
-
-    public Double getCapitalRemainingFirePower()
-    {
-        return capitalRemainingFirePower;
-    }
-
-    public void setCapitalRemainingFirePower(Double capitalRemainingFirePower)
-    {
-        this.capitalRemainingFirePower = capitalRemainingFirePower;
-    }
-
-    public Double getPortfolioValue()
-    {
-        return portfolioValue;
-    }
-
-    public void setPortfolioValue(Double portfolioValue)
-    {
-        this.portfolioValue = portfolioValue;
-    }
-
-    public Strategy getStrategy()
-    {
-        return strategy;
-    }
-
-    public void setStrategy(Strategy strategy)
-    {
-        this.strategy = strategy;
-    }
-
-    public Integer getRecordIndex()
-    {
-        return recordIndex;
-    }
-
-    public void setRecordIndex(Integer recordIndex)
-    {
-        this.recordIndex = recordIndex;
-    }
-
-    public Instrument getInstrument()
-    {
-        return instrument;
-    }
-
-    public Double getPercentCapitalDeployed()
-    {
-        return percentCapitalDeployed;
-    }
-
-    public void setPercentCapitalDeployed(Double percentCapitalDeployed)
-    {
-        this.percentCapitalDeployed = percentCapitalDeployed;
-    }
-
-    public void setInstrument(Instrument instrument)
-    {
-        this.instrument = instrument;
-    }
-
-    public SRMatrix getSrMatrix()
-    {
-        return srMatrix;
-    }
-
-    public void setSrMatrix(SRMatrix srMatrix)
-    {
-        this.srMatrix = srMatrix;
-    }
-
-    public TradingSessions getTradingSessions()
-    {
-        return tradingSessions;
-    }
-
-    public void setTradingSessions(TradingSessions tradingSessions)
-    {
-        this.tradingSessions = tradingSessions;
-    }
-
-    public Integer getLeverage()
-    {
-        return leverage;
-    }
-
-    public void setLeverage(Integer leverage)
-    {
         this.leverage = leverage;
     }
 }

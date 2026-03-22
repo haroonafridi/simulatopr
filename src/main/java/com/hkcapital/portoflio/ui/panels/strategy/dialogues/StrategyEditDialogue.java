@@ -2,6 +2,7 @@ package com.hkcapital.portoflio.ui.panels.strategy.dialogues;
 
 import com.hkcapital.portoflio.model.Strategy;
 import com.hkcapital.portoflio.service.StrategyService;
+import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,9 @@ public class StrategyEditDialogue extends JDialog
 
     private final JLabel nameLabel = new JLabel("Name:");
     private final JTextField name = new JTextField(20);
-
+    private final JTextField strategyDescription = new JTextField(40);
+    private final JLabel capitalAllocatedLabel = new JLabel("Capital Allocated");
+    private final JTextField capitalAllocated = new NumberTextField(40);
     private final JLabel descriptionLabel = new JLabel("Description:");
     private final JTextArea description = new JTextArea(10, 80);
     private final JCheckBox active = new JCheckBox("Active");
@@ -53,6 +56,8 @@ public class StrategyEditDialogue extends JDialog
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         mainPanel.add(nameLabel);
         mainPanel.add(name);
+        mainPanel.add(capitalAllocatedLabel);
+        mainPanel.add(capitalAllocated);
         mainPanel.add(Box.createVerticalStrut(8));
         mainPanel.add(Box.createVerticalStrut(8));
         mainPanel.add(Box.createVerticalStrut(8));

@@ -126,8 +126,9 @@ public class InstrumentPanel extends UIBag
         String name = instrumentName.getText();
         if (name != null && !name.trim().isEmpty())
         {
-            Instrument instrument = new Instrument(name.trim());
-            if(instrument.isActive() == null) //
+            Instrument instrument = new Instrument();
+            instrument.setName(name.trim());
+            if(instrument.getActive() == null) //
             {
                 instrument.setActive(false);
             }

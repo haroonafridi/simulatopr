@@ -107,11 +107,11 @@ public class EToroWSClient implements WebSocket.Listener //
                 {
                     List<Instrument> instrumentList = instrumentService.findAll()//
                             .stream()//
-                            .filter(instrument -> instrument != null && instrument.isActive()).collect(Collectors.toList());
+                            .filter(instrument -> instrument != null && instrument.getActive()).collect(Collectors.toList());
 
                     instrumentList.stream().forEach(instrument ->
                     {
-                            if (instrument != null && instrument.isActive() && //
+                            if (instrument != null && instrument.getActive() && //
                                     instrument.getEtoroInstrumentId() != null)
                             {
                                 subscribeInstrument(webSocket, "" + instrument.getEtoroInstrumentId());

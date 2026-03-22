@@ -12,6 +12,7 @@ import com.hkcapital.portoflio.service.PositionService;
 import com.hkcapital.portoflio.service.Service;
 import com.hkcapital.portoflio.service.StrategyService;
 import com.hkcapital.portoflio.ui.UIBag;
+import com.hkcapital.portoflio.ui.fields.NumberTextField;
 import com.hkcapital.portoflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.RemoveStrategyButtonListener;
 import com.hkcapital.portoflio.ui.panels.strategy.listners.SaveStrategyButtonListener;
@@ -31,13 +32,14 @@ public class StrategyHeaderPanel extends UIBag
     private final JLabel strategyDescriptionLabel = new JLabel("Strategy Description:");
 
     private final JTextField strategyDescription = new JTextField(40);
+    private final JLabel capitalAllocatedLabel = new JLabel("Capital Allocated");
+    private final JTextField capitalAllocated = new NumberTextField(40);
 
     private final JCheckBox active = new JCheckBox();
 
-    private final JButton saveStrategy = new JButton();
+    private final JButton saveStrategy = new JButton("Save");
 
     private final JButton cancelButton = new JButton("Cancel");
-    private final JButton closeButton = new JButton("Close");
     private final JButton removeButton = new JButton("Remove");
 
     private final JButton manualOrderButton = new JButton("Create Market Order");
@@ -66,16 +68,18 @@ public class StrategyHeaderPanel extends UIBag
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
-        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name",
+        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed",
                 "Description:","Active:"}, strategyService.findAll());
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         topPanel.add(strategyNameLabel);
         topPanel.add(strategyName);
+        topPanel.add(capitalAllocatedLabel);
+        topPanel.add(capitalAllocated);
         topPanel.add(strategyDescriptionLabel);
-        topPanel.add(active);
         topPanel.add(strategyDescription);
+        topPanel.add(active);
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
         topPanel.add(manualOrderButton);

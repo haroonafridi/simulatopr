@@ -1,12 +1,18 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "strategy")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Strategy
 {
     @Id
@@ -18,6 +24,9 @@ public class Strategy
     @Column(name = "description", length = 500)
     private String description;
 
+    @Column(name = "capital_allocated")
+    private Double capitalAllocated;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -26,7 +35,6 @@ public class Strategy
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Position> positionPnLList;
 
-    public Strategy() {}
     public Strategy(final String name,
                     final String description,  //
                     final LocalDateTime creationDate
@@ -35,65 +43,5 @@ public class Strategy
         this.name = name;
         this.description = description;
         this.creationDate = creationDate;
-    }
-
-    public Integer getId()
-    {
-        return id;
-    }
-
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    public LocalDateTime getCreationDate()
-    {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate)
-    {
-        this.creationDate = creationDate;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public List<Position> getPositionPnLList()
-    {
-        return positionPnLList;
-    }
-
-    public void setPositionPnLList(List<Position> positionPnLList)
-    {
-        this.positionPnLList = positionPnLList;
-    }
-
-    public Boolean getActive()
-    {
-        return active;
-    }
-
-    public void setActive(Boolean active)
-    {
-        this.active = active;
     }
 }

@@ -1,9 +1,15 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "trading_sessions")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class TradingSessions
 {
     @Id
@@ -20,67 +26,13 @@ public class TradingSessions
 
     @Column(name = "end_time")
     private String endTime;
-    
 
-    public TradingSessions()
-    {
-    }
 
     public TradingSessions(String name, String description, String startTime, String endTime)
     {
         this.name = name;
         this.description = description;
         this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    public Integer getId()
-    {
-        return id;
-    }
-
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
-
-    public String getStartTime()
-    {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime)
-    {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime()
-    {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime)
-    {
         this.endTime = endTime;
     }
 }

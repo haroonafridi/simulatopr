@@ -1,9 +1,15 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "market_conditions")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class MarketConditions
 {
     @Id
@@ -19,71 +25,11 @@ public class MarketConditions
     @Column(name = "percent_move")
     private Double percentMove;
 
-    public MarketConditions()
-    {
-    }
-
     public MarketConditions(Instrument instrument, Double dayLow, Double dayHigh, Double percentMove)
     {
         this.instrument = instrument;
         this.dayLow = dayLow;
         this.dayHigh = dayHigh;
         this.percentMove = percentMove;
-    }
-
-    public Integer getId()
-    {
-        return id;
-    }
-
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
-
-    public Instrument getInstrument()
-    {
-        return instrument;
-    }
-
-    public void setInstrument(Instrument instrument)
-    {
-        this.instrument = instrument;
-    }
-
-    public Double getDayLow()
-    {
-        return dayLow;
-    }
-
-    public void setDayLow(Double dayLow)
-    {
-        this.dayLow = dayLow;
-    }
-
-    public Double getDayHigh()
-    {
-        return dayHigh;
-    }
-
-    public void setDayHigh(Double dayHigh)
-    {
-        this.dayHigh = dayHigh;
-    }
-
-    public Double getPercentMove()
-    {
-        return percentMove;
-    }
-
-    public void setPercentMove(Double percentMove)
-    {
-        this.percentMove = percentMove;
-    }
-
-    @Override
-    public String toString()
-    {
-        return instrument.getName()+ " = low : [" + dayLow + " ] | high ["+dayHigh+"] | percent move ["+percentMove+"]";
     }
 }

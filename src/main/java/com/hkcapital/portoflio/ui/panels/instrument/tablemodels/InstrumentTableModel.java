@@ -59,7 +59,7 @@ public class InstrumentTableModel<E> extends TableModel
             case 6:
             {
 
-                return inst.isActive();
+                return inst.getActive();
             }
 
             default:

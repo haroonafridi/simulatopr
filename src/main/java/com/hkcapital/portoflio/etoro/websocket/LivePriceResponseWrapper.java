@@ -12,8 +12,6 @@ public class LivePriceResponseWrapper implements Serializable
     @JsonProperty("messages")
     private List<Message> messages;
 
-
-
     public List<Message> getMessages()
     {
         return messages;

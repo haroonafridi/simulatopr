@@ -1,11 +1,17 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sr_matrix")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class SRMatrix
 {
     @Id
@@ -29,16 +35,14 @@ public class SRMatrix
 
     private Boolean active;
 
-    public SRMatrix() {
 
-    }
-    public SRMatrix( LocalDateTime creationDate, //
-                     Integer timeFrame, //
-                     String timeFrameUnit, //
-                     Instrument instrument, //
-                     Double support, //
-                     Double resistance,
-                     Boolean active)
+    public SRMatrix(LocalDateTime creationDate, //
+                    Integer timeFrame, //
+                    String timeFrameUnit, //
+                    Instrument instrument, //
+                    Double support, //
+                    Double resistance,
+                    Boolean active)
     {
         this.creationDate = creationDate;
         this.timeFrame = timeFrame;
@@ -46,86 +50,6 @@ public class SRMatrix
         this.instrument = instrument;
         this.support = support;
         this.resistance = resistance;
-        this.active = active;
-    }
-
-    public Integer getId()
-    {
-        return id;
-    }
-
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreationDate()
-    {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate)
-    {
-        this.creationDate = creationDate;
-    }
-
-    public Integer getTimeFrame()
-    {
-        return timeFrame;
-    }
-
-    public void setTimeFrame(Integer timeFrame)
-    {
-        this.timeFrame = timeFrame;
-    }
-
-    public String getTimeFrameUnit()
-    {
-        return timeFrameUnit;
-    }
-
-    public void setTimeFrameUnit(String timeFrameUnit)
-    {
-        this.timeFrameUnit = timeFrameUnit;
-    }
-
-    public Double getSupport()
-    {
-        return support;
-    }
-
-    public void setSupport(Double support)
-    {
-        this.support = support;
-    }
-
-    public Double getResistance()
-    {
-        return resistance;
-    }
-
-    public void setResistance(Double resistance)
-    {
-        this.resistance = resistance;
-    }
-
-    public Instrument getInstrument()
-    {
-        return instrument;
-    }
-
-    public void setInstrument(Instrument instrument)
-    {
-        this.instrument = instrument;
-    }
-
-    public Boolean getActive()
-    {
-        return active;
-    }
-
-    public void setActive(Boolean active)
-    {
         this.active = active;
     }
 }

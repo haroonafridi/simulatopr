@@ -50,7 +50,7 @@ public class InstrumentEditDialogue extends JDialog
         instrumentDescription.setText(instrument.getInstrumentDesc());
         etoroInstrumentId.setText(instrument.getEtoroInstrumentId() != null ? "" + instrument.getEtoroInstrumentId() : "");
         maxSlippage.setText(instrument.getMaxSlippage() != null ? "" + instrument.getMaxSlippage() : "");
-        active.setSelected(instrument.isActive() == null ? false : instrument.isActive());
+        active.setSelected(instrument.getActive() == null ? false : instrument.getActive());
         JDialog dialog = new JDialog((Frame) null, "Instrument = [" + instrument.getName() + "]", true);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -80,7 +80,7 @@ public class InstrumentEditDialogue extends JDialog
 
     private void createLayout(JPanel panel, Instrument instrument)
     {
-        active.setSelected(instrument.isActive());
+        active.setSelected(instrument.getActive());
         panel1.add(instrumentSymbolLabel);
         panel1.add(instrumentSymbol);
         panel1.add(instrumentNameLabel);

@@ -1,10 +1,17 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "opening_capital")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class OpeningCapital
 {
     @Id
@@ -14,45 +21,4 @@ public class OpeningCapital
     LocalDate date;
     @Column(name = "opening_capital")
     double capital;
-
-    public OpeningCapital()
-    {
-    }
-
-    public OpeningCapital(int id, LocalDate date, double capital)
-    {
-        this.id = id;
-        this.date = date;
-        this.capital = capital;
-    }
-
-    public int getId()
-    {
-        return id;
-    }
-
-    public void setId(int id)
-    {
-        this.id = id;
-    }
-
-    public LocalDate getDate()
-    {
-        return date;
-    }
-
-    public void setDate(LocalDate date)
-    {
-        this.date = date;
-    }
-
-    public double getCapital()
-    {
-        return capital;
-    }
-
-    public void setCapital(double capital)
-    {
-        this.capital = capital;
-    }
 }

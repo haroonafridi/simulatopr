@@ -15,17 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @Import(ObjectMapper.class)
-class LivePriceResponseWrapperTest
+class LivePriceResponseWrapperTest extends LiveFeedAbstractTest
 {
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Test
     void testLogFileContainsExpectedText()
     {
         LivePriceResponseWrapper livePriceResponseWrapper;
         String filePath = "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/nasda-gold-btc-live-feed-16.03.2026.log"; // <-- replace with your log file path
-        String expectedText = "{\"messages\":[{"; // example: checking for the word "ERROR" in the log
+        String expectedText = "{\"messages\":[{";
         boolean found = false;
         int count = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(filePath)))
@@ -48,6 +45,6 @@ class LivePriceResponseWrapperTest
             e.printStackTrace();
         }
 
-        System.out.println("No of lines processed "+count);
+
     }
 }

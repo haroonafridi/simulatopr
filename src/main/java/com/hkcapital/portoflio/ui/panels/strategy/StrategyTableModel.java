@@ -29,10 +29,14 @@ public class StrategyTableModel<E> extends TableModel
             }
             case 2:
             {
+                return strategy.getCapitalAllocated();
+            }
+            case 3:
+            {
                 return strategy.getDescription();
             }
 
-            case 3:
+            case 4:
             {
                 return strategy.getActive();
             }

@@ -1,9 +1,15 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name ="running_capital")
+@Table(name = "running_capital")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class RunningCapital
 {
     @Id
@@ -11,24 +17,4 @@ public class RunningCapital
     private int id;
     @Column(name = "capital")
     private double capital;
-
-    public RunningCapital(int id, double capital)
-    {
-        this.id = id;
-        this.capital = capital;
-    }
-
-    public RunningCapital()
-    {
-    }
-
-    public int getId()
-    {
-        return id;
-    }
-
-    public double getCapital()
-    {
-        return capital;
-    }
 }
