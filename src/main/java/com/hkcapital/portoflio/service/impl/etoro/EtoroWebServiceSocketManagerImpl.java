@@ -83,8 +83,8 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                     if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
                     {
                         logger.info("Sending Automatic trade to etoro!");
-                        Double ask = Double.parseDouble(instrumentRate.getAsk());
-                        Double bid = Double.parseDouble(instrumentRate.getBid());
+                        Double ask = instrumentRate.getAsk();
+                        Double bid = instrumentRate.getBid();
                         Double slippage = ask - bid;
                         if (slippage > maxSlippage)
                         {
