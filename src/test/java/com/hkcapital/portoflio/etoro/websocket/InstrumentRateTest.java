@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
+import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -12,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class InstrumentRateTest extends LiveFeedAbstractTest
+class InstrumentRateTest extends EtoroAbstractTest
 {
     private final static String GOLD_NASDAQ100_LIVE_FEED_FILE_PATH = //
             "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/instrument-rate-message.log";

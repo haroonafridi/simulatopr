@@ -178,9 +178,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         {
             try
             {
-                System.out.println("url = "+etoroApiConfiguration.getPortfolioInformationUrl());
-                System.out.println("api key = "+ etoroApiConfiguration.getApiKey());
-                System.out.println("user key = "+  etoroApiConfiguration.getUserKey());
                 response = Unirest.get(etoroApiConfiguration.getPortfolioInformationUrl())//
                         .header(etoroApiConfiguration.getXRequestId(), UUID.randomUUID().toString())//
                         .header(etoroApiConfiguration.getXApiKey(), etoroApiConfiguration.getApiKey())//

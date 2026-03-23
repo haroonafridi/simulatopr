@@ -1,9 +1,9 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @Import(ObjectMapper.class)
-class LivePriceResponseWrapperTest extends LiveFeedAbstractTest
+class LivePriceResponseWrapperTest extends EtoroAbstractTest
 {
     @Test
     void testLogFileContainsExpectedText()

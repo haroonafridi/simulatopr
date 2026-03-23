@@ -1,13 +1,17 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.InstrumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,12 +25,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 
+@Component
 public class EToroWSClient implements WebSocket.Listener //
 {
     private static final Logger logger = LoggerFactory.getLogger(EToroWSClient.class.getName());
     private final Set<String> subscribedTopics = new HashSet<>();
     private final CountDownLatch latch = new CountDownLatch(1);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private  ObjectMapper objectMapper;
 
     private LivePriceResponseWrapper livePriceResponseWrapper;
 
@@ -39,9 +45,10 @@ public class EToroWSClient implements WebSocket.Listener //
 
     }
 
-    public EToroWSClient(final InstrumentService instrumentService)
+    public EToroWSClient(final InstrumentService instrumentService , final ObjectMapper objectMapper)
     {
         this.instrumentService = instrumentService;
+        this.objectMapper = objectMapper;
     }
 
     public void start(EtoroApiConfiguration apiInformation) throws InterruptedException //

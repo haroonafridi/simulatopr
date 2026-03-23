@@ -1,5 +1,6 @@
 package com.hkcapital.portoflio.service.impl.etoro;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.Configuration;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
@@ -39,13 +40,16 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
 
     private final EtoroApiConfiguration etoroApiConfiguration;
 
+    private final ObjectMapper objectMapper;
+
 
     public EtoroWebServiceSocketManagerImpl(final SRMatrixService srMatrixService,
                                             final OrderManagerService orderManagerService,
                                             final InstrumentService instrumentService,
                                             final StrategyService strategyService,
                                             final PositionService positionService,
-                                            final EtoroApiConfiguration etoroApiConfiguration)
+                                            final EtoroApiConfiguration etoroApiConfiguration,
+                                            final ObjectMapper objectMapper)
     {
         this.srMatrixService = srMatrixService;
         this.orderManagerService = orderManagerService;
@@ -53,12 +57,13 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
         this.strategyService = strategyService;
         this.positionService = positionService;
         this.etoroApiConfiguration = etoroApiConfiguration;
+        this.objectMapper = objectMapper;
     }
 
     @Override
     public void subscribeAndSchedule()
     {
-        EToroWSClient eToroWSClient = new EToroWSClient(instrumentService);
+        EToroWSClient eToroWSClient = new EToroWSClient(instrumentService, objectMapper);
         StartWebSocket startWebSocket = new StartWebSocket(eToroWSClient, etoroApiConfiguration);
         new Thread(startWebSocket).start();
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
