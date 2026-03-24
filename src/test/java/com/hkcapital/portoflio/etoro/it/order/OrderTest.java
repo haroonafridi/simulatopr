@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.etoro.it.order;
 
 
+import com.hkcapital.portoflio.etoro.DbCleaner;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portoflio.order.OrderTypes;
@@ -26,14 +27,18 @@ public class OrderTest
     private static final double TAKE_PROFIT_RATE = 5400;
     private static final double ETORO_SLIPPAGE = 0.75d;
     @Autowired
+    private DbCleaner dbCleaner;
+
+    @Autowired
     private OrderRepository orderRepository;
+
     @Autowired
     private OrderManagerService orderManagerService;
 
     @Test
     public void testOrderCreation()
     {
-        orderRepository.deleteAll();
+        dbCleaner.clean();
         Assertions.assertEquals(0, orderRepository.findAll().size());
         EtoroMarketOrderDto etoroMarketOrderDto = EtoroMarketOrderDto
                 .builder()
@@ -60,5 +65,6 @@ public class OrderTest
         orderManagerService.saveOrder(etoroMarketOrderDto, //
                 etoroOrderDetails, //
                 UUID.randomUUID().toString());
+        dbCleaner.clean();
     }
 }
