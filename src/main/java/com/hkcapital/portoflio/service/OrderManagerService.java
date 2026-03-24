@@ -21,4 +21,5 @@ public interface OrderManagerService extends Service
     EtoroOrder saveOrder(EtoroMarketOrderDto etoroMarketOrderDto,
                                 EtoroOrderDetails orderDetails,
                                 String etoroOrderToken);
+
 }

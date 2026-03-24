@@ -151,7 +151,7 @@ public class EtoroOrder
         leverage = details.getLeverage();
         stopLossRate = details.getStopLossRate();
         takeProfitRate = details.getTakeProfitRate();
-        isTslEnabled = details.getTslEnabled();
+        isTslEnabled = details.getIsTslEnabled();
         orderID = details.getOrderID();
         openDateTime = details.getOpenDateTime();
         this.dateTime = LocalDateTime.now();

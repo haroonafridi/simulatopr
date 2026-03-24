@@ -1,36 +1,26 @@
 package com.hkcapital.portoflio.etoro.portfolio;
-
 import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
 import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroClientPortfolioDTO;
 import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioPositionDTO;
-import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import org.junit.jupiter.api.Test;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.time.OffsetDateTime;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * @author : Haroon Ur Rasheed Afridi
+ * Test for verifying etoro portfolio positions
+ */
 public class EtoroPortfolioTest extends EtoroAbstractTest
 {
-    private final static String PORTFOLIO_DATA = //
-            "D:/portfolio-pnl-simulator/src/test/data/portfolio/portfolio.json";
+    private static final String PORTFOLIO_POSITIONS = "/data/portfolio/portfolio.json";
 
     @Test
     public void testPortfolioPositions() throws Exception
     {
-        StringBuilder content = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(PORTFOLIO_DATA)))
-        {
-            String line;
-            while ((line = br.readLine()) != null)
-            {
-                content.append(line).append("\n");
-            }
-        }
-        EtoroPortfolioResponseDTO portolioResponse = objectMapper.readValue(content.toString(),
-                EtoroPortfolioResponseDTO.class);
-        EtoroClientPortfolioDTO etoroClientPortfolioDTO = portolioResponse.getClientPortfolio();
+        EtoroClientPortfolioDTO etoroClientPortfolioDTO = loadPortfolio(PORTFOLIO_POSITIONS).getClientPortfolio();
         List<EtoroPortfolioPositionDTO> positions = etoroClientPortfolioDTO.getPositions();
         assertEquals(3, positions.size());
         assertGoldPosition(positions.get(0));
