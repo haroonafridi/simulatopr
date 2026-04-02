@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.service.impl.etoro;
+package com.hkcapital.portoflio.service.impl.etoro.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;

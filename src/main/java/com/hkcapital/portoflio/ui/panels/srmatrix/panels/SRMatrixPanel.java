@@ -89,6 +89,7 @@ public class SRMatrixPanel extends UIBag
         for (Instrument instrument : instrumentList)
         {
             this.instrumentList.addItem(instrument);
+
         }
 
         tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",

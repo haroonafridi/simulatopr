@@ -3,7 +3,7 @@ package com.hkcapital.portoflio.order;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "etoro_orders")
@@ -26,7 +26,7 @@ public class EtoroOrder
 
     private Double ask;
 
-    private LocalDateTime dateTime;
+    private Instant dateTime;
 
     private String error;
 
@@ -35,7 +35,8 @@ public class EtoroOrder
 
     private String tokenId;
 
-    private String openDateTime;
+    @Column(columnDefinition = "TIMESTAMP(6)")
+    private Instant openDateTime;
 
     private String oderType;
 
@@ -133,12 +134,12 @@ public class EtoroOrder
         this.orderID = orderID;
     }
 
-    public String getOpenDateTime()
+    public Instant getOpenDateTime()
     {
         return openDateTime;
     }
 
-    public void setOpenDateTime(String openDateTime)
+    public void setOpenDateTime(Instant openDateTime)
     {
         this.openDateTime = openDateTime;
     }
@@ -154,7 +155,7 @@ public class EtoroOrder
         isTslEnabled = details.getIsTslEnabled();
         orderID = details.getOrderID();
         openDateTime = details.getOpenDateTime();
-        this.dateTime = LocalDateTime.now();
+        this.dateTime = Instant.now();
         return this;
     }
 
@@ -208,12 +209,12 @@ public class EtoroOrder
         this.ask = ask;
     }
 
-    public LocalDateTime getDateTime()
+    public Instant getDateTime()
     {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime)
+    public void setDateTime(Instant dateTime)
     {
         this.dateTime = dateTime;
     }

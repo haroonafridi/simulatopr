@@ -9,8 +9,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import javax.swing.*;
 
 @SpringBootApplication
-public class PortfolioPnlSimulatorApplication {
-
+public class PortfolioPnlSimulatorApplication
+{
 	public static void main(String[] args) {
 		System.setProperty("java.awt.headless", "false");
 		ConfigurableApplicationContext context = SpringApplication.run(PortfolioPnlSimulatorApplication.class, args);
@@ -25,8 +25,6 @@ public class PortfolioPnlSimulatorApplication {
 			}
 		});
 	}
-
-
 	public static void main1(String[] args) {
 		System.setProperty("java.awt.headless", "false");
 		ConfigurableApplicationContext context = SpringApplication.run(PortfolioPnlSimulatorApplication.class, args);

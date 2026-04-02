@@ -2,12 +2,16 @@ package com.hkcapital.portoflio.etoro.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class EtoroOrderDetails {
     @JsonProperty("instrumentID")
     private int instrumentID;
@@ -22,7 +26,7 @@ public class EtoroOrderDetails {
     private int leverage;
 
     @JsonProperty("stopLossRate")
-    private Double stopLossRate; // Use Double (wrapper) to handle nulls
+    private Double stopLossRate;
 
     @JsonProperty("takeProfitRate")
     private Double takeProfitRate;
@@ -34,5 +38,5 @@ public class EtoroOrderDetails {
     private long orderID;
 
     @JsonProperty("openDateTime")
-    private String openDateTime; // Can be ZonedDateTime with proper modules
+    private Instant openDateTime;
 }

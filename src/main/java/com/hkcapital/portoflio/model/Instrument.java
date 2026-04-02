@@ -37,4 +37,10 @@ public class Instrument
 
     @Column(name = "active")
     private Boolean active;
+
+    @Override
+    public String toString()
+    {
+        return  name ;
+    }
 }

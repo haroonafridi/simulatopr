@@ -1,13 +1,12 @@
 package com.hkcapital.portoflio.ui;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.hkcapital.portoflio.DataObject;
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.model.TradingSessions;
 import com.hkcapital.portoflio.repository.ServiceRegistery;
 import com.hkcapital.portoflio.service.*;
-import com.hkcapital.portoflio.service.impl.etoro.EtoroOrderManagerServiceImpl;
+import com.hkcapital.portoflio.service.impl.etoro.impl.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portoflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.instrument.dialogues.InstrumentDialogue;
