@@ -24,15 +24,18 @@ public class EtoroApiConfiguration implements Service
     private String orderInformationUrl;
     private String portfolioInformationUrl;
 
-    public String getXRequestId() {
+    public String getXRequestId()
+    {
         return "x-request-id";
     }
 
-    public String getXApiKey() {
+    public String getXApiKey()
+    {
         return "x-api-key";
     }
 
-    public String getXUserKey() {
+    public String getXUserKey()
+    {
         return "x-user-key";
     }
 }

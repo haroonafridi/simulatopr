@@ -71,13 +71,14 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
         {
             try
             {
+                orderManagerService.fetchAndCloseEtoroOrder();
                 logger.info("Executing background orders...");
 
                 LiveInstrumentRate instrumentRate = eToroWSClient.getLiveInstrumentRate();
 
                 Instrument instrument = instrumentService.findAll().stream()
                         .filter(e -> e.getEtoroInstrumentId() != null && e.getEtoroInstrumentId().intValue() //
-                                == Instruments.GOLD.getInstrumentId()//
+                                == Instruments.NASDAQ1100.getInstrumentId()//
                                 .intValue()).findAny()//
                         .get();
 
@@ -186,7 +187,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
             {
                 logger.error("Error in background task", e);
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 5, 5, TimeUnit.MINUTES);
     }
 }
 
