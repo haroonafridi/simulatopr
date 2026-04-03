@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServerEndpoint(value = "/etoro", configurator = AuthConfigurator.class)
+@ServerEndpoint(value = "/etoro")
 public class EtoroTestServer
 {
     private boolean authenticated = false;
