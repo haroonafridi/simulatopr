@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.etoro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
@@ -36,6 +37,7 @@ public abstract class EtoroAbstractTest
 
     @Autowired
     protected OrderRepository orderRepository;
+
 
     public InputStream loadResource(String path)
     {

@@ -37,6 +37,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     @Override
     public EtoroOrder createAndSaveMarketOrder(EtoroMarketOrderDto etoroMarketOrderDto)
     {
+        logger.info("Send and saving etoro order for instrument [{}]", etoroMarketOrderDto.getInstrumentId());
         try
         {
             List<EtoroOrder> orders = //

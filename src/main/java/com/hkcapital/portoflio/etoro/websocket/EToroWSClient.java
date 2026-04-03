@@ -1,16 +1,12 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
-import com.hkcapital.portoflio.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.InstrumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -31,37 +27,28 @@ public class EToroWSClient implements WebSocket.Listener //
     private static final Logger logger = LoggerFactory.getLogger(EToroWSClient.class.getName());
     private final Set<String> subscribedTopics = new HashSet<>();
     private final CountDownLatch latch = new CountDownLatch(1);
-
-    private  ObjectMapper objectMapper;
-
+    private final ObjectMapper objectMapper;
     private LivePriceResponseWrapper livePriceResponseWrapper;
-
     private LiveInstrumentRate liveInstrumentRate;
-
     private InstrumentService instrumentService;
 
-    public EToroWSClient()
-    {
-
-    }
-
-    public EToroWSClient(final InstrumentService instrumentService , final ObjectMapper objectMapper)
+    public EToroWSClient(final InstrumentService instrumentService, final ObjectMapper objectMapper)
     {
         this.instrumentService = instrumentService;
         this.objectMapper = objectMapper;
     }
 
-    public void start(EtoroApiConfiguration apiInformation) throws InterruptedException //
+    public void connect(EtoroApiConfiguration apiInformation, String url) throws InterruptedException //
     {
         HttpClient.newHttpClient()
                 .newWebSocketBuilder()
-                .buildAsync(URI.create("wss://ws.etoro.com/ws"), this)
+                .buildAsync(URI.create(url), this)
                 .thenAccept(ws ->
                 {
                     logger.info("Connection request sent to etoro websocket!");
                     performAuth(ws, apiInformation);
                 });
-        latch.await(); // Keep the program alive
+        latch.await();
     }
 
     private void performAuth(WebSocket ws, EtoroApiConfiguration apiInformation)
@@ -97,7 +84,7 @@ public class EToroWSClient implements WebSocket.Listener //
                                      boolean last)
     {
         String message = data.toString();
-        logger.info("Started recieving data : {}" , message);
+        logger.info("Started receiving data : {}", message);
         try
         {
             JsonNode node = objectMapper.readTree(message);
@@ -108,21 +95,22 @@ public class EToroWSClient implements WebSocket.Listener //
                     node.path("success").asBoolean(false))
             {
 
-                System.out.println("Authentication successful");
+                logger.info("Authentication successful");
 
                 if (instrumentService != null)
                 {
                     List<Instrument> instrumentList = instrumentService.findAll()//
                             .stream()//
-                            .filter(instrument -> instrument != null && instrument.getActive()).collect(Collectors.toList());
+                            .filter(instrument -> instrument != null && instrument.getActive()) //
+                            .collect(Collectors.toList());
 
                     instrumentList.stream().forEach(instrument ->
                     {
-                            if (instrument != null && instrument.getActive() && //
-                                    instrument.getEtoroInstrumentId() != null)
-                            {
-                                subscribeInstrument(webSocket, "" + instrument.getEtoroInstrumentId());
-                            }
+                        if (instrument != null && instrument.getActive() && //
+                                instrument.getEtoroInstrumentId() != null)
+                        {
+                            subscribeInstrument(webSocket, "" + instrument.getEtoroInstrumentId());
+                        }
                     });
                 }
             }
@@ -133,17 +121,17 @@ public class EToroWSClient implements WebSocket.Listener //
 
                 if (node.path("success").asBoolean(false))
                 {
-                    System.out.println("Subscription successful for topics: " +
+                    logger.info("Subscription successful for topics: " +
                             node.path("data").path("topics").toString());
                 } else
                 {
                     String code = node.path("errorCode").asText();
                     if ("TopicAlreadySubscribed".equals(code))
                     {
-                        System.out.println("Already subscribed — skipping");
+                        logger.info("Already subscribed — skipping");
                     } else
                     {
-                        System.err.println("Subscription error: " + node.path("errorMessage").asText());
+                        logger.info("Subscription error: " + node.path("errorMessage").asText());
                     }
                 }
             }
@@ -151,7 +139,7 @@ public class EToroWSClient implements WebSocket.Listener //
             {
                 String topic = node.get("topic").asText();
                 JsonNode tickData = node.get("data");
-                System.out.println("Tick for " + topic + " → " + tickData.toString());
+                logger.info("Tick for " + topic + " → " + tickData.toString());
             }
 
             livePriceResponseWrapper = objectMapper.readValue(message, LivePriceResponseWrapper.class);
@@ -174,7 +162,6 @@ public class EToroWSClient implements WebSocket.Listener //
     public void onError(WebSocket webSocket, Throwable error)
     {
         logger.error("Error recieved [{}]", error.getMessage());
-        error.printStackTrace();
     }
 
     @Override
@@ -190,10 +177,9 @@ public class EToroWSClient implements WebSocket.Listener //
     {
         if (subscribedTopics.contains(instrumentId))
         {
-            System.out.println("Already subscribed to " + instrumentId);
+            logger.error("Already subscribed to  [{}]", instrumentId);
             return;
         }
-
         // For testing, use snapshot = true to get immediate data
         String subscribeMessage = """
                 {
@@ -205,7 +191,6 @@ public class EToroWSClient implements WebSocket.Listener //
                   }
                 }
                 """.formatted(UUID.randomUUID(), instrumentId);
-
         webSocket.sendText(subscribeMessage, true);
         subscribedTopics.add(instrumentId);
         logger.info("Subscribe request sent for instrument:" + instrumentId);

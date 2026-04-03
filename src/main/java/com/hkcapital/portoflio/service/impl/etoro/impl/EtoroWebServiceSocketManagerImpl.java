@@ -24,24 +24,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.Executors.*;
+
 @Service
 public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerService
 {
     private final Logger logger = LoggerFactory.getLogger(EtoroWebServiceSocketManagerImpl.class);
-
     private final SRMatrixService srMatrixService;
     private final OrderManagerService orderManagerService;
-
     private final InstrumentService instrumentService;
-
     private final StrategyService strategyService;
-
     private final PositionService positionService;
-
     private final EtoroApiConfiguration etoroApiConfiguration;
-
     private final ObjectMapper objectMapper;
-
 
     public EtoroWebServiceSocketManagerImpl(final SRMatrixService srMatrixService,
                                             final OrderManagerService orderManagerService,
@@ -64,27 +59,29 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
     public void subscribeAndSchedule()
     {
         EToroWSClient eToroWSClient = new EToroWSClient(instrumentService, objectMapper);
-        StartWebSocket startWebSocket = new StartWebSocket(eToroWSClient, etoroApiConfiguration);
+        StartWebSocketRunner startWebSocket = new StartWebSocketRunner(eToroWSClient, etoroApiConfiguration);
         new Thread(startWebSocket).start();
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() ->
         {
             try
             {
                 orderManagerService.fetchAndCloseEtoroOrder();
+
                 logger.info("Executing background orders...");
 
                 LiveInstrumentRate instrumentRate = eToroWSClient.getLiveInstrumentRate();
 
                 Instrument instrument = instrumentService.findAll().stream()
                         .filter(e -> e.getEtoroInstrumentId() != null && e.getEtoroInstrumentId().intValue() //
-                                == Instruments.NASDAQ1100.getInstrumentId()//
-                                .intValue()).findAny()//
+                                == Instruments.GOLD.getInstrumentId()//
+                                .intValue() && e.getActive()).findAny()//
                         .get();
 
                 Double maxSlippage = instrument.getMaxSlippage();
 
-                if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
+                if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null &&
+                 instrument.getEtoroInstrumentId().intValue() == instrumentRate.getInstrumentId().intValue())
                 {
                     if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
                     {
@@ -177,8 +174,6 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                                     logger.info("Automatic trading is not yet activated!");
                                 }
                             }
-//                        Double tp = (calculateTargetPrice(Double.parseDouble(instrumentRate.getAsk()), position.getConfigurtaion().getLev(),
-//                                position.getCurrentPositionEquity(), 0.50));
                         }
                     }
 
@@ -188,40 +183,5 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                 logger.error("Error in background task", e);
             }
         }, 5, 5, TimeUnit.MINUTES);
-    }
-}
-
-class StartWebSocket implements Runnable
-{
-
-    private EToroWSClient eToroWSClient;
-
-    private final EtoroApiConfiguration etoroApiConfiguration;
-
-    StartWebSocket(EToroWSClient eToroWSClient,
-                   EtoroApiConfiguration etoroApiConfiguration)
-    {
-        this.eToroWSClient = eToroWSClient;
-        this.etoroApiConfiguration = etoroApiConfiguration;
-    }
-
-    /**
-     * Runs this operation.
-     */
-    @Override
-    public void run()
-    {
-        try
-        {
-            eToroWSClient.start(this.etoroApiConfiguration);
-        } catch (InterruptedException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public EToroWSClient geteToroWSClient()
-    {
-        return eToroWSClient;
     }
 }
