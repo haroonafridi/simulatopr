@@ -2,6 +2,7 @@ package com.hkcapital.portoflio.service.impl.etoro.impl;
 
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.websocket.EToroWSClient;
+import com.hkcapital.portoflio.etoro.websocket.EtoroLiveFeedListener;
 
 public class StartWebSocketRunner implements Runnable
 {

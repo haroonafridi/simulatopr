@@ -32,6 +32,8 @@ public class EToroWSClient implements WebSocket.Listener //
     private LiveInstrumentRate liveInstrumentRate;
     private InstrumentService instrumentService;
 
+
+
     public EToroWSClient(final InstrumentService instrumentService, final ObjectMapper objectMapper)
     {
         this.instrumentService = instrumentService;

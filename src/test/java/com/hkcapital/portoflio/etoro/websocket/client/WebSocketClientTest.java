@@ -1,7 +1,11 @@
 package com.hkcapital.portoflio.etoro.websocket.client;
 
 import com.hkcapital.portoflio.config.EtoroApiConfiguration;
+import com.hkcapital.portoflio.etoro.websocket.EtoroLiveFeedListener;
 import com.hkcapital.portoflio.etoro.websocket.server.EtoroTestServer;
+import com.hkcapital.portoflio.service.MarketFeedObserver;
+import com.hkcapital.portoflio.service.impl.LiveResponseMapper;
+import com.hkcapital.portoflio.service.impl.MarketFeedDbWriter;
 import org.glassfish.tyrus.server.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,6 +24,15 @@ public class WebSocketClientTest
     private static Server server;
     @Autowired
     private EtoroApiConfiguration etoroApiConfiguration;
+
+    @Autowired
+    private LiveResponseMapper liveResponseMapper;
+
+    @Autowired
+    private MarketFeedObserver marketFeedObserver;
+
+    @Autowired
+    private MarketFeedDbWriter marketFeedDbWriter;
 
     @BeforeAll
     static void startServer() throws Exception
@@ -46,11 +59,13 @@ public class WebSocketClientTest
     @Test
     void testClientConnection() throws InterruptedException
     {
+        marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
         HttpClient client = HttpClient.newHttpClient();
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
-                        new EtoroLiveFeedListener(etoroApiConfiguration))
+                        new EtoroLiveFeedListener(etoroApiConfiguration, marketFeedObserver,
+                                liveResponseMapper))
                 .join();
         ws.sendText("{\n" +
                 "  \"id\": \"ed72693c-1545-4fa1-8a10-aca7cf5419a6\",\n" +

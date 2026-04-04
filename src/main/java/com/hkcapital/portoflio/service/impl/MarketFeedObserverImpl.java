@@ -1,0 +1,37 @@
+package com.hkcapital.portoflio.service.impl;
+
+import com.hkcapital.portoflio.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.MarketFeedObserver;
+import com.hkcapital.portoflio.service.MarketFeedSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class MarketFeedObserverImpl implements MarketFeedObserver
+{
+    private final Logger logger = LoggerFactory.getLogger(MarketFeedObserverImpl.class);
+    private final List<MarketFeedSubscriber> feedSubscribers = new ArrayList<>();
+
+    @Override
+    public void process(LiveInstrumentRate liveInstrumentRate)
+    {
+        if (liveInstrumentRate != null)
+        {
+            feedSubscribers.forEach(feedSubscriber -> feedSubscriber.process(liveInstrumentRate));
+        } else
+        {
+            logger.info("Cannot broadcast instrument feed for a null instrument rate!!");
+        }
+    }
+
+    @Override
+    public void addMarketFeedSubscriber(MarketFeedSubscriber marketFeedSubscriber)
+    {
+        feedSubscribers.add(marketFeedSubscriber);
+    }
+
+}
