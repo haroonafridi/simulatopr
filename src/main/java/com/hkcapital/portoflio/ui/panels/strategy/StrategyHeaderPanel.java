@@ -5,7 +5,7 @@ import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.broker.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.Strategy;
-import com.hkcapital.portoflio.order.OrderTypes;
+import com.hkcapital.portoflio.values.order.OrderTypes;
 import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portoflio.service.orders.OrderManagerService;
 import com.hkcapital.portoflio.service.positions.PositionService;

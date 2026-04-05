@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.order;
+package com.hkcapital.portoflio.model.etoro;
 
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
 import jakarta.persistence.*;

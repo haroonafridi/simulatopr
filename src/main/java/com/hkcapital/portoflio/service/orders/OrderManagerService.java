@@ -2,7 +2,7 @@ package com.hkcapital.portoflio.service.orders;
 
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
-import com.hkcapital.portoflio.order.EtoroOrder;
+import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import com.hkcapital.portoflio.service.registry.Service;
 
 import java.util.List;

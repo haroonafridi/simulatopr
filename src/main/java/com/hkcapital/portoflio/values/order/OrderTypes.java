@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.order;
+package com.hkcapital.portoflio.values.order;
 
 public enum OrderTypes
 {

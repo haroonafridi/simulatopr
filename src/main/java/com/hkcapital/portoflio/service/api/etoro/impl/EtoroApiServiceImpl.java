@@ -8,7 +8,7 @@ import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroLimitOrderDto;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetailsResponseDTO;
 import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
-import com.hkcapital.portoflio.order.OrderTypes;
+import com.hkcapital.portoflio.values.order.OrderTypes;
 import com.hkcapital.portoflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portoflio.service.orders.impl.EtoroOrderManagerServiceImpl;
 import com.mashape.unirest.http.HttpResponse;

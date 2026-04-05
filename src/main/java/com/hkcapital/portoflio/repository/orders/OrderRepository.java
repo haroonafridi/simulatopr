@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.repository.orders;
 
-import com.hkcapital.portoflio.order.EtoroOrder;
+import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
