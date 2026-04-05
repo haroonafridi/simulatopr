@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.repository;
 
 import com.hkcapital.portoflio.model.LiveInstrumentFeed;
+import com.hkcapital.portoflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,12 +1,12 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
-import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
+import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.order.OrderTypes;
-import com.hkcapital.portoflio.repository.ServiceRegistery;
-import com.hkcapital.portoflio.service.OrderManagerService;
-import com.hkcapital.portoflio.service.PositionService;
-import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portoflio.service.orders.OrderManagerService;
+import com.hkcapital.portoflio.service.positions.PositionService;
+import com.hkcapital.portoflio.service.registry.Service;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 
 import javax.swing.*;

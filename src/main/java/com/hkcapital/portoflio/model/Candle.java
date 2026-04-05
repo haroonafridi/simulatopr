@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.model;
 
-import com.hkcapital.portoflio.etoro.dto.candle.CandleDataInformationDto;
+import com.hkcapital.portoflio.broker.etoro.dto.candle.CandleDataInformationDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

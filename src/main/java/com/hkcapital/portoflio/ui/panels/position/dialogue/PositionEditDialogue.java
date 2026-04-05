@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.position.dialogue;
 
 import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.positions.PositionService;
 
 import javax.swing.*;
 import java.awt.*;

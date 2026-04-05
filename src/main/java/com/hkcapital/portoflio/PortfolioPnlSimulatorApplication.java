@@ -25,13 +25,4 @@ public class PortfolioPnlSimulatorApplication
 			}
 		});
 	}
-	public static void main1(String[] args) {
-		System.setProperty("java.awt.headless", "false");
-		ConfigurableApplicationContext context = SpringApplication.run(PortfolioPnlSimulatorApplication.class, args);
-		SwingUtilities.invokeLater(() -> {
-			SRMatrixPanelTest simulator = context.getBean(SRMatrixPanelTest.class);
-			simulator.launch();
-		});
-	}
-
 }

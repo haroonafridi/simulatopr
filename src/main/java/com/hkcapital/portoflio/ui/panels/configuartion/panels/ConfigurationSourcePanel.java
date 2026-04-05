@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.configuartion.panels;
 
 import com.hkcapital.portoflio.model.Configuration;
-import com.hkcapital.portoflio.service.ConfigurationService;
+import com.hkcapital.portoflio.service.configuration.ConfigurationService;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 import com.hkcapital.portoflio.ui.panels.configuartion.labels.Labels;

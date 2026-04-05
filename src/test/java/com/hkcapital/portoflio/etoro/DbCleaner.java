@@ -1,6 +1,15 @@
 package com.hkcapital.portoflio.etoro;
 
-import com.hkcapital.portoflio.repository.*;
+import com.hkcapital.portoflio.repository.candle.CandleRepository;
+import com.hkcapital.portoflio.repository.configuration.ConfigurationRepository;
+import com.hkcapital.portoflio.repository.instrument.InstrumentRepository;
+import com.hkcapital.portoflio.repository.marketconditions.MarketconditionsRepository;
+import com.hkcapital.portoflio.repository.orders.OrderRepository;
+import com.hkcapital.portoflio.repository.positions.PositionRepository;
+import com.hkcapital.portoflio.repository.srmatrix.SRMatrixRepository;
+import com.hkcapital.portoflio.repository.strategy.StrategyRepository;
+import com.hkcapital.portoflio.repository.tradingsession.TradingSessionsRepository;
+import com.hkcapital.portoflio.repository.tradingtimiframe.TradingTimeFramesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

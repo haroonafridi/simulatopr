@@ -1,10 +1,9 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
 import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.service.PositionService;
+import com.hkcapital.portoflio.service.positions.PositionService;
 import com.hkcapital.portoflio.ui.panels.position.dialogue.PositionEditDialogue;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
-import com.hkcapital.portoflio.ui.panels.strategy.dialogues.StrategyEditDialogue;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

@@ -1,11 +1,8 @@
 package com.hkcapital.portoflio.ui.panels.srmatrix.panels;
 
-import com.hkcapital.portoflio.repository.ServiceRegistery;
-import com.hkcapital.portoflio.ui.panels.instrument.panels.InstrumentPanel;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import javax.swing.*;
 
 @Component
 public class SRMatrixPanelTest

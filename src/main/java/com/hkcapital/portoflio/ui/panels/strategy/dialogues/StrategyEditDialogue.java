@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.strategy.dialogues;
 
 import com.hkcapital.portoflio.model.Strategy;
-import com.hkcapital.portoflio.service.StrategyService;
+import com.hkcapital.portoflio.service.strategy.StrategyService;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;

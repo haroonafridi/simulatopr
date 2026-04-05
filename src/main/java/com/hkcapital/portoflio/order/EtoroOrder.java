@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.order;
 
-import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
+import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
 import jakarta.persistence.*;
 
 import java.time.Instant;

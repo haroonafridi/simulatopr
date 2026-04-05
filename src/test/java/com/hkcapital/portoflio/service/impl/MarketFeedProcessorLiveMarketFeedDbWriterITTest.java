@@ -1,14 +1,13 @@
 package com.hkcapital.portoflio.service.impl;
 
-import com.hkcapital.portoflio.etoro.websocket.LiveInstrumentRate;
-import com.hkcapital.portoflio.repository.LiveInstrumentFeedRepository;
-import com.hkcapital.portoflio.service.MarketFeedObserver;
-import com.hkcapital.portoflio.service.MarketFeedSubscriber;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
+import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
+import com.hkcapital.portoflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -18,7 +17,7 @@ class MarketFeedProcessorLiveMarketFeedDbWriterITTest
     @Autowired
     private MarketFeedObserver marketFeedObserver;
     @Autowired
-    private MarketFeedDbWriter marketFeedDbWriter;
+    private MarketFeedDbWriterSub marketFeedDbWriter;
     @Autowired
     private LiveInstrumentFeedRepository feedRepository;
     @Test

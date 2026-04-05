@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.instrument.dialogues;
 
 import com.hkcapital.portoflio.model.Instrument;
-import com.hkcapital.portoflio.service.InstrumentService;
+import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;

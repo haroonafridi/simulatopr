@@ -4,10 +4,10 @@ import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.MarketConditions;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.SRMatrix;
-import com.hkcapital.portoflio.service.ConfigurationService;
-import com.hkcapital.portoflio.service.MarketConditionsService;
-import com.hkcapital.portoflio.service.PositionService;
-import com.hkcapital.portoflio.service.SRMatrixService;
+import com.hkcapital.portoflio.service.configuration.ConfigurationService;
+import com.hkcapital.portoflio.service.marketconditions.MarketConditionsService;
+import com.hkcapital.portoflio.service.positions.PositionService;
+import com.hkcapital.portoflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
 import com.hkcapital.portoflio.ui.panels.marketconditions.panels.MarketConditionsSourcePanel;
 import com.hkcapital.portoflio.ui.panels.position.PositionParameters;
@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import static com.hkcapital.portoflio.service.impl.PositionServiceImpl.calculatePosition;
+import static com.hkcapital.portoflio.service.positions.impl.PositionServiceImpl.calculatePosition;
 
 public class AddPositionsButtonListener implements ActionListener
 {

@@ -1,11 +1,9 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
 import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.repository.ServiceRegistery;
-import com.hkcapital.portoflio.service.PositionService;
-import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portoflio.service.registry.Service;
 import com.hkcapital.portoflio.ui.panels.position.dialogue.PositionBuyDialogue;
-import com.hkcapital.portoflio.ui.panels.position.dialogue.PositionSellDialogue;
 import com.hkcapital.portoflio.ui.panels.position.tablemodels.PositionTableModel;
 
 import javax.swing.*;

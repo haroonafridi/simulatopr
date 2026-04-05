@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.strategy.listners;
 
 import com.hkcapital.portoflio.model.Strategy;
-import com.hkcapital.portoflio.service.StrategyService;
+import com.hkcapital.portoflio.service.strategy.StrategyService;
 import com.hkcapital.portoflio.ui.panels.strategy.StrategyTableModel;
 import com.hkcapital.portoflio.ui.panels.strategy.dialogues.StrategyEditDialogue;
 

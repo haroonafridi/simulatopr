@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.etoro.portfolio;
 import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
-import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroClientPortfolioDTO;
-import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioPositionDTO;
+import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroClientPortfolioDTO;
+import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioPositionDTO;
 import org.junit.jupiter.api.Test;
 import java.time.OffsetDateTime;
 import java.util.List;

@@ -2,7 +2,7 @@ package com.hkcapital.portoflio.ui.panels.capital;
 
 import com.hkcapital.portoflio.model.Configuration;
 import com.hkcapital.portoflio.model.OpeningCapital;
-import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;

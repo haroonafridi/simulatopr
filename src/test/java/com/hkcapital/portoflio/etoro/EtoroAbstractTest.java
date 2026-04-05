@@ -1,14 +1,13 @@
 package com.hkcapital.portoflio.etoro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.config.EtoroApiConfiguration;
-import com.hkcapital.portoflio.etoro.dto.order.EtoroMarketOrderDto;
-import com.hkcapital.portoflio.etoro.dto.order.EtoroOrderDetails;
-import com.hkcapital.portoflio.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
+import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
+import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
+import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import com.hkcapital.portoflio.order.EtoroOrder;
 import com.hkcapital.portoflio.order.OrderTypes;
-import com.hkcapital.portoflio.repository.OrderRepository;
-import com.hkcapital.portoflio.service.OrderManagerService;
+import com.hkcapital.portoflio.repository.orders.OrderRepository;
+import com.hkcapital.portoflio.service.orders.OrderManagerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

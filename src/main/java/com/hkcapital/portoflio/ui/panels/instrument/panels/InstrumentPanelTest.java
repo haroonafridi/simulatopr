@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.instrument.panels;
 
-import com.hkcapital.portoflio.repository.ServiceRegistery;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 

@@ -1,11 +1,13 @@
 package com.hkcapital.portoflio.etoro.websocket.client;
 
-import com.hkcapital.portoflio.config.EtoroApiConfiguration;
-import com.hkcapital.portoflio.etoro.websocket.EtoroLiveFeedListener;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portoflio.service.candle.etoro.impl.EtoroLiveFeedServiceImpl;
 import com.hkcapital.portoflio.etoro.websocket.server.EtoroTestServer;
-import com.hkcapital.portoflio.service.MarketFeedObserver;
-import com.hkcapital.portoflio.service.impl.LiveResponseMapper;
-import com.hkcapital.portoflio.service.impl.MarketFeedDbWriter;
+import com.hkcapital.portoflio.service.instrument.InstrumentService;
+import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
+import com.hkcapital.portoflio.service.helper.LiveResponseMapper;
+import com.hkcapital.portoflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import org.glassfish.tyrus.server.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +34,12 @@ public class WebSocketClientTest
     private MarketFeedObserver marketFeedObserver;
 
     @Autowired
-    private MarketFeedDbWriter marketFeedDbWriter;
+    private MarketFeedDbWriterSub marketFeedDbWriter;
+
+    @Autowired
+    private InstrumentService instrumentService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     static void startServer() throws Exception
@@ -64,8 +71,8 @@ public class WebSocketClientTest
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
-                        new EtoroLiveFeedListener(etoroApiConfiguration, marketFeedObserver,
-                                liveResponseMapper))
+                        new EtoroLiveFeedServiceImpl(etoroApiConfiguration, marketFeedObserver,
+                                liveResponseMapper,instrumentService , objectMapper ))
                 .join();
         ws.sendText("{\n" +
                 "  \"id\": \"ed72693c-1545-4fa1-8a10-aca7cf5419a6\",\n" +

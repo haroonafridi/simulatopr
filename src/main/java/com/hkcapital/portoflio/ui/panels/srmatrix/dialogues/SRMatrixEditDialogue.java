@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.srmatrix.dialogues;
 
 import com.hkcapital.portoflio.model.SRMatrix;
-import com.hkcapital.portoflio.service.SRMatrixService;
+import com.hkcapital.portoflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
 
 import javax.swing.*;

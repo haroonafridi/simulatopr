@@ -8,10 +8,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class JacksonConfig {
+public class JacksonConfig
+{
 
     @Bean
-    public ObjectMapper objectMapper() {
+    public ObjectMapper objectMapper() //
+    {
         JsonFactory factory = JsonFactory.builder().build();
         ObjectMapper mapper = new ObjectMapper(factory);
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

@@ -1,7 +1,7 @@
 package com.hkcapital.portoflio.ui.panels.position.listeners;
 
-import com.hkcapital.portoflio.repository.ServiceRegistery;
-import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portoflio.service.registry.Service;
 import com.hkcapital.portoflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationPanel;
 import com.hkcapital.portoflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;

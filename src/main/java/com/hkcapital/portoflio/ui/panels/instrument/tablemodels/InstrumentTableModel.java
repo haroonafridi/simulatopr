@@ -1,7 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.instrument.tablemodels;
 
 import com.hkcapital.portoflio.model.Instrument;
-import com.hkcapital.portoflio.service.InstrumentService;
 import com.hkcapital.portoflio.ui.TableModel;
 
 import java.util.List;

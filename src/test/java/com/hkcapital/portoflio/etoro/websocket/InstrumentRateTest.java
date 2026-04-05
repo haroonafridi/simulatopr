@@ -1,6 +1,9 @@
 package com.hkcapital.portoflio.etoro.websocket;
 
 import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LivePriceResponseWrapper;
+import com.hkcapital.portoflio.service.api.etoro.websocket.Message;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;

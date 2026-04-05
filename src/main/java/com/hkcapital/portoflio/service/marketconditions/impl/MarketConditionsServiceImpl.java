@@ -1,0 +1,72 @@
+package com.hkcapital.portoflio.service.marketconditions.impl;
+
+import com.hkcapital.portoflio.model.MarketConditions;
+import com.hkcapital.portoflio.model.Strategy;
+import com.hkcapital.portoflio.repository.marketconditions.MarketconditionsRepository;
+import com.hkcapital.portoflio.service.marketconditions.MarketConditionsService;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class MarketConditionsServiceImpl implements MarketConditionsService
+{
+    private final MarketconditionsRepository marketconditionsRepository;
+
+    public MarketConditionsServiceImpl(MarketconditionsRepository marketconditionsRepository)
+    {
+        this.marketconditionsRepository = marketconditionsRepository;
+    }
+
+    @Override
+    public MarketConditions addMarketCondition(MarketConditions marketCondition)
+    {
+        return marketconditionsRepository.save(marketCondition);
+    }
+
+    @Override
+    public void removeMarketCondition(MarketConditions marketCondition)
+    {
+        marketconditionsRepository.delete(marketCondition);
+    }
+
+    @Override
+    public Strategy updateMarketCondition(MarketConditions marketCondition)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeById(Integer id)
+    {
+        marketconditionsRepository.findById(id) //
+                .ifPresent(marketConditions -> marketconditionsRepository.delete(marketConditions));
+    }
+
+    @Override
+    public List<MarketConditions> findAll()
+    {
+        return marketconditionsRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    }
+
+    @Override
+    public MarketConditions findById(Integer id)
+    {
+        Optional<MarketConditions> marketCondition = marketconditionsRepository.findById(id);
+        return !marketCondition.isEmpty() ? marketCondition.get() : null;
+    }
+
+    @Override
+    public void removeAll()
+    {
+        marketconditionsRepository.deleteAll();
+    }
+
+    @Override
+    public MarketConditions getReferenceById(Integer id) //
+    {
+        return marketconditionsRepository.getReferenceById(id);
+    }
+}

@@ -1,8 +1,8 @@
 package com.hkcapital.portoflio.service.impl;
 
-import com.hkcapital.portoflio.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.model.LiveInstrumentFeed;
-import com.hkcapital.portoflio.repository.LiveInstrumentFeedRepository;
+import com.hkcapital.portoflio.service.instrument.LiveInstrumentFeedDbService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

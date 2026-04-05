@@ -1,8 +1,8 @@
 package com.hkcapital.portoflio.ui.panels.marketconditions.panels;
 
-import com.hkcapital.portoflio.repository.ServiceRegistery;
-import com.hkcapital.portoflio.service.MarketConditionsService;
-import com.hkcapital.portoflio.service.Service;
+import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portoflio.service.marketconditions.MarketConditionsService;
+import com.hkcapital.portoflio.service.registry.Service;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
