@@ -2,6 +2,7 @@ package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class SRMatrix
 {
     @Id
@@ -26,30 +28,10 @@ public class SRMatrix
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
-
     @Column(name = "support")
     private Double support;
-
     @Column(name = "resistance")
     private Double resistance;
-
     private Boolean active;
 
-
-    public SRMatrix(LocalDateTime creationDate, //
-                    Integer timeFrame, //
-                    String timeFrameUnit, //
-                    Instrument instrument, //
-                    Double support, //
-                    Double resistance,
-                    Boolean active)
-    {
-        this.creationDate = creationDate;
-        this.timeFrame = timeFrame;
-        this.timeFrameUnit = timeFrameUnit;
-        this.instrument = instrument;
-        this.support = support;
-        this.resistance = resistance;
-        this.active = active;
-    }
 }

@@ -25,13 +25,13 @@ public class Configuration
     private Double maxPercentAllowedPerInstrument;
     private Integer lev;
     public Configuration( Double percentAllocationAllowed, //
-                         Integer noOfInsutrments, //
+                         Integer noOfInstruments, //
                          Integer noOfPositionsPerInstruments, //
                          Double maxPercentAllowedPerInstrument,
                          Integer lev)
     {
         this.percentAllocationAllowed = percentAllocationAllowed;
-        this.noOfInsutrments = noOfInsutrments;
+        this.noOfInsutrments = noOfInstruments;
         this.noOfPositionsPerInstruments = noOfPositionsPerInstruments;
         this.maxPercentAllowedPerInstrument = maxPercentAllowedPerInstrument;
         this.lev = lev;

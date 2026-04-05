@@ -6,8 +6,8 @@ import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.positions.PositionService;
-import com.hkcapital.portoflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portoflio.service.registry.Service;
+import com.hkcapital.portoflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portoflio.ui.UIBag;
 import com.hkcapital.portoflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portoflio.ui.fields.NumberTextField;
@@ -191,15 +191,15 @@ public class SRMatrixPanel extends UIBag
 
     public void save()
     {
-
-        SRMatrix srMatrix = new SRMatrix(LocalDateTime.now(), //
-                this.timeFrame.getIntValue(), //
-                this.timeFrameUnit.getSelectedItem().toString(), //
-                (Instrument) this.instrumentList.getModel().getSelectedItem(), //
-                this.support.getDoubleValue(), //
-                this.resistence.getDoubleValue(),
-                this.active.isSelected());
-
+        SRMatrix srMatrix = SRMatrix.builder()
+                .creationDate(LocalDateTime.now())
+                .timeFrame(this.timeFrame.getIntValue())
+                .timeFrameUnit(this.timeFrameUnit.getSelectedItem().toString())
+                .instrument((Instrument) this.instrumentList.getModel().getSelectedItem())
+                .support(this.support.getDoubleValue())
+                .resistance(this.resistence.getDoubleValue())
+                .active(this.active.isSelected())
+                .build();
         srMatrixService.addSRMatrix(srMatrix);
         tableModel.addRow(srMatrix);
     }

@@ -88,7 +88,7 @@ public class TradingSessionPanel extends UIBag
         buttonPanel.add(removeButton);
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
-      //  buttonPanel.add(selectButton);
+        //  buttonPanel.add(selectButton);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -113,7 +113,7 @@ public class TradingSessionPanel extends UIBag
         cancelButton.addActionListener(e -> remove());
         closeButton.addActionListener(e -> clear());
         removeButton.addActionListener(e -> remove());
-       // selectButton.addActionListener(e -> select());
+        // selectButton.addActionListener(e -> select());
     }
 
     public JButton getSaveButton()
@@ -138,13 +138,11 @@ public class TradingSessionPanel extends UIBag
 
     public void save()
     {
-        TradingSessions tradingSession = new TradingSessions(
-                tradingSessionName.getText(),
-                tradingSessionDescription.getText(),
-                startTime.getText(),
-                endTime.getText()
-        );
-
+        TradingSessions tradingSession = TradingSessions.builder()
+                .name(tradingSessionName.getText())
+                .description(tradingSessionDescription.getText())
+                .startTime(startTime.getText()).endTime(endTime.getText())
+                .build();
         tradingSessionsService.add(tradingSession);
         tradingSessionName.setText(null);
         tradingSessionDescription.setText(null);

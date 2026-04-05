@@ -2,11 +2,19 @@ package com.hkcapital.portoflio.model.etoro;
 
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "etoro_orders")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class EtoroOrder
 {
     @Id
@@ -15,134 +23,23 @@ public class EtoroOrder
     private int instrumentID;
     private double amount;
     private boolean isBuy;
-
     private int leverage;
     private Double stopLossRate;
     private Double takeProfitRate;
     private Boolean isTslEnabled;
     private String status;
-
     private Double bid;
-
     private Double ask;
-
     private Instant dateTime;
-
     private String error;
-
     @Column(name = "order_id")
     private long orderID;
-
     private String tokenId;
-
     @Column(columnDefinition = "TIMESTAMP(6)")
     private Instant openDateTime;
-
     private String oderType;
-
     private Double maxAllowedSlippage;
-
     private Double etoroSlippage;
-
-    public int getId()
-    {
-        return id;
-    }
-
-    public void setId(int id)
-    {
-        this.id = id;
-    }
-
-    public int getInstrumentID()
-    {
-        return instrumentID;
-    }
-
-    public void setInstrumentID(int instrumentID)
-    {
-        this.instrumentID = instrumentID;
-    }
-
-    public double getAmount()
-    {
-        return amount;
-    }
-
-    public void setAmount(double amount)
-    {
-        this.amount = amount;
-    }
-
-    public boolean isBuy()
-    {
-        return isBuy;
-    }
-
-    public void setBuy(boolean buy)
-    {
-        isBuy = buy;
-    }
-
-    public int getLeverage()
-    {
-        return leverage;
-    }
-
-    public void setLeverage(int leverage)
-    {
-        this.leverage = leverage;
-    }
-
-    public Double getStopLossRate()
-    {
-        return stopLossRate;
-    }
-
-    public void setStopLossRate(Double stopLossRate)
-    {
-        this.stopLossRate = stopLossRate;
-    }
-
-    public Double getTakeProfitRate()
-    {
-        return takeProfitRate;
-    }
-
-    public void setTakeProfitRate(Double takeProfitRate)
-    {
-        this.takeProfitRate = takeProfitRate;
-    }
-
-    public Boolean getTslEnabled()
-    {
-        return isTslEnabled;
-    }
-
-    public void setTslEnabled(Boolean tslEnabled)
-    {
-        isTslEnabled = tslEnabled;
-    }
-
-    public long getOrderID()
-    {
-        return orderID;
-    }
-
-    public void setOrderID(long orderID)
-    {
-        this.orderID = orderID;
-    }
-
-    public Instant getOpenDateTime()
-    {
-        return openDateTime;
-    }
-
-    public void setOpenDateTime(Instant openDateTime)
-    {
-        this.openDateTime = openDateTime;
-    }
 
     public EtoroOrder fill(EtoroOrderDetails details)
     {
@@ -157,95 +54,5 @@ public class EtoroOrder
         openDateTime = details.getOpenDateTime();
         this.dateTime = Instant.now();
         return this;
-    }
-
-    public String getStatus()
-    {
-        return status;
-    }
-
-    public void setStatus(String status)
-    {
-        this.status = status;
-    }
-
-    public String getError()
-    {
-        return error;
-    }
-
-    public void setError(String error)
-    {
-        this.error = error;
-    }
-
-    public String getTokenId()
-    {
-        return tokenId;
-    }
-
-    public void setTokenId(String tokenId)
-    {
-        this.tokenId = tokenId;
-    }
-
-    public Double getBid()
-    {
-        return bid;
-    }
-
-    public void setBid(Double bid)
-    {
-        this.bid = bid;
-    }
-
-    public Double getAsk()
-    {
-        return ask;
-    }
-
-    public void setAsk(Double ask)
-    {
-        this.ask = ask;
-    }
-
-    public Instant getDateTime()
-    {
-        return dateTime;
-    }
-
-    public void setDateTime(Instant dateTime)
-    {
-        this.dateTime = dateTime;
-    }
-
-    public String getOderType()
-    {
-        return oderType;
-    }
-
-    public void setOderType(String oderType)
-    {
-        this.oderType = oderType;
-    }
-
-    public Double getMaxAllowedSlippage()
-    {
-        return maxAllowedSlippage;
-    }
-
-    public void setMaxAllowedSlippage(Double maxAllowedSlippage)
-    {
-        this.maxAllowedSlippage = maxAllowedSlippage;
-    }
-
-    public Double getEtoroSlippage()
-    {
-        return etoroSlippage;
-    }
-
-    public void setEtoroSlippage(Double etoroSlippage)
-    {
-        this.etoroSlippage = etoroSlippage;
     }
 }

@@ -27,9 +27,7 @@ public class EtoroApiServiceImpl implements EtoroApiService
 {
     private static final Logger logger = LoggerFactory.getLogger(EtoroOrderManagerServiceImpl.class);
     private final EtoroApiConfiguration etoroApiConfiguration;
-
     private final ObjectMapper objectMapper;
-
     public EtoroApiServiceImpl(EtoroApiConfiguration etoroApiConfiguration, ObjectMapper objectMapper)
     {
         this.etoroApiConfiguration = etoroApiConfiguration;

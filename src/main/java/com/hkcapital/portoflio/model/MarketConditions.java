@@ -2,6 +2,7 @@ package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "market_conditions")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 public class MarketConditions
 {
@@ -18,18 +20,11 @@ public class MarketConditions
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
     private Instrument instrument;
-    @Column(name="day_low")
+    @Column(name = "day_low")
     private Double dayLow;
-    @Column(name="day_high")
+    @Column(name = "day_high")
     private Double dayHigh;
     @Column(name = "percent_move")
     private Double percentMove;
 
-    public MarketConditions(Instrument instrument, Double dayLow, Double dayHigh, Double percentMove)
-    {
-        this.instrument = instrument;
-        this.dayLow = dayLow;
-        this.dayHigh = dayHigh;
-        this.percentMove = percentMove;
-    }
 }

@@ -37,8 +37,6 @@ public class LiveResponseMapper
 
                 }
             }
-
-
             return liveInstrumentRate;
         } catch (JsonProcessingException e)
         {

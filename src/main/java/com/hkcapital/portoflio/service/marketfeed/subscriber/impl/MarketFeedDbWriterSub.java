@@ -1,18 +1,16 @@
 package com.hkcapital.portoflio.service.marketfeed.subscriber.impl;
 
-import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.model.LiveInstrumentFeed;
 import com.hkcapital.portoflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.MarketFeedSubscriber;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.logging.Logger;
 
 @Service
 public class MarketFeedDbWriterSub implements MarketFeedSubscriber
 {
-    private Logger logger = Logger.getLogger(MarketFeedDbWriterSub.class.getName());
     private final LiveInstrumentFeedRepository liveInstrumentFeedRepository;
 
     public MarketFeedDbWriterSub(LiveInstrumentFeedRepository liveInstrumentFeedRepository)
@@ -36,6 +34,7 @@ public class MarketFeedDbWriterSub implements MarketFeedSubscriber
                             .availabilityReason(liveRate.getAvailabilityReason())
                             .bidDiscounted(liveRate.getBidDiscounted())
                             .conversionRateAsk(liveRate.getConversionRateAsk())
+                            .feedDate(liveRate.getDate())
                             .creationDate(Instant.now())//
                             .conversionRateBid(liveRate.getConversionRateBid())
                             .isInstrumentActive(liveRate.getIsInstrumentActive())

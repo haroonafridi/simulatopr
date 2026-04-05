@@ -158,8 +158,11 @@ public class MarketConditionsPanel extends UIBag
     public void save()
     {
         Instrument instrument = (Instrument) instrumentList.getModel().getSelectedItem();
-        MarketConditions marketConditions = new MarketConditions(instrument, dayLow.getDoubleValue(), dayHigh.getDoubleValue(),
-                percentMove.getDoubleValue());
+        MarketConditions marketConditions = MarketConditions.builder()
+                .instrument(instrument)
+                .dayLow(dayLow.getDoubleValue())
+                .dayHigh(dayHigh.getDoubleValue())
+                .percentMove(percentMove.getDoubleValue()).build();
         marketconditionsService.addMarketCondition(marketConditions);
         tableModel.addRow(marketConditions);
         dayLow.setText(null);

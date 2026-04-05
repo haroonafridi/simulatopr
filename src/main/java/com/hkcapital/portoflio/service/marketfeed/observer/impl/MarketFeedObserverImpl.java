@@ -21,11 +21,8 @@ public class MarketFeedObserverImpl implements MarketFeedObserver
     {
         if (liveInstrumentRate != null)
         {
-            logger.info("Broadcasting tick {} ",liveInstrumentRate);
+            logger.info("Broadcasting tick [{}] ",liveInstrumentRate);
             feedSubscribers.forEach(feedSubscriber -> feedSubscriber.process(liveInstrumentRate));
-        } else
-        {
-            logger.info("Cannot broadcast instrument feed for a null instrument rate!!");
         }
     }
 

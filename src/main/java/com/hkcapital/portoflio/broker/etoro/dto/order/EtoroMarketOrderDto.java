@@ -1,9 +1,16 @@
 package com.hkcapital.portoflio.broker.etoro.dto.order;
 
 import com.hkcapital.portoflio.broker.etoro.JSON;
-import lombok.Builder;
+import lombok.*;
 
+/**
+ * Data Transfer object responbile for wrapping etoro Market Order
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Builder
+@ToString
 public class EtoroMarketOrderDto implements JSON
 {
     private Integer instrumentId;
@@ -28,185 +35,6 @@ public class EtoroMarketOrderDto implements JSON
     private Double etoroSlippage;
 
 
-    public EtoroMarketOrderDto(Integer instrumentId, Boolean isBuy, Integer leverage, //
-                               Double amount, Double stopLossRate, //
-                               Double takeProfitRate, Boolean isTslEnabled, //
-                               Boolean isNoStopLoss, //
-                               Boolean isNoTakeProfit,
-                               String orderType,
-                               Double bid,
-                               Double ask,
-                               Double maxAllowedSlippage,
-                               Double etoroSlippage)
-    {
-        this.instrumentId = instrumentId;
-        this.isBuy = isBuy;
-        this.leverage = leverage;
-        this.amount = amount;
-        this.stopLossRate = stopLossRate;
-        this.takeProfitRate = takeProfitRate;
-        this.isTslEnabled = isTslEnabled;
-        this.isNoStopLoss = isNoStopLoss;
-        this.isNoTakeProfit = isNoTakeProfit;
-        this.orderType = orderType;
-        this.bid = bid;
-        this.ask = ask;
-        this.maxAllowedSlippage = maxAllowedSlippage;
-        this.etoroSlippage = etoroSlippage;
-    }
-
-    public Integer getInstrumentId()
-    {
-        return instrumentId;
-    }
-
-    public void setInstrumentId(Integer instrumentId)
-    {
-        this.instrumentId = instrumentId;
-    }
-
-    public Boolean getBuy()
-    {
-        return isBuy;
-    }
-
-    public void setBuy(Boolean buy)
-    {
-        isBuy = buy;
-    }
-
-    public Integer getLeverage()
-    {
-        return leverage;
-    }
-
-    public void setLeverage(Integer leverage)
-    {
-        this.leverage = leverage;
-    }
-
-    public Double getAmount()
-    {
-        return amount;
-    }
-
-    public void setAmount(Double amount)
-    {
-        this.amount = amount;
-    }
-
-    public Double getStopLossRate()
-    {
-        return stopLossRate;
-    }
-
-    public void setStopLossRate(Double stopLossRate)
-    {
-        this.stopLossRate = stopLossRate;
-    }
-
-    public Double getTakeProfitRate()
-    {
-        return takeProfitRate;
-    }
-
-    public void setTakeProfitRate(Double takeProfitRate)
-    {
-        this.takeProfitRate = takeProfitRate;
-    }
-
-    public Boolean getTslEnabled()
-    {
-        return isTslEnabled;
-    }
-
-    public void setTslEnabled(Boolean tslEnabled)
-    {
-        isTslEnabled = tslEnabled;
-    }
-
-    public Boolean getNoStopLoss()
-    {
-        return isNoStopLoss;
-    }
-
-    public void setNoStopLoss(Boolean noStopLoss)
-    {
-        isNoStopLoss = noStopLoss;
-    }
-
-    public Boolean getNoTakeProfit()
-    {
-        return isNoTakeProfit;
-    }
-
-    public void setNoTakeProfit(Boolean noTakeProfit)
-    {
-        isNoTakeProfit = noTakeProfit;
-    }
-
-
-    public void setOrderType(String orderType)
-    {
-        this.orderType = orderType;
-    }
-
-    public Double getBid()
-    {
-        return bid;
-    }
-
-    public void setBid(Double bid)
-    {
-        this.bid = bid;
-    }
-
-    public Double getAsk()
-    {
-        return ask;
-    }
-
-    public void setAsk(Double ask)
-    {
-        this.ask = ask;
-    }
-
-    public Double getMaxAllowedSlippage()
-    {
-        return maxAllowedSlippage;
-    }
-
-    public void setMaxAllowedSlippage(Double maxAllowedSlippage)
-    {
-        this.maxAllowedSlippage = maxAllowedSlippage;
-    }
-
-    public Double getEtoroSlippage()
-    {
-        return etoroSlippage;
-    }
-
-    public void setEtoroSlippage(Double etoroSlippage)
-    {
-        this.etoroSlippage = etoroSlippage;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "EtoroMarketOrderDto{" +
-                "instrumentId=" + instrumentId +
-                ", isBuy=" + isBuy +
-                ", leverage=" + leverage +
-                ", amount=" + amount +
-                ", stopLossRate=" + stopLossRate +
-                ", takeProfitRate=" + takeProfitRate +
-                ", isTslEnabled=" + isTslEnabled +
-                ", isNoStopLoss=" + isNoStopLoss +
-                ", isNoTakeProfit=" + isNoTakeProfit +
-                '}';
-    }
-
     @Override
     public String toJson()
     {
@@ -223,8 +51,4 @@ public class EtoroMarketOrderDto implements JSON
                 "\n}";
     }
 
-    public String getOrderType()
-    {
-        return orderType;
-    }
 }

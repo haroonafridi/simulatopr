@@ -1,88 +1,27 @@
 package com.hkcapital.portoflio.model;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hkcapital.portoflio.broker.etoro.dto.candle.CandleDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InstrumentCandles {
-
+public class InstrumentCandles
+{
     private int instrumentId;
     private List<CandleDto> candles;
-
     private double rangeOpen;
     private double rangeClose;
     private double rangeHigh;
     private double rangeLow;
     private double volume;
-
     private String fromDate;
-
-    public InstrumentCandles() {}
-
-    public int getInstrumentId() {
-        return instrumentId;
-    }
-
-    public void setInstrumentId(int instrumentId) {
-        this.instrumentId = instrumentId;
-    }
-
-    public List<CandleDto> getCandles() {
-        return candles;
-    }
-
-    public void setCandles(List<CandleDto> candles) {
-        this.candles = candles;
-    }
-
-    public double getRangeOpen() {
-        return rangeOpen;
-    }
-
-    public void setRangeOpen(double rangeOpen) {
-        this.rangeOpen = rangeOpen;
-    }
-
-    public double getRangeClose() {
-        return rangeClose;
-    }
-
-    public void setRangeClose(double rangeClose) {
-        this.rangeClose = rangeClose;
-    }
-
-    public double getRangeHigh() {
-        return rangeHigh;
-    }
-
-    public void setRangeHigh(double rangeHigh) {
-        this.rangeHigh = rangeHigh;
-    }
-
-    public double getRangeLow() {
-        return rangeLow;
-    }
-
-    public void setRangeLow(double rangeLow) {
-        this.rangeLow = rangeLow;
-    }
-
-    public double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public String getFromDate()
-    {
-        return fromDate;
-    }
-
-    public void setFromDate(String fromDate)
-    {
-        this.fromDate = fromDate;
-    }
 }
