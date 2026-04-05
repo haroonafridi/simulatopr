@@ -1,9 +1,7 @@
-package com.hkcapital.portoflio.service.helper;
+package com.hkcapital.portoflio.service.api.etoro.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
-import com.hkcapital.portoflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,11 +22,24 @@ public class LiveResponseMapper
         try
         {
             LivePriceResponseWrapper livePriceResponseWrapper = objectMapper.readValue(message, LivePriceResponseWrapper.class);
+            LiveInstrumentRate liveInstrumentRate = null;
             if (livePriceResponseWrapper.getMessages() != null && livePriceResponseWrapper.getMessages().size() > 0)
             {
-                return objectMapper.readValue(livePriceResponseWrapper.getMessages().get(0).getContent(), //
+                Message msg = livePriceResponseWrapper.getMessages().get(0);
+                liveInstrumentRate = objectMapper.readValue(msg.getContent(), //
                         LiveInstrumentRate.class);
+                if (liveInstrumentRate.getInstrumentId() == null)
+                {
+                    if (msg.getTopic() != null) //
+                    {
+                        liveInstrumentRate.setInstrumentId(Integer.parseInt(msg.getTopic().split(":")[1]));
+                    }
+
+                }
             }
+
+
+            return liveInstrumentRate;
         } catch (JsonProcessingException e)
         {
             logger.error(" Cannot process message because of error [{}]", e.getMessage());

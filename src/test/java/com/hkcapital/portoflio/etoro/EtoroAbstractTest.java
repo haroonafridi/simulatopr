@@ -6,7 +6,7 @@ import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import com.hkcapital.portoflio.values.order.OrderTypes;
-import com.hkcapital.portoflio.repository.orders.OrderRepository;
+import com.hkcapital.portoflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portoflio.service.orders.OrderManagerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,7 @@ public abstract class EtoroAbstractTest
     protected OrderManagerService orderManagerService;
 
     @Autowired
-    protected OrderRepository orderRepository;
+    protected EtoroOrderRepository orderRepository;
 
 
     public InputStream loadResource(String path)

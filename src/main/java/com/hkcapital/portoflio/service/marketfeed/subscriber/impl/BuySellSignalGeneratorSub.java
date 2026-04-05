@@ -10,6 +10,6 @@ public class BuySellSignalGeneratorSub implements MarketFeedSubscriber
     @Override
     public void process(LiveInstrumentRate liveInstrumentRate)
     {
-        System.out.println("Sending Sell or buy order!!!");
+
     }
 }

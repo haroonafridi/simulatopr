@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.repository.orders;
+package com.hkcapital.portoflio.repository.orders.etoro;
 
 import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<EtoroOrder, Integer>
+public interface EtoroOrderRepository extends JpaRepository<EtoroOrder, Integer>
 {
     EtoroOrder findByorderID(Long orderId);
     List<EtoroOrder> findByInstrumentIDAndOderType(Integer InstrumentID, String oderType);

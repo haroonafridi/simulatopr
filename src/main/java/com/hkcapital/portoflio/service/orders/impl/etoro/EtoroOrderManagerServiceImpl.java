@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.service.orders.impl;
+package com.hkcapital.portoflio.service.orders.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hkcapital.portoflio.broker.etoro.EtoroOrderException;
@@ -9,7 +9,7 @@ import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponse
 import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import com.hkcapital.portoflio.values.order.OrderStatus;
 import com.hkcapital.portoflio.values.order.OrderTypes;
-import com.hkcapital.portoflio.repository.orders.OrderRepository;
+import com.hkcapital.portoflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portoflio.service.orders.OrderManagerService;
 import com.hkcapital.portoflio.service.api.etoro.EtoroApiService;
 import org.slf4j.Logger;
@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 public class EtoroOrderManagerServiceImpl implements OrderManagerService
 {
     private static final Logger logger = LoggerFactory.getLogger(EtoroOrderManagerServiceImpl.class);
-    private final OrderRepository orderRepository;
+    private final EtoroOrderRepository orderRepository;
 
     private final EtoroApiService etoroApiService;
 
-    public EtoroOrderManagerServiceImpl(OrderRepository orderRepository, EtoroApiService etoroApiService)
+    public EtoroOrderManagerServiceImpl(EtoroOrderRepository orderRepository, EtoroApiService etoroApiService)
     {
         this.orderRepository = orderRepository;
         this.etoroApiService = etoroApiService;

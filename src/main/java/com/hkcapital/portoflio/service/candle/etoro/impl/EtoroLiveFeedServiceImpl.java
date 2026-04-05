@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
-import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
-import com.hkcapital.portoflio.service.helper.LiveResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -87,6 +87,7 @@ public class EtoroLiveFeedServiceImpl implements Listener
         {
             throw new RuntimeException(e);
         }
+        logger.info("recieved tick [{}]", data.toString());
         LiveInstrumentRate liveInstrumentRate = liveResponseMapper.mapResponse(data.toString());
         marketFeedObserver.process(liveInstrumentRate);
         ws.request(1);

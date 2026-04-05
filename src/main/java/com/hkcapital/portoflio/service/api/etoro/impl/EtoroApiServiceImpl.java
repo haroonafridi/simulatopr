@@ -10,7 +10,7 @@ import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetailsResponseD
 import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import com.hkcapital.portoflio.values.order.OrderTypes;
 import com.hkcapital.portoflio.service.api.etoro.EtoroApiService;
-import com.hkcapital.portoflio.service.orders.impl.EtoroOrderManagerServiceImpl;
+import com.hkcapital.portoflio.service.orders.impl.etoro.EtoroOrderManagerServiceImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;

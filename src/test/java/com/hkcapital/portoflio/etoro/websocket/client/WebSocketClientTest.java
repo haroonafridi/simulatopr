@@ -6,7 +6,7 @@ import com.hkcapital.portoflio.service.candle.etoro.impl.EtoroLiveFeedServiceImp
 import com.hkcapital.portoflio.etoro.websocket.server.EtoroTestServer;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
-import com.hkcapital.portoflio.service.helper.LiveResponseMapper;
+import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import org.glassfish.tyrus.server.Server;
 import org.junit.jupiter.api.AfterAll;

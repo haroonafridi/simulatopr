@@ -4,7 +4,7 @@ import com.hkcapital.portoflio.repository.candle.CandleRepository;
 import com.hkcapital.portoflio.repository.configuration.ConfigurationRepository;
 import com.hkcapital.portoflio.repository.instrument.InstrumentRepository;
 import com.hkcapital.portoflio.repository.marketconditions.MarketconditionsRepository;
-import com.hkcapital.portoflio.repository.orders.OrderRepository;
+import com.hkcapital.portoflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portoflio.repository.positions.PositionRepository;
 import com.hkcapital.portoflio.repository.srmatrix.SRMatrixRepository;
 import com.hkcapital.portoflio.repository.strategy.StrategyRepository;
@@ -25,7 +25,7 @@ public class DbCleaner
     @Autowired
     private MarketconditionsRepository marketconditionsRepository;
     @Autowired
-    private OrderRepository orderRepository;
+    private EtoroOrderRepository orderRepository;
     @Autowired
 
     private PositionRepository positionRepository;

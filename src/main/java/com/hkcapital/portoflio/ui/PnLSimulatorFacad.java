@@ -8,7 +8,7 @@ import com.hkcapital.portoflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portoflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portoflio.service.configuration.ConfigurationService;
-import com.hkcapital.portoflio.service.orders.impl.EtoroOrderManagerServiceImpl;
+import com.hkcapital.portoflio.service.orders.impl.etoro.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portoflio.service.positions.PositionService;

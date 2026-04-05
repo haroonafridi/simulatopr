@@ -9,7 +9,7 @@ import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetailsResponseD
 import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import com.hkcapital.portoflio.values.order.OrderStatus;
 import com.hkcapital.portoflio.values.order.OrderTypes;
-import com.hkcapital.portoflio.repository.orders.OrderRepository;
+import com.hkcapital.portoflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portoflio.service.orders.OrderManagerService;
 import com.hkcapital.portoflio.service.api.etoro.EtoroApiService;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +37,7 @@ class EtoroOrderManagerServiceImplTest extends EtoroAbstractTest
     @Autowired
     private OrderManagerService orderManagerService;
     @Autowired
-    private OrderRepository orderRepository;
+    private EtoroOrderRepository orderRepository;
     @MockitoBean
     private EtoroApiService etoroApiService;
 
