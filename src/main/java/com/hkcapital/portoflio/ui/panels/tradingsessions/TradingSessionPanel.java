@@ -113,7 +113,6 @@ public class TradingSessionPanel extends UIBag
         cancelButton.addActionListener(e -> remove());
         closeButton.addActionListener(e -> clear());
         removeButton.addActionListener(e -> remove());
-        // selectButton.addActionListener(e -> select());
     }
 
     public JButton getSaveButton()
@@ -174,6 +173,6 @@ public class TradingSessionPanel extends UIBag
     @Override
     protected void paintComponent(Graphics g)
     {
-        super.paintComponent(g); // always call super
+        super.paintComponent(g);
     }
 }

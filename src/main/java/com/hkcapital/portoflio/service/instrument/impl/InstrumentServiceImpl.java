@@ -67,4 +67,11 @@ public class InstrumentServiceImpl implements InstrumentService
     {
         return null;
     }
+
+    @Override
+    public List<Instrument> findByActive(Boolean active)
+    {
+        return instrumentRepository.findByActive(active);
+    }
+
 }

@@ -5,9 +5,11 @@ import com.hkcapital.portoflio.ui.panels.srmatrix.panels.SRMatrixPanelTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.swing.*;
 
+@EnableScheduling
 @SpringBootApplication
 public class PortfolioPnlSimulatorApplication
 {

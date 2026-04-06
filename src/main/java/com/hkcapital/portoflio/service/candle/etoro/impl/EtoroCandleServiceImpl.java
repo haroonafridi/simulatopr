@@ -1,14 +1,13 @@
 package com.hkcapital.portoflio.service.candle.etoro.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.broker.etoro.dto.candle.CandleResponseDto;
-import com.hkcapital.portoflio.broker.etoro.master.Instruments;
 import com.hkcapital.portoflio.broker.etoro.master.TimeFrame;
 import com.hkcapital.portoflio.model.Candle;
 import com.hkcapital.portoflio.model.InstrumentCandles;
 import com.hkcapital.portoflio.repository.candle.CandleRepository;
+import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleResponseMapper;
 import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import org.springframework.stereotype.Service;
 
@@ -22,57 +21,56 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
 {
     private final CandleRepository candleRepository;
     private final EtoroApiConfiguration apiInformationService;
+    private final ObjectMapper objectMapper;
+    private final EtoroCandleResponseMapper candleResponseMapper;
 
-    public EtoroCandleServiceImpl(final CandleRepository candleRepository, final EtoroApiConfiguration apiInformationService)
+    public EtoroCandleServiceImpl(final CandleRepository candleRepository,
+                                  final EtoroApiConfiguration apiConfig,
+                                  final ObjectMapper objectMapper,
+                                  final EtoroCandleResponseMapper candleResponseMapper)
     {
         this.candleRepository = candleRepository;
-        this.apiInformationService = apiInformationService;
+        this.apiInformationService = apiConfig;
+        this.objectMapper = objectMapper;
+        this.candleResponseMapper = candleResponseMapper;
     }
 
     @Override
-    public Candle getCandleInformation(TimeFrame timeFrame)
+    public void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, final Integer interval)
     {
-        EtoroInstrumentCandleDataServiceImpl etoroInstrumentCandleData = new EtoroInstrumentCandleDataServiceImpl(apiInformationService);
-        String intervalData = etoroInstrumentCandleData.getInstrumentCandleData(Instruments.GOLD.getInstrumentId(), "desc",
-                timeFrame.name(),
-                30);
-        ObjectMapper mapper = new ObjectMapper();
-        try
+
+        CandleResponseDto response = candleResponseMapper.mapResponse(instrumentId, timeFrame, interval);
+        List<Candle> candleList = new ArrayList<>();
+        for (InstrumentCandles instrumentCandles : response.getCandles())
         {
-            CandleResponseDto response =
-                    mapper.readValue(intervalData, CandleResponseDto.class);
-
-            List<Candle> candleList = new ArrayList<>();
-
-            for(InstrumentCandles instrumentCandles : response.getCandles())
+            instrumentCandles.getCandles().forEach(c ->
             {
-                instrumentCandles.getCandles().forEach(c-> {
-                    Candle candl =  new Candle();
-                    candl.setCreationDateTime(LocalDateTime.now());
-                    candl.setTimeFrame(timeFrame.name());
-                    candl.setClose(c.getClose());
-                    candl.setHigh(c.getHigh());
-                    candl.setLow(c.getLow());
-                    candl.setVolume(c.getVolume());
-                    candl.setInstrumentID(c.getInstrumentID());
-                    candl.setVolume(c.getVolume());
-                    candl.setFromDate(Instant.parse(c.getFromDate()));
-                    candleList.add(candl);
-                });
-            }
-
-            candleRepository.saveAll(candleList);
-        } catch (JsonProcessingException e)
-        {
-            throw new RuntimeException(e);
+                Candle candle = Candle.builder()
+                        .creationDateTime(LocalDateTime.now())
+                        .instrumentID(c.getInstrumentID())
+                        .timeFrame(timeFrame.name())
+                        .open(c.getOpen())
+                        .low(c.getLow())
+                        .high(c.getHigh())
+                        .volume(c.getVolume())
+                        .fromDate(Instant.parse(c.getFromDate()))
+                        .close(c.getClose())
+                        .build();
+                candleList.add(candle);
+            });
         }
-
-        return null;
+        candleRepository.saveAll(candleList);
     }
 
     @Override
     public Candle save(Candle candle)
     {
-        return null;
+        return candleRepository.save(candle);
+    }
+
+    @Override
+    public List<Candle> findCandleByInstrumentIDAndTimeFrameAndFromDateBetween(final Integer instrumentId, final TimeFrame timeFrame, final Instant startDate, final Instant endDate)
+    {
+        return candleRepository.findCandleByInstrumentIDAndTimeFrameAndFromDateBetween(instrumentId, timeFrame.getTimeFrame(), startDate, endDate);
     }
 }

@@ -1,9 +1,7 @@
 package com.hkcapital.portoflio.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
@@ -12,9 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "candle")
 @NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
+
 public class Candle
 {
 
@@ -35,5 +31,20 @@ public class Candle
 
     private LocalDateTime creationDateTime;
 
-
+    @Builder
+    public Candle(int instrumentID, Instant fromDate, double open, //
+                  double high, double low, double close, //
+                  double volume, String timeFrame, //
+                  LocalDateTime creationDateTime)
+    {
+        this.instrumentID = instrumentID;
+        this.fromDate = fromDate;
+        this.open = open;
+        this.high = high;
+        this.low = low;
+        this.close = close;
+        this.volume = volume;
+        this.timeFrame = timeFrame;
+        this.creationDateTime = creationDateTime;
+    }
 }

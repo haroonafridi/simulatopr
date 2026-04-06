@@ -23,5 +23,7 @@ public interface InstrumentService  extends Service
 
     Instrument findByEtoroInstrumentId(Integer id);
 
+    List<Instrument> findByActive(Boolean active);
+
 
 }

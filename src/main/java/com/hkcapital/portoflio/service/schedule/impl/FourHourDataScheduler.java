@@ -9,27 +9,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-@Service("ThirtyMinutesDataScheduler")
 
-public class ThirtyMinutesDataScheduler implements ScheduleService
+@Service("FourHourDataScheduler")
+public class FourHourDataScheduler implements ScheduleService
 {
     private Logger logger = LoggerFactory.getLogger(FifteenMinutesDataScheduler.class);
     private final EtoroCandleService candleService;
     private final InstrumentService instrumentService;
 
-    public ThirtyMinutesDataScheduler(EtoroCandleService candleService, InstrumentService instrumentService)
+    public FourHourDataScheduler(EtoroCandleService candleService, InstrumentService instrumentService)
     {
         this.candleService = candleService;
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 */30 * * * *")
+    @Scheduled(cron = "0 0 */4 * * *")
     @Override
     public void run()
     {
-        logger.info("Running scheduler TimeFrame = 30 MINUTES");
-        instrumentService.findByActive(Boolean.TRUE).forEach(instrument -> //
+        logger.info("Running scheduler TimeFrame = 01 HOUR");
+        instrumentService.findByActive(Boolean.TRUE).forEach(instrument ->
                 candleService.fetchAndSaveCandleInformation(instrument.getEtoroInstrumentId(), //
-                        TimeFrame.ThirtyMinutes, 1));
+                        TimeFrame.FourHours, 1));
+
     }
 }
