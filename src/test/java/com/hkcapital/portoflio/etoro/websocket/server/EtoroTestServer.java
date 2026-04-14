@@ -1,9 +1,6 @@
 package com.hkcapital.portoflio.etoro.websocket.server;
 
-import jakarta.websocket.EndpointConfig;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +25,11 @@ public class EtoroTestServer
     @OnMessage
     public void onMessage(Session session, String message)
     {
+        if(message.equals("ping"))
+        {
+            System.out.println("Ping received");
+            return;
+        }
         try
         {
             JSONObject apiKeyMessage = new JSONObject(message);
@@ -92,12 +94,6 @@ public class EtoroTestServer
         {
             e.printStackTrace();
         }
-    }
-
-    @OnOpen
-    public void onOpen(Session session, EndpointConfig config) throws IOException
-    {
-        System.out.println("Connecting to fake etoro server!!!");
     }
 
 }

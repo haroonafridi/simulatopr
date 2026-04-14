@@ -5,6 +5,7 @@ import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portoflio.service.api.etoro.websocket.Message;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,6 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@SpringBootTest
 class InstrumentRateTest extends EtoroAbstractTest
 {
     private final static String GOLD_NASDAQ100_LIVE_FEED_FILE_PATH = //

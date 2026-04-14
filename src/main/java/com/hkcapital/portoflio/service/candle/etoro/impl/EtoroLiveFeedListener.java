@@ -13,30 +13,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Component
-public class EtoroLiveFeedServiceImpl implements Listener
+public class EtoroLiveFeedListener implements Listener
 {
-    private final Logger logger = LoggerFactory.getLogger(EtoroLiveFeedServiceImpl.class);
+
+    private final Logger logger = LoggerFactory.getLogger(EtoroLiveFeedListener.class);
+
     private final EtoroApiConfiguration apiConfiguration;
     private final MarketFeedObserver marketFeedObserver;
     private final LiveResponseMapper liveResponseMapper;
     private final InstrumentService instrumentService;
     private final ObjectMapper objectMapper;
-    private final Set<String> subscribedTopics = new HashSet<>();
-    public EtoroLiveFeedServiceImpl(EtoroApiConfiguration apiConfiguration,
-                                    MarketFeedObserver marketFeedObserver,
-                                    LiveResponseMapper liveResponseMapper,
-                                    InstrumentService instrumentService,
-                                    ObjectMapper objectMapper)
+
+    private final Set<String> subscribedTopics = ConcurrentHashMap.newKeySet();
+
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    private final ScheduledExecutorService scheduler =
+            Executors.newSingleThreadScheduledExecutor();
+
+    private volatile WebSocket webSocket;
+
+    private volatile boolean reconnecting = false;
+
+    public EtoroLiveFeedListener(EtoroApiConfiguration apiConfiguration,
+                                 MarketFeedObserver marketFeedObserver,
+                                 LiveResponseMapper liveResponseMapper,
+                                 InstrumentService instrumentService,
+                                 ObjectMapper objectMapper)
     {
         this.apiConfiguration = apiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
@@ -48,6 +63,10 @@ public class EtoroLiveFeedServiceImpl implements Listener
     @Override
     public void onOpen(WebSocket webSocket)
     {
+        logger.info("WebSocket connected");
+        this.webSocket = webSocket;
+        reconnecting = false;
+        subscribedTopics.clear();
         performAuth(webSocket, apiConfiguration);
         webSocket.request(1);
     }
@@ -55,10 +74,10 @@ public class EtoroLiveFeedServiceImpl implements Listener
     @Override
     public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last)
     {
-        JsonNode node = null;
         try
         {
-            node = objectMapper.readTree(data.toString());
+            JsonNode node = objectMapper.readTree(data.toString());
+
             if (node.has("operation") &&
                     "Authenticate".equals(node.get("operation").asText()) &&
                     node.path("success").asBoolean(false))
@@ -66,47 +85,52 @@ public class EtoroLiveFeedServiceImpl implements Listener
 
                 logger.info("Authentication successful");
 
-                if (instrumentService != null)
-                {
-                    List<Instrument> instrumentList = instrumentService.findAll()//
-                            .stream()//
-                            .filter(instrument -> instrument != null && instrument.getActive()) //
-                            .collect(Collectors.toList());
+                List<Instrument> instrumentList = instrumentService.findAll()
+                        .stream()
+                        .filter(instrument -> instrument != null && instrument.getActive())
+                        .collect(Collectors.toList());
 
-                    instrumentList.stream().forEach(instrument ->
+                instrumentList.forEach(instrument ->
+                {
+                    if (instrument.getEtoroInstrumentId() != null)
                     {
-                        if (instrument != null && instrument.getActive() && //
-                                instrument.getEtoroInstrumentId() != null)
-                        {
-                            subscribeInstrument(ws, "" + instrument.getEtoroInstrumentId());
-                        }
-                    });
-                }
+                        subscribeInstrument(ws,
+                                String.valueOf(instrument.getEtoroInstrumentId()));
+                    }
+                });
             }
-        } catch (JsonProcessingException e)
-        {
-            throw new RuntimeException(e);
         }
-        logger.info("recieved tick [{}]", data.toString());
-        LiveInstrumentRate liveInstrumentRate = liveResponseMapper.mapResponse(data.toString());
+        catch (JsonProcessingException e)
+        {
+            logger.error("JSON parse error", e);
+        }
+
+        logger.debug("Received tick [{}]", data.toString());
+
+        LiveInstrumentRate liveInstrumentRate =
+                liveResponseMapper.mapResponse(data.toString());
+
         marketFeedObserver.process(liveInstrumentRate);
+
         ws.request(1);
-        return null;
+
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public void onError(WebSocket webSocket, Throwable error)
     {
-        System.err.println("WebSocket error: " + error);
+        logger.error("WebSocket error", error);
+        reconnect();
     }
 
     @Override
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason)
     {
-        System.out.println("WebSocket closed: " + reason);
-        return null;
+        logger.warn("WebSocket closed [{}] {}", statusCode, reason);
+        reconnect();
+        return CompletableFuture.completedFuture(null);
     }
-
 
     private void performAuth(WebSocket ws, EtoroApiConfiguration apiInformation)
     {
@@ -124,19 +148,19 @@ public class EtoroLiveFeedServiceImpl implements Listener
                 apiInformation.getUserKey(),
                 apiInformation.getApiKey()
         );
+
         ws.sendText(authMessage, true);
-        logger.error("Authentication sent!!");
+
+        logger.info("Authentication sent");
     }
 
-
-    private void subscribeInstrument(WebSocket webSocket, String instrumentId)
+    public void subscribeInstrument(WebSocket webSocket, String instrumentId)
     {
         if (subscribedTopics.contains(instrumentId))
         {
-            logger.error("Already subscribed to  [{}]", instrumentId);
             return;
         }
-        // For testing, use snapshot = true to get immediate data
+
         String subscribeMessage = """
                 {
                   "id": "%s",
@@ -147,9 +171,39 @@ public class EtoroLiveFeedServiceImpl implements Listener
                   }
                 }
                 """.formatted(UUID.randomUUID(), instrumentId);
+
         webSocket.sendText(subscribeMessage, true);
+
         subscribedTopics.add(instrumentId);
-        logger.info("Subscribe request sent for instrument:" + instrumentId);
+
+        logger.info("Subscribed instrument {}", instrumentId);
     }
 
+    private void reconnect()
+    {
+        if (reconnecting)
+        {
+            return;
+        }
+
+        reconnecting = true;
+
+        logger.warn("Reconnecting to eToro WebSocket...");
+
+        scheduler.schedule(() ->
+        {
+            httpClient.newWebSocketBuilder()
+                    .buildAsync(URI.create("wss://ws.etoro.com/ws"), this)
+                    .whenComplete((ws, error) ->
+                    {
+                        if (error != null)
+                        {
+                            logger.error("Reconnect failed", error);
+                            reconnecting = false;
+                            reconnect();
+                        }
+                    });
+
+        }, 3, TimeUnit.SECONDS);
+    }
 }

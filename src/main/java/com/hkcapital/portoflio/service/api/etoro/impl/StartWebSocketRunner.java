@@ -3,7 +3,7 @@ package com.hkcapital.portoflio.service.api.etoro.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
-import com.hkcapital.portoflio.service.candle.etoro.impl.EtoroLiveFeedServiceImpl;
+import com.hkcapital.portoflio.service.candle.etoro.impl.EtoroLiveFeedListener;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
 
@@ -38,7 +38,7 @@ public class StartWebSocketRunner implements Runnable
         HttpClient.newHttpClient().newWebSocketBuilder()
                 .buildAsync(
                         URI.create(ETORO_WEB_SOCKET_URL),
-                        new EtoroLiveFeedServiceImpl(etoroApiConfiguration, marketFeedObserver,
+                        new EtoroLiveFeedListener(etoroApiConfiguration, marketFeedObserver,
                                 liveResponseMapper, instrumentService, objectMapper))
                 .join();
     }
