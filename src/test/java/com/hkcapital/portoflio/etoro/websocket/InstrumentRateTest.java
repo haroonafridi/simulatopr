@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InstrumentRateTest extends EtoroAbstractTest
 {
     private final static String GOLD_NASDAQ100_LIVE_FEED_FILE_PATH = //
-            "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/instrument-rate-message.log";
+            "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/nasdaq_gold_instrument-message.log";
 
     @Test
     void instrumentRateBasicTest() throws IOException

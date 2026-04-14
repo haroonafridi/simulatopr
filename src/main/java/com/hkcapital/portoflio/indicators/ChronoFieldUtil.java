@@ -9,10 +9,10 @@ import java.time.temporal.TemporalField;
 /**
  * Utility class for extracting different temporal fields from the date component.
  */
-public final class TimeUtil
+public final class ChronoFieldUtil
 {
 
-    private TimeUtil()
+    private ChronoFieldUtil()
     {
     }
 
@@ -25,7 +25,7 @@ public final class TimeUtil
 
     public static int valueOf(Instant instant, ZoneId zoneId, TemporalField temporalField)
     {
-        return ZonedDateTime.ofInstant(instant, zoneId.systemDefault()).get(temporalField);
+        return ZonedDateTime.ofInstant(instant, zoneId).get(temporalField);
     }
 
     /**

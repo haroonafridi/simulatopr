@@ -23,7 +23,7 @@ class LivePriceResponseWrapperTest extends EtoroAbstractTest
     void testLogFileContainsExpectedText()
     {
         LivePriceResponseWrapper livePriceResponseWrapper;
-        String filePath = "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/nasda-gold-btc-live-feed-16.03.2026.log"; // <-- replace with your log file path
+        String filePath = "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/gold_1_minute_multiple_candle.log"; // <-- replace with your log file path
         String expectedText = "{\"messages\":[{";
         boolean found = false;
         int count = 0;

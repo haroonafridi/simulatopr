@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hkcapital.portoflio.indicators.TimeUtil.minuteOfHour;
+import static com.hkcapital.portoflio.indicators.ChronoFieldUtil.minuteOfHour;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -29,7 +29,6 @@ public class CandleBuilder
             addCandle(tick);
         }
         Candle candle = candles.get(candles.size() - 1);
-
         if (isSameTimeFrame(candle, tick))
         {
             Candle updatedCandle = updateCandle(candle, tick);
