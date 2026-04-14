@@ -13,6 +13,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,8 +80,7 @@ class CandleBuilderTest
                 for (Message message : livePriceResponseWrapper.getMessages())
                 {
                     LiveInstrumentRate rate = objectMapper.readValue(message.getContent(), LiveInstrumentRate.class);
-                    Tick tick = Tick.builder()
-                            .instrument(rate.getInstrumentId().toString()) //
+                    Tick tick = Tick.builder().instrument(rate.getInstrumentId().toString()) //
                             .time(rate.getDate())//
                             .val(rate.getAsk()).build();
                     candleBuilder.addTick(tick);
@@ -120,8 +122,7 @@ class CandleBuilderTest
                 for (Message message : livePriceResponseWrapper.getMessages())
                 {
                     LiveInstrumentRate rate = objectMapper.readValue(message.getContent(), LiveInstrumentRate.class);
-                    Tick tick = Tick.builder()
-                            .instrument(rate.getInstrumentId().toString()) //
+                    Tick tick = Tick.builder().instrument(rate.getInstrumentId().toString()) //
                             .time(rate.getDate())//
                             .val(rate.getAsk()).build();
                     candleBuilder.addTick(tick);
@@ -158,9 +159,9 @@ class CandleBuilderTest
                 for (Message message : livePriceResponseWrapper.getMessages())
                 {
                     LiveInstrumentRate rate = objectMapper.readValue(message.getContent(), LiveInstrumentRate.class);
-                    if(rate.getInstrumentId() != null) {
-                        Tick tick = Tick.builder()
-                                .instrument(rate.getInstrumentId().toString()) //
+                    if (rate.getInstrumentId() != null)
+                    {
+                        Tick tick = Tick.builder().instrument(rate.getInstrumentId().toString()) //
                                 .time(rate.getDate())//
                                 .val(rate.getAsk()).build();
                         candleBuilder.addTick(tick);
@@ -172,9 +173,33 @@ class CandleBuilderTest
 
         List<Candle> candles = candleBuilder.of(Unit.MINUTE);
         candles.forEach(System.out::println);
-
-
     }
 
+
+    @Test
+    public void goldCvsTest() throws IOException
+    {
+        CandleBuilder candleBuilder = CandleBuilder.build();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+
+
+        try (BufferedReader br = new BufferedReader(new FileReader("D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gole_live_ticks_etoro.csv")))
+        {
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                String[] data = line.split(",");
+                LocalDateTime localDateTime = LocalDateTime.parse(data[2].replace("\"", ""), formatter);
+                Tick tick = Tick.builder().instrument(data[0]) //
+                        .val(Double.valueOf(data[1])) //
+                        .time(localDateTime.toInstant(ZoneOffset.UTC)).build();
+                candleBuilder.addTick(tick);
+            }
+        }
+
+        List<Candle> candles = candleBuilder.of(Unit.MINUTE);
+        candles.forEach(System.out::println);
+    }
 
 }

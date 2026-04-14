@@ -1,10 +1,12 @@
 package com.hkcapital.portoflio.indicators;
 
 import lombok.Builder;
+import lombok.ToString;
 
 import java.time.Instant;
 
 @Builder
+@ToString
 public class Tick
 {
     private String instrument;
