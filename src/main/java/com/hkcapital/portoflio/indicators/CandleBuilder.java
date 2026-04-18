@@ -1,17 +1,20 @@
 package com.hkcapital.portoflio.indicators;
 
 import java.time.ZoneId;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalField;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hkcapital.portoflio.indicators.ChronoFieldUtil.minuteOfHour;
+import static com.hkcapital.portoflio.indicators.ChronoFieldUtil.getTimeFrame;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class CandleBuilder
 {
     private CandleList candles = new CandleList();
+    private TemporalField muinuteTimeFrame = ChronoField.MINUTE_OF_HOUR;
 
     private CandleBuilder()
     {
@@ -22,44 +25,45 @@ public class CandleBuilder
         return new CandleBuilder();
     }
 
-    public CandleBuilder addTick(final Tick tick)
+    public CandleBuilder addAndUpdateCandle(final Candle subcandle, Unit timeUnit, Integer interval)
     {
         if (candles.isEmpty())
         {
-            addCandle(tick);
+            addCandle(subcandle, timeUnit, interval);
         }
-        Candle candle = candles.get(candles.size() - 1);
-        if (isSameTimeFrame(candle, tick))
+        Candle mainCandle = candles.get(candles.size() - 1);
+        if (isSameTimeFrame(mainCandle, subcandle))
         {
-            Candle updatedCandle = updateCandle(candle, tick);
+            Candle updatedCandle = updateCandle(mainCandle, subcandle);
             candles.set(candles.size() - 1, updatedCandle);
         } else
         {
-            addCandle(tick);
+            addCandle(subcandle, timeUnit, interval);
         }
         return this;
     }
 
-    private Candle updateCandle(final Candle candle, final Tick tick)
+    private Candle updateCandle(final Candle candle, final Candle subCandle)
     {
-        candle.setLow(min(candle.getLow(), tick.getVal()));
-        candle.setHigh(max(candle.getHigh(), tick.getVal()));
-        candle.setClose(tick.getVal());
-        candle.setTime(tick.getTime());
+        candle.setLow(min(candle.getLow(), subCandle.getLow()));
+        candle.setHigh(max(candle.getHigh(), subCandle.getHigh()));
+        candle.setClose(subCandle.getClose());
+        candle.setTime(subCandle.getTime());
         return candle;
     }
 
-    private void addCandle(final Tick tick)
+    private void addCandle(final Candle subCandle, Unit timeUnit, Integer interval)
     {
-        candles.add(new Candle(tick.getInstrument(),
-                tick.getVal(), tick.getVal(), tick.getVal(),
-                tick.getVal(), tick.getTime(), Unit.MINUTE, 1));
+        candles.add(new Candle(subCandle.getInstrument(),
+                subCandle.getOpen(), subCandle.getLow(), subCandle.getHigh(),
+                subCandle.getClose(), subCandle.getTime(), timeUnit, interval));
     }
 
-    private boolean isSameTimeFrame(final Candle candle, final Tick tick)
+    private boolean isSameTimeFrame(final Candle candle, final Candle subCandle)
     {
-        return minuteOfHour(candle.getTime(), ZoneId.systemDefault()) ==
-                minuteOfHour(tick.getTime(), ZoneId.systemDefault());
+        int mainCandleTimeFrame = getTimeFrame(candle.getTime(), ZoneId.systemDefault(), muinuteTimeFrame);
+        int subCandleTimeFrame = getTimeFrame(subCandle.getTime(), ZoneId.systemDefault(), muinuteTimeFrame);
+        return mainCandleTimeFrame == subCandleTimeFrame;
     }
 
     public List<Candle> fromTo(final Unit unit, final Integer range)

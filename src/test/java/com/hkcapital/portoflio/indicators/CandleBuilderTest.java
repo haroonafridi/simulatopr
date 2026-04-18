@@ -2,15 +2,14 @@ package com.hkcapital.portoflio.indicators;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
-import com.hkcapital.portoflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portoflio.service.api.etoro.websocket.Message;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,123 +17,92 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static com.hkcapital.portoflio.indicators.Unit.MINUTE;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @Import({ObjectMapper.class})
-class CandleBuilderTest
+@DisplayName("Should test different candle generation scenarios")
+class CandleBuilderTest extends CandleBuilderAbstract
 {
-    private final static String GOLD_NASDAQ100_LIVE_FEED_FILE_PATH = //
-            "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/gold_1_minute_candle.log";
+    private final static String gold_1_minute_candle = "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/gold_1_minute_candle.log";
+    private final static String gold_1_minute_multiple_candle = "D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gold_1_minute_multiple_candle.log";
+    private final static String gold_live_ticks_etoro = "D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gole_live_ticks_etoro.csv";
 
     @Test
-    public void shouldBuildCandles()
+    @DisplayName("Should aggregate market ticks into a minute candle")
+    public void shouldAggregateMarketTicksInMinuteCandles()
     {
-        CandleBuilder candleBuilder = CandleBuilder.build();
-
-        Tick t1 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:15:00.00Z")).val(5400).build();
-        Tick t2 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:15:01.00Z")).val(5401.53).build();
-        Tick t3 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:15:02.00Z")).val(5405.53).build();
-        Tick t4 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:15:59.00Z")).val(5403.51).build();
-
-        Tick t5 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:16:00.00Z")).val(5410).build();
-        Tick t6 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:16:01.00Z")).val(5411.53).build();
-        Tick t7 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:16:02.00Z")).val(5405.47).build();
-        Tick t8 = Tick.builder().instrument("18").time(Instant.parse("2007-12-03T10:16:59.00Z")).val(5415.56).build();
-
-        candleBuilder.addTick(t1).addTick(t2).addTick(t3).addTick(t4).addTick(t5).addTick(t6).addTick(t7).addTick(t8);
-
-        List<Candle> candles = candleBuilder.of(Unit.MINUTE);
+        List<Candle> candles = CandleBuilder.build()//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:15:00.00Z")).val(5400).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:15:01.00Z")).val(5401.53).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:15:02.00Z")).val(5405.53).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:15:59.00Z")).val(5403.51).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:16:00.00Z")).val(5410).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:16:01.00Z")).val(5411.53).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:16:02.00Z")).val(5405.47).build()), MINUTE, 1)//
+                .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
+                        .time(Instant.parse("2007-12-03T10:16:59.00Z")).val(5415.56).build()), MINUTE, 1)//
+                .of(MINUTE);
 
         assertEquals(candles.size(), 2);
 
-        Candle candle15 = candles.get(0);
-        Candle candle16 = candles.get(1);
-
-        assertEquals(5400, candle15.getLow());
-        assertEquals(5405.53, candle15.getHigh());
-        assertEquals(5403.51, candle15.getClose());
-
-        assertEquals(5405.47, candle16.getLow());
-        assertEquals(5415.56, candle16.getHigh());
-        assertEquals(5415.56, candle16.getClose());
-
+        assertEquals(5400, candles.get(0).getLow());
+        assertEquals(5405.53, candles.get(0).getHigh());
+        assertEquals(5403.51, candles.get(0).getClose());
+        assertEquals(5405.47, candles.get(1).getLow());
+        assertEquals(5415.56, candles.get(1).getHigh());
+        assertEquals(5415.56, candles.get(1).getClose());
     }
 
-
     @Test
-    public void testLiveEtoroRate() throws IOException
+    public void shouldBuildOneMinuteTwoCandles() throws IOException
     {
         CandleBuilder candleBuilder = CandleBuilder.build();
-        String expectedText = "{\"messages\":[{";
-        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-        LivePriceResponseWrapper livePriceResponseWrapper;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(GOLD_NASDAQ100_LIVE_FEED_FILE_PATH)))
+        for (String line : loadTicks(gold_1_minute_candle))
         {
-            String line;
-            while ((line = br.readLine()) != null)
+            if (!line.contains(expectedText)) continue;
+            for (Message message : messageFrom(line))
             {
-                if (!line.contains(expectedText)) continue;
-                livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
-                for (Message message : livePriceResponseWrapper.getMessages())
-                {
-                    LiveInstrumentRate rate = objectMapper.readValue(message.getContent(), LiveInstrumentRate.class);
-                    Tick tick = Tick.builder().instrument(rate.getInstrumentId().toString()) //
-                            .time(rate.getDate())//
-                            .val(rate.getAsk()).build();
-                    candleBuilder.addTick(tick);
-                }
+                candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tickFromRate(rateFromMessage(message))), MINUTE, 1);
             }
         }
 
-        List<Candle> candles = candleBuilder.of(Unit.MINUTE);
+        List<Candle> candles = candleBuilder.of(MINUTE);
         assertEquals(candles.size(), 2);
 
-        Candle candle15 = candles.get(0);
-        Candle candle16 = candles.get(1);
+        assertEquals(4999.15, candles.get(0).getLow());
+        assertEquals(5003.15, candles.get(0).getHigh());
+        assertEquals(4999.15, candles.get(0).getClose());
 
-        assertEquals(4999.15, candle15.getLow());
-        assertEquals(5003.15, candle15.getHigh());
-        assertEquals(4999.15, candle15.getClose());
-
-        assertEquals(4981.55, candle16.getLow());
-        assertEquals(5017.15, candle16.getHigh());
-        assertEquals(4981.55, candle16.getClose());
+        assertEquals(4981.55, candles.get(1).getLow());
+        assertEquals(5017.15, candles.get(1).getHigh());
+        assertEquals(4981.55, candles.get(1).getClose());
     }
-
 
     @Test
     public void shouldExtractFirstCandle() throws IOException
     {
         CandleBuilder candleBuilder = CandleBuilder.build();
-        String expectedText = "{\"messages\":[{";
-        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-        LivePriceResponseWrapper livePriceResponseWrapper;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(GOLD_NASDAQ100_LIVE_FEED_FILE_PATH)))
+        for (String line : loadTicks(gold_1_minute_candle))
         {
-            String line;
-            while ((line = br.readLine()) != null)
+            if (!line.contains(expectedText)) continue;
+            for (Message message : messageFrom(line))
             {
-                if (!line.contains(expectedText)) continue;
-                livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
-                for (Message message : livePriceResponseWrapper.getMessages())
-                {
-                    LiveInstrumentRate rate = objectMapper.readValue(message.getContent(), LiveInstrumentRate.class);
-                    Tick tick = Tick.builder().instrument(rate.getInstrumentId().toString()) //
-                            .time(rate.getDate())//
-                            .val(rate.getAsk()).build();
-                    candleBuilder.addTick(tick);
-                }
+                candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tickFromRate(rateFromMessage(message))), MINUTE, 1);
             }
         }
-
-        List<Candle> candles = candleBuilder.fromTo(Unit.MINUTE, 2);
+        List<Candle> candles = candleBuilder.fromTo(MINUTE, 2);
         assertEquals(candles.size(), 2);
-
         Candle candle15 = candles.get(0);
-
         assertEquals(4999.15, candle15.getLow());
         assertEquals(5003.15, candle15.getHigh());
         assertEquals(4999.15, candle15.getClose());
@@ -142,64 +110,77 @@ class CandleBuilderTest
     }
 
     @Test
-    public void btcOneMinutLiveFeed() throws IOException
+    public void btcOneMinuteLiveFeed() throws IOException
     {
+
         CandleBuilder candleBuilder = CandleBuilder.build();
-        String expectedText = "{\"messages\":[{";
-        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-        LivePriceResponseWrapper livePriceResponseWrapper;
 
-        try (BufferedReader br = new BufferedReader(new FileReader("D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gold_1_minute_multiple_candle.log")))
+        for (String line : loadTicks(gold_1_minute_multiple_candle))
         {
-            String line;
-            while ((line = br.readLine()) != null)
-            {
-                if (!line.contains(expectedText)) continue;
-                livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
-                for (Message message : livePriceResponseWrapper.getMessages())
-                {
-                    LiveInstrumentRate rate = objectMapper.readValue(message.getContent(), LiveInstrumentRate.class);
-                    if (rate.getInstrumentId() != null)
-                    {
-                        Tick tick = Tick.builder().instrument(rate.getInstrumentId().toString()) //
-                                .time(rate.getDate())//
-                                .val(rate.getAsk()).build();
-                        candleBuilder.addTick(tick);
-                    }
+            if (!line.contains(expectedText)) continue;
 
+            for (Message message : messageFrom(line))
+            {
+                LiveInstrumentRate rate = rateFromMessage(message);
+                if (rate.getInstrumentId() != null)
+                {
+                    candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tickFromRate(rateFromMessage(message))), MINUTE, 1);
                 }
             }
         }
-
-        List<Candle> candles = candleBuilder.of(Unit.MINUTE);
+        List<Candle> candles = candleBuilder.of(MINUTE);
         candles.forEach(System.out::println);
     }
-
 
     @Test
-    public void goldCvsTest() throws IOException
+    public void shouldBuildOneMinuteCandlesFromCSV() throws IOException
     {
         CandleBuilder candleBuilder = CandleBuilder.build();
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-
-
-        try (BufferedReader br = new BufferedReader(new FileReader("D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gole_live_ticks_etoro.csv")))
+        for (String line : loadTicks(gold_live_ticks_etoro))
         {
-            String line;
-            while ((line = br.readLine()) != null)
-            {
-                String[] data = line.split(",");
-                LocalDateTime localDateTime = LocalDateTime.parse(data[2].replace("\"", ""), formatter);
-                Tick tick = Tick.builder().instrument(data[0]) //
-                        .val(Double.valueOf(data[1])) //
-                        .time(localDateTime.toInstant(ZoneOffset.UTC)).build();
-                candleBuilder.addTick(tick);
-            }
+            String[] data = line.split(",");
+            LocalDateTime localDateTime = LocalDateTime.parse(data[2].replace("\"", ""), formatter);
+            Tick tick = Tick.builder().instrument(data[0]) //
+                    .val(Double.valueOf(data[1])) //
+                    .time(localDateTime.toInstant(ZoneOffset.UTC)).build();
+            candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tick), MINUTE, 1);
         }
-
-        List<Candle> candles = candleBuilder.of(Unit.MINUTE);
-        candles.forEach(System.out::println);
+        List<Candle> candles = candleBuilder.of(MINUTE);
+        Assertions.assertEquals(20, candles.size());
+        assertOLHC("assert OLHC Candle 0", 4678.96, 4677.91, 4679.41, 4679.41, candles.get(0));
+        assertOLHC("assert OLHC Candle 1", 4679.35, 4677.68, 4679.35, 4678.15, candles.get(1));
+        assertOLHC("assert OLHC Candle 2", 4678.43, 4677.19, 4679.92, 4677.75, candles.get(2));
+        assertOLHC("assert OLHC Candle 3", 4678.06, 4677.76, 4680.28, 4679.29, candles.get(3));
+        assertOLHC("assert OLHC Candle 4", 4679.22, 4678.28, 4680.55, 4679.37, candles.get(4));
+        assertOLHC("assert OLHC Candle 5", 4679.35, 4678.29, 4680.01, 4678.75, candles.get(5));
+        assertOLHC("assert OLHC Candle 6", 4678.69, 4678.19, 4680.21, 4680.15, candles.get(6));
+        assertOLHC("assert OLHC Candle 7", 4680.39, 4680.39, 4682.92, 4682.6, candles.get(7));
+        assertOLHC("assert OLHC Candle 8", 4682.62, 4682.42, 4683.86, 4683.26, candles.get(8));
+        assertOLHC("assert OLHC Candle 9", 4683.31, 4683.14, 4685.48, 4684.72, candles.get(9));
+        assertOLHC("assert OLHC Candle 10", 4684.66, 4683.75, 4686.73, 4683.99, candles.get(10));
+        assertOLHC("assert OLHC Candle 11", 4683.94, 4682.69, 4684.04, 4682.74, candles.get(11));
+        assertOLHC("assert OLHC Candle 12", 4682.75, 4681.45, 4683.46, 4682.69, candles.get(12));
+        assertOLHC("assert OLHC Candle 13", 4682.45, 4682.2, 4684.13, 4683.84, candles.get(13));
+        assertOLHC("assert OLHC Candle 14", 4683.73, 4682.77, 4685.8, 4685.58, candles.get(14));
+        assertOLHC("assert OLHC Candle 15", 4685.53, 4685.05, 4686.74, 4685.26, candles.get(15));
+        assertOLHC("assert OLHC Candle 16", 4685.22, 4683.77, 4685.22, 4684.48, candles.get(16));
+        assertOLHC("assert OLHC Candle 17", 4684.24, 4684.05, 4685.5, 4684.86, candles.get(17));
+        assertOLHC("assert OLHC Candle 18", 4684.76, 4679.94, 4685.03, 4680.44, candles.get(18));
+        assertOLHC("assert OLHC Candle 19", 4680.5, 4677.9, 4681.06, 4678.63, candles.get(19));
     }
+
+
+    private void assertOLHC(String message, double open, double low, double high, double close, Candle candle)
+    {
+        assertAll(message, () ->
+        {
+            Assertions.assertEquals(open, candle.getOpen());
+            Assertions.assertEquals(low, candle.getLow());
+            Assertions.assertEquals(high, candle.getHigh());
+            Assertions.assertEquals(close, candle.getClose());
+        });
+    }
+
 
 }

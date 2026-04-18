@@ -78,4 +78,8 @@ public final class ChronoFieldUtil
         return valueOf(instant, zoneId, ChronoField.ALIGNED_WEEK_OF_MONTH);
     }
 
+    public static int  getTimeFrame(Instant instant, ZoneId zoneId, TemporalField temporalField)
+    {
+        return valueOf(instant, zoneId, temporalField);
+    }
 }
