@@ -114,4 +114,11 @@ public class CandleBuilder
                 .val(rate.getAsk()) //
                 .build();
     }
+
+    public void flush() {
+        if (!candles.isEmpty()) {
+            Candle lastCandle = candles.get(candles.size() - 1);
+            //publishCloseEvent(lastCandle);
+        }
+    }
 }
