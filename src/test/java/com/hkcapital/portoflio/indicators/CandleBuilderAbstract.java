@@ -10,6 +10,11 @@ import org.apache.commons.io.IOUtils;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public abstract class CandleBuilderAbstract
@@ -18,7 +23,7 @@ public abstract class CandleBuilderAbstract
     protected static final String expectedText = "{\"messages\":[{";
     protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    public List<String> loadTicks(final String fileName) throws IOException
+    public List<String> loadData(final String fileName) throws IOException
     {
         return IOUtils.readLines(new FileReader(fileName, StandardCharsets.UTF_8));
     }
@@ -45,5 +50,28 @@ public abstract class CandleBuilderAbstract
                 .time(rate.getDate())//
                 .val(rate.getAsk()) //
                 .build();
+    }
+
+    public LiveInstrumentRate rateFromString(final String line) throws JsonProcessingException
+    {
+        String[] fields = line.split(",");
+        if(!"NULL".equals(fields[3]) && !("NULL".equals(fields[13]) && !("NULL".equals(fields[14]))))
+        {
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+                            .withZone(ZoneOffset.UTC);
+            LocalDateTime ldt = LocalDateTime.parse(
+                    fields[13].replace("\"",""),
+                    formatter
+            );
+            Double ask = Double.parseDouble(fields[3]);
+            Instant feedDate  = ldt.atZone(ZoneId.systemDefault()).toInstant();
+            Integer instrumentId = Integer.parseInt(fields[14]);
+                return LiveInstrumentRate.builder()
+                        .ask(ask)
+                        .instrumentId(instrumentId).date(feedDate).build();
+        }
+
+        return null;
     }
 }

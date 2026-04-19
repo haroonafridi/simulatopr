@@ -78,8 +78,36 @@ public final class ChronoFieldUtil
         return valueOf(instant, zoneId, ChronoField.ALIGNED_WEEK_OF_MONTH);
     }
 
-    public static int  getTimeFrame(Instant instant, ZoneId zoneId, TemporalField temporalField)
+    public static int getTimeFrame(Instant instant, ZoneId zoneId, TemporalField temporalField)
     {
         return valueOf(instant, zoneId, temporalField);
+    }
+
+    public static long toBucket(Instant time, Unit unit, int interval)
+    {
+        long epochMillis = time.toEpochMilli();
+
+        long bucketSizeMillis = switch (unit)
+                {
+                    case MINUTE -> interval * 60_000L;
+                    case HOUR -> interval * 60 * 60_000L;
+                    case DAY    -> interval * 24 * 60 * 60_000L;
+                    case WEEK   -> interval * 7 * 24 * 60 * 60_000L;
+                };
+        return epochMillis / bucketSizeMillis;
+    }
+
+    public static Instant bucketStart(Instant time, Unit unit, int interval)
+    {
+        long bucket = toBucket(time, unit, interval);
+
+        long bucketSizeMillis = switch (unit)
+                {
+                    case MINUTE -> interval * 60_000L;
+                    case HOUR -> interval * 60 * 60_000L;
+                    case DAY -> 0L;
+                    case WEEK -> 0L;
+                };
+        return Instant.ofEpochMilli(bucket * bucketSizeMillis);
     }
 }

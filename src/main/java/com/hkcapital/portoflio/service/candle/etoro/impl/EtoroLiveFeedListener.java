@@ -4,6 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portoflio.indicators.Candle;
+import com.hkcapital.portoflio.indicators.CandleBuilder;
+import com.hkcapital.portoflio.indicators.Tick;
+import com.hkcapital.portoflio.indicators.Unit;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
@@ -17,7 +21,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
-import java.util.HashSet;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -74,6 +78,7 @@ public class EtoroLiveFeedListener implements Listener
     @Override
     public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last)
     {
+        CandleBuilder candleBuilder = CandleBuilder.build();
         try
         {
             JsonNode node = objectMapper.readTree(data.toString());
@@ -99,8 +104,7 @@ public class EtoroLiveFeedListener implements Listener
                     }
                 });
             }
-        }
-        catch (JsonProcessingException e)
+        } catch (JsonProcessingException e)
         {
             logger.error("JSON parse error", e);
         }
@@ -109,11 +113,14 @@ public class EtoroLiveFeedListener implements Listener
 
         LiveInstrumentRate liveInstrumentRate =
                 liveResponseMapper.mapResponse(data.toString());
+        //marketFeedObserver.process(liveInstrumentRate);
 
-        marketFeedObserver.process(liveInstrumentRate);
-
+        if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
+        {
+            Tick tick = tickFromRate(liveInstrumentRate);
+            candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tick));
+        }
         ws.request(1);
-
         return CompletableFuture.completedFuture(null);
     }
 
@@ -206,4 +213,19 @@ public class EtoroLiveFeedListener implements Listener
 
         }, 3, TimeUnit.SECONDS);
     }
+
+    public Tick tickFromRate(final LiveInstrumentRate rate)
+    {
+        return Tick.builder().instrument(rate.getInstrumentId().toString()) //
+                .time(rate.getDate())//
+                .val(rate.getAsk()) //
+                .build();
+    }
+
+    public Candle toOneMinuteCandle(final Tick tick)
+    {
+        return new Candle(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
+                Unit.MINUTE, 1);
+    }
+
 }
