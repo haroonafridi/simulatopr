@@ -5,7 +5,6 @@ public class CandleDto
 {
 
     private int instrumentID;
-
     private String  fromDate;
     private double open;
     private double high;

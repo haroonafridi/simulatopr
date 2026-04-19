@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CandleDataInformationDto
 {
-
     @JsonProperty("instrumentID")
     private int instrumentID;
-
     private String fromDate;
     private double open;
     private double high;
@@ -18,7 +16,6 @@ public class CandleDataInformationDto
     private double volume;
     private String interval;
     public CandleDataInformationDto() {}
-
 
     public int getInstrumentID()
     {

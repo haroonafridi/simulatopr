@@ -1,4 +1,4 @@
-package com.hkcapital.portoflio.etoro.it.order;
+package com.hkcapital.portoflio.etoro.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hkcapital.portoflio.etoro.EtoroAbstractTest;

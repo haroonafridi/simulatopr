@@ -7,12 +7,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CandleResponseDto
 {
-
     private String interval;
     private List<InstrumentCandles> candles;
-
     public CandleResponseDto() {}
-
     public String getInterval() {
         return interval;
     }

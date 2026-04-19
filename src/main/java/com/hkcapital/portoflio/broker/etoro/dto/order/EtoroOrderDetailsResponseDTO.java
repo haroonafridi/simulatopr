@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class EtoroOrderDetailsResponseDTO {
     @JsonProperty("orderForOpen")
     private EtoroOrderDetails orderForOpen;
-
     @JsonProperty("token")
     private String token;
 

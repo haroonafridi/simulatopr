@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("Should test different candle generation scenarios")
 class CandleBuilderTest extends CandleBuilderAbstract
 {
-    private final static String gold_1_minute_candle = "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/gold_1_minute_candle.log";
-    private final static String gold_1_minute_multiple_candle = "D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gold_1_minute_multiple_candle.log";
-    private final static String gold_live_ticks_etoro = "D:\\portfolio-pnl-simulator\\src\\test\\data\\livefeed-etoro\\gole_live_ticks_etoro.csv";
+    private final static String gold_1_minute_candle = "/data/livefeed-etoro/gold_1_minute_candle.log";
+    private final static String gold_1_minute_multiple_candle = "/data/livefeed-etoro/gold_1_minute_multiple_candle.log";
+    private final static String gold_live_ticks_etoro = "/data/livefeed-etoro/gole_live_ticks_etoro.csv";
 
     @Test
     @DisplayName("Should aggregate market ticks into a minute candle")

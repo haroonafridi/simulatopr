@@ -2,14 +2,14 @@ package com.hkcapital.portoflio.indicators;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portoflio.service.api.etoro.websocket.Message;
 import org.apache.commons.io.IOUtils;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -25,7 +25,7 @@ public abstract class CandleBuilderAbstract
 
     public List<String> loadData(final String fileName) throws IOException
     {
-        return IOUtils.readLines(new FileReader(fileName, StandardCharsets.UTF_8));
+        return IOUtils.readLines(loadResource(fileName));
     }
 
     public Candle toOneMinuteCandle(final Tick tick)
@@ -55,23 +55,29 @@ public abstract class CandleBuilderAbstract
     public LiveInstrumentRate rateFromString(final String line) throws JsonProcessingException
     {
         String[] fields = line.split(",");
-        if(!"NULL".equals(fields[3]) && !("NULL".equals(fields[13]) && !("NULL".equals(fields[14]))))
+        if (!"NULL".equals(fields[3]) && !("NULL".equals(fields[13]) && !("NULL".equals(fields[14]))))
         {
             DateTimeFormatter formatter =
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
                             .withZone(ZoneOffset.UTC);
             LocalDateTime ldt = LocalDateTime.parse(
-                    fields[13].replace("\"",""),
+                    fields[13].replace("\"", ""),
                     formatter
             );
             Double ask = Double.parseDouble(fields[3]);
-            Instant feedDate  = ldt.atZone(ZoneId.systemDefault()).toInstant();
+            Instant feedDate = ldt.atZone(ZoneId.systemDefault()).toInstant();
             Integer instrumentId = Integer.parseInt(fields[14]);
-                return LiveInstrumentRate.builder()
-                        .ask(ask)
-                        .instrumentId(instrumentId).date(feedDate).build();
+            return LiveInstrumentRate.builder()
+                    .ask(ask)
+                    .instrumentId(instrumentId).date(feedDate).build();
         }
 
         return null;
     }
+
+    public InputStream loadResource(String path)
+    {
+        return getClass().getResourceAsStream(path);
+    }
+
 }

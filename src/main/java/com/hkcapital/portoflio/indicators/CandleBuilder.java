@@ -32,6 +32,7 @@ public class CandleBuilder
         if (candles.isEmpty())
         {
             addCandle(subcandle, timeFrame, interval);
+            return this;
         }
         Candle mainCandle = candles.get(candles.size() - 1);
         if (isSameTimeFrame(mainCandle, subcandle))
@@ -40,8 +41,9 @@ public class CandleBuilder
             candles.set(candles.size() - 1, updatedCandle);
         } else
         {
+            Candle closedCandle = mainCandle;
             addCandle(subcandle, timeFrame, interval);
-            // candle closed event logic here
+            System.out.println("emit close event candle"+closedCandle);
         }
         return this;
     }
