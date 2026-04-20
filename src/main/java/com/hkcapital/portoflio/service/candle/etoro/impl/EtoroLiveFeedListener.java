@@ -11,6 +11,7 @@ import com.hkcapital.portoflio.indicators.Unit;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
+import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class EtoroLiveFeedListener implements Listener
     private final InstrumentService instrumentService;
     private final ObjectMapper objectMapper;
 
+    private final EtoroCandleService etoroCandleService;
     private final Set<String> subscribedTopics = ConcurrentHashMap.newKeySet();
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -49,19 +51,49 @@ public class EtoroLiveFeedListener implements Listener
 
     private volatile WebSocket webSocket;
 
+    CandleBuilder candleBuilder1Min = CandleBuilder
+            .build()
+            .ofTimeFrame(Unit.MINUTE)
+            .ofInterval(1);
+
+
+
+    CandleBuilder candleBuilder5Min = CandleBuilder
+            .build()
+            .ofTimeFrame(Unit.MINUTE)
+            .ofInterval(5);
+    CandleBuilder candleBuilder15Min = CandleBuilder
+            .build()
+            .ofTimeFrame(Unit.MINUTE)
+            .ofInterval(15);
+    CandleBuilder candleBuilder30Min = CandleBuilder
+            .build()
+            .ofTimeFrame(Unit.MINUTE)
+            .ofInterval(30);
+    CandleBuilder candleBuilder1Hour = CandleBuilder
+            .build()
+            .ofTimeFrame(Unit.HOUR)
+            .ofInterval(1);
+    CandleBuilder candleBuilder4Hour = CandleBuilder
+            .build()
+            .ofTimeFrame(Unit.HOUR)
+            .ofInterval(4);
+
     private volatile boolean reconnecting = false;
 
     public EtoroLiveFeedListener(EtoroApiConfiguration apiConfiguration,
                                  MarketFeedObserver marketFeedObserver,
                                  LiveResponseMapper liveResponseMapper,
                                  InstrumentService instrumentService,
-                                 ObjectMapper objectMapper)
+                                 ObjectMapper objectMapper,
+                                 EtoroCandleService etoroCandleService)
     {
         this.apiConfiguration = apiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
         this.liveResponseMapper = liveResponseMapper;
         this.instrumentService = instrumentService;
         this.objectMapper = objectMapper;
+        this.etoroCandleService = etoroCandleService;
     }
 
     @Override
@@ -78,7 +110,6 @@ public class EtoroLiveFeedListener implements Listener
     @Override
     public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last)
     {
-        CandleBuilder candleBuilder = CandleBuilder.build();
         try
         {
             JsonNode node = objectMapper.readTree(data.toString());
@@ -104,23 +135,34 @@ public class EtoroLiveFeedListener implements Listener
                     }
                 });
             }
+            //logger.debug("Received tick [{}]", data);
+
+            LiveInstrumentRate liveInstrumentRate =
+                    liveResponseMapper.mapResponse(data.toString());
+            //marketFeedObserver.process(liveInstrumentRate);
+
+            if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
+            {
+                Tick tick = tickFromRate(liveInstrumentRate);
+                candleBuilder1Min.setCandleService(etoroCandleService);
+                candleBuilder5Min.setCandleService(etoroCandleService);
+                candleBuilder15Min.setCandleService(etoroCandleService);
+                candleBuilder30Min.setCandleService(etoroCandleService);
+                candleBuilder1Hour.setCandleService(etoroCandleService);
+                candleBuilder4Hour.setCandleService(etoroCandleService);
+
+                candleBuilder1Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 1));
+                candleBuilder5Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 5));
+                candleBuilder15Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 15));
+                candleBuilder30Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 30));
+                candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 1));
+                candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 4));
+            }
+            ws.request(1);
         } catch (JsonProcessingException e)
         {
             logger.error("JSON parse error", e);
         }
-
-        logger.debug("Received tick [{}]", data.toString());
-
-        LiveInstrumentRate liveInstrumentRate =
-                liveResponseMapper.mapResponse(data.toString());
-        //marketFeedObserver.process(liveInstrumentRate);
-
-        if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
-        {
-            Tick tick = tickFromRate(liveInstrumentRate);
-            candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tick));
-        }
-        ws.request(1);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -131,10 +173,18 @@ public class EtoroLiveFeedListener implements Listener
         reconnect();
     }
 
+
+
     @Override
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason)
     {
         logger.warn("WebSocket closed [{}] {}", statusCode, reason);
+        candleBuilder1Min.flush();
+        candleBuilder5Min.flush();
+        candleBuilder15Min.flush();
+        candleBuilder30Min.flush();
+        candleBuilder1Hour.flush();
+        candleBuilder4Hour.flush();
         reconnect();
         return CompletableFuture.completedFuture(null);
     }
@@ -222,10 +272,10 @@ public class EtoroLiveFeedListener implements Listener
                 .build();
     }
 
-    public Candle toOneMinuteCandle(final Tick tick)
+    public Candle toCandle(final Tick tick, Unit unit , Integer interval)
     {
         return new Candle(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
-                Unit.MINUTE, 1);
+                unit, interval);
     }
 
 }

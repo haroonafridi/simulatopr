@@ -1,9 +1,13 @@
 package com.hkcapital.portoflio.etoro.websocket.server;
 
+import com.hkcapital.portoflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.jupiter.api.AutoClose;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -20,7 +24,7 @@ public class EtoroTestServer
     private static final String userKey = "eyJjaSI6IjYwY2FiYjBiLTU1OTctNDQ4NS04ZjYzLTdlOWUwNTZlMGJiOCIsImVhbiI6IlVucmVnaXN0ZXJlZEFwcGxpY2F0aW9uIiwiZWsiOiJQSGVOS0kzeklPUDhpenNyeW1qNnhrV1JoVFNuVkJld0Z0RkdvSTJWMmRFR2pKNXAuYWV5WW9nUDNvTzVqQ0hkTFVZSUx2N0pRLmdIUTh0cTZXeldLYkJGaGNSclIyTGl0emF4UnJ3WDhNQV8ifQ__";
     private static final Map<Session, Set<String>> subscriptions = new ConcurrentHashMap<>();
     private final static String GOLD_NASDAQ100_LIVE_FEED_FILE_PATH = //
-            "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/nasda-gold-btc-live-feed-17.03.2026.log";
+            "D:\\portfolio-pnl-simulator\\src\\test\\resources\\data\\livefeed-etoro\\4-20-2026_Gold.log";
 
     @OnMessage
     public void onMessage(Session session, String message)

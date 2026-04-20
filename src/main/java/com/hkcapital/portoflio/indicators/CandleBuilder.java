@@ -1,8 +1,14 @@
 package com.hkcapital.portoflio.indicators;
 
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -11,14 +17,33 @@ import java.util.stream.Collectors;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+@Component
 public class CandleBuilder
 {
+    private Logger logger = LoggerFactory.getLogger(CandleBuilder.class);
     private CandleList candles = new CandleList();
     private Unit timeFrame;
     private Integer interval;
 
+    private EtoroCandleService candleService = null;
+
+    public CandleBuilder(EtoroCandleService candleService)
+    {
+        this.candleService = candleService;
+    }
+
+    public EtoroCandleService getCandleService()
+    {
+        return candleService;
+    }
+
     private CandleBuilder()
     {
+    }
+
+    public void setCandleService(EtoroCandleService candleService)
+    {
+        this.candleService = candleService;
     }
 
     public static CandleBuilder build()
@@ -43,7 +68,19 @@ public class CandleBuilder
         {
             Candle closedCandle = mainCandle;
             addCandle(subcandle, timeFrame, interval);
-            System.out.println("emit close event candle"+closedCandle);
+            com.hkcapital.portoflio.model.Candle etoroCandle = com.hkcapital.portoflio.model
+                    .Candle.builder()
+                    .instrumentID(Integer.parseInt(closedCandle.getInstrument()))
+                    .close(closedCandle.getClose())
+                    .low(closedCandle.getLow())
+                    .high(closedCandle.getHigh())
+                    .open(closedCandle.getOpen())
+                    .fromDate(closedCandle.getTime())
+                    .creationDateTime(LocalDateTime.now())
+                    .timeFrame(closedCandle.getUnit().getUnit() + "-" + closedCandle.getInterval())
+                    .build();
+            candleService.save(etoroCandle);
+            logger.info("Candle closed event fired: {}", closedCandle);
         }
         return this;
     }
@@ -115,8 +152,10 @@ public class CandleBuilder
                 .build();
     }
 
-    public void flush() {
-        if (!candles.isEmpty()) {
+    public void flush()
+    {
+        if (!candles.isEmpty())
+        {
             Candle lastCandle = candles.get(candles.size() - 1);
             //publishCloseEvent(lastCandle);
         }

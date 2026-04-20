@@ -24,7 +24,7 @@ public class OneWeekDataScheduler implements ScheduleService
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 0 0 * * MON")
+    //@Scheduled(cron = "0 0 0 * * MON")
     @Override
     public void run()
     {

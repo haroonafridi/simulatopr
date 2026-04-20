@@ -3,12 +3,14 @@ package com.hkcapital.portoflio.indicators;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
 @Data
+@ToString
 public class Candle
 {
     private String instrument;

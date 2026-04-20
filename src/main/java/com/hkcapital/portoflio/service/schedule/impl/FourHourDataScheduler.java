@@ -23,7 +23,7 @@ public class FourHourDataScheduler implements ScheduleService
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 0 */4 * * *")
+    //@Scheduled(cron = "0 0 */4 * * *")
     @Override
     public void run()
     {

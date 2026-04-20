@@ -24,7 +24,7 @@ public class FiveMinutesDataScheduler implements ScheduleService
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 */5 * * * *")
+    //@Scheduled(cron = "0 */5 * * * *")
     @Override
     public void run()
     {

@@ -22,7 +22,7 @@ public class FifteenMinutesDataScheduler implements ScheduleService
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 */15 * * * *")
+    //@Scheduled(cron = "0 */15 * * * *")
     @Override
     public void run()
     {

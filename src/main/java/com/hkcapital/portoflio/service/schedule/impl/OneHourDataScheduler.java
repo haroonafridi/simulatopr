@@ -23,7 +23,7 @@ public class OneHourDataScheduler implements ScheduleService
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    //@Scheduled(cron = "0 0 * * * *")
     @Override
     public void run()
     {

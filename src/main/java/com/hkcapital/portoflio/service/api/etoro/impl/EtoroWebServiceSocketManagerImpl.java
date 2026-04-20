@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.service.api.etoro.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
+import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
@@ -33,6 +34,8 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portoflio
     private final MarketFeedDbWriterSub marketFeedDbWriter;
     private final BuySellSignalGeneratorSub buySellManager;
 
+    private final EtoroCandleService etoroCandleService;
+
     public EtoroWebServiceSocketManagerImpl(final com.hkcapital.portoflio.service.srmatrix.SRMatrixService srMatrixService, //
                                             final OrderManagerService orderManagerService, //
                                             final InstrumentService instrumentService, //
@@ -43,7 +46,8 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portoflio
                                             final MarketFeedObserver marketFeedObserver, //
                                             final LiveResponseMapper liveResponseMapper,
                                             final MarketFeedDbWriterSub marketFeedDbWriter,
-                                            final BuySellSignalGeneratorSub buySellManager)
+                                            final BuySellSignalGeneratorSub buySellManager,
+                                            final EtoroCandleService etoroCandleService)
     {
 
         this.orderManagerService = orderManagerService;
@@ -54,6 +58,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portoflio
         this.liveResponseMapper = liveResponseMapper;
         this.marketFeedDbWriter = marketFeedDbWriter;
         this.buySellManager = buySellManager;
+        this.etoroCandleService = etoroCandleService;
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
         marketFeedObserver.addMarketFeedSubscriber(buySellManager);
     }
@@ -64,7 +69,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portoflio
 
         StartWebSocketRunner startWebSocket = //
                 new StartWebSocketRunner(etoroApiConfiguration, marketFeedObserver, //
-                        liveResponseMapper, instrumentService, objectMapper);
+                        liveResponseMapper, instrumentService, objectMapper, etoroCandleService);
         new Thread(startWebSocket).start();
 
         ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();

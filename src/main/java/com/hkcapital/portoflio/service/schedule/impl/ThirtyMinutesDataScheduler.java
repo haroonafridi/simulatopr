@@ -23,7 +23,7 @@ public class ThirtyMinutesDataScheduler implements ScheduleService
         this.instrumentService = instrumentService;
     }
 
-    @Scheduled(cron = "0 */30 * * * *")
+    //@Scheduled(cron = "0 */30 * * * *")
     @Override
     public void run()
     {

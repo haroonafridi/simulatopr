@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.etoro.websocket.server.EtoroTestServer;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
+import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portoflio.service.candle.etoro.impl.EtoroLiveFeedListener;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
@@ -41,6 +42,10 @@ public class WebSocketClientTest
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private EtoroCandleService etoroCandleService;
+
+
     @BeforeAll
     static void startServer() throws Exception
     {
@@ -66,7 +71,8 @@ public class WebSocketClientTest
                 marketFeedObserver, //
                 liveResponseMapper, //
                 instrumentService, //
-                objectMapper);
+                objectMapper,
+                etoroCandleService);
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
@@ -84,7 +90,8 @@ public class WebSocketClientTest
                 marketFeedObserver, //
                 liveResponseMapper, //
                 instrumentService, //
-                objectMapper);
+                objectMapper,
+                etoroCandleService);
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
@@ -104,7 +111,8 @@ public class WebSocketClientTest
                 marketFeedObserver, //
                 liveResponseMapper, //
                 instrumentService, //
-                objectMapper);
+                objectMapper,
+                etoroCandleService);
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
