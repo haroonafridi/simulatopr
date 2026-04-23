@@ -25,6 +25,9 @@ public class CandleBuilder
     private Unit timeFrame;
     private Integer interval;
 
+    private RSI rsi = new RSI();
+    private final ATR atr = new ATR(14);
+
     private EtoroCandleService candleService = null;
 
     public CandleBuilder(EtoroCandleService candleService)
@@ -80,7 +83,16 @@ public class CandleBuilder
                     .timeFrame(closedCandle.getUnit().getUnit() + "-" + closedCandle.getInterval())
                     .build();
             candleService.save(etoroCandle);
-            logger.info("Candle closed event fired: {}", closedCandle);
+            Double rsiValue = rsi.onCandleAdd(closedCandle,14);
+            Double atrVal = atr.onCandleAdd(closedCandle);
+            if(rsiValue == null) {
+                rsiValue = 0d;
+            }
+
+            if(atrVal == null) {
+                atrVal = 0d;
+            }
+            logger.info("Candle closed event fired: rsi = {}  atr = {}, {} ",rsiValue , atrVal ,closedCandle);
         }
         return this;
     }

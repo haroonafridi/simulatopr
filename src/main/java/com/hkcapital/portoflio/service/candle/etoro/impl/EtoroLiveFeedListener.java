@@ -135,11 +135,11 @@ public class EtoroLiveFeedListener implements Listener
                     }
                 });
             }
-            //logger.debug("Received tick [{}]", data);
+            logger.info("{}", data);
 
             LiveInstrumentRate liveInstrumentRate =
                     liveResponseMapper.mapResponse(data.toString());
-            //marketFeedObserver.process(liveInstrumentRate);
+            marketFeedObserver.process(liveInstrumentRate);
 
             if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
             {
