@@ -76,9 +76,6 @@ class EtoroOrderManagerServiceImplTest extends EtoroAbstractTest
         Assertions.assertEquals(2, sentOrders);
         Mockito.when(etoroApiService.etoroPortfolio()).then((invocation)->loadPortfolio(PORTFOLIO_POSITIONS));
         orderManagerService.fetchAndCloseEtoroOrder();
-        orderRepository.findAll().forEach(order -> {
-            System.out.println("order => "+order.getStatus());
-        });
     }
 
     @Test

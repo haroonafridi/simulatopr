@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
-class RSITest
+class SMATest
 {
 
 
     @Test
-    public void shouldReturnRSIOf30Min14Period()
+    public void shouldReturn1MinSMA()
     {
         Candle candle0 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.41).low(4736.64).open(4736.9).close(4738.41).build();
         Candle candle1 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.45).low(4736.79).open(4738.44).close(4736.82).build();
@@ -27,22 +27,22 @@ class RSITest
         Candle candle13 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         Candle candle14 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        RSI rsi = new RSI();
-        rsi.onCandleAdd(candle0, 14);
-        rsi.onCandleAdd(candle1, 14);
-        rsi.onCandleAdd(candle2, 14);
-        rsi.onCandleAdd(candle3, 14);
-        rsi.onCandleAdd(candle4, 14);
-        rsi.onCandleAdd(candle5, 14);
-        rsi.onCandleAdd(candle6, 14);
-        rsi.onCandleAdd(candle7, 14);
-        rsi.onCandleAdd(candle8, 14);
-        rsi.onCandleAdd(candle9, 14);
-        rsi.onCandleAdd(candle10, 14);
-        rsi.onCandleAdd(candle11, 14);
-        rsi.onCandleAdd(candle12, 14);
-        rsi.onCandleAdd(candle13, 14);
-        Double rsiret = rsi.onCandleAdd(candle14, 14);
+        SMA sma = new SMA(15);
+        sma.onPrice(candle0.getClose());
+        sma.onPrice(candle1.getClose());
+        sma.onPrice(candle2.getClose());
+        sma.onPrice(candle3.getClose());
+        sma.onPrice(candle4.getClose());
+        sma.onPrice(candle5.getClose());
+        sma.onPrice(candle6.getClose());
+        sma.onPrice(candle7.getClose());
+        sma.onPrice(candle8.getClose());
+        sma.onPrice(candle9.getClose());
+        sma.onPrice(candle10.getClose());
+        sma.onPrice(candle11.getClose());
+        sma.onPrice(candle12.getClose());
+        sma.onPrice(candle13.getClose());
+        Double smaPrice = sma.onPrice(candle14.getClose());
 
     }
 

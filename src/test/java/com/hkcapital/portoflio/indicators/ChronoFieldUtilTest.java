@@ -5,7 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 import static com.hkcapital.portoflio.indicators.ChronoFieldUtil.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -93,6 +96,13 @@ class ChronoFieldUtilTest
         Instant d1 = Instant.parse("2026-03-16T22:00:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:29:59.1874723Z");
         Assertions.assertNotEquals(toBucket(d1, Unit.HOUR, 1), toBucket(d2, Unit.HOUR, 1));
+    }
+
+
+    @Test
+    public void shouldCreateInstant(){
+       Assertions.assertEquals("2026-04-21T00:00:38.395309Z", //
+               ChronoFieldUtil.parse("2026-04-21 00:00:38.395309").toString());
     }
 
 

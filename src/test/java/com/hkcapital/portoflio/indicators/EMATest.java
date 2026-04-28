@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
-class RSITest
+class EMATest
 {
 
 
     @Test
-    public void shouldReturnRSIOf30Min14Period()
+    public void shouldReturn1MinSMA()
     {
         Candle candle0 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.41).low(4736.64).open(4736.9).close(4738.41).build();
         Candle candle1 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.45).low(4736.79).open(4738.44).close(4736.82).build();
@@ -27,24 +27,21 @@ class RSITest
         Candle candle13 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         Candle candle14 = Candle.builder().time(Instant.now()).unit(Unit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        RSI rsi = new RSI();
-        rsi.onCandleAdd(candle0, 14);
-        rsi.onCandleAdd(candle1, 14);
-        rsi.onCandleAdd(candle2, 14);
-        rsi.onCandleAdd(candle3, 14);
-        rsi.onCandleAdd(candle4, 14);
-        rsi.onCandleAdd(candle5, 14);
-        rsi.onCandleAdd(candle6, 14);
-        rsi.onCandleAdd(candle7, 14);
-        rsi.onCandleAdd(candle8, 14);
-        rsi.onCandleAdd(candle9, 14);
-        rsi.onCandleAdd(candle10, 14);
-        rsi.onCandleAdd(candle11, 14);
-        rsi.onCandleAdd(candle12, 14);
-        rsi.onCandleAdd(candle13, 14);
-        Double rsiret = rsi.onCandleAdd(candle14, 14);
-
+        EMA ema = new EMA(14);
+        ema.onPrice(candle0.getClose());
+        ema.onPrice(candle1.getClose());
+        ema.onPrice(candle2.getClose());
+        ema.onPrice(candle3.getClose());
+        ema.onPrice(candle4.getClose());
+        ema.onPrice(candle5.getClose());
+        ema.onPrice(candle6.getClose());
+        ema.onPrice(candle7.getClose());
+        ema.onPrice(candle8.getClose());
+        ema.onPrice(candle9.getClose());
+        ema.onPrice(candle10.getClose());
+        ema.onPrice(candle11.getClose());
+        ema.onPrice(candle12.getClose());
+        ema.onPrice(candle13.getClose());
+        Double emaPrice = ema.onPrice(candle14.getClose());
     }
-
-
 }

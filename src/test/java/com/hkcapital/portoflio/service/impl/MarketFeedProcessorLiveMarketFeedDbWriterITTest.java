@@ -25,7 +25,6 @@ class MarketFeedProcessorLiveMarketFeedDbWriterITTest
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
         marketFeedObserver.process(getLiveInstrumentRate());
-        System.out.println("size = "+feedRepository.findAll().size());
         Assertions.assertTrue(feedRepository.findAll().size() > 1) ;
     }
 

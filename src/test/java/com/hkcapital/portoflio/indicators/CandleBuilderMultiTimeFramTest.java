@@ -52,7 +52,6 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                 builderOf_05_Min.addAndUpdateCandle(candle);
             }
         });
-        builderOf_05_Min.candles().forEach(c -> System.out.println(c));
     }
 
     @Test
@@ -86,7 +85,6 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                 builderOf_05_Min.addAndUpdateCandle(candle);
             }
         });
-        builderOf_05_Min.candles().forEach(c -> System.out.println(c));
     }
 
     @Test
@@ -120,7 +118,6 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                 builderOf_15_Min.addAndUpdateCandle(candle);
             }
         });
-        builderOf_15_Min.candles().forEach(c -> System.out.println(c));
     }
 
     @Test
@@ -154,7 +151,6 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                 builderOf_30_Min.addAndUpdateCandle(candle);
             }
         });
-        builderOf_30_Min.candles().forEach(c -> System.out.println(c));
     }
 
     @Test
@@ -188,7 +184,6 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                 builderOf_01_Hour.addAndUpdateCandle(candle);
             }
         });
-        builderOf_01_Hour.candles().forEach(c -> System.out.println(c));
     }
 
 

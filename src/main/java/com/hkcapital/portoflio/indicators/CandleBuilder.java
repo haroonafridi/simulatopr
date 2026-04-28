@@ -4,7 +4,6 @@ import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -24,10 +23,10 @@ public class CandleBuilder
     private CandleList candles = new CandleList();
     private Unit timeFrame;
     private Integer interval;
-
     private RSI rsi = new RSI();
     private final ATR atr = new ATR(14);
-
+    private final EMA ema = new EMA(14);
+    private final SMA sma = new SMA(14);
     private EtoroCandleService candleService = null;
 
     public CandleBuilder(EtoroCandleService candleService)
@@ -56,7 +55,6 @@ public class CandleBuilder
 
     public CandleBuilder addAndUpdateCandle(final Candle subcandle)
     {
-
         if (candles.isEmpty())
         {
             addCandle(subcandle, timeFrame, interval);
@@ -83,16 +81,31 @@ public class CandleBuilder
                     .timeFrame(closedCandle.getUnit().getUnit() + "-" + closedCandle.getInterval())
                     .build();
             candleService.save(etoroCandle);
-            Double rsiValue = rsi.onCandleAdd(closedCandle,14);
+            Double rsiValue = rsi.onCandleAdd(closedCandle, 14);
             Double atrVal = atr.onCandleAdd(closedCandle);
-            if(rsiValue == null) {
+            Double emaVal = ema.onPrice(closedCandle.getClose());
+            Double smaVal = sma.onPrice(closedCandle.getClose());
+
+            if (rsiValue == null)
+            {
                 rsiValue = 0d;
             }
 
-            if(atrVal == null) {
+            if (atrVal == null)
+            {
                 atrVal = 0d;
             }
-            logger.info("Candle closed event fired: rsi = {}  atr = {}, {} ",rsiValue , atrVal ,closedCandle);
+
+            if (emaVal == null)
+            {
+                emaVal = 0d;
+            }
+            if (smaVal == null)
+            {
+                smaVal = 0d;
+            }
+
+            logger.info("Candle closed event fired: rsi = {}  atr = {}, ema = {} sma = {}, {} ", rsiValue, atrVal, emaVal, smaVal, closedCandle);
         }
         return this;
     }

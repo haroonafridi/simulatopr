@@ -35,11 +35,6 @@ class LivePriceResponseWrapperTest extends EtoroAbstractTest
                 if (line.contains(expectedText))
                 {
                     livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
-                    for (Message message : livePriceResponseWrapper.getMessages())
-                    {
-                            System.out.println("Line no = ["+count+"] "+message.getContent());
-                            count++;
-                    }
                 }
             }
         } catch (IOException e)

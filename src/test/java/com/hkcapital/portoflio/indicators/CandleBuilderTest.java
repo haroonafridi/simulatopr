@@ -128,8 +128,6 @@ class CandleBuilderTest extends CandleBuilderAbstract
                 }
             }
         }
-        List<Candle> candles = candleBuilder.candles();
-        candles.forEach(System.out::println);
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.hkcapital.portoflio.indicators.CandleBuilder;
 import com.hkcapital.portoflio.indicators.Tick;
 import com.hkcapital.portoflio.indicators.Unit;
 import com.hkcapital.portoflio.model.Instrument;
+import com.hkcapital.portoflio.service.api.etoro.impl.StartWebSocketRunner;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
@@ -22,7 +23,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
-import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 public class EtoroLiveFeedListener implements Listener
 {
 
+    private StringBuilder buffer = new StringBuilder();
     private final Logger logger = LoggerFactory.getLogger(EtoroLiveFeedListener.class);
 
     private final EtoroApiConfiguration apiConfiguration;
@@ -55,8 +56,6 @@ public class EtoroLiveFeedListener implements Listener
             .build()
             .ofTimeFrame(Unit.MINUTE)
             .ofInterval(1);
-
-
 
     CandleBuilder candleBuilder5Min = CandleBuilder
             .build()
@@ -110,59 +109,58 @@ public class EtoroLiveFeedListener implements Listener
     @Override
     public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last)
     {
-        try
-        {
-            JsonNode node = objectMapper.readTree(data.toString());
-
-            if (node.has("operation") &&
-                    "Authenticate".equals(node.get("operation").asText()) &&
-                    node.path("success").asBoolean(false))
+        buffer.append(data);
+        if(last) {
+            try
             {
-
-                logger.info("Authentication successful");
-
-                List<Instrument> instrumentList = instrumentService.findAll()
-                        .stream()
-                        .filter(instrument -> instrument != null && instrument.getActive())
-                        .collect(Collectors.toList());
-
-                instrumentList.forEach(instrument ->
+                JsonNode node = objectMapper.readTree(data.toString());
+                if (node.has("operation") &&
+                        "Authenticate".equals(node.get("operation").asText()) &&
+                        node.path("success").asBoolean(false))
                 {
-                    if (instrument.getEtoroInstrumentId() != null)
+                    logger.info("Authentication successful");
+                    List<Instrument> instrumentList = instrumentService.findAll()
+                            .stream()
+                            .filter(instrument -> instrument != null && instrument.getActive())
+                            .collect(Collectors.toList());
+
+                    instrumentList.forEach(instrument ->
                     {
-                        subscribeInstrument(ws,
-                                String.valueOf(instrument.getEtoroInstrumentId()));
-                    }
-                });
-            }
-            logger.info("{}", data);
+                        if (instrument.getEtoroInstrumentId() != null)
+                        {
+                            subscribeInstrument(ws,
+                                    String.valueOf(instrument.getEtoroInstrumentId()));
+                        }
+                    });
+                }
+                logger.info("{}", data);
+                LiveInstrumentRate liveInstrumentRate =
+                        liveResponseMapper.mapResponse(data.toString());
+                marketFeedObserver.process(liveInstrumentRate);
+                if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
+                {
+                    Tick tick = tickFromRate(liveInstrumentRate);
+                    candleBuilder1Min.setCandleService(etoroCandleService);
+                    candleBuilder5Min.setCandleService(etoroCandleService);
+                    candleBuilder15Min.setCandleService(etoroCandleService);
+                    candleBuilder30Min.setCandleService(etoroCandleService);
+                    candleBuilder1Hour.setCandleService(etoroCandleService);
+                    candleBuilder4Hour.setCandleService(etoroCandleService);
 
-            LiveInstrumentRate liveInstrumentRate =
-                    liveResponseMapper.mapResponse(data.toString());
-            marketFeedObserver.process(liveInstrumentRate);
+                    candleBuilder1Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 1));
+                    candleBuilder5Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 5));
+                    candleBuilder15Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 15));
+                    candleBuilder30Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 30));
+                    candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 1));
+                    candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 4));
+                }
 
-            if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
+            } catch (JsonProcessingException e)
             {
-                Tick tick = tickFromRate(liveInstrumentRate);
-                candleBuilder1Min.setCandleService(etoroCandleService);
-                candleBuilder5Min.setCandleService(etoroCandleService);
-                candleBuilder15Min.setCandleService(etoroCandleService);
-                candleBuilder30Min.setCandleService(etoroCandleService);
-                candleBuilder1Hour.setCandleService(etoroCandleService);
-                candleBuilder4Hour.setCandleService(etoroCandleService);
-
-                candleBuilder1Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 1));
-                candleBuilder5Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 5));
-                candleBuilder15Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 15));
-                candleBuilder30Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 30));
-                candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 1));
-                candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 4));
+                logger.error("JSON parse error", data);
             }
-            ws.request(1);
-        } catch (JsonProcessingException e)
-        {
-            logger.error("JSON parse error", e);
         }
+        ws.request(1);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -170,7 +168,7 @@ public class EtoroLiveFeedListener implements Listener
     public void onError(WebSocket webSocket, Throwable error)
     {
         logger.error("WebSocket error", error);
-        reconnect();
+        reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
     }
 
 
@@ -185,7 +183,7 @@ public class EtoroLiveFeedListener implements Listener
         candleBuilder30Min.flush();
         candleBuilder1Hour.flush();
         candleBuilder4Hour.flush();
-        reconnect();
+        reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -235,8 +233,7 @@ public class EtoroLiveFeedListener implements Listener
 
         logger.info("Subscribed instrument {}", instrumentId);
     }
-
-    private void reconnect()
+    private void reconnect(String url)
     {
         if (reconnecting)
         {
@@ -250,14 +247,14 @@ public class EtoroLiveFeedListener implements Listener
         scheduler.schedule(() ->
         {
             httpClient.newWebSocketBuilder()
-                    .buildAsync(URI.create("wss://ws.etoro.com/ws"), this)
+                    .buildAsync(URI.create(url), this)
                     .whenComplete((ws, error) ->
                     {
                         if (error != null)
                         {
                             logger.error("Reconnect failed", error);
                             reconnecting = false;
-                            reconnect();
+                            reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
                         }
                     });
 

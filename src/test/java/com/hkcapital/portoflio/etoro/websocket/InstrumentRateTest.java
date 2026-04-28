@@ -7,9 +7,10 @@ import com.hkcapital.portoflio.service.api.etoro.websocket.Message;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +30,22 @@ class InstrumentRateTest extends EtoroAbstractTest
 
         List<LiveInstrumentRate> liveInstrumentRateList = new ArrayList<>();
         LivePriceResponseWrapper livePriceResponseWrapper;
-        try (BufferedReader br = new BufferedReader(new FileReader(GOLD_NASDAQ100_LIVE_FEED_FILE_PATH)))
+
+        List<String> lines = Files.readAllLines(Path.of(URI.create(GOLD_NASDAQ100_LIVE_FEED_FILE_PATH)));
+        for (String line : lines)
         {
-            String line;
-            while ((line = br.readLine()) != null)
+            if (!line.contains(expectedText)) continue;
+            livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
+            for (Message message : livePriceResponseWrapper.getMessages())
             {
-                if (!line.contains(expectedText)) continue;
-                livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
-                for (Message message : livePriceResponseWrapper.getMessages())
-                {
-                    liveInstrumentRateList.add(objectMapper.readValue(message.getContent(), LiveInstrumentRate.class));
-                }
+                liveInstrumentRateList.add(objectMapper.readValue(message.getContent(), LiveInstrumentRate.class));
             }
+            assertEquals(2, liveInstrumentRateList.size());
+            assertGoldLiveRateFeed(liveInstrumentRateList.get(0));
+            assertNASDAQ100LiveRateFeed(liveInstrumentRateList.get(1));
         }
-        assertEquals(2, liveInstrumentRateList.size());
-        assertGoldLiveRateFeed(liveInstrumentRateList.get(0));
-        assertNASDAQ100LiveRateFeed(liveInstrumentRateList.get(1));
     }
+
 
     private static void assertNASDAQ100LiveRateFeed(LiveInstrumentRate nasdaq100Rate)
     {

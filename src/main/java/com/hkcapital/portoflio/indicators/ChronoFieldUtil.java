@@ -1,8 +1,7 @@
 package com.hkcapital.portoflio.indicators;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalField;
 
@@ -109,5 +108,10 @@ public final class ChronoFieldUtil
                     case WEEK -> 0L;
                 };
         return Instant.ofEpochMilli(bucket * bucketSizeMillis);
+    }
+
+    public static Instant parse(String input) {
+         return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")) //
+                 .toInstant(ZoneOffset.UTC);
     }
 }
