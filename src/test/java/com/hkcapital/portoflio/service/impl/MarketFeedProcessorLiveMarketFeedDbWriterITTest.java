@@ -2,6 +2,7 @@ package com.hkcapital.portoflio.service.impl;
 
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
+import com.hkcapital.portoflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +25,7 @@ class MarketFeedProcessorLiveMarketFeedDbWriterITTest
     public void shouldSubscribeToLiveFeed()
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
-        marketFeedObserver.process(getLiveInstrumentRate());
+        marketFeedObserver.process(getLiveInstrumentRate(), SignalBuilder.builder().build());
         Assertions.assertTrue(feedRepository.findAll().size() > 1) ;
     }
 

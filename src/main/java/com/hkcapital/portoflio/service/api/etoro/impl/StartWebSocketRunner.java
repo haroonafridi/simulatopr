@@ -13,8 +13,8 @@ import java.net.http.HttpClient;
 
 public class StartWebSocketRunner implements Runnable
 {
-   // public static final String ETORO_WEB_SOCKET_URL = "wss://ws.etoro.com/ws";
-    public static final String ETORO_WEB_SOCKET_URL =  "ws://localhost:8025/ws/etoro";
+    public static final String ETORO_WEB_SOCKET_URL = "wss://ws.etoro.com/ws";
+    //public static final String ETORO_WEB_SOCKET_URL =  "ws://localhost:8025/ws/etoro";
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final MarketFeedObserver marketFeedObserver;
     private final LiveResponseMapper liveResponseMapper;

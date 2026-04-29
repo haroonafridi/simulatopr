@@ -3,6 +3,7 @@ package com.hkcapital.portoflio.service.marketfeed.subscriber.impl;
 import com.hkcapital.portoflio.model.LiveInstrumentFeed;
 import com.hkcapital.portoflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.MarketFeedSubscriber;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class MarketFeedDbWriterSub implements MarketFeedSubscriber
     }
 
     @Override
-    public void process(LiveInstrumentRate liveRate)
+    public void process(LiveInstrumentRate liveRate, SignalBuilder signalBuilder)
     {
 
         if (liveRate.getInstrumentId() != null && liveRate.getAsk() != null && liveRate.getBid() != null)

@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.service.impl;
 
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portoflio.service.marketfeed.observer.impl.MarketFeedObserverImpl;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.MarketFeedSubscriber;
@@ -17,8 +18,8 @@ class MarketFeedProcessorImplUnitTest
     {
         LiveInstrumentRate liveInstrumentRate = getLiveInstrumentRate();
         MarketFeedObserver marketFeedObserver = Mockito.mock(MarketFeedObserverImpl.class);
-        marketFeedObserver.process(liveInstrumentRate);
-        Mockito.verify(marketFeedObserver).process(liveInstrumentRate);
+        marketFeedObserver.process(liveInstrumentRate, SignalBuilder.builder().build());
+        Mockito.verify(marketFeedObserver).process(liveInstrumentRate, SignalBuilder.builder().build());
     }
 
     @Test
@@ -69,7 +70,7 @@ class MarketFeedProcessorImplUnitTest
         MarketFeedObserver marketFeedObserver = new MarketFeedObserverImpl();
         subscribers.forEach(subscriber -> marketFeedObserver.addMarketFeedSubscriber(subscriber));
         LiveInstrumentRate rate = getLiveInstrumentRate();
-        marketFeedObserver.process(rate);
-        subscribers.forEach(s -> Mockito.verify(s).process(rate));
+        marketFeedObserver.process(rate, SignalBuilder.builder().build());
+        subscribers.forEach(s -> Mockito.verify(s).process(rate, SignalBuilder.builder().build()));
     }
 }

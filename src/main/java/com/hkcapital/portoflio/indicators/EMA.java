@@ -23,4 +23,9 @@ public class EMA
         ema = (price * alpha) + (ema * (1 - alpha));
         return ema;
     }
+
+    public Double getEma()
+    {
+        return ema;
+    }
 }

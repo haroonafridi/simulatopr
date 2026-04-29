@@ -9,6 +9,8 @@ public class RSI {
     private Double avgGain = null;
     private Double avgLoss = null;
 
+    private Double rsi = null;
+
     public Double onCandleAdd(Candle candle, int period) {
         closes.add(candle.getClose());
 
@@ -52,6 +54,12 @@ public class RSI {
         }
 
         double rs = avgGain / avgLoss;
-        return 100 - (100 / (1 + rs));
+        rsi =  100 - (100 / (1 + rs));
+        return rsi;
+    }
+
+    public Double getRsi()
+    {
+        return rsi;
     }
 }

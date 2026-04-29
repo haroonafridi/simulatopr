@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.service.marketfeed.observer.impl;
 
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portoflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portoflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portoflio.service.marketfeed.subscriber.MarketFeedSubscriber;
 import org.slf4j.Logger;
@@ -17,12 +18,11 @@ public class MarketFeedObserverImpl implements MarketFeedObserver
     private final List<MarketFeedSubscriber> feedSubscribers = new ArrayList<>();
 
     @Override
-    public void process(LiveInstrumentRate liveInstrumentRate)
+    public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
         if (liveInstrumentRate != null)
         {
-            //logger.info("Broadcasting tick [{}] ",liveInstrumentRate);
-            feedSubscribers.forEach(feedSubscriber -> feedSubscriber.process(liveInstrumentRate));
+            feedSubscribers.forEach(feedSubscriber -> feedSubscriber.process(liveInstrumentRate, signalBuilder));
         }
     }
 

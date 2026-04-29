@@ -41,7 +41,6 @@ public class EtoroLiveFeedListener implements Listener
     private final LiveResponseMapper liveResponseMapper;
     private final InstrumentService instrumentService;
     private final ObjectMapper objectMapper;
-
     private final EtoroCandleService etoroCandleService;
     private final Set<String> subscribedTopics = ConcurrentHashMap.newKeySet();
 
@@ -77,6 +76,15 @@ public class EtoroLiveFeedListener implements Listener
             .build()
             .ofTimeFrame(Unit.HOUR)
             .ofInterval(4);
+
+    SignalBuilder signalBuilder = SignalBuilder.builder()
+            .candleBuilder1Min(candleBuilder1Min)
+            .candleBuilder5Min(candleBuilder5Min)
+            .candleBuilder15Min(candleBuilder15Min)
+            .candleBuilder30Min(candleBuilder30Min)
+            .candleBuilder1Hour(candleBuilder1Hour)
+            .candleBuilder4Hour(candleBuilder4Hour)
+            .build();
 
     private volatile boolean reconnecting = false;
 
@@ -136,7 +144,7 @@ public class EtoroLiveFeedListener implements Listener
                 logger.info("{}", data);
                 LiveInstrumentRate liveInstrumentRate =
                         liveResponseMapper.mapResponse(data.toString());
-                marketFeedObserver.process(liveInstrumentRate);
+
                 if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
@@ -146,14 +154,16 @@ public class EtoroLiveFeedListener implements Listener
                     candleBuilder30Min.setCandleService(etoroCandleService);
                     candleBuilder1Hour.setCandleService(etoroCandleService);
                     candleBuilder4Hour.setCandleService(etoroCandleService);
-
                     candleBuilder1Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 1));
                     candleBuilder5Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 5));
                     candleBuilder15Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 15));
                     candleBuilder30Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 30));
                     candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 1));
                     candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 4));
+                    marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }
+
+
 
             } catch (JsonProcessingException e)
             {
@@ -170,8 +180,6 @@ public class EtoroLiveFeedListener implements Listener
         logger.error("WebSocket error", error);
         reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
     }
-
-
 
     @Override
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason)

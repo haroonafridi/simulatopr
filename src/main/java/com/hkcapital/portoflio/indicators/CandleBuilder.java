@@ -185,4 +185,39 @@ public class CandleBuilder
             //publishCloseEvent(lastCandle);
         }
     }
+
+    public CandleList getCandles()
+    {
+        return candles;
+    }
+
+    public Unit getTimeFrame()
+    {
+        return timeFrame;
+    }
+
+    public Integer getInterval()
+    {
+        return interval;
+    }
+
+    public RSI getRsi()
+    {
+        return rsi;
+    }
+
+    public ATR getAtr()
+    {
+        return atr;
+    }
+
+    public EMA getEma()
+    {
+        return ema;
+    }
+
+    public SMA getSma()
+    {
+        return sma;
+    }
 }
