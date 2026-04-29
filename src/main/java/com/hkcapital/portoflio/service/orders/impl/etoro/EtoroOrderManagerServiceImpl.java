@@ -1,7 +1,6 @@
 package com.hkcapital.portoflio.service.orders.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hkcapital.portoflio.broker.etoro.EtoroOrderException;
 import com.hkcapital.portoflio.broker.etoro.config.Configuration;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
@@ -9,7 +8,6 @@ import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetailsResponseD
 import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.Position;
-import com.hkcapital.portoflio.model.SRMatrix;
 import com.hkcapital.portoflio.model.Strategy;
 import com.hkcapital.portoflio.model.etoro.EtoroOrder;
 import com.hkcapital.portoflio.repository.orders.etoro.EtoroOrderRepository;
@@ -29,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +45,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final StrategyService strategyService;
     private final SRMatrixService srMatrixService;
     private final PositionService positionService;
+
     public EtoroOrderManagerServiceImpl(final EtoroOrderRepository orderRepository, //
                                         final EtoroApiService etoroApiService,
                                         final InstrumentService instrumentService,
@@ -200,37 +198,39 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                     {
                         Instrument inst = position.getInstrument();
                         Integer leverage = position.getConfiguration().getLev();
-                        if(signalBuilder !=null && inst.getActive())
+                        if (signalBuilder != null && inst.getActive())
                         {
                             logger.info("No of candles generated {} ", signalBuilder.getCandleBuilder1Min().candles().size());
-                            if(signalBuilder.getCandleBuilder1Min() != null && signalBuilder.getCandleBuilder1Min().candles().size() >=15 )
+                            if (signalBuilder.getCandleBuilder1Min() != null && signalBuilder.getCandleBuilder1Min().candles().size() >= 15)
                             {
                                 Double rsi = signalBuilder.getCandleBuilder1Min().getRsi() != null ? signalBuilder.getCandleBuilder1Min().getRsi().getRsi() : null;
                                 Double atr = signalBuilder.getCandleBuilder1Min().getAtr() != null ? signalBuilder.getCandleBuilder1Min().getAtr().getCurrentATR() : null;
                                 Double ema = signalBuilder.getCandleBuilder1Min().getEma() != null ? signalBuilder.getCandleBuilder1Min().getEma().getEma() : null;
 
-                                if (rsi <= 15) {
+                                if (rsi <= 15)
+                                {
                                     logger.info("Placing buy order timeframe 1 min extreme sold condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
                                     EtoroMarketOrderDto etoroMarketBuyOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(true).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null)
                                             .takeProfitRate(instrumentRate.getAsk() + 100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
                                     createAndSaveMarketOrder((etoroMarketBuyOrder));
                                     return;
                                 }
-                                if (rsi >= 50 && rsi <=60) {
+                                if (rsi >= 50 && rsi <= 60)
+                                {
                                     logger.info("Placing buy order timeframe 1 min bull condition condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
-                                    EtoroMarketOrderDto etoroMarketBuyOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(true).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null).takeProfitRate(instrumentRate.getAsk()+100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
+                                    EtoroMarketOrderDto etoroMarketBuyOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(true).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null).takeProfitRate(instrumentRate.getAsk() + 100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
                                     createAndSaveMarketOrder((etoroMarketBuyOrder));
                                     return;
                                 }
-                                if (rsi <= 40) {
+                                if (rsi <= 40)
+                                {
                                     logger.info("Placing buy order timeframe 1 min bear condition condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
-                                    EtoroMarketOrderDto etoroMarketSellOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(false).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null).takeProfitRate(instrumentRate.getAsk()-100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
+                                    EtoroMarketOrderDto etoroMarketSellOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(false).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null).takeProfitRate(instrumentRate.getAsk() - 100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
                                     createAndSaveMarketOrder((etoroMarketSellOrder));
                                     return;
                                 }
                             }
                         }
-
                     }
                 }
             }
