@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.service.schedule.impl;
 
 import com.hkcapital.portoflio.broker.etoro.master.TimeFrame;
+import com.hkcapital.portoflio.indicators.Unit;
 import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portoflio.service.instrument.InstrumentService;
 import com.hkcapital.portoflio.service.schedule.ScheduleService;
@@ -29,7 +30,7 @@ public class FifteenMinutesDataScheduler implements ScheduleService
         logger.info("Running scheduler TimeFrame = 15 mins");
         instrumentService.findByActive(Boolean.TRUE).forEach(
                 instrument -> etoroCandleService.fetchAndSaveCandleInformation(instrument.getEtoroInstrumentId(),
-                        TimeFrame.FifteenMinutes, 1)
+                        TimeFrame.FifteenMinutes, 1, Unit.MINUTE)
         );
     }
 }

@@ -1,5 +1,7 @@
 package com.hkcapital.portoflio.indicators;
 
+import com.hkcapital.portoflio.model.Candle;
+import com.hkcapital.portoflio.model.CandleSource;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.candle.etoro.EtoroCandleService;
 import org.slf4j.Logger;
@@ -53,23 +55,23 @@ public class CandleBuilder
         return new CandleBuilder();
     }
 
-    public CandleBuilder addAndUpdateCandle(final Candle subcandle)
+    public CandleBuilder addAndUpdateCandle(final CandleDto subcandle)
     {
         if (candles.isEmpty())
         {
             addCandle(subcandle, timeFrame, interval);
             return this;
         }
-        Candle mainCandle = candles.get(candles.size() - 1);
+        CandleDto mainCandle = candles.get(candles.size() - 1);
         if (isSameTimeFrame(mainCandle, subcandle))
         {
-            Candle updatedCandle = updateCandle(mainCandle, subcandle);
+            CandleDto updatedCandle = updateCandle(mainCandle, subcandle);
             candles.set(candles.size() - 1, updatedCandle);
         } else
         {
-            Candle closedCandle = mainCandle;
+            CandleDto closedCandle = mainCandle;
             addCandle(subcandle, timeFrame, interval);
-            com.hkcapital.portoflio.model.Candle etoroCandle = com.hkcapital.portoflio.model
+            Candle candle = com.hkcapital.portoflio.model
                     .Candle.builder()
                     .instrumentID(Integer.parseInt(closedCandle.getInstrument()))
                     .close(closedCandle.getClose())
@@ -78,9 +80,11 @@ public class CandleBuilder
                     .open(closedCandle.getOpen())
                     .fromDate(closedCandle.getTime())
                     .creationDateTime(LocalDateTime.now())
-                    .timeFrame(closedCandle.getUnit().getUnit() + "-" + closedCandle.getInterval())
+                    .timeFrame(closedCandle.getInterval())
+                    .timeFrameUnit(closedCandle.getUnit().getUnit())
+                    .source(CandleSource.INTERNAL.getSource())
                     .build();
-            candleService.save(etoroCandle);
+            candleService.save(candle);
             Double rsiValue = rsi.onCandleAdd(closedCandle, 14);
             Double atrVal = atr.onCandleAdd(closedCandle);
             Double emaVal = ema.onPrice(closedCandle.getClose());
@@ -111,7 +115,7 @@ public class CandleBuilder
     }
 
 
-    private Candle updateCandle(final Candle candle, final Candle subCandle)
+    private CandleDto updateCandle(final CandleDto candle, final CandleDto subCandle)
     {
         candle.setLow(min(candle.getLow(), subCandle.getLow()));
         candle.setHigh(max(candle.getHigh(), subCandle.getHigh()));
@@ -120,10 +124,10 @@ public class CandleBuilder
         return candle;
     }
 
-    private void addCandle(final Candle subCandle, Unit timeUnit, Integer interval)
+    private void addCandle(final CandleDto subCandle, Unit timeUnit, Integer interval)
     {
         Instant bucketTime = ChronoFieldUtil.bucketStart(subCandle.getTime(), subCandle.getUnit(), interval);
-        candles.add(new Candle(subCandle.getInstrument(),
+        candles.add(new CandleDto(subCandle.getInstrument(),
                 subCandle.getOpen(), subCandle.getLow(), subCandle.getHigh(),
                 subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeUnit, interval));
     }
@@ -141,9 +145,9 @@ public class CandleBuilder
         return this;
     }
 
-    public List<Candle> fromTo(final Unit unit, final Integer range)
+    public List<CandleDto> fromTo(final Unit unit, final Integer range)
     {
-        List<Candle> candleList = candles.stream()
+        List<CandleDto> candleList = candles.stream()
                 .filter(candle -> candle.getUnit().equals(unit)) //
                 .collect(Collectors.toList());
         if (candleList.isEmpty())
@@ -155,14 +159,14 @@ public class CandleBuilder
         return candles.subList(fromIndex, size);
     }
 
-    public List<Candle> candles()
+    public List<CandleDto> candles()
     {
         return candles.stream()
                 .filter(candle -> candle.getUnit().equals(this.timeFrame)) //
                 .collect(Collectors.toList());
     }
 
-    private boolean isSameTimeFrame(Candle c1, Candle c2)
+    private boolean isSameTimeFrame(CandleDto c1, CandleDto c2)
     {
         long bucket1 = ChronoFieldUtil.toBucket(c1.getTime(), c1.getUnit(), c1.getInterval());
         long bucket2 = ChronoFieldUtil.toBucket(c2.getTime(), c2.getUnit(), c2.getInterval());
@@ -181,7 +185,7 @@ public class CandleBuilder
     {
         if (!candles.isEmpty())
         {
-            Candle lastCandle = candles.get(candles.size() - 1);
+            CandleDto lastCandle = candles.get(candles.size() - 1);
             //publishCloseEvent(lastCandle);
         }
     }

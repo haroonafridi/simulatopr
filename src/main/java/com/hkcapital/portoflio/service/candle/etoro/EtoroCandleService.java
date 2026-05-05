@@ -1,6 +1,7 @@
 package com.hkcapital.portoflio.service.candle.etoro;
 
 import com.hkcapital.portoflio.broker.etoro.master.TimeFrame;
+import com.hkcapital.portoflio.indicators.Unit;
 import com.hkcapital.portoflio.model.Candle;
 import com.hkcapital.portoflio.service.registry.Service;
 
@@ -9,10 +10,15 @@ import java.util.List;
 
 public interface EtoroCandleService extends Service
 {
-    void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, final Integer interval);
+    void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, //
+                                       final Integer interval, //
+                                       Unit timeUnit);
 
     Candle save(Candle candle);
 
-    List<Candle> findCandleByInstrumentIDAndTimeFrameAndFromDateBetween(final Integer instrumentId, final TimeFrame timeFrame, final Instant starDate,
-                            final Instant fromDate);
+    List<Candle> findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(Integer instrumentID, Integer sourceTimeFrame, //
+                                                                                           String sourceTimeFrameUnit, //
+                                                                                           Instant startDate, //
+                                                                                           Instant endDate);
+    void removeAll();
 }

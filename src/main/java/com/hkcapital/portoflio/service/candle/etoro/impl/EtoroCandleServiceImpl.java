@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portoflio.broker.etoro.dto.candle.CandleResponseDto;
 import com.hkcapital.portoflio.broker.etoro.master.TimeFrame;
+import com.hkcapital.portoflio.indicators.Unit;
 import com.hkcapital.portoflio.model.Candle;
 import com.hkcapital.portoflio.model.InstrumentCandles;
 import com.hkcapital.portoflio.repository.candle.CandleRepository;
@@ -36,7 +37,9 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
     }
 
     @Override
-    public void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, final Integer interval)
+    public void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, //
+                                              final Integer interval, //
+                                              Unit timeUnit)
     {
 
         CandleResponseDto response = candleResponseMapper.mapResponse(instrumentId, timeFrame, interval);
@@ -48,7 +51,8 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
                 Candle candle = Candle.builder()
                         .creationDateTime(LocalDateTime.now())
                         .instrumentID(c.getInstrumentID())
-                        .timeFrame(timeFrame.name())
+                        .timeFrame(interval)
+                        .timeFrameUnit(timeUnit.getUnit())
                         .open(c.getOpen())
                         .low(c.getLow())
                         .high(c.getHigh())
@@ -69,8 +73,24 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
     }
 
     @Override
-    public List<Candle> findCandleByInstrumentIDAndTimeFrameAndFromDateBetween(final Integer instrumentId, final TimeFrame timeFrame, final Instant startDate, final Instant endDate)
+    public List<Candle> findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(Integer instrumentID,
+                                                                                                  Integer sourceTimeFrame,
+                                                                                                  String sourceTimeFrameUnit,
+                                                                                                  Instant startDate, Instant endDate)
     {
-        return candleRepository.findCandleByInstrumentIDAndTimeFrameAndFromDateBetween(instrumentId, timeFrame.getTimeFrame(), startDate, endDate);
+//        return candleRepository.
+//                findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(instrumentID,
+//                        sourceTimeFrame,
+//                        sourceTimeFrameUnit,
+//                        startDate, endDate);
+
+        return null;
     }
+
+    @Override
+    public void removeAll()
+    {
+        candleRepository.deleteAll();
+    }
+
 }

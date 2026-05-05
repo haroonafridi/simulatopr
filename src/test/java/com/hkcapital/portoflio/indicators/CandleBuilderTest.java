@@ -34,7 +34,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     @DisplayName("Should aggregate market ticks into a minute candle")
     public void shouldAggregateMarketTicksInMinuteCandles()
     {
-        List<Candle> candles = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1)//
+        List<CandleDto> candles = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1)//
                 .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
                         .time(Instant.parse("2007-12-03T10:15:00.00Z")).val(5400).build()))//
                 .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
@@ -76,7 +76,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
             }
         }
 
-        List<Candle> candles = candleBuilder.candles();
+        List<CandleDto> candles = candleBuilder.candles();
         assertEquals(candles.size(), 2);
 
         assertEquals(4999.15, candles.get(0).getLow());
@@ -100,9 +100,9 @@ class CandleBuilderTest extends CandleBuilderAbstract
                 candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tickFromRate(rateFromMessage(message))));
             }
         }
-        List<Candle> candles = candleBuilder.fromTo(MINUTE, 2);
+        List<CandleDto> candles = candleBuilder.fromTo(MINUTE, 2);
         assertEquals(candles.size(), 2);
-        Candle candle15 = candles.get(0);
+        CandleDto candle15 = candles.get(0);
         assertEquals(4999.15, candle15.getLow());
         assertEquals(5003.15, candle15.getHigh());
         assertEquals(4999.15, candle15.getClose());
@@ -144,7 +144,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
                     .time(localDateTime.toInstant(ZoneOffset.UTC)).build();
             candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tick));
         }
-        List<Candle> candles = candleBuilder.candles();
+        List<CandleDto> candles = candleBuilder.candles();
         Assertions.assertEquals(20, candles.size());
         assertOHLC("Candle 0", 4678.96, 4677.91, 4679.41, 4679.41, candles.get(0));
         assertOHLC("Candle 1", 4679.35, 4677.68, 4679.35, 4678.15, candles.get(1));
@@ -169,7 +169,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     }
 
 
-    private void assertOHLC(String message, double open, double low, double high, double close, Candle candle)
+    private void assertOHLC(String message, double open, double low, double high, double close, CandleDto candle)
     {
         assertAll(message, () ->
         {

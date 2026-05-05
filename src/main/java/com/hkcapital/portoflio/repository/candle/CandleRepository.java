@@ -10,7 +10,9 @@ import java.util.List;
 @Repository
 public interface CandleRepository extends JpaRepository<Candle, Integer>
 {
-    List<Candle> findCandleByInstrumentIDAndTimeFrameAndFromDateBetween(Integer instrumentID, String timeFrame, //
-                                                            Instant startDate, //
-                                                            Instant endDate);
+//    List<Candle> findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(Integer instrumentID, Integer sourceTimeFrame, //
+//                                                                                           String sourceTimeFrameUnit, //
+//                                                                                           Instant startDate, //
+//                                                                                           Instant endDate);
+
 }

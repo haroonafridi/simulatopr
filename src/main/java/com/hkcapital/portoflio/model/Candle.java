@@ -27,14 +27,20 @@ public class Candle
     private double close;
     private double volume;
 
-    private String timeFrame;
-
+    private Integer timeFrame;
+    private String timeFrameUnit;
+    private String source;
+    private String sourceTimeFrame;
     private LocalDateTime creationDateTime;
+
 
     @Builder
     public Candle(int instrumentID, Instant fromDate, double open, //
                   double high, double low, double close, //
-                  double volume, String timeFrame, //
+                  double volume, Integer timeFrame, //
+                  String timeFrameUnit ,
+                  String source,
+                  String sourceTimeFrame,
                   LocalDateTime creationDateTime)
     {
         this.instrumentID = instrumentID;
@@ -45,6 +51,9 @@ public class Candle
         this.close = close;
         this.volume = volume;
         this.timeFrame = timeFrame;
+        this.timeFrameUnit = timeFrameUnit;
+        this.source = source;
+        this.sourceTimeFrame = sourceTimeFrame;
         this.creationDateTime = creationDateTime;
     }
 }

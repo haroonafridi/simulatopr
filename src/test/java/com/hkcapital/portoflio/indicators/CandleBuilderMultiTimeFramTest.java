@@ -39,7 +39,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .val(rate.getAsk())
                         .time(rate.getFeedDate())
                         .build();
-                Candle candle = Candle.builder()
+                CandleDto candle = CandleDto.builder()
                         .instrument(tick.getInstrument())
                         .high(tick.getVal())
                         .open(tick.getVal())
@@ -72,7 +72,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .val(rate.getAsk())
                         .time(rate.getFeedDate())
                         .build();
-                Candle candle = Candle.builder()
+                CandleDto candle = CandleDto.builder()
                         .instrument(tick.getInstrument())
                         .high(tick.getVal())
                         .open(tick.getVal())
@@ -105,7 +105,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .val(rate.getAsk())
                         .time(rate.getFeedDate())
                         .build();
-                Candle candle = Candle.builder()
+                CandleDto candle = CandleDto.builder()
                         .instrument(tick.getInstrument())
                         .high(tick.getVal())
                         .open(tick.getVal())
@@ -138,7 +138,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .val(rate.getAsk())
                         .time(rate.getFeedDate())
                         .build();
-                Candle candle = Candle.builder()
+                CandleDto candle = CandleDto.builder()
                         .instrument(tick.getInstrument())
                         .high(tick.getVal())
                         .open(tick.getVal())
@@ -171,7 +171,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .val(rate.getAsk())
                         .time(rate.getFeedDate())
                         .build();
-                Candle candle = Candle.builder()
+                CandleDto candle = CandleDto.builder()
                         .instrument(tick.getInstrument())
                         .high(tick.getVal())
                         .open(tick.getVal())

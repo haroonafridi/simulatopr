@@ -11,7 +11,7 @@ public class RSI {
 
     private Double rsi = null;
 
-    public Double onCandleAdd(Candle candle, int period) {
+    public Double onCandleAdd(CandleDto candle, int period) {
         closes.add(candle.getClose());
 
         if (closes.size() < period+1) {

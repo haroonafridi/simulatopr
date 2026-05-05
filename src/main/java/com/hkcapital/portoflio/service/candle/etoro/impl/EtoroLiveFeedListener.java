@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portoflio.broker.etoro.config.EtoroApiConfiguration;
-import com.hkcapital.portoflio.indicators.Candle;
+import com.hkcapital.portoflio.indicators.CandleDto;
 import com.hkcapital.portoflio.indicators.CandleBuilder;
 import com.hkcapital.portoflio.indicators.Tick;
 import com.hkcapital.portoflio.indicators.Unit;
@@ -277,9 +277,9 @@ public class EtoroLiveFeedListener implements Listener
                 .build();
     }
 
-    public Candle toCandle(final Tick tick, Unit unit , Integer interval)
+    public CandleDto toCandle(final Tick tick, Unit unit , Integer interval)
     {
-        return new Candle(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
+        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
                 unit, interval);
     }
 

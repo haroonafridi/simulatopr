@@ -2,7 +2,6 @@ package com.hkcapital.portoflio.indicators;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portoflio.etoro.EtoroAbstractTest;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portoflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portoflio.service.api.etoro.websocket.Message;
@@ -28,9 +27,9 @@ public abstract class CandleBuilderAbstract
         return IOUtils.readLines(loadResource(fileName));
     }
 
-    public Candle toOneMinuteCandle(final Tick tick)
+    public CandleDto toOneMinuteCandle(final Tick tick)
     {
-        return new Candle(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
+        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
                 Unit.MINUTE, 1);
     }
 

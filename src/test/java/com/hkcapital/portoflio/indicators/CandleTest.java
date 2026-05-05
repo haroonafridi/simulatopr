@@ -10,7 +10,7 @@ class CandleTest
     @Test
     void shouldCreateCandle()
     {
-        Candle candle = new Candle("18", 5400.52, 5380.33, 5410.20, 5405.55,
+        CandleDto candle = new CandleDto("18", 5400.52, 5380.33, 5410.20, 5405.55,
                 Instant.parse("2026-04-09T18:00:01.00Z"), Unit.MINUTE, 15);
         Assertions.assertEquals(candle.getInstrument(), "18");
         Assertions.assertEquals(candle.getOpen(), 5400.52);

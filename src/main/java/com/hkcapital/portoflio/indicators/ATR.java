@@ -14,7 +14,7 @@ public class ATR {
         this.period = period;
     }
 
-    public Double onCandleAdd(Candle candle) {
+    public Double onCandleAdd(CandleDto candle) {
 
         // First candle → no TR possible
         if (prevClose == null) {

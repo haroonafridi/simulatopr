@@ -1,11 +1,12 @@
 package com.hkcapital.portoflio.service.orders.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hkcapital.portoflio.broker.etoro.config.Configuration;
+import com.hkcapital.portoflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroOrderDetailsResponseDTO;
 import com.hkcapital.portoflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
+import com.hkcapital.portoflio.indicators.CandleBuilder;
 import com.hkcapital.portoflio.model.Instrument;
 import com.hkcapital.portoflio.model.Position;
 import com.hkcapital.portoflio.model.Strategy;
@@ -85,9 +86,16 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
 
             final EtoroOrderDetailsResponseDTO orderResponse = etoroApiService.createMarketOrder(etoroMarketOrderDto);
 
-            final EtoroOrderDetails orderDetails = orderResponse.getOrderForOpen();
+            if (orderResponse != null) //
+            {
 
-            return saveOrder(etoroMarketOrderDto, orderDetails, orderResponse.getToken());
+                final EtoroOrderDetails orderDetails = orderResponse.getOrderForOpen();
+
+                return saveOrder(etoroMarketOrderDto, orderDetails, orderResponse.getToken());
+            }
+
+            return null;
+
 
         } catch (JsonProcessingException e)
         {
@@ -156,7 +164,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 closedOrder.add(closeEtoroOrder(orderRepository.findById(order.getId()).get().getId()));
             }
         });
-
         return closedOrder;
     }
 
@@ -171,7 +178,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null
                 && instrument.getEtoroInstrumentId().intValue() == instrumentRate.getInstrumentId().intValue())
         {
-            if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
+            if (TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
             {
                 logger.info("Sending Automatic trade to etoro!");
                 Double ask = instrumentRate.getAsk();
@@ -190,44 +197,60 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                                 .filter(Strategy::getActive)//
                                 .collect(Collectors.toList());
 
+                logger.info("No of candles generated {} ", signalBuilder.getCandleBuilder1Min().candles().size());
                 for (Strategy strategy : strategies)
                 {
-                    List<Position> positions = positionService.findByStrategyId(strategy.getId());
+                    final List<Position> positions = positionService.findByStrategyId(strategy.getId());
 
                     for (Position position : positions)
                     {
-                        Instrument inst = position.getInstrument();
-                        Integer leverage = position.getConfiguration().getLev();
+                        final Instrument inst = position.getInstrument();
+                        final Integer leverage = position.getConfiguration().getLev();
+                        final Integer srTimeFrame = position.getSrMatrix().getTimeFrame();
+                        final String srTimeFrameUnit = position.getSrMatrix().getTimeFrameUnit();
                         if (signalBuilder != null && inst.getActive())
                         {
-                            logger.info("No of candles generated {} ", signalBuilder.getCandleBuilder1Min().candles().size());
-                            if (signalBuilder.getCandleBuilder1Min() != null && signalBuilder.getCandleBuilder1Min().candles().size() >= 15)
-                            {
-                                Double rsi = signalBuilder.getCandleBuilder1Min().getRsi() != null ? signalBuilder.getCandleBuilder1Min().getRsi().getRsi() : null;
-                                Double atr = signalBuilder.getCandleBuilder1Min().getAtr() != null ? signalBuilder.getCandleBuilder1Min().getAtr().getCurrentATR() : null;
-                                Double ema = signalBuilder.getCandleBuilder1Min().getEma() != null ? signalBuilder.getCandleBuilder1Min().getEma().getEma() : null;
 
-                                if (rsi <= 15)
+                            if (signalBuilder.getCandleBuilder1Min() != null
+                                    && signalBuilder.getCandleBuilder1Min().candles().size() >= 15
+                                    && srTimeFrameUnit != null && srTimeFrame != null)
+                            {
+
+                                final Double rsi = getRsi(signalBuilder);
+                                final Double atr = getAtr(signalBuilder);
+                                final Double ema = getEma(signalBuilder);
+                                CandleBuilder candleBuilder = signalBuilder.getCandleBuilder1Min();
+                                String candleTimeFrameUnit = candleBuilder.getTimeFrame().getUnit();
+                                Integer interval = candleBuilder.getInterval();
+
+                                if (candleTimeFrameUnit != null
+                                        && candleTimeFrameUnit.equals(srTimeFrameUnit)
+                                        && interval != null && interval.compareTo(srTimeFrame) == 0)
                                 {
-                                    logger.info("Placing buy order timeframe 1 min extreme sold condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
-                                    EtoroMarketOrderDto etoroMarketBuyOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(true).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null)
-                                            .takeProfitRate(instrumentRate.getAsk() + 100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
-                                    createAndSaveMarketOrder((etoroMarketBuyOrder));
-                                    return;
-                                }
-                                if (rsi >= 50 && rsi <= 60)
-                                {
-                                    logger.info("Placing buy order timeframe 1 min bull condition condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
-                                    EtoroMarketOrderDto etoroMarketBuyOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(true).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null).takeProfitRate(instrumentRate.getAsk() + 100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
-                                    createAndSaveMarketOrder((etoroMarketBuyOrder));
-                                    return;
-                                }
-                                if (rsi <= 40)
-                                {
-                                    logger.info("Placing buy order timeframe 1 min bear condition condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
-                                    EtoroMarketOrderDto etoroMarketSellOrder = EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()).isBuy(false).leverage(leverage).amount(position.getCurrentPositionEquity()).stopLossRate(null).takeProfitRate(instrumentRate.getAsk() - 100).isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null).orderType(OrderTypes.AUTO.getOrderType()).bid(bid).ask(ask).maxAllowedSlippage(maxSlippage).etoroSlippage(slippage).build();
-                                    createAndSaveMarketOrder((etoroMarketSellOrder));
-                                    return;
+                                    if (rsi != null)
+                                    {
+                                        if (rsi <= 12)
+                                        {
+                                            logger.info("Placing buy order timeframe 1 min extreme sold condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
+                                            createAndSaveMarketOrder((buildBuyOrder(instrumentRate, maxSlippage, ask, bid, slippage, //
+                                                    position, inst, leverage)));
+                                            return;
+                                        }
+                                        if (rsi >= 50 && rsi <= 60)
+                                        {
+                                            logger.info("Placing buy order timeframe 1 min bull condition condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
+
+                                            createAndSaveMarketOrder((buildBuyOrder(instrumentRate, maxSlippage, ask, bid, slippage, //
+                                                    position, inst, leverage)));
+                                            return;
+                                        }
+                                        if (rsi >= 80)
+                                        {
+                                            logger.info("Placing sell order timeframe 1 min bear condition condition... rsi = {} , atr = {} ema = {} ", rsi, atr, ema);
+                                            createAndSaveMarketOrder((buildSellOrder(instrumentRate, maxSlippage, ask, bid, slippage, position, inst, leverage)));
+                                            return;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -236,5 +259,52 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             }
 
         }
+    }
+
+    private static Double getEma(SignalBuilder signalBuilder)
+    {
+        return signalBuilder.getCandleBuilder1Min().getEma() != null ?
+                signalBuilder.getCandleBuilder1Min().getEma().getEma() : null;
+    }
+
+    private static Double getAtr(SignalBuilder signalBuilder)
+    {
+        return signalBuilder.getCandleBuilder1Min().getAtr() != null ?
+                signalBuilder.getCandleBuilder1Min().getAtr().getCurrentATR() : null;
+    }
+
+    private static Double getRsi(SignalBuilder signalBuilder)
+    {
+        return signalBuilder.getCandleBuilder1Min().getRsi() != null ?
+                signalBuilder.getCandleBuilder1Min().getRsi().getRsi() : null;
+    }
+
+    private static EtoroMarketOrderDto buildSellOrder(LiveInstrumentRate instrumentRate, Double maxSlippage, Double ask, Double bid, Double slippage, Position position, Instrument inst, Integer leverage)
+    {
+        return EtoroMarketOrderDto.builder().instrumentId(inst.getEtoroInstrumentId()) //
+                .isBuy(false).leverage(leverage).amount(position.getCurrentPositionEquity())//
+                .stopLossRate(null).takeProfitRate(instrumentRate.getAsk() - 100)//
+                .isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null)//
+                .orderType(OrderTypes.AUTO.getOrderType())//
+                .bid(bid).ask(ask).maxAllowedSlippage(maxSlippage) //
+                .etoroSlippage(slippage) //
+                .build();
+    }
+
+    private static EtoroMarketOrderDto buildBuyOrder(LiveInstrumentRate instrumentRate, Double maxSlippage, Double ask, Double bid, Double slippage, Position position, Instrument inst, Integer leverage)
+    {
+        return EtoroMarketOrderDto.builder()//
+                .instrumentId(inst.getEtoroInstrumentId())//
+                .isBuy(true)//
+                .leverage(leverage)//
+                .amount(position.getCurrentPositionEquity())//
+                .stopLossRate(null)//
+                .takeProfitRate(instrumentRate.getAsk() + 100)//
+                .isTslEnabled(null).isNoTakeProfit(null).isNoStopLoss(null)//
+                .orderType(OrderTypes.AUTO.getOrderType())//
+                .bid(bid)//
+                .ask(ask)//
+                .maxAllowedSlippage(maxSlippage)//
+                .etoroSlippage(slippage).build();
     }
 }

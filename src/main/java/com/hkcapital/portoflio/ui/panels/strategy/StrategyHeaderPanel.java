@@ -1,6 +1,6 @@
 package com.hkcapital.portoflio.ui.panels.strategy;
 
-import com.hkcapital.portoflio.broker.etoro.config.Configuration;
+import com.hkcapital.portoflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portoflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portoflio.broker.etoro.master.Instruments;
 import com.hkcapital.portoflio.model.Position;
@@ -119,13 +119,13 @@ public class StrategyHeaderPanel extends UIBag
         manualOrderButton.addActionListener(m -> createMarketOrder());
         automaticTrading.addActionListener(a ->
         {
-            if (Configuration.ACTIVATE_AUTOMATIC_TRADING)
+            if (TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
             {
-                Configuration.ACTIVATE_AUTOMATIC_TRADING = Boolean.FALSE;
+                TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.FALSE;
                 automaticTrading.setText("Activate Auto Trading");
             } else
             {
-                Configuration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
+                TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
                 automaticTrading.setText("Deactivate Auto Trading");
             }
         });

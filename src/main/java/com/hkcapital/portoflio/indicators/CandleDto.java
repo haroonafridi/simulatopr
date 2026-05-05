@@ -11,7 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Data
 @ToString
-public class Candle
+public class CandleDto
 {
     private String instrument;
     private double open;
