@@ -1,0 +1,46 @@
+package com.hkcapital.portflio.etoro.websocket;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portflio.etoro.EtoroAbstractTest;
+import com.hkcapital.portflio.service.api.etoro.websocket.LivePriceResponseWrapper;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ExtendWith(SpringExtension.class)
+@Import(ObjectMapper.class)
+class LivePriceResponseWrapperTest extends EtoroAbstractTest
+{
+    @Test
+    void testLogFileContainsExpectedText()
+    {
+        LivePriceResponseWrapper livePriceResponseWrapper;
+        String filePath = "D:/portfolio-pnl-simulator/src/test/data/livefeed-etoro/gold_1_minute_multiple_candle.log"; // <-- replace with your log file path
+        String expectedText = "{\"messages\":[{";
+        boolean found = false;
+        int count = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath)))
+        {
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                if (line.contains(expectedText))
+                {
+                    livePriceResponseWrapper = objectMapper.readValue(line, LivePriceResponseWrapper.class);
+                }
+            }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+    }
+}

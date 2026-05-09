@@ -1,0 +1,50 @@
+package com.hkcapital.portflio.ui.panels.strategy;
+
+import com.hkcapital.portflio.model.Strategy;
+import com.hkcapital.portflio.ui.TableModel;
+
+import java.util.List;
+
+public class StrategyTableModel<E> extends TableModel
+{
+    public StrategyTableModel(String[] columnsName, List<Strategy> elements)
+    {
+        super(columnsName, elements);
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex)
+    {
+        Strategy strategy = (Strategy) getElements().get(rowIndex);
+
+        switch (columnIndex)
+        {
+            case 0:
+            {
+                return strategy.getId();
+            }
+            case 1:
+            {
+                return strategy.getName();
+            }
+            case 2:
+            {
+                return strategy.getCapitalAllocated();
+            }
+            case 3:
+            {
+                return strategy.getDescription();
+            }
+
+            case 4:
+            {
+                return strategy.getActive();
+            }
+
+            default:
+            {
+                return null;
+            }
+        }
+    }
+}

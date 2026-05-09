@@ -1,0 +1,104 @@
+package com.hkcapital.portflio.ui.panels.position.listeners;
+
+import com.hkcapital.portflio.model.Configuration;
+import com.hkcapital.portflio.model.MarketConditions;
+import com.hkcapital.portflio.model.Position;
+import com.hkcapital.portflio.model.SRMatrix;
+import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
+import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.ui.panels.configuartion.panels.ConfigurationSourcePanel;
+import com.hkcapital.portflio.ui.panels.marketconditions.panels.MarketConditionsSourcePanel;
+import com.hkcapital.portflio.ui.panels.position.PositionParameters;
+import com.hkcapital.portflio.ui.panels.position.panels.PositionActionsPanel;
+import com.hkcapital.portflio.ui.panels.position.tablemodels.PositionTableModel;
+import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixSourcePanel;
+import com.hkcapital.portflio.ui.panels.strategy.StrategyHeaderPanel;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import static com.hkcapital.portflio.service.positions.impl.PositionServiceImpl.calculatePosition;
+
+public class AddPositionsButtonListener implements ActionListener
+{
+    private final MarketConditionsService marketConditionsService;
+    private final MarketConditionsSourcePanel marketConditionsSourcePanel;
+    private final ConfigurationService configurationService;
+
+    private final ConfigurationSourcePanel configurationSourcePanel;
+
+    private final StrategyHeaderPanel strategyHeaderPanel;
+
+    private final List<Position> positionPnLList;
+
+    private final PositionService positionService;
+
+    final SRMatrixSourcePanel srMatrixSourcePanel;
+    final SRMatrixService srMatrixService;
+
+    private final PositionTableModel model;
+
+    final PositionActionsPanel positionActionsPanel;
+
+    public AddPositionsButtonListener(final MarketConditionsService marketConditionsService,
+                                      final MarketConditionsSourcePanel marketConditionsSourcePanel,
+                                      final ConfigurationService configurationService,
+                                      final ConfigurationSourcePanel configurationSourcePanel,
+                                      final StrategyHeaderPanel strategyHeaderPanel,
+                                      final SRMatrixSourcePanel srMatrixSourcePanel,
+                                      final SRMatrixService srMatrixService,
+                                      final  List<Position> positionPnLList,
+                                      final PositionService positionService,
+                                      final PositionTableModel model,
+                                      final PositionActionsPanel positionActionsPanel)
+    {
+        this.marketConditionsService = marketConditionsService;
+        this.marketConditionsSourcePanel = marketConditionsSourcePanel;
+        this.configurationService = configurationService;
+        this.configurationSourcePanel = configurationSourcePanel;
+        this.strategyHeaderPanel = strategyHeaderPanel;
+        this.positionPnLList = positionPnLList;
+        this.positionService = positionService;
+        this.srMatrixService = srMatrixService;
+        this.srMatrixSourcePanel = srMatrixSourcePanel;
+        this.model = model;
+        this.positionActionsPanel = positionActionsPanel;
+    }
+
+    /**
+     * Invoked when an action occurs.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        MarketConditions marketConditions = marketConditionsService.findById(marketConditionsSourcePanel.getPositionId().getIntValue());
+        Position position = new Position();
+        position.setInstrument(marketConditions.getInstrument());
+        Configuration configuration = configurationService.findById(configurationSourcePanel.getId().getIntValue());
+        SRMatrix srMatrix = srMatrixService.findById(srMatrixSourcePanel.getId().intValue());
+        position.setConfiguration(configuration);
+        position.setMarketConditions(marketConditions);
+        position.setSrMatrix(srMatrix);
+        position.setStrategy(strategyHeaderPanel.getStrategy());
+        PositionParameters positionParameter = calculatePosition(positionPnLList,configuration, marketConditions,
+                positionActionsPanel.getPositionSizeInPercent(),
+                positionActionsPanel.getCapitalPanel().getOpeningCapitalValue(),
+                positionActionsPanel.getCapitalPanel().getAllocatedCapital());
+        position.setAllowedFirePower(positionParameter.allowedFirePower());
+        position.setRemainingFirepower(positionParameter.remainingFirePower());
+        position.setCapitalRemainingFirePower(positionParameter.remainingCapital());
+        position.setPercentCapitalDeployed(positionParameter.percentCapitalDeployed());
+        position.setCurrentPositionEquity(positionParameter.capital());
+        position.setLeverage(positionParameter.leverage());
+        positionService.add(position);
+        List<Position> positionList = positionService.findByStrategyId(strategyHeaderPanel.getStrategy().getId());
+        model.updateData(positionList);
+    }
+
+
+}
