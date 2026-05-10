@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-class MarketStructure_UT
+class Gold_MarketStructure_UT
 {
     @Test
-    public void shouldCreateGoldMarketBands() throws IOException
+    public void shouldCreateGoldMarketStructure() throws IOException
     {
-
         final String instName = "GOLD";
         final String instTicker = "XAU/USD";
         final String instDesc = "Gold Standard CFD";
@@ -54,7 +53,7 @@ class MarketStructure_UT
                         .marketSession(MarketSession.builder().build())
                         .modus(Modus.builder().mod(10)
                                 .subtract(10).build())
-                        .previousDayMarketRange(range)
+                        .priceRange(range)
                         .build();
 
         List<String> rows = Files.readAllLines(Path.of("D:/gold_data/gold_candle_07_05_2026.csv"));

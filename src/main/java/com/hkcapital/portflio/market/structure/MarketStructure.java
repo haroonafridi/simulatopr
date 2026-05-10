@@ -14,7 +14,7 @@ import java.util.Optional;
 @Getter
 public class MarketStructure implements MarketFeedSubscriber
 {
-    private final PreviousDayMarketRange previousDayMarketRange;
+    private final PriceRange priceRange;
     private final MarketSession marketSession;
     private final int intervals;
     private NavigableSet<MarketPriceBand> upperBands;
@@ -22,19 +22,23 @@ public class MarketStructure implements MarketFeedSubscriber
     private final Range range;
     private boolean initCompleted = false;
     private Modus modus;
+    @Getter
+    private MarketAction action;
+    @Getter
+    private MarketRegime marketRegime;
 
     @Builder
-    public MarketStructure(final PreviousDayMarketRange previousDayMarketRange, //
+    public MarketStructure(final PriceRange priceRange, //
                            final MarketSession marketSession, //
                            final int intervals,
                            final Modus modus
     )
     {
-        this.previousDayMarketRange = previousDayMarketRange;
+        this.priceRange = priceRange;
         this.marketSession = marketSession;
         this.intervals = intervals;
         this.modus = modus;
-        this.range = RangeExtractor.of(previousDayMarketRange, modus);
+        this.range = RangeExtractor.of(priceRange, modus);
         upperBands = BandGenerator.of(range, BandType.HIGH, intervals);
         lowerBands = BandGenerator.of(range, BandType.LOW, intervals);
     }
@@ -43,6 +47,8 @@ public class MarketStructure implements MarketFeedSubscriber
     public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
         // process logic goes here
+        // update action here based on conditions
+        // update market regim here based on conditions
     }
 
     public void updateBands(Candle candle)
@@ -51,7 +57,7 @@ public class MarketStructure implements MarketFeedSubscriber
         updateBand(lowerBands, candle, candle.getLow());
     }
 
-    private void updateBand(NavigableSet<MarketPriceBand> upperBands,Candle candle, double price)
+    private void updateBand(NavigableSet<MarketPriceBand> upperBands, Candle candle, double price)
     {
         findMarketPriceBand(upperBands, price)
                 .ifPresentOrElse(marketPriceBand ->
@@ -101,6 +107,7 @@ public class MarketStructure implements MarketFeedSubscriber
             final double high = candle.getHigh();
             // HIGH bands (use candle high)
             updateMarketVisitCount(upperBands, high);
+            // LOW bands (use candle low)
             updateMarketVisitCount(lowerBands, low);
         }
     }
