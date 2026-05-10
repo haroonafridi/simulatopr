@@ -1,44 +1,45 @@
 package com.hkcapital.portflio.market.structure;
 
+import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.Instant;
 
 @Builder
 @Getter
-@ToString
-public class PreviousDayMarketRange implements PriceRange
+public class CandlePriceRange implements PriceRange
 {
-    private Instrument instrument;
-    private Double low;
-    private Double high;
-    private Instant date;
+
+    private final Candle candle;
+    public CandlePriceRange(Candle candle)
+    {
+        this.candle = candle;
+    }
 
     @Override
     public Instrument getInstrument()
     {
         // instrument has to be added
-        return instrument;
+        return null;
     }
 
     @Override
     public double getLow()
     {
-        return low;
+        return candle.getLow();
     }
 
     @Override
     public double getHigh()
     {
-        return high;
+        return candle.getHigh();
     }
 
     @Override
     public Instant getDate()
     {
-        return date;
+        return candle.getFromDate();
     }
 }

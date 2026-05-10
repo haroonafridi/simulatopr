@@ -20,6 +20,13 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
     @Override
     public int compareTo(MarketPriceBand other)
     {
+        int typeCompare = this.bandType.compareTo(other.bandType);
+
+        if (typeCompare != 0)
+        {
+            return typeCompare;
+        }
+
         return Double.compare(this.lowerBound, other.lowerBound);
     }
 
