@@ -4,10 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
-import com.hkcapital.portflio.indicators.CandleDto;
-import com.hkcapital.portflio.indicators.CandleBuilder;
-import com.hkcapital.portflio.indicators.Tick;
-import com.hkcapital.portflio.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.CandleBuilder;
+import com.hkcapital.portflio.market.indicators.CandleDto;
+import com.hkcapital.portflio.market.indicators.Tick;
+import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.api.etoro.impl.StartWebSocketRunner;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
@@ -48,6 +49,8 @@ public class EtoroLiveFeedListener implements Listener
 
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
+
+    private final MarketStructureManagerCache marketStructureManagerCache;
 
     private volatile WebSocket webSocket;
 
@@ -93,7 +96,8 @@ public class EtoroLiveFeedListener implements Listener
                                  LiveResponseMapper liveResponseMapper,
                                  InstrumentService instrumentService,
                                  ObjectMapper objectMapper,
-                                 EtoroCandleService etoroCandleService)
+                                 EtoroCandleService etoroCandleService,
+                                 MarketStructureManagerCache marketStructureManagerCache)
     {
         this.apiConfiguration = apiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
@@ -101,6 +105,14 @@ public class EtoroLiveFeedListener implements Listener
         this.instrumentService = instrumentService;
         this.objectMapper = objectMapper;
         this.etoroCandleService = etoroCandleService;
+        this.marketStructureManagerCache = marketStructureManagerCache;
+
+        candleBuilder1Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder5Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder15Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder30Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1Hour.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder4Hour.marketStructureManagerCache(marketStructureManagerCache);
     }
 
     @Override
@@ -118,7 +130,8 @@ public class EtoroLiveFeedListener implements Listener
     public CompletionStage<?> onText(WebSocket ws, CharSequence data, boolean last)
     {
         buffer.append(data);
-        if(last) {
+        if (last)
+        {
             try
             {
                 JsonNode node = objectMapper.readTree(data.toString());
@@ -162,7 +175,6 @@ public class EtoroLiveFeedListener implements Listener
                     candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 4));
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }
-
 
 
             } catch (JsonProcessingException e)
@@ -241,6 +253,7 @@ public class EtoroLiveFeedListener implements Listener
 
         logger.info("Subscribed instrument {}", instrumentId);
     }
+
     private void reconnect(String url)
     {
         if (reconnecting)
@@ -277,7 +290,7 @@ public class EtoroLiveFeedListener implements Listener
                 .build();
     }
 
-    public CandleDto toCandle(final Tick tick, Unit unit , Integer interval)
+    public CandleDto toCandle(final Tick tick, Unit unit, Integer interval)
     {
         return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
                 unit, interval);

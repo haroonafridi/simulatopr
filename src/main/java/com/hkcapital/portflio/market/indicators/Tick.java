@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.indicators;
+package com.hkcapital.portflio.market.indicators;
 
 import lombok.Builder;
 import lombok.ToString;

@@ -1,5 +1,6 @@
-package com.hkcapital.portflio.market.structure;
+package com.hkcapital.portflio.market.structure.ut;
 
+import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-class Gold_MarketStructure_UT
+class Gold_MarketStructure_07_05_UT
 {
     @Test
     public void shouldCreateGoldMarketStructure() throws IOException
@@ -75,21 +76,21 @@ class Gold_MarketStructure_UT
                 .builder()
                 .low(4775)
                 .high(4800).build();
-        marketStructure.updateBands(newCandle0);
+        marketStructure.createOrUpdateBands(newCandle0);
 
         Candle newCandle1 = Candle
                 .builder()
                 .low(4775)
                 .high(4789)
                 .build();
-        marketStructure.updateBands(newCandle1);
+        marketStructure.createOrUpdateBands(newCandle1);
 
         Candle newCandle2 = Candle
                 .builder()
                 .low(4660)
                 .high(4689)
                 .build();
-        marketStructure.updateBands(newCandle2);
+        marketStructure.createOrUpdateBands(newCandle2);
 
         assertBandsAfterNewCandleArrival("Assert upper bands after adding new bands", marketStructure.getUpperBands(), buildExpectedModifiedUpperBands());
         assertBandsAfterNewCandleArrival("Assert lower bands after adding new bands", marketStructure.getLowerBands(), buildModifiedExpectedLowerBands());

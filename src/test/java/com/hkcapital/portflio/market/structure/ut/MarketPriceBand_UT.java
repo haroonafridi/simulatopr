@@ -1,5 +1,8 @@
-package com.hkcapital.portflio.market.structure;
+package com.hkcapital.portflio.market.structure.ut;
 
+import com.hkcapital.portflio.market.structure.BandKey;
+import com.hkcapital.portflio.market.structure.BandType;
+import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

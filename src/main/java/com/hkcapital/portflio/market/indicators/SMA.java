@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.indicators;
+package com.hkcapital.portflio.market.indicators;
 import java.util.LinkedList;
 import java.util.Queue;
 

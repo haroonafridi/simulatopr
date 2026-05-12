@@ -3,7 +3,7 @@ package com.hkcapital.portflio.etoro.websocket.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
-import com.hkcapital.portflio.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.Unit;
 import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.service.api.etoro.impl.StartWebSocketRunner;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
@@ -69,6 +69,8 @@ public class Gold1MinStrategyE2ETest
 
     @Autowired
     private OrderManagerService orderManagerService;
+
+
 
     CountDownLatch done = new CountDownLatch(1);
 
@@ -242,7 +244,8 @@ public class Gold1MinStrategyE2ETest
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService);
+                etoroCandleService,
+                null); // add market cach here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create(StartWebSocketRunner.ETORO_WEB_SOCKET_URL),
@@ -269,7 +272,8 @@ public class Gold1MinStrategyE2ETest
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService);
+                etoroCandleService,
+                null); //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create(StartWebSocketRunner.ETORO_WEB_SOCKET_URL),
@@ -289,7 +293,7 @@ public class Gold1MinStrategyE2ETest
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService);
+                etoroCandleService, null);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create(StartWebSocketRunner.ETORO_WEB_SOCKET_URL),

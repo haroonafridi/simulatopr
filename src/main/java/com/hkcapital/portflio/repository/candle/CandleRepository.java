@@ -4,12 +4,19 @@ import com.hkcapital.portflio.model.Candle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface CandleRepository extends JpaRepository<Candle, Integer>
 {
-//    List<Candle> findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(Integer instrumentID, Integer sourceTimeFrame, //
-//                                                                                           String sourceTimeFrameUnit, //
-//                                                                                           Instant startDate, //
-//                                                                                           Instant endDate);
+    List<Candle> findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(
+            Integer instrumentID,
+            Integer sourceTimeFrame,
+            String timeFrameUnit,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
 
 }

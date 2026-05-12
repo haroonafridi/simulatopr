@@ -60,7 +60,7 @@ public class WebSocketClientTest
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService);
+                etoroCandleService, null);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
@@ -79,7 +79,7 @@ public class WebSocketClientTest
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService);
+                etoroCandleService, null);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
@@ -100,7 +100,7 @@ public class WebSocketClientTest
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService);
+                etoroCandleService, null); // //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),

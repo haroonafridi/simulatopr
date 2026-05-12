@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.candle.CandleResponseDto;
 import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
-import com.hkcapital.portflio.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.Unit;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.InstrumentCandles;
 import com.hkcapital.portflio.repository.candle.CandleRepository;
@@ -73,19 +73,15 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
     }
 
     @Override
-    public List<Candle> findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(Integer instrumentID,
-                                                                                                  Integer sourceTimeFrame,
-                                                                                                  String sourceTimeFrameUnit,
-                                                                                                  Instant startDate, Instant endDate)
+    public List<Candle> findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(Integer instrumentID, Integer timeFrame, String timeFrameUnit, LocalDateTime startDate, LocalDateTime endDate)
     {
-//        return candleRepository.
-//                findCandleByInstrumentIDAndSourceTimeFrameAndTimeFrameUnitFromDateBetween(instrumentID,
-//                        sourceTimeFrame,
-//                        sourceTimeFrameUnit,
-//                        startDate, endDate);
-
-        return null;
+        return candleRepository.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(instrumentID,
+                timeFrame,
+                timeFrameUnit,
+                startDate,
+                endDate);
     }
+
 
     @Override
     public void removeAll()

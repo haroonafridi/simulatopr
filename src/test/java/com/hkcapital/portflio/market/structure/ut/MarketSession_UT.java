@@ -1,5 +1,6 @@
-package com.hkcapital.portflio.market.structure;
+package com.hkcapital.portflio.market.structure.ut;
 
+import com.hkcapital.portflio.market.structure.MarketSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

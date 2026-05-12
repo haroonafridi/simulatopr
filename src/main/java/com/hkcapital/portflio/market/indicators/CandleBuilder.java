@@ -1,5 +1,6 @@
-package com.hkcapital.portflio.indicators;
-
+package com.hkcapital.portflio.market.indicators;
+import com.hkcapital.portflio.market.structure.MarketStructure;
+import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.CandleSource;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
@@ -30,6 +31,7 @@ public class CandleBuilder
     private final EMA ema = new EMA(14);
     private final SMA sma = new SMA(14);
     private EtoroCandleService candleService = null;
+    private MarketStructureManagerCache marketStructureManagerCache;
 
     public CandleBuilder(EtoroCandleService candleService)
     {
@@ -112,12 +114,13 @@ public class CandleBuilder
                     .source(CandleSource.INTERNAL.getSource())
                     .build();
 
+            MarketStructure structure = marketStructureManagerCache.get("GOLD_15M");
 
+            if (structure != null && candle.getTimeFrame() == 15)
+            {
+                structure.createOrUpdateBands(candle);
+            }
             candleService.save(candle);
-
-
-
-
             logger.info("Candle closed event fired: rsi = {}  atr = {}, ema = {} sma = {}, {} ", rsiValue, atrVal, emaVal, smaVal, closedCandle);
         }
         return this;
@@ -141,7 +144,6 @@ public class CandleBuilder
                 subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeUnit, interval));
     }
 
-
     public CandleBuilder ofTimeFrame(Unit timeFrame)
     {
         this.timeFrame = timeFrame;
@@ -151,6 +153,13 @@ public class CandleBuilder
     public CandleBuilder ofInterval(Integer interval)
     {
         this.interval = interval;
+        return this;
+    }
+
+
+    public CandleBuilder marketStructureManagerCache(MarketStructureManagerCache marketStructureManagerCache)
+    {
+        this.marketStructureManagerCache = marketStructureManagerCache;
         return this;
     }
 

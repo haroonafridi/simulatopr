@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.indicators;
 
+import com.hkcapital.portflio.market.indicators.Unit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

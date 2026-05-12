@@ -27,7 +27,6 @@ public class Candle
     private double low;
     private double close;
     private double volume;
-
     private Integer timeFrame;
     private String timeFrameUnit;
     private String source;

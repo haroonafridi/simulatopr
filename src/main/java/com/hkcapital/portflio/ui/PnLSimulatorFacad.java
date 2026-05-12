@@ -3,6 +3,7 @@ package com.hkcapital.portflio.ui;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.hkcapital.portflio.DataObject;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.model.TradingSessions;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
@@ -63,8 +64,10 @@ public class PnLSimulatorFacad
     private final EtoroApiConfiguration etoroApiInformationService;
 
     private DataObject<String, String> dataObject = new DataObject<>();
-
+    private final MarketStructureManagerCache marketStructureManagerCache;
     private final EtoroApiConfiguration etoroApiConfiguration;
+
+
 
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
@@ -80,6 +83,7 @@ public class PnLSimulatorFacad
                              SRMatrixService srMatrixService,
                              ProfileService profileService,
                              EtoroApiConfiguration etoroApiConfiguration,
+                             MarketStructureManagerCache marketStructureManagerCache,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -96,7 +100,7 @@ public class PnLSimulatorFacad
         this.srMatrixService = srMatrixService;
         this.profileService = profileService;
         this.etoroApiConfiguration = etoroApiConfiguration;
-
+        this.marketStructureManagerCache = marketStructureManagerCache;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -264,6 +268,7 @@ public class PnLSimulatorFacad
                 srMatrixPanel.setVisible(true);
             }
         });
+        this.marketStructureManagerCache.openMarket();
         etoroWebSocketManagerService.subscribeAndSchedule();
     }
 

@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.indicators;
+package com.hkcapital.portflio.market.indicators;
 
 import java.util.ArrayList;
 import java.util.List;

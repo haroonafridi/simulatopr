@@ -2,6 +2,9 @@ package com.hkcapital.portflio.indicators;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portflio.market.indicators.CandleDto;
+import com.hkcapital.portflio.market.indicators.Tick;
+import com.hkcapital.portflio.market.indicators.Unit;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portflio.service.api.etoro.websocket.Message;

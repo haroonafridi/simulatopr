@@ -1,5 +1,9 @@
-package com.hkcapital.portflio.market.structure;
+package com.hkcapital.portflio.market.structure.ut;
 
+import com.hkcapital.portflio.market.structure.Modus;
+import com.hkcapital.portflio.market.structure.PreviousDayMarketRange;
+import com.hkcapital.portflio.market.structure.Range;
+import com.hkcapital.portflio.market.structure.RangeExtractor;
 import com.hkcapital.portflio.model.Instrument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,10 @@
 package com.hkcapital.portflio.indicators;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portflio.market.indicators.CandleBuilder;
+import com.hkcapital.portflio.market.indicators.CandleDto;
+import com.hkcapital.portflio.market.indicators.Tick;
+import com.hkcapital.portflio.market.indicators.Unit;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.api.etoro.websocket.Message;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +21,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static com.hkcapital.portflio.indicators.Unit.MINUTE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +37,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     @DisplayName("Should aggregate market ticks into a minute candle")
     public void shouldAggregateMarketTicksInMinuteCandles()
     {
-        List<CandleDto> candles = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1)//
+        List<CandleDto> candles = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(1)//
                 .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
                         .time(Instant.parse("2007-12-03T10:15:00.00Z")).val(5400).build()))//
                 .addAndUpdateCandle(toOneMinuteCandle(Tick.builder().instrument(GOLD_ETORO_INSTRUMENT)
@@ -66,7 +69,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     @Test
     public void shouldBuildOneMinuteTwoCandles() throws IOException
     {
-        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1);
+        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(1);
         for (String line : loadData(gold_1_minute_candle))
         {
             if (!line.contains(expectedText)) continue;
@@ -91,7 +94,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     @Test
     public void shouldExtractFirstCandle() throws IOException
     {
-        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1);
+        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(1);
         for (String line : loadData(gold_1_minute_candle))
         {
             if (!line.contains(expectedText)) continue;
@@ -100,7 +103,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
                 candleBuilder.addAndUpdateCandle(toOneMinuteCandle(tickFromRate(rateFromMessage(message))));
             }
         }
-        List<CandleDto> candles = candleBuilder.fromTo(MINUTE, 2);
+        List<CandleDto> candles = candleBuilder.fromTo(Unit.MINUTE, 2);
         assertEquals(candles.size(), 2);
         CandleDto candle15 = candles.get(0);
         assertEquals(4999.15, candle15.getLow());
@@ -113,7 +116,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     public void btcOneMinuteLiveFeed() throws IOException
     {
 
-        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1);
+        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(1);
 
         for (String line : loadData(gold_1_minute_multiple_candle))
         {
@@ -133,7 +136,7 @@ class CandleBuilderTest extends CandleBuilderAbstract
     @Test
     public void shouldBuildOneMinuteCandlesFromCSV() throws IOException
     {
-        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(MINUTE).ofInterval(1);
+        CandleBuilder candleBuilder = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
         for (String line : loadData(gold_live_ticks_etoro))
         {

@@ -1,5 +1,8 @@
 package com.hkcapital.portflio.indicators;
 
+import com.hkcapital.portflio.market.indicators.CandleDto;
+import com.hkcapital.portflio.market.indicators.EMA;
+import com.hkcapital.portflio.market.indicators.Unit;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

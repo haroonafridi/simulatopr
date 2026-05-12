@@ -1,7 +1,7 @@
 package com.hkcapital.portflio.service.schedule.impl;
 
 import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
-import com.hkcapital.portflio.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.Unit;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.schedule.ScheduleService;

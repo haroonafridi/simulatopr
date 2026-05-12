@@ -1,6 +1,6 @@
 package com.hkcapital.portflio.service.candle.etoro.impl;
 
-import com.hkcapital.portflio.indicators.CandleBuilder;
+import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import lombok.Builder;
 import lombok.Getter;
 
