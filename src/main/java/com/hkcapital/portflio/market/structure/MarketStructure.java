@@ -6,20 +6,26 @@ import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.marketfeed.subscriber.MarketFeedSubscriber;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Optional;
 
 @Getter
-public class MarketStructure implements MarketFeedSubscriber
+@Slf4j
+public class MarketStructure implements MarketFeedSubscriber , Flushable
 {
+    private final Logger logger = LoggerFactory.getLogger(MarketStructure.class);
     private final PriceRange priceRange;
     private final MarketSession marketSession;
     private final int intervals;
     private NavigableSet<MarketPriceBand> upperBands;
     private NavigableSet<MarketPriceBand> lowerBands;
     private final Range range;
+    @Getter
     private boolean initCompleted = false;
     private Modus modus;
     @Getter
@@ -48,25 +54,33 @@ public class MarketStructure implements MarketFeedSubscriber
     {
         // process logic goes here
         // update action here based on conditions
-        // update market regim here based on conditions
+        // update market regime here based on conditions
     }
 
-    public void updateBands(Candle candle)
+    public void createOrUpdateBands(Candle candle)
     {
         updateBand(upperBands, candle, candle.getHigh());
         updateBand(lowerBands, candle, candle.getLow());
+
+        if(lowerBands != null) {
+            lowerBands.forEach(b -> logger.info(b.toString()));
+        }
+
+        if(upperBands != null) {
+            upperBands.forEach(b -> logger.info(b.toString()));
+        }
     }
 
-    private void updateBand(NavigableSet<MarketPriceBand> upperBands, Candle candle, double price)
+    private void updateBand(NavigableSet<MarketPriceBand> band, Candle candle, double price)
     {
-        findMarketPriceBand(upperBands, price)
+        findMarketPriceBand(band, price)
                 .ifPresentOrElse(marketPriceBand ->
                 {
-                    updateMarketVisitCount(upperBands, price);
+                    updateMarketVisitCount(band, price);
                 }, () ->
                 {
                     createNewBands(candle);
-                    updateMarketVisitCount(upperBands, price);
+                    updateMarketVisitCount(band, price);
                 });
     }
 
@@ -80,15 +94,18 @@ public class MarketStructure implements MarketFeedSubscriber
                 BandGenerator.of(newRange, BandType.HIGH, intervals);
         final NavigableSet<MarketPriceBand> newLowerBands = //
                 BandGenerator.of(newRange, BandType.LOW, intervals);
-
-        for (MarketPriceBand band : newUpperBands)
-        {
-            upperBands.add(band);
-        }
+        // merge HIGH bands
+        addBands(newUpperBands, upperBands);
         // merge LOW bands
-        for (MarketPriceBand band : newLowerBands)
+        addBands(newLowerBands, lowerBands);
+    }
+
+    private void addBands(NavigableSet<MarketPriceBand> newBands,
+                          NavigableSet<MarketPriceBand> existingBands)
+    {
+        for (MarketPriceBand band : newBands)
         {
-            lowerBands.add(band);
+            existingBands.add(band);
         }
     }
 
@@ -98,6 +115,7 @@ public class MarketStructure implements MarketFeedSubscriber
         {
             return;
         }
+
 
         initCompleted = true;
 
@@ -109,6 +127,14 @@ public class MarketStructure implements MarketFeedSubscriber
             updateMarketVisitCount(upperBands, high);
             // LOW bands (use candle low)
             updateMarketVisitCount(lowerBands, low);
+        }
+
+        if(lowerBands != null) {
+            lowerBands.forEach(b -> logger.info(b.toString()));
+        }
+
+        if(upperBands != null) {
+            upperBands.forEach(b -> logger.info(b.toString()));
         }
     }
 
@@ -141,5 +167,14 @@ public class MarketStructure implements MarketFeedSubscriber
         }
         return Optional.empty();
     }
+
+    @Override
+    public void flush()
+    {
+        upperBands.clear(); // flush logic here
+        upperBands.clear(); //
+        initCompleted = false;
+    }
+
 
 }
