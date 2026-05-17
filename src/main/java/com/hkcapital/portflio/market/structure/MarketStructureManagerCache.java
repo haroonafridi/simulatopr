@@ -1,7 +1,9 @@
 package com.hkcapital.portflio.market.structure;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,53 +18,45 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import com.hkcapital.portflio.service.registry.Service;
 
 @Component
 @Slf4j
-public class MarketStructureManagerCache
+public class MarketStructureManagerCache implements Service
 {
     private Logger logger = LoggerFactory.getLogger(MarketStructureManagerCache.class);
-    private final Map<String, MarketStructure> structures =
+    private final Map<MarketTypes, MarketStructure> structures =
             new ConcurrentHashMap<>();
-
     private final EtoroCandleService candleService;
-
     private final InstrumentService instrumentService;
 
-    public MarketStructureManagerCache(EtoroCandleService candleService,
-                                       InstrumentService instrumentService)
+    private final ObjectMapper objectMapper;
+
+    public MarketStructureManagerCache(final EtoroCandleService candleService,
+                                       final InstrumentService instrumentService,
+                                       final ObjectMapper objectMapper)
     {
         this.candleService = candleService;
         this.instrumentService = instrumentService;
+        this.objectMapper = objectMapper;
     }
 
-    public void register(String key, MarketStructure structure)
+    public void register(MarketTypes key, MarketStructure structure)
     {
         structures.put(key, structure);
     }
 
-    public MarketStructure get(String key)
+    public MarketStructure get(MarketTypes key)
     {
         return structures.get(key);
     }
-
-    public void remove(String key)
-    {
-        structures.remove(key);
-    }
-
-    public boolean contains(String key)
-    {
-        return structures.containsKey(key);
-    }
-
     @Scheduled(cron = "0 0 23 * * MON-FRI")
     public void closeMarket()
     {
         logger.info("Flushing cache");
-        if (structures.get("15_mins_market") != null)
+        if (structures.get(MarketTypes.GOLD_15_MIN) != null)
         {
-            structures.get("15_mins_market").flush();
+            structures.get(MarketTypes.GOLD_15_MIN).flush();
         }
     }
 
@@ -72,7 +66,7 @@ public class MarketStructureManagerCache
         logger.info("Creating market cache..");
 
         LocalDateTime start = LocalDate.now()
-                .minusDays(1)
+                .minusDays(2)
                 .atStartOfDay();
 
         LocalDateTime end = LocalDate.now()
@@ -84,12 +78,11 @@ public class MarketStructureManagerCache
 
         double low = candleList.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
         double high = candleList.stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
-
+        logger.info("Day range created low = {} , high = {}",low, high);
         Instrument instrument = instrumentService.findAll()
                 .stream() //
                 .filter(inst -> inst.getActive()) //
                 .findAny().get();
-
         final PreviousDayMarketRange
                 priceRange = PreviousDayMarketRange.builder()
                 .instrument(instrument)
@@ -100,13 +93,37 @@ public class MarketStructureManagerCache
 
         MarketStructure structure = MarketStructure.builder().priceRange(priceRange)
                 .modus(Modus.builder().mod(10).subtract(10).build())
+                .objectMapper(objectMapper)
+                .instrument(instrument)
                 .marketSession(null)
                 .intervals(10)
                 .build();
 
         structure.init(candleList);
 
-        register("GOLD_15M", structure);
+        register(MarketTypes.GOLD_15_MIN, structure);
+    }
+
+    public void initDefaultMarket(final Instrument instrument,
+                                  final PriceRange priceRange,
+                                  final Modus modus,
+                                  final MarketSession marketSession,
+                                  final Integer interval,
+                                  final MarketTypes marketKey,
+                                  final ObjectMapper objectMapper)
+    {
+
+        MarketStructure structure = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder()
+                        .mod(modus.getMod())
+                        .subtract(modus.getSubtract())
+                        .build())
+                .marketSession(marketSession)
+                .objectMapper(objectMapper)
+                .instrument(instrument)
+                .intervals(interval)
+                .build();
+        register(marketKey, structure);
     }
 
 }

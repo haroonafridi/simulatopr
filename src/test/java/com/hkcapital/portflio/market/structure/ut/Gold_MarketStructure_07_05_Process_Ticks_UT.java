@@ -1,12 +1,20 @@
 package com.hkcapital.portflio.market.structure.ut;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hkcapital.portflio.etoro.TickHelper;
 import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -15,8 +23,17 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-class Gold_MarketStructure_07_05_UT
+class Gold_MarketStructure_07_05_Process_Ticks_UT
 {
+    static ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().build());
+    @BeforeAll
+    public static void beforeAll()
+    {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+        mapper.registerModule(new JavaTimeModule());
+    }
+
     @Test
     public void shouldCreateGoldMarketStructure() throws IOException
     {
@@ -52,12 +69,16 @@ class Gold_MarketStructure_07_05_UT
                         .builder()
                         .intervals(10)
                         .marketSession(MarketSession.builder().build())
+                        .instrument(instrument)
+                        .marketTypes(MarketTypes.GOLD_15_MIN)
+                        .objectMapper(mapper)
                         .modus(Modus.builder().mod(10)
                                 .subtract(10).build())
                         .priceRange(range)
                         .build();
 
-        List<String> rows = Files.readAllLines(Path.of("D:/gold_data/07_05_2026/gold_candle_07_05_2026.csv"));
+        //load previous day candles
+        List<String> rows = loadFile("D:/gold_data/07_05_2026/gold_candle_07_05_2026.csv");
         List<Candle> candles = new ArrayList<>();
         for (String row : rows)
         {
@@ -68,36 +89,13 @@ class Gold_MarketStructure_07_05_UT
                     .build());
         }
         marketStructure.init(candles);
+        //load ticks
+        List<String> ticks = loadFile("D:/gold_data/08_05_2026/gold_tick_08_05_2026.csv");
 
-        assertBandsAfterNewCandleArrival("Assert lower bands ", marketStructure.getLowerBands(), buildExpectedInitialLowerBands());
-
-        assertBandsAfterNewCandleArrival("Assert upper bands ", marketStructure.getUpperBands(), buildExpectedInitialUpperBands());
-
-        Candle newCandle0 = Candle
-                .builder()
-                .low(4775)
-                .high(4800).build();
-
-        marketStructure.createOrUpdateBands(newCandle0);
-
-        Candle newCandle1 = Candle
-                .builder()
-                .low(4775)
-                .high(4789)
-                .build();
-        marketStructure.createOrUpdateBands(newCandle1);
-
-        Candle newCandle2 = Candle
-                .builder()
-                .low(4660)
-                .high(4689)
-                .build();
-
-        marketStructure.createOrUpdateBands(newCandle2);
-
-        assertBandsAfterNewCandleArrival("Assert upper bands after adding new bands", marketStructure.getUpperBands(), buildExpectedModifiedUpperBands());
-
-        assertBandsAfterNewCandleArrival("Assert lower bands after adding new bands", marketStructure.getLowerBands(), buildModifiedExpectedLowerBands());
+        for (String tick : ticks)
+        {
+            marketStructure.process(TickHelper.rateFromString(tick), null);
+        }
     }
 
     private void assertBandsAfterNewCandleArrival(final String heading, final NavigableSet<MarketPriceBand> actualBands,
@@ -554,5 +552,14 @@ class Gold_MarketStructure_07_05_UT
         return new TreeSet<>(List.of(hb0, hb1, hb2, hb3, hb4, hb5, hb6, hb7, hb8, hb9, hb10, hb11, hb12, hb13, hb14));
     }
 
+    public InputStream loadResource(String path)
+    {
+        return getClass().getResourceAsStream(path);
+    }
 
+
+    public List<String> loadFile(String path) throws IOException
+    {
+        return Files.readAllLines(Path.of(path));
+    }
 }

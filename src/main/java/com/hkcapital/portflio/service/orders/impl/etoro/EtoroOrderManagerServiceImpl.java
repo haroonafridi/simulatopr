@@ -10,7 +10,9 @@ import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseD
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.Unit;
 import com.hkcapital.portflio.market.structure.MarketAction;
-import com.hkcapital.portflio.market.structure.MarketRegime;
+import com.hkcapital.portflio.market.structure.MarketStructure;
+import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketTypes;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.model.SRMatrix;
@@ -49,11 +51,16 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final StrategyService strategyService;
     private final PositionService positionService;
 
+    private MarketAction marketAction = MarketAction.NONE;
+
+    private final MarketStructureManagerCache marketStructureManagerCache;
+
     public EtoroOrderManagerServiceImpl(final EtoroOrderRepository orderRepository, //
                                         final EtoroApiService etoroApiService,
                                         final InstrumentService instrumentService,
                                         final StrategyService strategyService,
-                                        final PositionService positionService
+                                        final PositionService positionService,
+                                        final MarketStructureManagerCache marketStructureManagerCache
     )
     {
         this.orderRepository = orderRepository;
@@ -61,6 +68,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         this.instrumentService = instrumentService;
         this.strategyService = strategyService;
         this.positionService = positionService;
+        this.marketStructureManagerCache = marketStructureManagerCache;
     }
 
     /**
@@ -173,12 +181,13 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     public void process(LiveInstrumentRate instrumentRate, SignalBuilder signalBuilder)
     {
 
-//        marketStructure.process(instrumentRate, signalBuilder);
-//
-//        final MarketAction action = marketStructure.getAction();
-//
-//        final MarketRegime marketRegime = marketStructure.getMarketRegime();
-
+        if (marketStructureManagerCache.get(MarketTypes.GOLD_15_MIN) != null)
+        {
+            MarketStructure marketStructure = marketStructureManagerCache.get(MarketTypes.GOLD_15_MIN);
+            marketStructure.process(instrumentRate, signalBuilder);
+            marketAction = marketStructure.getMarketAction();
+        }
+        logger.info("Market action is {}", marketAction.getValue());
         Instrument instrument = instrumentService.findAll().stream().filter(Instrument::getActive).findAny()//
                 .get();
 

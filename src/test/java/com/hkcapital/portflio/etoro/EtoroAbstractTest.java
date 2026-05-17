@@ -17,7 +17,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
@@ -41,6 +44,12 @@ public abstract class EtoroAbstractTest
     public InputStream loadResource(String path)
     {
         return getClass().getResourceAsStream(path);
+    }
+
+
+    public List<String> loadFile(String path) throws IOException
+    {
+        return Files.readAllLines(Path.of(path));
     }
 
     public EtoroPortfolioResponseDTO loadPortfolio(String path) throws IOException

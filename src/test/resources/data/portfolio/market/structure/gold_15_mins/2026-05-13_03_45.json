@@ -1,0 +1,100 @@
+[
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4660_4670",
+    "lowerBound": 4660.0,
+    "upperBound": 4670.0,
+    "marketVisitCount": 6
+  },
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4670_4680",
+    "lowerBound": 4670.0,
+    "upperBound": 4680.0,
+    "marketVisitCount": 5
+  },
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4680_4690",
+    "lowerBound": 4680.0,
+    "upperBound": 4690.0,
+    "marketVisitCount": 2
+  },
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4690_4700",
+    "lowerBound": 4690.0,
+    "upperBound": 4700.0,
+    "marketVisitCount": 2
+  },
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4700_4710",
+    "lowerBound": 4700.0,
+    "upperBound": 4710.0,
+    "marketVisitCount": 4
+  },
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4710_4720",
+    "lowerBound": 4710.0,
+    "upperBound": 4720.0,
+    "marketVisitCount": 15
+  },
+  {
+    "bandType": "LOW",
+    "bandKey": "low_4720_4730",
+    "lowerBound": 4720.0,
+    "upperBound": 4730.0,
+    "marketVisitCount": 1
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4660_4670",
+    "lowerBound": 4660.0,
+    "upperBound": 4670.0,
+    "marketVisitCount": 1
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4670_4680",
+    "lowerBound": 4670.0,
+    "upperBound": 4680.0,
+    "marketVisitCount": 5
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4680_4690",
+    "lowerBound": 4680.0,
+    "upperBound": 4690.0,
+    "marketVisitCount": 6
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4690_4700",
+    "lowerBound": 4690.0,
+    "upperBound": 4700.0,
+    "marketVisitCount": 2
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4700_4710",
+    "lowerBound": 4700.0,
+    "upperBound": 4710.0,
+    "marketVisitCount": 1
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4710_4720",
+    "lowerBound": 4710.0,
+    "upperBound": 4720.0,
+    "marketVisitCount": 7
+  },
+  {
+    "bandType": "HIGH",
+    "bandKey": "high_4720_4730",
+    "lowerBound": 4720.0,
+    "upperBound": 4730.0,
+    "marketVisitCount": 13
+  }
+]

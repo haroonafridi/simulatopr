@@ -29,7 +29,7 @@ public class EtoroTestServer
     private static final String userKey = "dummyUserKey";
     private static final Map<Session, Set<String>> subscriptions = new ConcurrentHashMap<>();
     private final static String GOLD_NASDAQ100_LIVE_FEED_FILE_PATH = //
-            "D:/gold_data/gold_ticks_20_04_2026.csv";
+            "D:/gold_data/06_05_2026/gold_tick_06_05_2026.csv";
 
     @OnMessage
     public void onMessage(Session session, String message)

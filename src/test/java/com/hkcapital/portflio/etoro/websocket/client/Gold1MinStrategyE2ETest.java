@@ -31,47 +31,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@ActiveProfiles("test")
-public class Gold1MinStrategyE2ETest
+
+public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
 {
-    private static Server server;
-    @Autowired
-    private EtoroApiConfiguration etoroApiConfiguration;
-
-    @Autowired
-    private StrategyService strategyService;
-
-    @Autowired
-    private LiveResponseMapper liveResponseMapper;
-
-    @Autowired
-    private MarketFeedObserver marketFeedObserver;
-
-    @Autowired
-    private MarketFeedDbWriterSub marketFeedDbWriter;
-
-    @Autowired
-    private InstrumentService instrumentService;
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private EtoroCandleService etoroCandleService;
-
-    @Autowired
-    private ConfigurationService configurationService;
-
-    @Autowired
-    private MarketConditionsService marketConditionsService;
-    @Autowired
-    private SRMatrixService srMatrixService;
-
-    @Autowired
-    private OrderManagerService orderManagerService;
-
-
-
     CountDownLatch done = new CountDownLatch(1);
 
     @Test
@@ -194,8 +156,6 @@ public class Gold1MinStrategyE2ETest
                 .stopLoss(10d)
                 .takeProfit(10d)
                 .build();
-
-
         Position pos1Hour = Position.builder()
                 .instrument(gold)
                 .leverage(20)
@@ -233,25 +193,13 @@ public class Gold1MinStrategyE2ETest
                 .stopLoss(10d)
                 .takeProfit(30d)
                 .build();
-
         strategy.setPositionPnLList(List.of(pos1Min, pos15Min, pos1Hour, pos4Hour));
         strategyService.addStrategy(strategy);
         TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
-        HttpClient client = HttpClient.newHttpClient();
-        EtoroLiveFeedListener etoroLiveFeedService = new EtoroLiveFeedListener(etoroApiConfiguration, //
-                marketFeedObserver, //
-                liveResponseMapper, //
-                instrumentService, //
-                objectMapper,
-                etoroCandleService,
-                null); // add market cach here
-        WebSocket ws = client.newWebSocketBuilder()
-                .buildAsync(
-                        URI.create(StartWebSocketRunner.ETORO_WEB_SOCKET_URL),
-                        etoroLiveFeedService)
-                .join();
-        etoroLiveFeedService.subscribeInstrument(ws, "18");
+
+        connect(gold);
+
         Thread.sleep(10000 * 16000);
     }
 

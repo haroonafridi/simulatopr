@@ -3,6 +3,7 @@ package com.hkcapital.portflio.ui.panels.strategy;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.broker.etoro.master.Instruments;
+import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.model.Strategy;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -46,6 +47,10 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JButton automaticTrading = new JButton("Activate Auto Trading");
 
+    private final JButton closeMarket = new JButton("Close Market");
+
+    private final JButton openMarket = new JButton("Open Market");
+
     private final JTable strategyTable;
     private final StrategyTableModel<Strategy> tableModel;
 
@@ -57,6 +62,8 @@ public class StrategyHeaderPanel extends UIBag
 
     private final OrderManagerService orderManagerService;
 
+    private final MarketStructureManagerCache marketStructureManagerCache;
+
 
     public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
     {
@@ -65,6 +72,7 @@ public class StrategyHeaderPanel extends UIBag
         this.strategyService = (StrategyService) serviceRegistery.getService(Service.StrategyService);
         this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
         this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
+        this.marketStructureManagerCache = (MarketStructureManagerCache) serviceRegistery.getService(Service.MarketStructureManagerCache);;
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
@@ -82,8 +90,10 @@ public class StrategyHeaderPanel extends UIBag
         topPanel.add(active);
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
-        topPanel.add(manualOrderButton);
+        //topPanel.add(manualOrderButton);
         topPanel.add(automaticTrading);
+        topPanel.add(closeMarket);
+        topPanel.add(openMarket);
         add(topPanel, BorderLayout.NORTH);
         strategyTable = new JTable(tableModel);
         int rowCountToShow = 50;
@@ -128,6 +138,16 @@ public class StrategyHeaderPanel extends UIBag
                 TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
                 automaticTrading.setText("Deactivate Auto Trading");
             }
+        });
+
+        closeMarket.addActionListener(a ->
+        {
+            marketStructureManagerCache.closeMarket();
+        });
+
+        openMarket.addActionListener(a ->
+        {
+            marketStructureManagerCache.openMarket();
         });
 
         strategyTable.addMouseListener(new StrategyEditDialogueMouseHandler(tableModel, strategyTable, strategyService));

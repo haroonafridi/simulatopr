@@ -17,6 +17,7 @@ public interface Service
     String OrderManagerService = "OrderManagerService";
 
     String EtoroWebSocketManagerService = "EtoroWebSocketManagerService";
+    String MarketStructureManagerCache = "MarketStructureManagerCache";
 
     String SRMatrixService = "SRMatrixService";
 

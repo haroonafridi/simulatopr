@@ -1,0 +1,156 @@
+ [
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4660.0,
+        "upperBound" : 4670.0
+      },
+      "lowerBound": 4660.0,
+      "upperBound": 4670.0,
+      "marketVisitCount": 6
+    },
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4670.0,
+        "upperBound" : 4680.0
+      },
+      "lowerBound": 4670.0,
+      "upperBound": 4680.0,
+      "marketVisitCount": 5
+    },
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4680.0,
+        "upperBound" : 4690.0
+      },
+      "lowerBound": 4680.0,
+      "upperBound": 4690.0,
+      "marketVisitCount": 2
+    },
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4690.0,
+        "upperBound" : 4700.0
+      },
+      "lowerBound" : 4690.0,
+      "upperBound" : 4700.0,
+      "marketVisitCount": 2
+    },
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4700.0,
+        "upperBound" : 4710.0
+      },
+      "lowerBound": 4700.0,
+      "upperBound": 4710.0,
+      "marketVisitCount": 1
+    },
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4710.0,
+        "upperBound" : 4720.0
+      },
+      "lowerBound": 4710.0,
+      "upperBound": 4720.0,
+      "marketVisitCount": 11
+    },
+    {
+      "bandType": "LOW",
+      "bandKey": {
+        "bandType" : "LOW",
+        "lowerBound" : 4720.0,
+        "upperBound" : 4730.0
+      },
+      "lowerBound": 4720.0,
+      "upperBound": 4730.0,
+      "marketVisitCount": 0
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4660.0,
+        "upperBound" : 4670.0
+      },
+      "lowerBound": 4660.0,
+      "upperBound": 4670.0,
+      "marketVisitCount": 1
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4670.0,
+        "upperBound" : 4680.0
+      },
+      "lowerBound": 4670.0,
+      "upperBound": 4680.0,
+      "marketVisitCount": 5
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4680.0,
+        "upperBound" : 4690.0
+      },
+      "lowerBound": 4680.0,
+      "upperBound": 4690.0,
+      "marketVisitCount": 6
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4690.0,
+        "upperBound" : 4700.0
+      },
+      "lowerBound": 4690.0,
+      "upperBound": 4700.0,
+      "marketVisitCount": 2
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4700.0,
+        "upperBound" : 4710.0
+      },
+      "lowerBound": 4700.0,
+      "upperBound": 4710.0,
+      "marketVisitCount": 1
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4710.0,
+        "upperBound" : 4720.0
+      },
+      "lowerBound": 4710.0,
+      "upperBound": 4720.0,
+      "marketVisitCount": 4
+    },
+    {
+      "bandType": "HIGH",
+      "bandKey": {
+        "bandType" : "HIGH",
+        "lowerBound" : 4720.0,
+        "upperBound" : 4730.0
+      },
+      "lowerBound": 4720.0,
+      "upperBound": 4730.0,
+      "marketVisitCount": 8
+    }
+  ]

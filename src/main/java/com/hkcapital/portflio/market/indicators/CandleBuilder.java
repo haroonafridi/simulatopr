@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.market.indicators;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketTypes;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.CandleSource;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
@@ -114,7 +115,7 @@ public class CandleBuilder
                     .source(CandleSource.INTERNAL.getSource())
                     .build();
 
-            MarketStructure structure = marketStructureManagerCache.get("GOLD_15M");
+            MarketStructure structure = marketStructureManagerCache.get(MarketTypes.GOLD_15_MIN);
 
             if (structure != null && candle.getTimeFrame() == 15)
             {

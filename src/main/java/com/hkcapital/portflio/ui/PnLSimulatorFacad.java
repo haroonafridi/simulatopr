@@ -114,6 +114,7 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.ProfileService, this.profileService);
+        serviceRegistery.putService(Service.MarketStructureManagerCache, this.marketStructureManagerCache);
 
     }
 

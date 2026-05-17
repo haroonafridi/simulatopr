@@ -2,17 +2,17 @@ package com.hkcapital.portflio.market.structure;
 
 import lombok.Getter;
 
-public enum MarketAction
+public enum OrderType
 {
     BUY("buy"),
-    SELL("sell"),
-    NONE("none");
-
+    SELL("sell");
     @Getter
-    private String value;
+    private final String value;
 
-    MarketAction(String value)
+    OrderType(String value)
     {
         this.value = value;
     }
+
+
 }

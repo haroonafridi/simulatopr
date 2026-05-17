@@ -20,10 +20,10 @@
     </appender>
 
     <!-- File appender for WebSocket logs -->
-    <appender name="WS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/websocket.log</file>
+    <appender name="OrderCache_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/OrderCache_FILE.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/websocket-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/OrderCache_FILE-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -32,17 +32,19 @@
     </appender>
 
     <!-- Console appender for WebSocket logs -->
-    <appender name="WS_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="OrderCache_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <!-- Dedicated WebSocket logger -->
-    <logger name="EToroWebSocket" level="INFO" additivity="false">
-        <appender-ref ref="WS_FILE" />
-        <appender-ref ref="WS_CONSOLE" />
+    <logger name="com.hkcapital.portflio.market.structure.OrderCache" level="INFO" additivity="false">
+        <appender-ref ref="OrderCache_FILE" />
+        <appender-ref ref="OrderCache_CONSOLE" />
     </logger>
+
+
 
     <!-- Root logger for main app -->
     <root level="INFO">
