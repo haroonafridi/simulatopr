@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     private NavigableSet<MarketPriceBand> lowerBands;
     private final Range range;
 
+    @Getter
     private final OrderCache orderCache;
     @Getter
     private boolean initCompleted = false;
@@ -42,8 +44,8 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     private MarketTypes marketTypes;
 
     private Instrument instrument;
-    int sellSignal = 1;
-    int buySignal = 1;
+    int sellSignal = 0;
+    int buySignal = 0;
 
     int totalTicks = 1;
     private final ObjectMapper objectMapper;
@@ -104,43 +106,6 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
 
         double tp = hB1.get().getUpperBound() - (2 * pTAbove);
 
-        if (dh1.isBelow())
-        {
-            if (dh1.absPoints() <= pTBelow && pTBelow >= dh1.absPoints())
-            {
-                OrderLogger orderLogger =
-                        OrderLogger.builder()
-                                .marketPriceBand(hB1.get()).distance(dh1)
-                                .absPoint(dh1.absPoints())
-                                .orderType(OrderType.SELL)
-                                .pTBelow(pTBelow)
-                                .orderCount(sellSignal)
-                                .instant(Instant.now())
-                                .price(liveInstrumentRate.getAsk())
-                                .build();
-                String order = null;
-                try
-                {
-                    order = objectMapper.writeValueAsString(orderLogger);
-                } catch (JsonProcessingException e)
-                {
-                    logger.info("cannot write sell to logger");
-                }
-                logger.info("{}", order);
-                Order sellOrder = Order.builder()
-                        .orderType(OrderType.SELL)
-                        .openPrice(liveInstrumentRate.getAsk())
-                        .tp(liveInstrumentRate.getAsk()-10d)
-                        .sl(liveInstrumentRate.getAsk()+10)
-                        .status("OPEN")
-                        .info("SELL order opend at price ["+liveInstrumentRate.getAsk()+"]")
-                        .leverage(20)
-                        .build();
-                orderCache.register(OrderType.SELL.getValue()+"-"+sellSignal, sellOrder);
-                sellSignal = sellSignal + 1;
-            }
-        }
-
         if (dl1.isAbove())
         {
             logger.info(" points above = {}, top = {} , price = {} ", dl1.absPoints(), pTAbove, liveInstrumentRate.getAsk());
@@ -165,21 +130,35 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                 {
                     logger.info("cannot write buy order to logger");
                 }
-                Order sellOrder = Order.builder()
+                Order buyOrder = Order.builder()
                         .orderType(OrderType.BUY)
                         .openPrice(liveInstrumentRate.getAsk())
-                        .tp(liveInstrumentRate.getAsk()+10d)
-                        .sl(liveInstrumentRate.getAsk()-10)
+                        .tp(liveInstrumentRate.getAsk() + 10d)
+                        .sl(liveInstrumentRate.getAsk() - 10)
                         .leverage(20)
+                        .brokerSent(false)
+                        .time(LocalDateTime.now())
                         .status("OPEN")
-                        .info("BUY order opened at price ["+liveInstrumentRate.getAsk()+"]")
+                        .info("BUY order opened at price [" + liveInstrumentRate.getAsk() + "]")
                         .build();
                 buySignal = buySignal + 1;
-                orderCache.register(OrderType.BUY.getValue()+"-"+sellSignal, sellOrder);
+
+                long openOrders = orderCache.getOrdersCache().entrySet()
+                        .stream().filter(order -> order.getValue().getOrderType().equals(OrderType.BUY) &&
+                                order.getValue().getStatus().equals("OPEN"))
+                        .count();
+                if (openOrders == 0)
+                {
+                    logger.info("opening order {} ", buyOrder);
+                    orderCache.register(OrderType.BUY.getValue() + "-" + buySignal, buyOrder);
+                } else
+                {
+                    logger.info("Cannot open order , {} order(s) exist", openOrders);
+                }
             }
         }
 
-        orderCache.process(liveInstrumentRate,objectMapper);
+        orderCache.process(liveInstrumentRate, objectMapper);
     }
 
 
@@ -211,11 +190,11 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         findMarketPriceBand(band, price)
                 .ifPresentOrElse(marketPriceBand ->
                 {
-                    updateMarketVisitCount(band, price);
+                    updateMarketVisitCountAndTime(band, price);
                 }, () ->
                 {
                     createNewBands(candle);
-                    updateMarketVisitCount(band, price);
+                    updateMarketVisitCountAndTime(band, price);
                 });
     }
 
@@ -258,9 +237,10 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
             final double low = candle.getLow();
             final double high = candle.getHigh();
             // HIGH bands (use candle high)
-            updateMarketVisitCount(upperBands, high);
+            updateMarketVisitCountAndTime(upperBands, high);
             // LOW bands (use candle low)
-            updateMarketVisitCount(lowerBands, low);
+            updateMarketVisitCountAndTime(lowerBands, low);
+
         }
 
         if (lowerBands != null)
@@ -286,16 +266,17 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         }
     }
 
-    private void updateMarketVisitCount(NavigableSet<MarketPriceBand> bands, double price)
+    private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price)
     {
-        for (MarketPriceBand upperBand : bands)
+        for (MarketPriceBand band : bands)
         {
-            if (price >= upperBand.getLowerBound()
-                    && price < upperBand.getUpperBound())
+            if (price >= band.getLowerBound()
+                    && price < band.getUpperBound())
             {
-                upperBand.updateMarketVisitCount(
-                        upperBand.getMarketVisitCount() + 1
+                band.updateMarketVisitCount(
+                        band.getMarketVisitCount() + 1
                 );
+                band.updateTime(Instant.now());
                 break; // important optimization
             }
         }

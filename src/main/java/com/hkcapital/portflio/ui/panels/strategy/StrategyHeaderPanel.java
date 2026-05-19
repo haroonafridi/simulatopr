@@ -18,6 +18,7 @@ import com.hkcapital.portflio.ui.panels.strategy.listners.RemoveStrategyButtonLi
 import com.hkcapital.portflio.ui.panels.strategy.listners.SaveStrategyButtonListener;
 import com.hkcapital.portflio.ui.panels.strategy.listners.StrategyEditDialogueMouseHandler;
 import com.hkcapital.portflio.values.order.OrderTypes;
+import com.hkcapital.portflio.values.timeframe.TimeFrame;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.*;
@@ -164,6 +165,7 @@ public class StrategyHeaderPanel extends UIBag
         StrategyService strategyService = (StrategyService) serviceRegistery.getService("StrategyService");
         Strategy strategy = strategyService.findById(12);
         List<Position> positionList = positionService.findByStrategyId(strategy.getId());
+        TimeFrame timeFrame = new TimeFrame(1, "hour");
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
                 true, //
                 1, //
@@ -178,7 +180,8 @@ public class StrategyHeaderPanel extends UIBag
                 null,
                 null,
                 null,
-                "Manual Order from ui");
+                "Manual Order from ui",
+                timeFrame);
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 

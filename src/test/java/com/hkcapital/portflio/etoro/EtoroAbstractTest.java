@@ -27,6 +27,19 @@ import java.util.UUID;
 @Import({ObjectMapper.class})
 public abstract class EtoroAbstractTest
 {
+    private static final double BID = 5400.01;
+    private static final double ASK = 5398.25;
+    private static final int LEVERAGE_20 = 20;
+
+    private static final double STOP_LOSS_RATE = 4255.49;
+    private static final double TAKE_PROFIT_RATE = 4473.73;
+    private static final double ETORO_SLIPPAGE = 0.75d;
+
+    private static final Instant AUTOMATIC_ORDER_OPEN_TIME =
+            Instant.parse("2026-01-01T10:00:00Z");
+
+    private static final Instant MANUAL_ORDER_OPEN_TIME =
+            Instant.parse("2026-02-01T10:00:00Z");
     public static final int GOLD_ID = ETORO_INSTUMENTS.GOLD.getInstumentId();
 
     public static final int AUTO_ORDER_ID_27 = 337970127;
@@ -144,17 +157,4 @@ public abstract class EtoroAbstractTest
                 .build();
         return orderDetails;
     }
-    private static final double BID = 5400.01;
-    private static final double ASK = 5398.25;
-    private static final int LEVERAGE_20 = 20;
-
-    private static final double STOP_LOSS_RATE = 4255.49;
-    private static final double TAKE_PROFIT_RATE = 4473.73;
-    private static final double ETORO_SLIPPAGE = 0.75d;
-
-    private static final Instant AUTOMATIC_ORDER_OPEN_TIME =
-            Instant.parse("2026-01-01T10:00:00Z");
-
-    private static final Instant MANUAL_ORDER_OPEN_TIME =
-            Instant.parse("2026-02-01T10:00:00Z");
 }

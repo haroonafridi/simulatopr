@@ -7,6 +7,7 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
+import com.hkcapital.portflio.values.timeframe.TimeFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -190,6 +191,9 @@ public class PositionBuyDialogue extends JDialog
     public void createMarketOrder()
     {
         Position position = positionService.findById(positionId);
+        TimeFrame timeFrame = //
+                new TimeFrame(position.getSrMatrix().getTimeFrame(), position.getSrMatrix().getTimeFrameUnit());
+
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
                 true, //
                 position.getConfiguration().getLev(), //
@@ -203,7 +207,8 @@ public class PositionBuyDialogue extends JDialog
                 null,
                 null,
                 null,
-                null,"Order created manually from UI");
+                null,"Order created manually from UI",
+                timeFrame);
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 }

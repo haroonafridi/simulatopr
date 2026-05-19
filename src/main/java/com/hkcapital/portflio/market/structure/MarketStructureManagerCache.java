@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -65,16 +66,38 @@ public class MarketStructureManagerCache implements Service
     {
         logger.info("Creating market cache..");
 
-        LocalDateTime start = LocalDate.now()
-                .minusDays(2)
-                .atStartOfDay();
 
-        LocalDateTime end = LocalDate.now()
+        LocalDate today = LocalDate.now();
+
+        DayOfWeek day = today.getDayOfWeek();
+
+        LocalDate targetDate;
+
+        if (day == DayOfWeek.MONDAY) {
+            targetDate = today.minusDays(3); // Friday
+        } else if (day == DayOfWeek.SUNDAY) {
+            targetDate = today.minusDays(2); // Friday
+        } else if (day == DayOfWeek.SATURDAY) {
+            targetDate = today.minusDays(1); // Friday
+        } else {
+            targetDate = today.minusDays(1); // Yesterday
+        }
+
+        LocalDateTime start = targetDate.atStartOfDay();
+
+        LocalDateTime end = targetDate
+                .plusDays(1)
                 .atStartOfDay()
                 .minusNanos(1);
 
         List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 15,
                 "m", start, end);
+
+        if(candleList.size() == 0)
+        {
+            logger.info("No candle data found cannot create market structure");
+            return;
+        }
 
         double low = candleList.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
         double high = candleList.stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();

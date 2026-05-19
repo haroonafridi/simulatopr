@@ -8,6 +8,7 @@ import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.ui.panels.position.tablemodels.PositionTableModel;
+import com.hkcapital.portflio.values.timeframe.TimeFrame;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -65,6 +66,8 @@ public class ImmediateBuyOrderActionListener implements ActionListener
     public void createMarketOrder(Integer positionId)
     {
         Position position = positionService.findById(positionId);
+        TimeFrame timeFrame = //
+                new TimeFrame(position.getSrMatrix().getTimeFrame(), position.getSrMatrix().getTimeFrameUnit());
         EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(position.getInstrument().getEtoroInstrumentId(),
                 true, //
                 position.getConfiguration().getLev(), //
@@ -79,7 +82,8 @@ public class ImmediateBuyOrderActionListener implements ActionListener
                 null,
                 null,
                 null,
-                "Order created manually from UI");
+                "Order created manually from UI",
+                timeFrame);
         orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
     }
 }

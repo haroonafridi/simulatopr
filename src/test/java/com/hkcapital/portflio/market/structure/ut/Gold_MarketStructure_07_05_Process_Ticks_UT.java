@@ -96,6 +96,8 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
         {
             marketStructure.process(TickHelper.rateFromString(tick), null);
         }
+
+        System.out.println();
     }
 
     private void assertBandsAfterNewCandleArrival(final String heading, final NavigableSet<MarketPriceBand> actualBands,

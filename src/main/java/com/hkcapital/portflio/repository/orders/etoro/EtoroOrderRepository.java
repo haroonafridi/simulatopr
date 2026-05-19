@@ -10,8 +10,19 @@ import java.util.List;
 public interface EtoroOrderRepository extends JpaRepository<EtoroOrder, Integer>
 {
     EtoroOrder findByorderID(Long orderId);
+
     List<EtoroOrder> findByInstrumentIDAndOderType(Integer InstrumentID, String oderType);
 
-    List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatus(Integer InstrumentID, String oderType , String statu);
+    List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatus(Integer InstrumentID, String oderType, String status);
+
+    List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnit
+            (
+                    Integer InstrumentID,
+                    String oderType,
+                    String status,
+                    Integer timeFrame,
+                    String timeFrameUnit
+            );
+
     List<EtoroOrder> findByInstrumentID(Integer InstrumentID);
 }

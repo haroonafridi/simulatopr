@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.broker.etoro.dto.order;
 
 import com.hkcapital.portflio.broker.etoro.JSON;
+import com.hkcapital.portflio.values.timeframe.TimeFrame;
 import lombok.*;
 
 /**
@@ -34,6 +35,8 @@ public class EtoroMarketOrderDto implements JSON
     private Double maxAllowedSlippage;
     private Double etoroSlippage;
     private String orderInfo;
+
+    private TimeFrame timeFrame;
 
 
     @Override

@@ -24,7 +24,7 @@ public class PriceTolerance
        // if (instrument.getEtoroInstrumentId() == 18 && //
             //    MarketTypes.GOLD_15_MIN.equals(marketTypes))
         //{
-            return 2d;
+            return 3d;
        // }
        // return null;
     }

@@ -3,6 +3,7 @@ package com.hkcapital.portflio.market.structure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OrderCache
 {
     private final Logger logger = LoggerFactory.getLogger(OrderCache.class);
+
+    @Getter
     private final Map<String, Order> ordersCache = new ConcurrentHashMap<>();
 
     public void register(String key, Order order)
@@ -61,9 +64,14 @@ public class OrderCache
 
         try
         {
-            logger.info("orders map => {}", objectMapper.writeValueAsString(ordersCache));
+            if(!ordersCache.isEmpty())
+            {
+                logger.info("{}", objectMapper.writeValueAsString(ordersCache));
+            }
+
         } catch (JsonProcessingException e)
         {
+            e.printStackTrace();
         }
     }
 

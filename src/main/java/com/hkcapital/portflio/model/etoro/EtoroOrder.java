@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.model.etoro;
 
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroOrderDetails;
+import com.hkcapital.portflio.values.timeframe.TimeFrame;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +44,10 @@ public class EtoroOrder
     @Column(name = "order_info")
     private String orderInfo;
 
-    public EtoroOrder fill(EtoroOrderDetails details)
+    private Integer timeFrame;
+    private String timeFrameUnit;
+
+    public EtoroOrder fill(EtoroOrderDetails details, TimeFrame timeFrame)
     {
         instrumentID = details.getInstrumentID();
         amount = details.getAmount();
@@ -55,6 +59,8 @@ public class EtoroOrder
         orderID = details.getOrderID();
         openDateTime = details.getOpenDateTime();
         this.dateTime = Instant.now();
+        this.timeFrame = timeFrame.timeFrame();
+        this.timeFrameUnit = timeFrame.timeFrameUnit();
         return this;
     }
 }

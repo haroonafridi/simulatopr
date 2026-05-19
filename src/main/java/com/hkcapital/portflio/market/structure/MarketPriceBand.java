@@ -2,6 +2,8 @@ package com.hkcapital.portflio.market.structure;
 
 import lombok.*;
 
+import java.time.Instant;
+
 @Builder
 @Getter
 @ToString
@@ -15,6 +17,7 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
     private Double lowerBound;
     private Double upperBound;
     private Integer marketVisitCount;
+    private Instant time;
 
     @Override
     public int compareTo(MarketPriceBand other)
@@ -35,5 +38,10 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
     public void updateMarketVisitCount(int marketVisitCount) //
     {
         this.marketVisitCount = marketVisitCount;
+    }
+
+    public void updateTime(Instant time) //
+    {
+        this.time = time;
     }
 }

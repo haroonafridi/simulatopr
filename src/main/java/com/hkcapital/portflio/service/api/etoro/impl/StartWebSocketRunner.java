@@ -17,9 +17,9 @@ import java.net.http.HttpClient;
 public class StartWebSocketRunner implements Runnable
 {
     private final Logger logger = LoggerFactory.getLogger(StartWebSocketRunner.class);
-    //public static final String ETORO_WEB_SOCKET_URL = "wss://ws.etoro.com/ws";
+    public static final String ETORO_WEB_SOCKET_URL = "wss://ws.etoro.com/ws";
 
-    public static final String ETORO_WEB_SOCKET_URL =  "ws://localhost:8025/ws/etoro";
+    //public static final String ETORO_WEB_SOCKET_URL =  "ws://localhost:8025/ws/etoro";
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final MarketFeedObserver marketFeedObserver;
     private final LiveResponseMapper liveResponseMapper;
@@ -49,7 +49,6 @@ public class StartWebSocketRunner implements Runnable
     @Override
     public void run()
     {
-
         logger.info("Connected to URL [{}]", ETORO_WEB_SOCKET_URL);
         HttpClient.newHttpClient().newWebSocketBuilder()
                 .buildAsync(
