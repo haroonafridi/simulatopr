@@ -20,7 +20,7 @@ public class CandleDto
     private double close;
     private Instant time;
 
-    private Unit unit;
+    private TimeFramesUnit timeFramesUnit;
 
     private Integer interval;
 
@@ -54,9 +54,9 @@ public class CandleDto
         return time;
     }
 
-    public Unit getUnit()
+    public TimeFramesUnit getTimeFramesUnit()
     {
-        return unit;
+        return timeFramesUnit;
     }
 
     public Integer getInterval()

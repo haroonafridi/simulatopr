@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.market.structure.it;
 
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
@@ -49,13 +50,13 @@ class MarketStructureInitEtoro_IT
                     .low(low)
                     .timeFrame(15)
                     .creationDateTime(dateTime)
-                    .timeFrameUnit("m").build();
+                    .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit()).build();
             candleService.save(candle);
         }
 
         List<Candle> candlesList = candleService
                 .findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18,15,
-                        "m", may112026_00_hr, may112026_23_hr);
+                        TimeFramesUnit.MINUTE.getUnit(), may112026_00_hr, may112026_23_hr);
 
         MarketSession marketSession = MarketSession.builder()
                 .name("ASIA/TOKYO").start(Instant.now())

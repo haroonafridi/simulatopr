@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.candle.CandleResponseDto;
 import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.InstrumentCandles;
 import com.hkcapital.portflio.repository.candle.CandleRepository;
@@ -39,7 +39,7 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
     @Override
     public void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, //
                                               final Integer interval, //
-                                              Unit timeUnit)
+                                              TimeFramesUnit timeTimeFramesUnit)
     {
 
         CandleResponseDto response = candleResponseMapper.mapResponse(instrumentId, timeFrame, interval);
@@ -52,7 +52,7 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
                         .creationDateTime(LocalDateTime.now())
                         .instrumentID(c.getInstrumentID())
                         .timeFrame(interval)
-                        .timeFrameUnit(timeUnit.getUnit())
+                        .timeFrameUnit(timeTimeFramesUnit.getUnit())
                         .open(c.getOpen())
                         .low(c.getLow())
                         .high(c.getHigh())

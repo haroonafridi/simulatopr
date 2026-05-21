@@ -1,14 +1,14 @@
 package com.hkcapital.portflio.market.indicators;
 
-public enum Unit
+public enum TimeFramesUnit
 {
-    MINUTE("m"),
-    HOUR("hour"),
-    DAY("day"),
-    WEEK("week");
+    MINUTE("MINUTE"),
+    HOUR("HOUR"),
+    DAY("DAY"),
+    WEEK("WEEK");
     private String unit;
 
-    Unit(String unit)
+    TimeFramesUnit(String unit)
     {
         this.unit = unit;
     }

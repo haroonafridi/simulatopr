@@ -59,12 +59,12 @@ public class SRMatrixSourcePanel extends UIBag
         return support;
     }
 
-    public JLabel getResistenceLabel()
+    public JLabel getResistanceLabel()
     {
         return resistenceLabel;
     }
 
-    public NumberTextField getResistence()
+    public NumberTextField getResistance()
     {
         return resistence;
     }
@@ -104,7 +104,7 @@ public class SRMatrixSourcePanel extends UIBag
         this.timeFrameUnit = timeFrameUnit;
     }
 
-    public JLabel getActiveLable()
+    public JLabel getActiveLabel()
     {
         return activeLable;
     }

@@ -1,6 +1,6 @@
 package com.hkcapital.portflio.indicators;
 
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +10,8 @@ class UnitTest
     @Test
     void verifyConstants() //
     {
-        Unit[] expected = new Unit[]{Unit.MINUTE, Unit.HOUR, Unit.DAY, Unit.WEEK};
-        Unit[] actual = Unit.values();
+        TimeFramesUnit[] expected = new TimeFramesUnit[]{TimeFramesUnit.MINUTE, TimeFramesUnit.HOUR, TimeFramesUnit.DAY, TimeFramesUnit.WEEK};
+        TimeFramesUnit[] actual = TimeFramesUnit.values();
         Assertions.assertArrayEquals(actual, expected);
     }
 }

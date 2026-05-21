@@ -78,7 +78,7 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
                         .build();
 
         //load previous day candles
-        List<String> rows = loadFile("D:/gold_data/07_05_2026/gold_candle_07_05_2026.csv");
+        List<String> rows = loadFile("D:/gold_data/14-05-2026/gold_candle_14_05_2026.csv");
         List<Candle> candles = new ArrayList<>();
         for (String row : rows)
         {
@@ -90,14 +90,12 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
         }
         marketStructure.init(candles);
         //load ticks
-        List<String> ticks = loadFile("D:/gold_data/08_05_2026/gold_tick_08_05_2026.csv");
+        List<String> ticks = loadFile("D:/gold_data/15-05-2026/gold_tick_15_05_2026.csv");
 
         for (String tick : ticks)
         {
             marketStructure.process(TickHelper.rateFromString(tick), null);
         }
-
-        System.out.println();
     }
 
     private void assertBandsAfterNewCandleArrival(final String heading, final NavigableSet<MarketPriceBand> actualBands,

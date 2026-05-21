@@ -25,7 +25,7 @@ public class CandleBuilder
 {
     private Logger logger = LoggerFactory.getLogger(CandleBuilder.class);
     private CandleList candles = new CandleList();
-    private Unit timeFrame;
+    private TimeFramesUnit timeFrame;
     private Integer interval;
     private RSI rsi = new RSI();
     private final ATR atr = new ATR(14);
@@ -111,7 +111,7 @@ public class CandleBuilder
                     .sma(smaVal)
                     .creationDateTime(LocalDateTime.now())
                     .timeFrame(closedCandle.getInterval())
-                    .timeFrameUnit(closedCandle.getUnit().getUnit())
+                    .timeFrameUnit(closedCandle.getTimeFramesUnit().getUnit())
                     .source(CandleSource.INTERNAL.getSource())
                     .build();
 
@@ -137,15 +137,15 @@ public class CandleBuilder
         return candle;
     }
 
-    private void addCandle(final CandleDto subCandle, Unit timeUnit, Integer interval)
+    private void addCandle(final CandleDto subCandle, TimeFramesUnit timeTimeFramesUnit, Integer interval)
     {
-        Instant bucketTime = ChronoFieldUtil.bucketStart(subCandle.getTime(), subCandle.getUnit(), interval);
+        Instant bucketTime = ChronoFieldUtil.bucketStart(subCandle.getTime(), subCandle.getTimeFramesUnit(), interval);
         candles.add(new CandleDto(subCandle.getInstrument(),
                 subCandle.getOpen(), subCandle.getLow(), subCandle.getHigh(),
-                subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeUnit, interval));
+                subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeTimeFramesUnit, interval));
     }
 
-    public CandleBuilder ofTimeFrame(Unit timeFrame)
+    public CandleBuilder ofTimeFrame(TimeFramesUnit timeFrame)
     {
         this.timeFrame = timeFrame;
         return this;
@@ -164,10 +164,10 @@ public class CandleBuilder
         return this;
     }
 
-    public List<CandleDto> fromTo(final Unit unit, final Integer range)
+    public List<CandleDto> fromTo(final TimeFramesUnit timeFramesUnit, final Integer range)
     {
         List<CandleDto> candleList = candles.stream()
-                .filter(candle -> candle.getUnit().equals(unit)) //
+                .filter(candle -> candle.getTimeFramesUnit().equals(timeFramesUnit)) //
                 .collect(Collectors.toList());
         if (candleList.isEmpty())
         {
@@ -181,14 +181,14 @@ public class CandleBuilder
     public List<CandleDto> candles()
     {
         return candles.stream()
-                .filter(candle -> candle.getUnit().equals(this.timeFrame)) //
+                .filter(candle -> candle.getTimeFramesUnit().equals(this.timeFrame)) //
                 .collect(Collectors.toList());
     }
 
     private boolean isSameTimeFrame(CandleDto c1, CandleDto c2)
     {
-        long bucket1 = ChronoFieldUtil.toBucket(c1.getTime(), c1.getUnit(), c1.getInterval());
-        long bucket2 = ChronoFieldUtil.toBucket(c2.getTime(), c2.getUnit(), c2.getInterval());
+        long bucket1 = ChronoFieldUtil.toBucket(c1.getTime(), c1.getTimeFramesUnit(), c1.getInterval());
+        long bucket2 = ChronoFieldUtil.toBucket(c2.getTime(), c2.getTimeFramesUnit(), c2.getInterval());
         return bucket1 == bucket2;
     }
 
@@ -214,7 +214,7 @@ public class CandleBuilder
         return candles;
     }
 
-    public Unit getTimeFrame()
+    public TimeFramesUnit getTimeFrame()
     {
         return timeFrame;
     }

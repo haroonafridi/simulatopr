@@ -8,6 +8,7 @@ import com.hkcapital.portflio.broker.etoro.dto.order.EtoroOrderDetailsResponseDT
 import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioPositionDTO;
 import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketAction;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
@@ -201,7 +202,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 Double slippage = ask - bid;
                 logger.info("Instrument price received bid = [{}] , ask = [{}] slippage = [{}] , maxSlippage = [{}] sending order for execution", bid, ask, slippage, maxSlippage);
                 logger.info("No of candles generated {} ", signalBuilder.getCandleBuilder1Min().candles().size());
-                TimeFrame timeFrame = new TimeFrame(15, "m");
+                TimeFrame timeFrame = new TimeFrame(15, TimeFramesUnit.MINUTE.getUnit());
                 if (marketStructureManagerCache.get(MarketTypes.GOLD_15_MIN) != null)
                 {
                     logger.info("Sending orders using bands!!");
@@ -241,13 +242,13 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
 
                         logger.info("processing positions for S/R timeframe = {} with unit = {}", srTimeFrameUnit, srTimeFrame);
 
-                        if (srTimeFrameUnit.equals("hour") && srTimeFrame == 1)
+                        if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 1)
                         {
                             logger.info("Processing 1 hour timeframe");
                             processOneHourTimeFrame(instrumentRate, maxSlippage, ask, bid, position, inst, leverage, support, resistance);
                         }
 
-                        if (srTimeFrameUnit.equals("hour") && srTimeFrame == 4)
+                        if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 4)
                         {
                             logger.info("Processing 4 hour timeframe");
                             processFourHourTimeFrame(instrumentRate, position, inst);
@@ -337,7 +338,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         final Integer leverage = position.getConfiguration().getLev();
         final Double support = position.getSrMatrix().getSupport();
         final Double resistance = position.getSrMatrix().getResistance();
-        TimeFrame timeFrame = new TimeFrame(4, "hour");
+        TimeFrame timeFrame = new TimeFrame(4, TimeFramesUnit.HOUR.getUnit());
         logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10,  support + 10, instrumentRate.getAsk());
         if (instrumentRate.getAsk() >= support - 10 && instrumentRate.getAsk() <= support + 10)
         {
@@ -368,7 +369,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                                          Integer leverage, //
                                          double support, double resistance)
     {
-        TimeFrame timeFrame = new TimeFrame(1, "hour");
+        TimeFrame timeFrame = new TimeFrame(1, TimeFramesUnit.HOUR.getUnit());
         logger.info("Support and price 1 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 7,  support + 7, instrumentRate.getAsk());
         if (instrumentRate.getAsk() >= support - 7 && instrumentRate.getAsk() <= support + 7)
         {

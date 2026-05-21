@@ -7,7 +7,7 @@ import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.api.etoro.impl.StartWebSocketRunner;
@@ -56,28 +56,28 @@ public class EtoroLiveFeedListener implements Listener
 
     CandleBuilder candleBuilder1Min = CandleBuilder
             .build()
-            .ofTimeFrame(Unit.MINUTE)
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(1);
 
     CandleBuilder candleBuilder5Min = CandleBuilder
             .build()
-            .ofTimeFrame(Unit.MINUTE)
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(5);
     CandleBuilder candleBuilder15Min = CandleBuilder
             .build()
-            .ofTimeFrame(Unit.MINUTE)
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(15);
     CandleBuilder candleBuilder30Min = CandleBuilder
             .build()
-            .ofTimeFrame(Unit.MINUTE)
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(30);
     CandleBuilder candleBuilder1Hour = CandleBuilder
             .build()
-            .ofTimeFrame(Unit.HOUR)
+            .ofTimeFrame(TimeFramesUnit.HOUR)
             .ofInterval(1);
     CandleBuilder candleBuilder4Hour = CandleBuilder
             .build()
-            .ofTimeFrame(Unit.HOUR)
+            .ofTimeFrame(TimeFramesUnit.HOUR)
             .ofInterval(4);
 
     SignalBuilder signalBuilder = SignalBuilder.builder()
@@ -167,12 +167,12 @@ public class EtoroLiveFeedListener implements Listener
                     candleBuilder30Min.setCandleService(etoroCandleService);
                     candleBuilder1Hour.setCandleService(etoroCandleService);
                     candleBuilder4Hour.setCandleService(etoroCandleService);
-                    candleBuilder1Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 1));
-                    candleBuilder5Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 5));
-                    candleBuilder15Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 15));
-                    candleBuilder30Min.addAndUpdateCandle(toCandle(tick, Unit.MINUTE, 30));
-                    candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 1));
-                    candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, Unit.HOUR, 4));
+                    candleBuilder1Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 1));
+                    candleBuilder5Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 5));
+                    candleBuilder15Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 15));
+                    candleBuilder30Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 30));
+                    candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 1));
+                    candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 4));
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }
 
@@ -290,10 +290,10 @@ public class EtoroLiveFeedListener implements Listener
                 .build();
     }
 
-    public CandleDto toCandle(final Tick tick, Unit unit, Integer interval)
+    public CandleDto toCandle(final Tick tick, TimeFramesUnit timeFramesUnit, Integer interval)
     {
         return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
-                unit, interval);
+                timeFramesUnit, interval);
     }
 
 }

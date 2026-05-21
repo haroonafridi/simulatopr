@@ -1,27 +1,12 @@
 package com.hkcapital.portflio.etoro.websocket.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.service.api.etoro.impl.StartWebSocketRunner;
-import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
-import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.candle.etoro.impl.EtoroLiveFeedListener;
-import com.hkcapital.portflio.service.configuration.ConfigurationService;
-import com.hkcapital.portflio.service.instrument.InstrumentService;
-import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
-import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
-import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
-import com.hkcapital.portflio.service.orders.OrderManagerService;
-import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
-import com.hkcapital.portflio.service.strategy.StrategyService;
-import org.glassfish.tyrus.server.Server;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -78,7 +63,7 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 .active(true)
                 .resistance(4500d)
                 .support(4400d)
-                .timeFrameUnit(Unit.MINUTE.getUnit())
+                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
                 .timeFrame(1)
                 .instrument(gold).build());
 
@@ -86,7 +71,7 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 .active(true)
                 .resistance(4500d)
                 .support(4400d)
-                .timeFrameUnit(Unit.MINUTE.getUnit())
+                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
                 .timeFrame(15)
                 .instrument(gold).build());
 
@@ -95,7 +80,7 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 .active(true)
                 .resistance(4838d)
                 .support(4673d)
-                .timeFrameUnit(Unit.HOUR.getUnit())
+                .timeFrameUnit(TimeFramesUnit.HOUR.getUnit())
                 .timeFrame(1)
                 .instrument(gold).build());
 
@@ -103,14 +88,14 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 .active(true)
                 .resistance(4862d)
                 .support(4576d)
-                .timeFrameUnit(Unit.HOUR.getUnit())
+                .timeFrameUnit(TimeFramesUnit.HOUR.getUnit())
                 .timeFrame(4)
                 .instrument(gold).build());
 
-        SRMatrix srMatrix1Mins  = getSrMatrix(Unit.MINUTE.getUnit(), 1);
-        SRMatrix srMatrix15Mins  = getSrMatrix(Unit.MINUTE.getUnit(), 15);
-        SRMatrix srMatrix1Hour  = getSrMatrix(Unit.HOUR.getUnit(), 1);
-        SRMatrix srMatrix4Hour  = getSrMatrix(Unit.HOUR.getUnit(), 4);
+        SRMatrix srMatrix1Mins  = getSrMatrix(TimeFramesUnit.MINUTE.getUnit(), 1);
+        SRMatrix srMatrix15Mins  = getSrMatrix(TimeFramesUnit.MINUTE.getUnit(), 15);
+        SRMatrix srMatrix1Hour  = getSrMatrix(TimeFramesUnit.HOUR.getUnit(), 1);
+        SRMatrix srMatrix4Hour  = getSrMatrix(TimeFramesUnit.HOUR.getUnit(), 4);
 
         Strategy strategy = Strategy.builder()
                 .description("Test Gold Strategy")

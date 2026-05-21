@@ -2,7 +2,7 @@ package com.hkcapital.portflio.etoro.websocket.client;
 
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.*;
 import org.junit.jupiter.api.Test;
 
@@ -58,11 +58,11 @@ public class Gold1HourAutomaticOrdersStreategyE2ETest extends EtoroWebSocketClie
                 .active(true)
                 .resistance(4838d)
                 .support(4673d)
-                .timeFrameUnit(Unit.HOUR.getUnit())
+                .timeFrameUnit(TimeFramesUnit.HOUR.getUnit())
                 .timeFrame(1)
                 .instrument(gold).build());
 
-        SRMatrix srMatrix1Hour  = getSrMatrix(Unit.HOUR.getUnit(), 1);
+        SRMatrix srMatrix1Hour  = getSrMatrix(TimeFramesUnit.HOUR.getUnit(), 1);
         Strategy strategy = Strategy.builder()
                 .description("Test Gold Strategy")
                 .creationDate(LocalDateTime.now())

@@ -6,6 +6,8 @@ import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.repository.positions.PositionRepository;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.ui.panels.position.PositionParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +17,6 @@ import java.util.Optional;
 @Service
 public class PositionServiceImpl implements PositionService
 {
-
     private final PositionRepository positionPnLRepository;
 
     public PositionServiceImpl(PositionRepository positionPnLRepository)

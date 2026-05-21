@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.etoro.TickHelper;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.api.etoro.websocket.LivePriceResponseWrapper;
 import com.hkcapital.portflio.service.api.etoro.websocket.Message;
@@ -13,11 +13,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public abstract class CandleBuilderAbstract
@@ -34,7 +29,7 @@ public abstract class CandleBuilderAbstract
     public CandleDto toOneMinuteCandle(final Tick tick)
     {
         return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
-                Unit.MINUTE, 1);
+                TimeFramesUnit.MINUTE, 1);
     }
 
     public List<Message> messageFrom(final String line) throws JsonProcessingException

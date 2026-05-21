@@ -1,7 +1,7 @@
 package com.hkcapital.portflio.indicators;
 
 import com.hkcapital.portflio.market.indicators.ChronoFieldUtil;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T23:11:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:11:50.1874723Z");
-        Assertions.assertEquals(toBucket(d1, Unit.MINUTE, 1), toBucket(d2, Unit.MINUTE, 1));
+        Assertions.assertEquals(toBucket(d1, TimeFramesUnit.MINUTE, 1), toBucket(d2, TimeFramesUnit.MINUTE, 1));
     }
 
 
@@ -52,7 +52,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T23:11:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:13:50.1874723Z");
-        Assertions.assertEquals(toBucket(d1, Unit.MINUTE, 5), toBucket(d2, Unit.MINUTE, 5));
+        Assertions.assertEquals(toBucket(d1, TimeFramesUnit.MINUTE, 5), toBucket(d2, TimeFramesUnit.MINUTE, 5));
     }
 
     @Test
@@ -60,7 +60,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T23:11:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:19:50.1874723Z");
-        Assertions.assertEquals(toBucket(d1, Unit.MINUTE, 10), toBucket(d2, Unit.MINUTE, 10));
+        Assertions.assertEquals(toBucket(d1, TimeFramesUnit.MINUTE, 10), toBucket(d2, TimeFramesUnit.MINUTE, 10));
     }
 
     @Test
@@ -68,7 +68,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T23:11:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:14:59.1874723Z");
-        Assertions.assertEquals(toBucket(d1, Unit.MINUTE, 15), toBucket(d2, Unit.MINUTE, 15));
+        Assertions.assertEquals(toBucket(d1, TimeFramesUnit.MINUTE, 15), toBucket(d2, TimeFramesUnit.MINUTE, 15));
     }
 
 
@@ -77,7 +77,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T23:00:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:29:59.1874723Z");
-        Assertions.assertEquals(toBucket(d1, Unit.MINUTE, 30), toBucket(d2, Unit.MINUTE, 30));
+        Assertions.assertEquals(toBucket(d1, TimeFramesUnit.MINUTE, 30), toBucket(d2, TimeFramesUnit.MINUTE, 30));
     }
 
 
@@ -86,7 +86,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T23:00:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:29:59.1874723Z");
-        Assertions.assertEquals(toBucket(d1, Unit.HOUR, 1), toBucket(d2, Unit.HOUR, 1));
+        Assertions.assertEquals(toBucket(d1, TimeFramesUnit.HOUR, 1), toBucket(d2, TimeFramesUnit.HOUR, 1));
     }
 
     @Test
@@ -94,7 +94,7 @@ class ChronoFieldUtilTest
     {
         Instant d1 = Instant.parse("2026-03-16T22:00:49.1874723Z");
         Instant d2 = Instant.parse("2026-03-16T23:29:59.1874723Z");
-        Assertions.assertNotEquals(toBucket(d1, Unit.HOUR, 1), toBucket(d2, Unit.HOUR, 1));
+        Assertions.assertNotEquals(toBucket(d1, TimeFramesUnit.HOUR, 1), toBucket(d2, TimeFramesUnit.HOUR, 1));
     }
 
 

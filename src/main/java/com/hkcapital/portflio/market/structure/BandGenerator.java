@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.market.structure;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -28,8 +29,10 @@ public class BandGenerator
                             .bandKey(new BandKey(bandType, (int) lowerBound, (int) upperBound))
                             .marketVisitCount(0)
                             .lowerBound(lowerBound)
-                            .time(Instant.now())
-                            .upperBound(upperBound).build();
+                            .initialVisitedTime(LocalDateTime.now())
+                            .lastVisitedTime(LocalDateTime.now())
+                            .upperBound(upperBound)
+                            .build();
             priceBands.add(marketPriceBand);
         }
         return priceBands;

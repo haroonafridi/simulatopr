@@ -18,7 +18,7 @@
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
 2026-04-20 19:24:46.886 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-04-20 19:24:47.008 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-20 19:24:47.008 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence timeFramesUnit 'default'
 2026-04-20 19:24:47.758 [main] INFO  c.h.p.PortfolioPnlSimulatorApplication - Started PortfolioPnlSimulatorApplication in 6.059 seconds (process running for 6.773)
 2026-04-20 19:24:49.030 [pool-2-thread-1] INFO  c.h.p.s.i.e.EtoroWebServiceSocketManagerImpl - Executing background orders...
 2026-04-20 19:24:49.554 [ForkJoinPool.commonPool-worker-1] INFO  c.h.p.etoro.websocket.EToroWSClient - Connection successfully established!

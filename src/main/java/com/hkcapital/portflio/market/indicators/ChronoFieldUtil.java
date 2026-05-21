@@ -82,11 +82,11 @@ public final class ChronoFieldUtil
         return valueOf(instant, zoneId, temporalField);
     }
 
-    public static long toBucket(Instant time, Unit unit, int interval)
+    public static long toBucket(Instant time, TimeFramesUnit timeFramesUnit, int interval)
     {
         long epochMillis = time.toEpochMilli();
 
-        long bucketSizeMillis = switch (unit)
+        long bucketSizeMillis = switch (timeFramesUnit)
                 {
                     case MINUTE -> interval * 60_000L;
                     case HOUR -> interval * 60 * 60_000L;
@@ -96,11 +96,11 @@ public final class ChronoFieldUtil
         return epochMillis / bucketSizeMillis;
     }
 
-    public static Instant bucketStart(Instant time, Unit unit, int interval)
+    public static Instant bucketStart(Instant time, TimeFramesUnit timeFramesUnit, int interval)
     {
-        long bucket = toBucket(time, unit, interval);
+        long bucket = toBucket(time, timeFramesUnit, interval);
 
-        long bucketSizeMillis = switch (unit)
+        long bucketSizeMillis = switch (timeFramesUnit)
                 {
                     case MINUTE -> interval * 60_000L;
                     case HOUR -> interval * 60 * 60_000L;

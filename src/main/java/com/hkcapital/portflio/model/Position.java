@@ -57,4 +57,6 @@ public class Position implements Serializable
     private Double stopLoss;
     @Column(name = "take_profit")
     private Double takeProfit;
+    @Column(name = "active")
+    private boolean active;
 }

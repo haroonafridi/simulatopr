@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.ui.panels.srmatrix.panels;
 
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.model.SRMatrix;
@@ -35,7 +36,7 @@ public class SRMatrixPanel extends UIBag
     private final JLabel timeFrameLabel = new JLabel("Timeframe");
     private final NumberTextField timeFrame = new NumberTextField(40);
 
-    JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{"MINUTE", "HOUR", "DAY", "WEEK"});
+    JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), TimeFramesUnit.WEEK.getUnit()});
 
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
 
@@ -247,7 +248,7 @@ public class SRMatrixPanel extends UIBag
         {
             srMatrixSourcePanel.getId().setText(srMatrix.getId().toString());
             srMatrixSourcePanel.getSupport().setText(srMatrix.getSupport().toString());
-            srMatrixSourcePanel.getResistence().setText(srMatrix.getResistance().toString());
+            srMatrixSourcePanel.getResistance().setText(srMatrix.getResistance().toString());
             srMatrixSourcePanel.getTimeFrame().setText(srMatrix.getTimeFrame().toString());
             srMatrixSourcePanel.getTimeFrameUnit().setText(srMatrix.getTimeFrameUnit());
             srMatrixSourcePanel.getActive().setSelected(srMatrix.getActive());

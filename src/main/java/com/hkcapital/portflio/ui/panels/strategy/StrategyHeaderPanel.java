@@ -39,8 +39,8 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JCheckBox active = new JCheckBox();
 
+    private final JButton refreshStrategy = new JButton("Refresh");
     private final JButton saveStrategy = new JButton("Save");
-
     private final JButton cancelButton = new JButton("Cancel");
     private final JButton removeButton = new JButton("Remove");
 
@@ -80,7 +80,7 @@ public class StrategyHeaderPanel extends UIBag
         tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed",
                 "Description:", "Active:"}, strategyService.findAll());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
 
         topPanel.add(strategyNameLabel);
         topPanel.add(strategyName);
@@ -89,9 +89,9 @@ public class StrategyHeaderPanel extends UIBag
         topPanel.add(strategyDescriptionLabel);
         topPanel.add(strategyDescription);
         topPanel.add(active);
+        topPanel.add(refreshStrategy);
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
-        //topPanel.add(manualOrderButton);
         topPanel.add(automaticTrading);
         topPanel.add(closeMarket);
         topPanel.add(openMarket);
@@ -108,6 +108,17 @@ public class StrategyHeaderPanel extends UIBag
         JScrollPane scrollPane = new JScrollPane(strategyTable);
         add(scrollPane, BorderLayout.CENTER);
         saveStrategy.addActionListener(new SaveStrategyButtonListener(strategyService, tableModel, this));
+        refreshStrategy.addActionListener(e-> {
+                int selectedRow = strategyTable.getSelectedRow();
+                if (selectedRow >= 0)
+                {
+                    System.out.println("Refreshing Strategy!!");
+                    Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
+                    setHeaderFieldsFromRow(strategy);
+                    List<Position> positionList = positionService.findByStrategyId(strategy.getId());
+                    positionActionsPanel.getPositionTableModel().updateData(positionList);
+                }
+        });
         strategyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         strategyTable.getSelectionModel().addListSelectionListener(e ->
         {

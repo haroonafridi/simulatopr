@@ -276,7 +276,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                 band.updateMarketVisitCount(
                         band.getMarketVisitCount() + 1
                 );
-                band.updateTime(Instant.now());
+                band.updateTime(LocalDateTime.now());
                 break; // important optimization
             }
         }

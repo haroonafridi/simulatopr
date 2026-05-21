@@ -3,7 +3,7 @@ package com.hkcapital.portflio.indicators;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.LiveInstrumentFeed;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
         List<LiveInstrumentFeed> feed = liveInstrumentFeedRepository
                 .findByFeedDateBetween(Instant.parse("2026-04-08T00:00:00.0Z"), Instant.parse("2026-04-08T23:59:59.0Z"));
 
-        CandleBuilder builderOf_05_Min = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(1);
+        CandleBuilder builderOf_05_Min = CandleBuilder.build().ofTimeFrame(TimeFramesUnit.MINUTE).ofInterval(1);
 
         feed.forEach(rate ->
         {
@@ -49,7 +49,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .close(tick.getVal())
                         .time(tick.getTime())
                         .interval(1)
-                        .unit(Unit.MINUTE)
+                        .timeFramesUnit(TimeFramesUnit.MINUTE)
                         .build();
                 builderOf_05_Min.addAndUpdateCandle(candle);
             }
@@ -64,7 +64,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
         List<LiveInstrumentFeed> feed = liveInstrumentFeedRepository
                 .findByFeedDateBetween(Instant.parse("2026-04-08T00:00:00.0Z"), Instant.parse("2026-04-08T23:59:59.0Z"));
 
-        CandleBuilder builderOf_05_Min = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(5);
+        CandleBuilder builderOf_05_Min = CandleBuilder.build().ofTimeFrame(TimeFramesUnit.MINUTE).ofInterval(5);
 
         feed.forEach(rate ->
         {
@@ -82,7 +82,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .close(tick.getVal())
                         .time(tick.getTime())
                         .interval(5)
-                        .unit(Unit.MINUTE)
+                        .timeFramesUnit(TimeFramesUnit.MINUTE)
                         .build();
                 builderOf_05_Min.addAndUpdateCandle(candle);
             }
@@ -97,7 +97,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
         List<LiveInstrumentFeed> feed = liveInstrumentFeedRepository
                 .findByFeedDateBetween(Instant.parse("2026-04-08T00:00:00.0Z"), Instant.parse("2026-04-08T23:59:59.0Z"));
 
-        CandleBuilder builderOf_15_Min = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(15);
+        CandleBuilder builderOf_15_Min = CandleBuilder.build().ofTimeFrame(TimeFramesUnit.MINUTE).ofInterval(15);
 
         feed.forEach(rate ->
         {
@@ -115,7 +115,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .close(tick.getVal())
                         .time(tick.getTime())
                         .interval(15)
-                        .unit(Unit.MINUTE)
+                        .timeFramesUnit(TimeFramesUnit.MINUTE)
                         .build();
                 builderOf_15_Min.addAndUpdateCandle(candle);
             }
@@ -130,7 +130,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
         List<LiveInstrumentFeed> feed = liveInstrumentFeedRepository
                 .findByFeedDateBetween(Instant.parse("2026-04-08T00:00:00.0Z"), Instant.parse("2026-04-08T23:59:59.0Z"));
 
-        CandleBuilder builderOf_30_Min = CandleBuilder.build().ofTimeFrame(Unit.MINUTE).ofInterval(30);
+        CandleBuilder builderOf_30_Min = CandleBuilder.build().ofTimeFrame(TimeFramesUnit.MINUTE).ofInterval(30);
 
         feed.forEach(rate ->
         {
@@ -148,7 +148,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .close(tick.getVal())
                         .time(tick.getTime())
                         .interval(30)
-                        .unit(Unit.MINUTE)
+                        .timeFramesUnit(TimeFramesUnit.MINUTE)
                         .build();
                 builderOf_30_Min.addAndUpdateCandle(candle);
             }
@@ -163,7 +163,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
         List<LiveInstrumentFeed> feed = liveInstrumentFeedRepository
                 .findByFeedDateBetween(Instant.parse("2026-04-08T00:00:00.0Z"), Instant.parse("2026-04-08T23:59:59.0Z"));
 
-        CandleBuilder builderOf_01_Hour = CandleBuilder.build().ofTimeFrame(Unit.HOUR).ofInterval(1);
+        CandleBuilder builderOf_01_Hour = CandleBuilder.build().ofTimeFrame(TimeFramesUnit.HOUR).ofInterval(1);
 
         feed.forEach(rate ->
         {
@@ -181,7 +181,7 @@ class CandleBuilderMultiTimeFrameTest extends CandleBuilderAbstract
                         .close(tick.getVal())
                         .time(tick.getTime())
                         .interval(1)
-                        .unit(Unit.HOUR)
+                        .timeFramesUnit(TimeFramesUnit.HOUR)
                         .build();
                 builderOf_01_Hour.addAndUpdateCandle(candle);
             }

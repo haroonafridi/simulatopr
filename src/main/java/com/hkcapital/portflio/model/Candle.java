@@ -20,7 +20,6 @@ public class Candle
     private int id;
     @Column(name = "instrument_id", nullable = false)
     private int instrumentID;
-
     private Instant fromDate;
     private double open;
     private double high;

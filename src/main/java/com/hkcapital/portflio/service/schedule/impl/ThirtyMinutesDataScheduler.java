@@ -1,7 +1,7 @@
 package com.hkcapital.portflio.service.schedule.impl;
 
 import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
-import com.hkcapital.portflio.market.indicators.Unit;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.schedule.ScheduleService;
@@ -30,6 +30,6 @@ public class ThirtyMinutesDataScheduler implements ScheduleService
         logger.info("Running scheduler TimeFrame = 30 MINUTES");
         instrumentService.findByActive(Boolean.TRUE).forEach(instrument -> //
                 candleService.fetchAndSaveCandleInformation(instrument.getEtoroInstrumentId(), //
-                        TimeFrame.ThirtyMinutes, 1, Unit.MINUTE));
+                        TimeFrame.ThirtyMinutes, 1, TimeFramesUnit.MINUTE));
     }
 }

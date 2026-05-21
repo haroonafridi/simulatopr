@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.market.structure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -91,7 +92,7 @@ public class MarketStructureManagerCache implements Service
                 .minusNanos(1);
 
         List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 15,
-                "m", start, end);
+                TimeFramesUnit.MINUTE.getUnit(), start, end);
 
         if(candleList.size() == 0)
         {

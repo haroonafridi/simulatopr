@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.ui.panels.srmatrix.dialogues;
 
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.SRMatrix;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
@@ -30,7 +31,7 @@ public class SRMatrixEditDialogue extends JDialog {
     private final JTextField timeFrame = new NumberTextField(30);
 
     private final JComboBox<String> timeFrameUnit =
-            new JComboBox<>(new String[]{"MINUTE", "HOUR", "DAY", "WEEK"});
+            new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), TimeFramesUnit.WEEK.getUnit()});
 
     private final JCheckBox active = new JCheckBox("Active");
 
