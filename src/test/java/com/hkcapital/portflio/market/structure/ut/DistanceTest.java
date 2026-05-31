@@ -47,7 +47,6 @@ class DistanceTest
                 .currentPrice(price)
                 .build();
 
-
         Distance dFromLow = Distance.builder()
                 .referencePrice(low.getLowerBound())
                 .currentPrice(price)

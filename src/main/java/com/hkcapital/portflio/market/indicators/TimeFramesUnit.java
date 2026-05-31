@@ -2,6 +2,7 @@ package com.hkcapital.portflio.market.indicators;
 
 public enum TimeFramesUnit
 {
+    SECOND("SECOND"),
     MINUTE("MINUTE"),
     HOUR("HOUR"),
     DAY("DAY"),

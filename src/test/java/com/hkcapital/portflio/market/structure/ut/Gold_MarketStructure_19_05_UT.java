@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.hkcapital.portflio.etoro.TickHelper;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Candle;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -26,7 +24,7 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-class Gold_MarketStructure_07_05_Process_Ticks_UT
+class Gold_MarketStructure_19_05_UT
 {
     static ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().build());
     @BeforeAll
@@ -36,7 +34,6 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
         mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
         mapper.registerModule(new JavaTimeModule());
     }
-
     @Test
     public void shouldCreateGoldMarketStructure() throws IOException
     {
@@ -46,9 +43,9 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
         final double maxSlippage = 1.75;
         final boolean active = true;
         final Integer etoroInstId = 18;
-        final Instant date = Instant.parse("2026-05-07T23:59:59.00Z");
-        final double low = 4686;
-        final double high = 4765.36;
+        final Instant date = Instant.parse("2026-05-18T23:59:59.00Z");
+        final double low = 4481.19;
+        final double high = 4589.41;
 
         final Instrument instrument = Instrument.builder()
                 .name(instName)
@@ -70,45 +67,58 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
         MarketStructure marketStructure = //
                 MarketStructure
                         .builder()
-                        .intervals(8)
+                        .intervals(10)
                         .marketSession(MarketSession.builder().build())
-                        .instrument(instrument)
-                        .marketTypes(MarketTypes.GOLD_15_MIN)
+                        .modus(Modus.builder().mod(10)
+                                .subtract(10).build())
                         .objectMapper(mapper)
-                        .modus(Modus.builder().mod(8)
-                                .subtract(8).build())
                         .timeFrame(15)
                         .timeFrameUnit(TimeFramesUnit.MINUTE)
                         .priceRange(range)
                         .build();
 
-        //load previous day candles
-        List<String> rows = loadFile("D:/gold_data/14-05-2026/gold_candle_14_05_2026.csv");
+        List<String> rows = Files.readAllLines(Path.of("D:/gold_data/18-05-2026/gold_candle_18_05_2026.csv"));
         List<Candle> candles = new ArrayList<>();
         for (String row : rows)
         {
             String[] cells = row.split(",");
-            LocalDateTime dateTime = LocalDateTime.parse(cells[3].replace("\"",""),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
             candles.add(Candle.builder() //
-                    .low(Double.parseDouble(cells[2])) //
-                    .high(Double.parseDouble(cells[4]))
-                    .creationDateTime(dateTime)
+                    .high(Double.parseDouble(cells[0])) //
+                    .low(Double.parseDouble(cells[1])) //
+                    .creationDateTime(LocalDateTime.parse(cells[2].replace("\"",""), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
                     .build());
         }
         marketStructure.init(candles);
-        //load ticks
-        List<String> ticks = loadFile("D:/gold_data/15-05-2026/gold_tick_15_05_2026.csv");
 
-        for (String tick : ticks)
-        {
-            marketStructure.process(TickHelper.rateFromString(tick), null);
-        }
-        NavigableSet<MarketPriceBand> upperBand = marketStructure.getUpperBands();
-        NavigableSet<MarketPriceBand> lowerBand = marketStructure.getLowerBands();
-        Assertions.assertEquals(11, upperBand.size());
-        Assertions.assertEquals(11, lowerBand.size());
+        assertBandsAfterNewCandleArrival("Assert lower bands ", marketStructure.getLowerBands(), buildExpectedInitialLowerBands());
 
+        assertBandsAfterNewCandleArrival("Assert upper bands ", marketStructure.getUpperBands(), buildExpectedInitialUpperBands());
+
+        Candle newCandle0 = Candle
+                .builder()
+                .low(4775)
+                .high(4800).build();
+
+        marketStructure.createOrUpdateBands(newCandle0);
+
+        Candle newCandle1 = Candle
+                .builder()
+                .low(4775)
+                .high(4789)
+                .build();
+        marketStructure.createOrUpdateBands(newCandle1);
+
+        Candle newCandle2 = Candle
+                .builder()
+                .low(4660)
+                .high(4689)
+                .build();
+
+        marketStructure.createOrUpdateBands(newCandle2);
+
+        assertBandsAfterNewCandleArrival("Assert upper bands after adding new bands", marketStructure.getUpperBands(), buildExpectedModifiedUpperBands());
+
+        assertBandsAfterNewCandleArrival("Assert lower bands after adding new bands", marketStructure.getLowerBands(), buildModifiedExpectedLowerBands());
     }
 
     private void assertBandsAfterNewCandleArrival(final String heading, final NavigableSet<MarketPriceBand> actualBands,
@@ -565,14 +575,5 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
         return new TreeSet<>(List.of(hb0, hb1, hb2, hb3, hb4, hb5, hb6, hb7, hb8, hb9, hb10, hb11, hb12, hb13, hb14));
     }
 
-    public InputStream loadResource(String path)
-    {
-        return getClass().getResourceAsStream(path);
-    }
 
-
-    public List<String> loadFile(String path) throws IOException
-    {
-        return Files.readAllLines(Path.of(path));
-    }
 }

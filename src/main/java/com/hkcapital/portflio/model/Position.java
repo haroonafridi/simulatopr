@@ -58,5 +58,5 @@ public class Position implements Serializable
     @Column(name = "take_profit")
     private Double takeProfit;
     @Column(name = "active")
-    private boolean active;
+    private Boolean active = true;
 }

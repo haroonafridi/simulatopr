@@ -1,7 +1,9 @@
 package com.hkcapital.portflio.market.structure.ut;
 
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.values.timeframe.TimeFrame;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,7 @@ class BandGenerator_UT
     public void shouldReturnPriceLowerBands()
     {
         NavigableSet<MarketPriceBand> lowerBands = //
-                BandGenerator.of(range, BandType.LOW, 10);
+                BandGenerator.of(range, BandType.LOW, 10, 15, TimeFramesUnit.MINUTE);
 
         Assertions.assertAll("verify generated lower bands ", () ->
         {
@@ -77,7 +79,7 @@ class BandGenerator_UT
     public void shouldReturnPriceUpperrBands()
     {
         NavigableSet<MarketPriceBand> upperBands = //
-                BandGenerator.of(range, BandType.HIGH, 10);
+                BandGenerator.of(range, BandType.HIGH, 10, 15, TimeFramesUnit.MINUTE);
 
         Assertions.assertAll("verify generated lower bands ", () ->
         {
@@ -85,7 +87,6 @@ class BandGenerator_UT
             Assertions.assertFalse(upperBands.isEmpty());
             Assertions.assertEquals(7, upperBands.size());
             List<MarketPriceBand> bands = upperBands.stream().collect(Collectors.toList());
-            bands.forEach(System.out::println);
             assertPriceBand(BandType.HIGH, new BandKey(BandType.HIGH, 4680, 4690),
                     4680d, 4690d, 0, bands.get(0));
             assertPriceBand(BandType.HIGH, new BandKey(BandType.HIGH, 4690, 4700),

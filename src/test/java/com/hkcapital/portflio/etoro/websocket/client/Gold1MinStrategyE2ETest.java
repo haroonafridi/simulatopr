@@ -206,10 +206,11 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 instrumentService, //
                 objectMapper,
                 etoroCandleService,
-                null); //add market cache here
+                null,
+                bandlogger); //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
-                        URI.create(StartWebSocketRunner.ETORO_WEB_SOCKET_URL),
+                        URI.create(etoroApiConfiguration.getUrl()),
                         etoroLiveFeedService)
                 .join();
         ws.sendText("ping", true);
@@ -226,10 +227,10 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 liveResponseMapper, //
                 instrumentService, //
                 objectMapper,
-                etoroCandleService, null);  //add market cache here
+                etoroCandleService, null, bandlogger);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
-                        URI.create(StartWebSocketRunner.ETORO_WEB_SOCKET_URL),
+                        URI.create(etoroApiConfiguration.getUrl()),
                         etoroLiveFeedService)
                 .join();
         ws.sendText("ping", true);

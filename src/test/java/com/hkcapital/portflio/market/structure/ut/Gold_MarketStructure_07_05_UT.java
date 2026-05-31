@@ -1,15 +1,24 @@
 package com.hkcapital.portflio.market.structure.ut;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableSet;
@@ -17,6 +26,16 @@ import java.util.TreeSet;
 
 class Gold_MarketStructure_07_05_UT
 {
+    static ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().build());
+
+    @BeforeAll
+    public static void beforeAll()
+    {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+        mapper.registerModule(new JavaTimeModule());
+    }
+
     @Test
     public void shouldCreateGoldMarketStructure() throws IOException
     {
@@ -54,6 +73,9 @@ class Gold_MarketStructure_07_05_UT
                         .marketSession(MarketSession.builder().build())
                         .modus(Modus.builder().mod(10)
                                 .subtract(10).build())
+                        .objectMapper(mapper)
+                        .timeFrame(15)
+                        .timeFrameUnit(TimeFramesUnit.MINUTE)
                         .priceRange(range)
                         .build();
 
@@ -62,12 +84,20 @@ class Gold_MarketStructure_07_05_UT
         for (String row : rows)
         {
             String[] cells = row.split(",");
+            LocalDateTime dateTime = LocalDateTime.parse(cells[2].replace("\"", ""),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
             candles.add(Candle.builder() //
-                    .high(Double.parseDouble(cells[0])) //
-                    .low(Double.parseDouble(cells[1])) //
+                    .low(Double.parseDouble(cells[0])) //
+                    .high(Double.parseDouble(cells[1]))
+                    .creationDateTime(dateTime)
+                    .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
+                    .timeFrame(15)
                     .build());
         }
+
         marketStructure.init(candles);
+
+        marketStructure.getLowerBands().forEach(System.out::println);
 
         assertBandsAfterNewCandleArrival("Assert lower bands ", marketStructure.getLowerBands(), buildExpectedInitialLowerBands());
 
@@ -76,7 +106,14 @@ class Gold_MarketStructure_07_05_UT
         Candle newCandle0 = Candle
                 .builder()
                 .low(4775)
-                .high(4800).build();
+                .high(4800)
+                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
+                .instrumentID(18)
+                .source("internal")
+                .creationDateTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
+                .build();
 
         marketStructure.createOrUpdateBands(newCandle0);
 
@@ -84,6 +121,8 @@ class Gold_MarketStructure_07_05_UT
                 .builder()
                 .low(4775)
                 .high(4789)
+                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
+                .timeFrame(15)
                 .build();
         marketStructure.createOrUpdateBands(newCandle1);
 
@@ -91,6 +130,8 @@ class Gold_MarketStructure_07_05_UT
                 .builder()
                 .low(4660)
                 .high(4689)
+                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
+                .timeFrame(15)
                 .build();
 
         marketStructure.createOrUpdateBands(newCandle2);
@@ -121,6 +162,7 @@ class Gold_MarketStructure_07_05_UT
                 .bandType(BandType.LOW)
                 .lowerBound(4660d)
                 .upperBound(4670d)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
                 .marketVisitCount(1)
                 .build();
 
@@ -131,6 +173,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4670d)
                 .upperBound(4680d)
                 .marketVisitCount(0)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb2 = MarketPriceBand
@@ -140,6 +185,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(5)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb3 = MarketPriceBand
@@ -149,6 +197,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(23)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb4 = MarketPriceBand
@@ -158,6 +209,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4700d)
                 .upperBound(4710d)
                 .marketVisitCount(20)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb5 = MarketPriceBand
@@ -167,6 +221,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(7)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb6 = MarketPriceBand
@@ -176,6 +233,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(7)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb7 = MarketPriceBand
@@ -185,6 +245,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(20)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb8 = MarketPriceBand
@@ -194,6 +257,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(7)
+                .timeFrame(15)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb9 = MarketPriceBand
@@ -203,6 +269,7 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(2)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
                 .build();
         MarketPriceBand hb10 = MarketPriceBand
                 .builder()
@@ -211,6 +278,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(0)
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand hb11 = MarketPriceBand
                 .builder()
@@ -219,6 +288,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4770d)
                 .upperBound(4780d)
                 .marketVisitCount(2)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand hb12 = MarketPriceBand
                 .builder()
@@ -227,6 +299,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4780d)
                 .upperBound(4790d)
                 .marketVisitCount(0)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand hb13 = MarketPriceBand
                 .builder()
@@ -234,6 +309,7 @@ class Gold_MarketStructure_07_05_UT
                 .bandType(BandType.LOW)
                 .lowerBound(4790d)
                 .upperBound(4800d)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
                 .marketVisitCount(0)
                 .build();
         MarketPriceBand hb14 = MarketPriceBand
@@ -243,6 +319,9 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4800d)
                 .upperBound(4810d)
                 .marketVisitCount(0)
+                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         return new TreeSet<>(List.of(hb0, hb1, hb2, hb3, hb4, hb5, hb6, hb7, hb8, hb9, hb10, hb11, hb12, hb13, hb14));
     }
@@ -256,6 +335,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(5)
+                .timeFrame(15)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand lb1 = MarketPriceBand
                 .builder()
@@ -264,6 +347,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(23)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand lb2 = MarketPriceBand
                 .builder()
@@ -272,6 +359,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4700d)
                 .upperBound(4710d)
                 .marketVisitCount(20)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand lb3 = MarketPriceBand
                 .builder()
@@ -280,6 +371,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(7)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand lb4 = MarketPriceBand
                 .builder()
@@ -288,6 +383,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(7)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand lb5 = MarketPriceBand
@@ -297,6 +396,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(20)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand lb6 = MarketPriceBand
@@ -306,6 +409,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(7)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand lb7 = MarketPriceBand
@@ -315,6 +422,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(2)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand lb8 = MarketPriceBand
@@ -324,6 +435,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(0)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         return new TreeSet<>(List.of(lb0, lb1, lb2, lb3, lb4, lb5, lb6, lb7, lb8));
@@ -338,6 +453,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(0)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb1 = MarketPriceBand
@@ -347,6 +466,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(11)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb2 = MarketPriceBand
@@ -356,6 +479,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4700d)
                 .upperBound(4710d)
                 .marketVisitCount(16)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb3 = MarketPriceBand
@@ -365,6 +492,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(22)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb4 = MarketPriceBand
@@ -374,6 +505,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(5)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb5 = MarketPriceBand
@@ -383,6 +518,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(9)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb6 = MarketPriceBand
@@ -392,6 +531,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(13)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb7 = MarketPriceBand
@@ -401,6 +544,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(12)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb8 = MarketPriceBand
@@ -410,6 +557,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(3)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         return new TreeSet<>(List.of(hb0, hb1, hb2, hb3, hb4, hb5, hb6, hb7, hb8));
     }
@@ -424,6 +575,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4660d)
                 .upperBound(4670d)
                 .marketVisitCount(0)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb1 = MarketPriceBand
@@ -433,6 +588,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4670d)
                 .upperBound(4680d)
                 .marketVisitCount(0)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb2 = MarketPriceBand
@@ -442,6 +601,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(1)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb3 = MarketPriceBand
@@ -451,6 +614,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(11)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb4 = MarketPriceBand
@@ -460,6 +627,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4700d)
                 .upperBound(4710d)
                 .marketVisitCount(16)
+                .timeFrame(15)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb5 = MarketPriceBand
@@ -469,6 +640,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(22)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb6 = MarketPriceBand
@@ -478,6 +653,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(5)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb7 = MarketPriceBand
@@ -487,6 +666,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(9)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb8 = MarketPriceBand
@@ -496,6 +679,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(13)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb9 = MarketPriceBand
@@ -505,6 +692,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(12)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb10 = MarketPriceBand
@@ -514,6 +705,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(3)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb11 = MarketPriceBand
@@ -523,6 +718,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4770d)
                 .upperBound(4780d)
                 .marketVisitCount(0)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb12 = MarketPriceBand
@@ -532,6 +731,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4780d)
                 .upperBound(4790d)
                 .marketVisitCount(1)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb13 = MarketPriceBand
@@ -541,6 +744,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4790d)
                 .upperBound(4800d)
                 .marketVisitCount(0)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
         MarketPriceBand hb14 = MarketPriceBand
@@ -550,6 +757,10 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4800d)
                 .upperBound(4810d)
                 .marketVisitCount(1)
+                .initialVisitedTime(LocalDateTime.now())
+                .lastVisitedTime(LocalDateTime.now())
+                .timeFrame(15)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         return new TreeSet<>(List.of(hb0, hb1, hb2, hb3, hb4, hb5, hb6, hb7, hb8, hb9, hb10, hb11, hb12, hb13, hb14));
     }

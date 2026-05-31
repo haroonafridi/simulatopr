@@ -6,6 +6,7 @@ etoro:
   instrument-candle-data-url: https://public-api.etoro.com/api/v1/market-data/instruments/
   order-information-url: https://public-api.etoro.com/api/v1/trading/info/demo/orders/
   portfolio-information-url: http://localhost:8080/etoro/portfolio
+  url: ws://localhost:8025/ws/etoro
 
   spring:
     datasource:

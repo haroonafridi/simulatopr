@@ -34,11 +34,7 @@ public class MarketStructure_15_MINS_Buy_Signals_IT extends EtoroWebSocketClient
 
         final Modus modus = Modus.builder().mod(10).subtract(10).build();
 
-        getMarketStructureCache().initDefaultMarket(gold, priceRange, modus,
-                null,
-                10,
-                MarketTypes.GOLD_15_MIN,
-                objectMapper);
+
 
 
         TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;

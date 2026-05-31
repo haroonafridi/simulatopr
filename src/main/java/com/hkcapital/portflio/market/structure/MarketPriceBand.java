@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.market.structure;
 
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = {"bandType", "bandKey", "lowerBound", "upperBound", "marketVisitCount"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class MarketPriceBand  implements Comparable<MarketPriceBand>
+public class MarketPriceBand implements Comparable<MarketPriceBand>
 {
     private BandType bandType;
     private BandKey bandKey;
@@ -20,11 +21,19 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
     private LocalDateTime initialVisitedTime;
     private LocalDateTime lastVisitedTime;
     private long timeDifference;
+
+    private Integer timeFrame;
+
+    private TimeFramesUnit timeFrameUnit;
+
     @Builder
     public MarketPriceBand(BandType bandType, BandKey bandKey,
                            Double lowerBound, Double upperBound,
-                           Integer marketVisitCount, LocalDateTime initialVisitedTime,
-                           LocalDateTime lastVisitedTime)
+                           Integer marketVisitCount,
+                           LocalDateTime initialVisitedTime,
+                           LocalDateTime lastVisitedTime,
+                           Integer timeFrame,
+                           TimeFramesUnit timeFrameUnit)
     {
         this.bandType = bandType;
         this.bandKey = bandKey;
@@ -33,6 +42,8 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
         this.marketVisitCount = marketVisitCount;
         this.initialVisitedTime = initialVisitedTime;
         this.lastVisitedTime = lastVisitedTime;
+        this.timeFrame = timeFrame;
+        this.timeFrameUnit = timeFrameUnit;
     }
 
     @Override
@@ -45,7 +56,8 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
             return typeCompare;
         }
 
-        if(this.lowerBound != null ) {
+        if (this.lowerBound != null)
+        {
             return Double.compare(this.lowerBound, other.lowerBound);
         }
         return -1;
@@ -63,6 +75,10 @@ public class MarketPriceBand  implements Comparable<MarketPriceBand>
 
     public long getTimeDifference() //
     {
-        return lastVisitedTime.getSecond() - initialVisitedTime.getSecond();
+        if (lastVisitedTime == null)
+        {
+            return DateTimeUtil.minus(initialVisitedTime, initialVisitedTime, timeFrameUnit);
+        }
+        return DateTimeUtil.minus(lastVisitedTime, initialVisitedTime, timeFrameUnit);
     }
 }

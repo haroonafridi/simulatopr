@@ -23,6 +23,7 @@ public class EtoroApiConfiguration implements Service
     private String instrumentCandleDataUrl;
     private String orderInformationUrl;
     private String portfolioInformationUrl;
+    private String url;
 
     public String getXRequestId()
     {

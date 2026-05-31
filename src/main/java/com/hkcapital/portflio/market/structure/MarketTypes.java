@@ -2,6 +2,7 @@ package com.hkcapital.portflio.market.structure;
 
 public enum MarketTypes
 {
+    GOLD_5_MIN("gold_5_mins"),
     GOLD_15_MIN("gold_15_mins"),
     GOLD_30_MIN("gold_30_mins"),
     GOLD_1_HOUR("gold_1_hour"),

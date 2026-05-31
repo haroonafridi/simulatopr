@@ -2,6 +2,7 @@ package com.hkcapital.portflio.market.structure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +32,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     private NavigableSet<MarketPriceBand> upperBands;
     private NavigableSet<MarketPriceBand> lowerBands;
     private final Range range;
-
+    private final MarketStructure childMarketStructure;
     @Getter
     private final OrderCache orderCache;
     @Getter
@@ -40,13 +42,16 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     private MarketAction marketAction = MarketAction.NONE;
     @Getter
     private MarketRegime marketRegime;
-
+    @Getter
+    final Integer timeFrame;
+    @Getter
+    final TimeFramesUnit timeFrameUnit;
+    @Getter
     private MarketTypes marketTypes;
-
+    @Getter
     private Instrument instrument;
     int sellSignal = 0;
     int buySignal = 0;
-
     int totalTicks = 1;
     private final ObjectMapper objectMapper;
 
@@ -57,7 +62,10 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                            final Modus modus,
                            final MarketTypes marketTypes,
                            final Instrument instrument,
-                           final ObjectMapper objectMapper
+                           final ObjectMapper objectMapper,
+                           final Integer timeFrame,
+                           final TimeFramesUnit timeFrameUnit,
+                           final MarketStructure childMarketStructure
     )
     {
         this.priceRange = priceRange;
@@ -67,8 +75,11 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         this.range = RangeExtractor.of(priceRange, modus);
         this.instrument = instrument;
         this.marketTypes = marketTypes;
-        upperBands = BandGenerator.of(range, BandType.HIGH, intervals);
-        lowerBands = BandGenerator.of(range, BandType.LOW, intervals);
+        this.timeFrame = timeFrame;
+        this.timeFrameUnit = timeFrameUnit;
+        upperBands = BandGenerator.of(range, BandType.HIGH, intervals, timeFrame, timeFrameUnit);
+        lowerBands = BandGenerator.of(range, BandType.LOW, intervals, timeFrame, timeFrameUnit);
+        this.childMarketStructure = childMarketStructure;
         this.objectMapper = objectMapper;
         orderCache = new OrderCache();
     }
@@ -93,18 +104,18 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
 
         Optional<MarketPriceBand> lB2 = lb.findNthMostVisitedLowBand(1);
 
-        Distance dh1 = getDistance(liveInstrumentRate.getAsk(), hB1.get().getUpperBound());
+        //Distance dh1 = getDistance(liveInstrumentRate.getAsk(), hB1.get().getUpperBound());
 
-        Distance dh2 = getDistance(liveInstrumentRate.getAsk(), hB2.get().getUpperBound());
+        //Distance dh2 = getDistance(liveInstrumentRate.getAsk(), hB2.get().getUpperBound());
 
         Distance dl1 = getDistance(liveInstrumentRate.getAsk(), lB1.get().getLowerBound());
 
-        Distance dl2 = getDistance(liveInstrumentRate.getAsk(), lB2.get().getLowerBound());
+        // Distance dl2 = getDistance(liveInstrumentRate.getAsk(), lB2.get().getLowerBound());
 
         // buy side
-        double sl = lB1.get().getLowerBound() - (2 * pTBelow);
+        //double sl = lB1.get().getLowerBound() - (2 * pTBelow);
 
-        double tp = hB1.get().getUpperBound() - (2 * pTAbove);
+        // double tp = hB1.get().getUpperBound() - (2 * pTAbove);
 
         if (dl1.isAbove())
         {
@@ -157,7 +168,6 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                 }
             }
         }
-
         orderCache.process(liveInstrumentRate, objectMapper);
     }
 
@@ -190,11 +200,11 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         findMarketPriceBand(band, price)
                 .ifPresentOrElse(marketPriceBand ->
                 {
-                    updateMarketVisitCountAndTime(band, price);
+                    updateMarketVisitCountAndTime(band, price, candle.getCreationDateTime());
                 }, () ->
                 {
                     createNewBands(candle);
-                    updateMarketVisitCountAndTime(band, price);
+                    updateMarketVisitCountAndTime(band, price, candle.getCreationDateTime());
                 });
     }
 
@@ -205,9 +215,9 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                         .candle(candle).build();
         final Range newRange = RangeExtractor.of(candlePriceRange, modus);
         final NavigableSet<MarketPriceBand> newUpperBands = //
-                BandGenerator.of(newRange, BandType.HIGH, intervals);
+                BandGenerator.of(newRange, BandType.HIGH, intervals, candle.getTimeFrame(), TimeFramesUnit.valueOf(candle.getTimeFrameUnit()));
         final NavigableSet<MarketPriceBand> newLowerBands = //
-                BandGenerator.of(newRange, BandType.LOW, intervals);
+                BandGenerator.of(newRange, BandType.LOW, intervals, candle.getTimeFrame(), TimeFramesUnit.valueOf(candle.getTimeFrameUnit()));
         // merge HIGH bands
         addBands(newUpperBands, upperBands);
         // merge LOW bands
@@ -237,9 +247,9 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
             final double low = candle.getLow();
             final double high = candle.getHigh();
             // HIGH bands (use candle high)
-            updateMarketVisitCountAndTime(upperBands, high);
+            updateMarketVisitCountAndTime(upperBands, high, candle.getCreationDateTime());
             // LOW bands (use candle low)
-            updateMarketVisitCountAndTime(lowerBands, low);
+            updateMarketVisitCountAndTime(lowerBands, low, candle.getCreationDateTime());
 
         }
 
@@ -266,7 +276,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         }
     }
 
-    private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price)
+    private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price, LocalDateTime creationDateTime)
     {
         for (MarketPriceBand band : bands)
         {
@@ -276,7 +286,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                 band.updateMarketVisitCount(
                         band.getMarketVisitCount() + 1
                 );
-                band.updateTime(LocalDateTime.now());
+                band.updateTime(creationDateTime);
                 break; // important optimization
             }
         }
@@ -301,7 +311,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     public void flush()
     {
         upperBands.clear(); // flush logic here
-        upperBands.clear(); //
+        lowerBands.clear(); //
         initCompleted = false;
     }
 

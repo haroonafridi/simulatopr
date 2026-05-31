@@ -207,8 +207,13 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 {
                     logger.info("Sending orders using bands!!");
                     MarketStructure marketStructure = marketStructureManagerCache.get(MarketTypes.GOLD_15_MIN);
+//                    MarketStructure marketStructure = marketStructureManagerCache.get(MarketTypes.GOLD_5_MIN);
+//                    MarketStructure marketStructure = marketStructureManagerCache.get(MarketTypes.GOLD_30_MIN);
+//                    MarketStructure marketStructure = marketStructureManagerCache.get(MarketTypes.GOLD_1_HOUR);
                     marketAction = marketStructure.getMarketAction();
+
                     marketStructure.process(instrumentRate, signalBuilder);
+
                     marketStructure.getOrderCache().getOrdersCache().entrySet().forEach(e ->
                     {
                         if (!e.getValue().isBrokerSent())

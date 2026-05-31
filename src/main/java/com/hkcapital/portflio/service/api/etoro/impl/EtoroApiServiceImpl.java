@@ -28,11 +28,13 @@ public class EtoroApiServiceImpl implements EtoroApiService
     private static final Logger logger = LoggerFactory.getLogger(EtoroOrderManagerServiceImpl.class);
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final ObjectMapper objectMapper;
+
     public EtoroApiServiceImpl(EtoroApiConfiguration etoroApiConfiguration, ObjectMapper objectMapper)
     {
         this.etoroApiConfiguration = etoroApiConfiguration;
         this.objectMapper = objectMapper;
     }
+
     @Override
     public HttpResponse<String> createOrder(JSON order, String url) throws UnirestException
     {
@@ -72,7 +74,7 @@ public class EtoroApiServiceImpl implements EtoroApiService
             logger.info("Creating limit Order [{}]", etoroLimitOrderDto.toJson());
             HttpResponse<String> response = createOrder(etoroLimitOrderDto, etoroApiConfiguration.getLimitOrderUrl());
             logger.info("Limit Order in etoro [{}]", response.getBody());
-            return  objectMapper.readValue(response.getBody(), EtoroOrderDetailsResponseDTO.class);
+            return objectMapper.readValue(response.getBody(), EtoroOrderDetailsResponseDTO.class);
         } catch (UnirestException e)
         {
             throw new RuntimeException(e);
@@ -109,7 +111,8 @@ public class EtoroApiServiceImpl implements EtoroApiService
 
         } catch (UnirestException e)
         {
-            throw new RuntimeException(e);
+            logger.error("error in creating order {}", e.getMessage());
+            return null;
         }
     }
 

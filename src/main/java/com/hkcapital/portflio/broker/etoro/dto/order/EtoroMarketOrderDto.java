@@ -4,6 +4,8 @@ import com.hkcapital.portflio.broker.etoro.JSON;
 import com.hkcapital.portflio.values.timeframe.TimeFrame;
 import lombok.*;
 
+import java.io.Serializable;
+
 /**
  * Data Transfer object responbile for wrapping etoro Market Order
  */
@@ -12,7 +14,7 @@ import lombok.*;
 @Data
 @Builder
 @ToString
-public class EtoroMarketOrderDto implements JSON
+public class EtoroMarketOrderDto implements JSON , Serializable
 {
     private Integer instrumentId;
     private Boolean isBuy;

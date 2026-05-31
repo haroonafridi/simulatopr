@@ -91,18 +91,33 @@ public class MarketStructureManagerCache implements Service
                 .atStartOfDay()
                 .minusNanos(1);
 
-        List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 15,
+        List<Candle> candleList1Mins = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 1,
                 TimeFramesUnit.MINUTE.getUnit(), start, end);
 
-        if(candleList.size() == 0)
+        List<Candle> candleList5Mins = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 5,
+                TimeFramesUnit.MINUTE.getUnit(), start, end);
+
+        List<Candle> candleList15Mins = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 15,
+                TimeFramesUnit.MINUTE.getUnit(), start, end);
+
+        List<Candle> candleList30Mins = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 30,
+                TimeFramesUnit.MINUTE.getUnit(), start, end);
+
+        List<Candle> candleList1Hour = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 1,
+                TimeFramesUnit.HOUR.getUnit(), start, end);
+
+        List<Candle> candleList4Hour = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18, 4,
+                TimeFramesUnit.HOUR.getUnit(), start, end);
+
+        if(candleList15Mins.size() == 0)
         {
             logger.info("No candle data found cannot create market structure");
             return;
         }
-
-        double low = candleList.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
-        double high = candleList.stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
+        double low = candleList15Mins.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
+        double high = candleList15Mins.stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
         logger.info("Day range created low = {} , high = {}",low, high);
+
         Instrument instrument = instrumentService.findAll()
                 .stream() //
                 .filter(inst -> inst.getActive()) //
@@ -115,38 +130,85 @@ public class MarketStructureManagerCache implements Service
                 .high(high)
                 .build();
 
-        MarketStructure structure = MarketStructure.builder().priceRange(priceRange)
-                .modus(Modus.builder().mod(10).subtract(10).build())
+        MarketStructure struct1Min = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder().mod(2).subtract(2).build())
                 .objectMapper(objectMapper)
                 .instrument(instrument)
                 .marketSession(null)
-                .intervals(10)
+                .intervals(2)
+                .timeFrame(1)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
-        structure.init(candleList);
-
-        register(MarketTypes.GOLD_15_MIN, structure);
-    }
-
-    public void initDefaultMarket(final Instrument instrument,
-                                  final PriceRange priceRange,
-                                  final Modus modus,
-                                  final MarketSession marketSession,
-                                  final Integer interval,
-                                  final MarketTypes marketKey,
-                                  final ObjectMapper objectMapper)
-    {
-
-        MarketStructure structure = MarketStructure.builder().priceRange(priceRange)
-                .modus(Modus.builder()
-                        .mod(modus.getMod())
-                        .subtract(modus.getSubtract())
-                        .build())
-                .marketSession(marketSession)
+        MarketStructure struct5Mins = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder().mod(4).subtract(4).build())
                 .objectMapper(objectMapper)
                 .instrument(instrument)
-                .intervals(interval)
+                .childMarketStructure(struct1Min)
+                .marketSession(null)
+                .intervals(4)
+                .timeFrame(5)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
+
+        struct5Mins.init(candleList5Mins);
+
+        MarketStructure struct15Mins = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder().mod(8).subtract(8).build())
+                .objectMapper(objectMapper)
+                .instrument(instrument)
+                .marketSession(null)
+                .intervals(8)
+                .timeFrame(15)
+                .childMarketStructure(struct5Mins)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
+                .build();
+        struct15Mins.init(candleList15Mins);
+
+        MarketStructure stuct30Mins = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder().mod(15).subtract(15).build())
+                .objectMapper(objectMapper)
+                .instrument(instrument)
+                .marketSession(null)
+                .intervals(15)
+                .timeFrame(30)
+                .childMarketStructure(struct15Mins)
+                .timeFrameUnit(TimeFramesUnit.MINUTE)
+                .build();
+
+        stuct30Mins.init(candleList30Mins);
+
+        MarketStructure struct1Hour = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder().mod(30).subtract(30).build())
+                .objectMapper(objectMapper)
+                .instrument(instrument)
+                .marketSession(null)
+                .timeFrame(1)
+                .timeFrameUnit(TimeFramesUnit.HOUR)
+                .childMarketStructure(stuct30Mins)
+                .intervals(30)
+                .build();
+
+        struct1Hour.init(candleList1Hour);
+
+        MarketStructure struct4Hour = MarketStructure.builder().priceRange(priceRange)
+                .modus(Modus.builder().mod(40).subtract(40).build())
+                .objectMapper(objectMapper)
+                .instrument(instrument)
+                .marketSession(null)
+                .timeFrame(4)
+                .timeFrameUnit(TimeFramesUnit.HOUR)
+                .childMarketStructure(struct1Hour)
+                .intervals(40)
+                .build();
+
+        struct4Hour.init(candleList4Hour);
+        register(MarketTypes.GOLD_4_HOUR, struct4Hour);
+    }
+
+    public void initDefaultMarket(MarketStructure structure,
+                                  final MarketTypes marketKey)
+    {
         register(marketKey, structure);
     }
 

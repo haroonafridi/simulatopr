@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
+import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
@@ -37,8 +38,9 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
 
     private final MarketStructureManagerCache marketStructureManagerCache;
 
-
     private final EtoroCandleService etoroCandleService;
+
+    private final Bandlogger bandlogger;
 
     public EtoroWebServiceSocketManagerImpl(final com.hkcapital.portflio.service.srmatrix.SRMatrixService srMatrixService, //
                                             final OrderManagerService orderManagerService, //
@@ -52,7 +54,8 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                                             final MarketFeedDbWriterSub marketFeedDbWriter,
                                             final BuySellSignalGeneratorSub buySellManager,
                                             final EtoroCandleService etoroCandleService,
-                                            final MarketStructureManagerCache marketStructureManagerCache)
+                                            final MarketStructureManagerCache marketStructureManagerCache,
+                                            final Bandlogger bandlogger)
     {
 
         this.orderManagerService = orderManagerService;
@@ -68,6 +71,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         marketFeedObserver.addMarketFeedSubscriber(buySellManager);
         marketFeedObserver.addMarketFeedSubscriber(orderManagerService);
         this.marketStructureManagerCache = marketStructureManagerCache;
+        this.bandlogger = bandlogger;
     }
 
     @Override
@@ -77,7 +81,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         StartWebSocketRunner startWebSocket = //
                 new StartWebSocketRunner(etoroApiConfiguration, marketFeedObserver, //
                         liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
-                        marketStructureManagerCache);
+                        marketStructureManagerCache, bandlogger);
         new Thread(startWebSocket).start();
 
         ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();

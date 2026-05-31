@@ -88,6 +88,7 @@ public final class ChronoFieldUtil
 
         long bucketSizeMillis = switch (timeFramesUnit)
                 {
+                    case SECOND -> interval * 1000L;
                     case MINUTE -> interval * 60_000L;
                     case HOUR -> interval * 60 * 60_000L;
                     case DAY    -> interval * 24 * 60 * 60_000L;
@@ -102,6 +103,7 @@ public final class ChronoFieldUtil
 
         long bucketSizeMillis = switch (timeFramesUnit)
                 {
+                    case SECOND -> interval * 1000L;
                     case MINUTE -> interval * 60_000L;
                     case HOUR -> interval * 60 * 60_000L;
                     case DAY -> 0L;
@@ -114,4 +116,5 @@ public final class ChronoFieldUtil
          return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")) //
                  .toInstant(ZoneOffset.UTC);
     }
+
 }

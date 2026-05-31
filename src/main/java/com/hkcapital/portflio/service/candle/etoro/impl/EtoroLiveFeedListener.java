@@ -13,6 +13,7 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.api.etoro.impl.StartWebSocketRunner;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
+import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
@@ -43,6 +44,8 @@ public class EtoroLiveFeedListener implements Listener
     private final InstrumentService instrumentService;
     private final ObjectMapper objectMapper;
     private final EtoroCandleService etoroCandleService;
+
+    private final Bandlogger bandlogger;
     private final Set<String> subscribedTopics = ConcurrentHashMap.newKeySet();
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -97,7 +100,8 @@ public class EtoroLiveFeedListener implements Listener
                                  InstrumentService instrumentService,
                                  ObjectMapper objectMapper,
                                  EtoroCandleService etoroCandleService,
-                                 MarketStructureManagerCache marketStructureManagerCache)
+                                 MarketStructureManagerCache marketStructureManagerCache,
+                                 Bandlogger bandlogger)
     {
         this.apiConfiguration = apiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
@@ -106,13 +110,26 @@ public class EtoroLiveFeedListener implements Listener
         this.objectMapper = objectMapper;
         this.etoroCandleService = etoroCandleService;
         this.marketStructureManagerCache = marketStructureManagerCache;
+        this.bandlogger = bandlogger;
 
         candleBuilder1Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1Min.bandLogger(bandlogger);
+        candleBuilder1Min.objectMapper(objectMapper);
         candleBuilder5Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder5Min.bandLogger(bandlogger);
+        candleBuilder5Min.objectMapper(objectMapper);
         candleBuilder15Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder15Min.bandLogger(bandlogger);
+        candleBuilder15Min.objectMapper(objectMapper);
         candleBuilder30Min.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder30Min.bandLogger(bandlogger);
+        candleBuilder30Min.objectMapper(objectMapper);
         candleBuilder1Hour.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1Hour.bandLogger(bandlogger);
+        candleBuilder1Hour.objectMapper(objectMapper);
         candleBuilder4Hour.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder4Hour.bandLogger(bandlogger);
+        candleBuilder4Hour.objectMapper(objectMapper);
     }
 
     @Override
@@ -190,7 +207,7 @@ public class EtoroLiveFeedListener implements Listener
     public void onError(WebSocket webSocket, Throwable error)
     {
         logger.error("WebSocket error", error);
-        reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
+        reconnect(apiConfiguration.getUrl());
     }
 
     @Override
@@ -203,7 +220,7 @@ public class EtoroLiveFeedListener implements Listener
         candleBuilder30Min.flush();
         candleBuilder1Hour.flush();
         candleBuilder4Hour.flush();
-        reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
+        reconnect(apiConfiguration.getUrl());
         return CompletableFuture.completedFuture(null);
     }
 
@@ -275,7 +292,7 @@ public class EtoroLiveFeedListener implements Listener
                         {
                             logger.error("Reconnect failed", error);
                             reconnecting = false;
-                            reconnect(StartWebSocketRunner.ETORO_WEB_SOCKET_URL);
+                            reconnect(apiConfiguration.getUrl());
                         }
                     });
 

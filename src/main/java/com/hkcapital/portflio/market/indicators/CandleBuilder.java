@@ -1,10 +1,16 @@
 package com.hkcapital.portflio.market.indicators;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.market.structure.MarketTypes;
+import com.hkcapital.portflio.model.BandLogger;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.CandleSource;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
+import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
@@ -33,6 +40,10 @@ public class CandleBuilder
     private final SMA sma = new SMA(14);
     private EtoroCandleService candleService = null;
     private MarketStructureManagerCache marketStructureManagerCache;
+
+    private Bandlogger bandlogger;
+
+    private ObjectMapper objectMapper;
 
     public CandleBuilder(EtoroCandleService candleService)
     {
@@ -70,7 +81,8 @@ public class CandleBuilder
         {
             CandleDto updatedCandle = updateCandle(mainCandle, subcandle);
             candles.set(candles.size() - 1, updatedCandle);
-        } else
+        } //
+        else
         {
             CandleDto closedCandle = mainCandle;
             addCandle(subcandle, timeFrame, interval);
@@ -115,18 +127,106 @@ public class CandleBuilder
                     .source(CandleSource.INTERNAL.getSource())
                     .build();
 
-            MarketStructure structure = marketStructureManagerCache.get(MarketTypes.GOLD_15_MIN);
+            MarketStructure structure = marketStructureManagerCache.get(MarketTypes.GOLD_4_HOUR);
 
-            if (structure != null && candle.getTimeFrame() == 15)
+            if (structure != null)
             {
-                structure.createOrUpdateBands(candle);
+                switch (candle.getTimeFrameUnit())
+                {
+                    case "HOUR":
+                    {
+                        switch (candle.getTimeFrame())
+                        {
+                            case 4:
+                                createAndSaveStructure(structure, candle, structure);
+                                break;
+                            case 1:
+                                createAndSaveStructure(structure.getChildMarketStructure(), candle, structure);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    case "MINUTE":
+                    {
+                        switch (candle.getTimeFrame())
+                        {
+                            case 30:
+                                createAndSaveStructure(structure.getChildMarketStructure().getChildMarketStructure(), candle, structure);
+                                break;
+                            case 15:
+                                createAndSaveStructure(structure.getChildMarketStructure() //
+                                        .getChildMarketStructure().getChildMarketStructure(), candle, structure);
+                                break;
+                            case 5:
+                                createAndSaveStructure(structure.getChildMarketStructure() //
+                                        .getChildMarketStructure() //
+                                        .getChildMarketStructure() //
+                                        .getChildMarketStructure(), candle, structure);
+                                break;
+                            case 1:
+                                createAndSaveStructure(structure.getChildMarketStructure() //
+                                        .getChildMarketStructure() //
+                                        .getChildMarketStructure() //
+                                        .getChildMarketStructure() //
+                                        .getChildMarketStructure(), candle, structure);
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+                    default:
+                        break;
+                }
             }
+
             candleService.save(candle);
             logger.info("Candle closed event fired: rsi = {}  atr = {}, ema = {} sma = {}, {} ", rsiValue, atrVal, emaVal, smaVal, closedCandle);
         }
         return this;
     }
 
+    private void createAndSaveStructure(MarketStructure childStructure, Candle candle, MarketStructure mainStructure)
+    {
+        childStructure.createOrUpdateBands(candle);
+        try
+        {
+            saveMarketStructure(mainStructure);
+        } catch (JsonProcessingException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void saveMarketStructure(MarketStructure structure) throws JsonProcessingException
+    {
+        String uuid = UUID.randomUUID().toString();
+
+        // 1. Recursively convert the hierarchical structure into a nested ObjectNode
+        String band = marketStructureExtractor(structure, uuid);
+        BandLogger bandLoggerEntity = new BandLogger();
+        bandLoggerEntity.setUuid(uuid);
+        bandLoggerEntity.setBandDesc(band); // String serialization is handled above
+        bandLoggerEntity.setCreationDate(LocalDateTime.now());
+        logger.info("band => {}", band);
+        bandlogger.save(bandLoggerEntity);
+    }
+
+    private String marketStructureExtractor(MarketStructure structure, String uuid)
+            throws JsonProcessingException
+    {
+        ObjectNode marketStructureJson = convertStructureToNode(structure);
+        // 2. Wrap it in your main root logger payload
+        ObjectNode root = objectMapper.createObjectNode();
+        root.put("uuid", uuid);
+        root.set("marketStructure", marketStructureJson);
+
+        // 3. Serialize to string and save to the database
+        String band = objectMapper.writeValueAsString(root);
+        return band;
+    }
 
     private CandleDto updateCandle(final CandleDto candle, final CandleDto subCandle)
     {
@@ -139,15 +239,31 @@ public class CandleBuilder
 
     private void addCandle(final CandleDto subCandle, TimeFramesUnit timeTimeFramesUnit, Integer interval)
     {
-        Instant bucketTime = ChronoFieldUtil.bucketStart(subCandle.getTime(), subCandle.getTimeFramesUnit(), interval);
-        candles.add(new CandleDto(subCandle.getInstrument(),
-                subCandle.getOpen(), subCandle.getLow(), subCandle.getHigh(),
-                subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeTimeFramesUnit, interval));
+        if (subCandle.getTime() != null && subCandle.getTimeFramesUnit() != null && interval != null)
+        {
+            Instant bucketTime = ChronoFieldUtil.bucketStart(subCandle.getTime(), subCandle.getTimeFramesUnit(), interval);
+            candles.add(new CandleDto(subCandle.getInstrument(),
+                    subCandle.getOpen(), subCandle.getLow(), subCandle.getHigh(),
+                    subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeTimeFramesUnit, interval));
+        }
+
     }
 
     public CandleBuilder ofTimeFrame(TimeFramesUnit timeFrame)
     {
         this.timeFrame = timeFrame;
+        return this;
+    }
+
+    public CandleBuilder objectMapper(ObjectMapper objectMapper)
+    {
+        this.objectMapper = objectMapper;
+        return this;
+    }
+
+    public CandleBuilder bandLogger(Bandlogger bandlogger)
+    {
+        this.bandlogger = bandlogger;
         return this;
     }
 
@@ -207,6 +323,28 @@ public class CandleBuilder
             CandleDto lastCandle = candles.get(candles.size() - 1);
             //publishCloseEvent(lastCandle);
         }
+    }
+
+
+    private ObjectNode convertStructureToNode(MarketStructure structure)
+    {
+        if (structure == null)
+        {
+            return null;
+        }
+        ObjectNode node = objectMapper.createObjectNode();
+        // Map current level attributes dynamically
+        // (Assuming structure has a way to expose its timeframe context, e.g., structure.getTimeframe())
+        node.put("timeFrame", structure.getTimeFrame());
+        node.set("timeFrameUnit", objectMapper.valueToTree(structure.getTimeFrameUnit()));
+        node.set("lowerBands", objectMapper.valueToTree(structure.getLowerBands()));
+        node.set("upperBands", objectMapper.valueToTree(structure.getUpperBands()));
+        // RECURSION: If a child structure exists, nest it inside this node
+        if (structure.getChildMarketStructure() != null)
+        {
+            node.set("child", convertStructureToNode(structure.getChildMarketStructure()));
+        }
+        return node;
     }
 
     public CandleList getCandles()
