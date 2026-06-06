@@ -6,6 +6,7 @@ import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 class MarketPriceBand_UT
@@ -20,7 +21,7 @@ class MarketPriceBand_UT
                 .lowerBound(4680d)
                 .upperBound(4689d)
                 .marketVisitCount(1)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .build();
         Assertions.assertAll(() ->
         {
@@ -40,7 +41,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4680, 4689))
                 .lowerBound(4680d)
                 .upperBound(4689d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(6)
                 .build();
         Assertions.assertAll(() ->
@@ -62,7 +63,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.HIGH, 4680, 4689))
                 .lowerBound(4680d)
                 .upperBound(4689d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(1)
                 .build();
 
@@ -80,7 +81,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.HIGH, 4690, 4699))
                 .lowerBound(4690d)
                 .upperBound(4699d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(6)
                 .build();
 
@@ -98,7 +99,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.HIGH, 4700, 4709))
                 .lowerBound(4700d)
                 .upperBound(4709d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(5)
                 .build();
 
@@ -116,7 +117,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.HIGH, 4710, 4719))
                 .lowerBound(4710d)
                 .upperBound(4719d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(8)
                 .build();
 
@@ -135,7 +136,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.HIGH, 4720, 4729))
                 .lowerBound(4720d)
                 .upperBound(4729d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(9)
                 .build();
 
@@ -153,7 +154,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.HIGH, 4730, 4739))
                 .lowerBound(4730d)
                 .upperBound(4739d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(6)
                 .build();
 
@@ -175,7 +176,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4680, 4689))
                 .lowerBound(4680d)
                 .upperBound(4689d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(6)
                 .build();
 
@@ -193,7 +194,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4690, 4699))
                 .lowerBound(4690d)
                 .upperBound(4699d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(6)
                 .build();
 
@@ -211,7 +212,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4700, 4709))
                 .lowerBound(4700d)
                 .upperBound(4709d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(6)
                 .build();
 
@@ -229,7 +230,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4710, 4719))
                 .lowerBound(4710d)
                 .upperBound(4719d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(9)
                 .build();
 
@@ -248,7 +249,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4720, 4729))
                 .lowerBound(4720d)
                 .upperBound(4729d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(5)
                 .build();
 
@@ -266,7 +267,7 @@ class MarketPriceBand_UT
                 .bandKey(new BandKey(BandType.LOW, 4730, 4739))
                 .lowerBound(4730d)
                 .upperBound(4739d)
-                .initialVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
                 .marketVisitCount(0)
                 .build();
 

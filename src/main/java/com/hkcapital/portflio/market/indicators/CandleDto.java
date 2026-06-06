@@ -16,7 +16,9 @@ public class CandleDto
     private String instrument;
     private double open;
     private double low;
+    private Instant lowTime;
     private double high;
+    private Instant highTime;
     private double close;
     private Instant time;
 

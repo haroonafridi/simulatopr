@@ -140,6 +140,8 @@ public class MarketStructureManagerCache implements Service
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
+        struct1Min.init(candleList1Mins);
+
         MarketStructure struct5Mins = MarketStructure.builder().priceRange(priceRange)
                 .modus(Modus.builder().mod(4).subtract(4).build())
                 .objectMapper(objectMapper)

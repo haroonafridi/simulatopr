@@ -59,17 +59,8 @@ public abstract class EtoroWebSocketClientAbstract_IT
     protected SRMatrixService srMatrixService;
     @Autowired
     protected OrderManagerService orderManagerService;
-
     @Autowired
     protected Bandlogger bandlogger;
-
-//    @AfterAll
-//    static void stopServer() throws InterruptedException
-//    {
-//        Thread.sleep(20000);
-//        server.stop();
-//    }
-
     public WebSocket connect(Instrument instrument) throws InterruptedException
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);

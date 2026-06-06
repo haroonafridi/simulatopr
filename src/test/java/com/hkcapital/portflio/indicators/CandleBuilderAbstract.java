@@ -28,7 +28,8 @@ public abstract class CandleBuilderAbstract
 
     public CandleDto toOneMinuteCandle(final Tick tick)
     {
-        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
+        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getTime(), tick.getVal(), tick.getTime(),
+                tick.getVal(), tick.getTime(),
                 TimeFramesUnit.MINUTE, 1);
     }
 

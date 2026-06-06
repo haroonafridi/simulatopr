@@ -6,6 +6,7 @@ import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
 import com.hkcapital.portflio.model.TradingSessions;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
@@ -20,6 +21,8 @@ import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.service.tradingsessions.TradingSessionsService;
 import com.hkcapital.portflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portflio.ui.panels.configuartion.panels.ConfigurationPanel;
+import com.hkcapital.portflio.ui.panels.etoro.configuartion.dialogues.EtoroOrdersDialogue;
+import com.hkcapital.portflio.ui.panels.etoro.configuartion.panels.EtoroOrdersPanel;
 import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentDialogue;
 import com.hkcapital.portflio.ui.panels.instrument.panels.InstrumentPanel;
 import com.hkcapital.portflio.ui.panels.marketconditions.dialogues.MarketConditionsDialogue;
@@ -55,14 +58,11 @@ public class PnLSimulatorFacad
 
     private final TradingSessionsService<TradingSessions> tradingSessionsService;
     private final EtoroCandleService etoroCandleService;
-
     private final EtoroWebSocketManagerService etoroWebSocketManagerService;
-
     private final SRMatrixService srMatrixService;
     private final ProfileService profileService;
-
+    private final EtoroApiService etoroApiService;
     private final EtoroApiConfiguration etoroApiInformationService;
-
     private DataObject<String, String> dataObject = new DataObject<>();
     private final MarketStructureManagerCache marketStructureManagerCache;
     private final EtoroApiConfiguration etoroApiConfiguration;
@@ -84,6 +84,7 @@ public class PnLSimulatorFacad
                              ProfileService profileService,
                              EtoroApiConfiguration etoroApiConfiguration,
                              MarketStructureManagerCache marketStructureManagerCache,
+                             EtoroApiService etoroApiService,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -100,6 +101,7 @@ public class PnLSimulatorFacad
         this.srMatrixService = srMatrixService;
         this.profileService = profileService;
         this.etoroApiConfiguration = etoroApiConfiguration;
+        this.etoroApiService = etoroApiService;
         this.marketStructureManagerCache = marketStructureManagerCache;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
@@ -114,6 +116,7 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.ProfileService, this.profileService);
+        serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
         serviceRegistery.putService(Service.MarketStructureManagerCache, this.marketStructureManagerCache);
 
     }
@@ -152,10 +155,10 @@ public class PnLSimulatorFacad
         settings.add(new DefaultMutableTreeNode("Profile"));
 
         DefaultMutableTreeNode brokers = new DefaultMutableTreeNode("Brokers");
-        brokers.add(new DefaultMutableTreeNode("Brokers"));
-        brokers.add(new DefaultMutableTreeNode("Brokers API"));
-        brokers.add(new DefaultMutableTreeNode("Broker Fee Structure"));
-
+        DefaultMutableTreeNode etoro = new DefaultMutableTreeNode("Etoro");
+        brokers.add(etoro);
+        etoro.add(new DefaultMutableTreeNode("Brokers API"));
+        etoro.add(new DefaultMutableTreeNode("Orders"));
         DefaultMutableTreeNode configuration = new DefaultMutableTreeNode("Configuration:");
 
         configuration.add(new DefaultMutableTreeNode("Positions and Leverage"));
@@ -227,6 +230,14 @@ public class PnLSimulatorFacad
             if (selectedNode == null) return; // nothing selected
 
             Object nodeObject = selectedNode.getUserObject();
+
+
+            if("Orders".equals(nodeObject.toString()))
+            {
+                EtoroOrdersDialogue configurationDialogue = //
+                        new EtoroOrdersDialogue(mainFrame, new EtoroOrdersPanel(serviceRegistery, null));
+                configurationDialogue.setVisible(true);
+            }
 
             // Check if it’s a leaf node or your domain object
             if (nodeObject.toString().equals("Positions and Leverage"))

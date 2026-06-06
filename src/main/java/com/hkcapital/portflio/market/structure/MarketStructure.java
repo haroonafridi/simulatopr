@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -181,8 +180,10 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
 
     public void createOrUpdateBands(Candle candle)
     {
-        updateBand(upperBands, candle, candle.getHigh());
-        updateBand(lowerBands, candle, candle.getLow());
+        Instant high = candle.getHighTime() == null ? Instant.now() : candle.getHighTime();
+        Instant low = candle.getLowTime() == null ? Instant.now() : candle.getLowTime();
+        updateBand(upperBands, candle, candle.getHigh(), high);
+        updateBand(lowerBands, candle, candle.getLow(), low);
 
         if (lowerBands != null)
         {
@@ -195,16 +196,16 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         }
     }
 
-    private void updateBand(NavigableSet<MarketPriceBand> band, Candle candle, double price)
+    private void updateBand(NavigableSet<MarketPriceBand> band, Candle candle, double price, Instant highOrLow)
     {
         findMarketPriceBand(band, price)
                 .ifPresentOrElse(marketPriceBand ->
                 {
-                    updateMarketVisitCountAndTime(band, price, candle.getCreationDateTime());
+                    updateMarketVisitCountAndTime(band, price, highOrLow);
                 }, () ->
                 {
                     createNewBands(candle);
-                    updateMarketVisitCountAndTime(band, price, candle.getCreationDateTime());
+                    updateMarketVisitCountAndTime(band, price, highOrLow);
                 });
     }
 
@@ -247,9 +248,9 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
             final double low = candle.getLow();
             final double high = candle.getHigh();
             // HIGH bands (use candle high)
-            updateMarketVisitCountAndTime(upperBands, high, candle.getCreationDateTime());
+            updateMarketVisitCountAndTime(upperBands, high, candle.getHighTime());
             // LOW bands (use candle low)
-            updateMarketVisitCountAndTime(lowerBands, low, candle.getCreationDateTime());
+            updateMarketVisitCountAndTime(lowerBands, low, candle.getLowTime());
 
         }
 
@@ -276,7 +277,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         }
     }
 
-    private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price, LocalDateTime creationDateTime)
+    private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price, Instant highLowTime)
     {
         for (MarketPriceBand band : bands)
         {
@@ -286,7 +287,13 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                 band.updateMarketVisitCount(
                         band.getMarketVisitCount() + 1
                 );
-                band.updateTime(creationDateTime);
+                if (highLowTime == null)
+                {
+                    band.updateTime(Instant.now());
+                } else
+                {
+                    band.updateTime(highLowTime);
+                }
                 break; // important optimization
             }
         }

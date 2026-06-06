@@ -99,7 +99,6 @@ public class BandChartApp {
 
         // 4. Swing UI
         ChartPanel chartPanel = new ChartPanel(chart);
-
         JFrame frame = new JFrame("Band Chart Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(chartPanel);

@@ -22,8 +22,11 @@ public class Candle
     private int instrumentID;
     private Instant fromDate;
     private double open;
+
     private double high;
+    private Instant highTime;
     private double low;
+    private Instant lowTime;
     private double close;
     private double volume;
     private Integer timeFrame;
@@ -41,7 +44,8 @@ public class Candle
 
     @Builder
     public Candle(int instrumentID, Instant fromDate, double open, //
-                  double high, double low, double close, //
+                  double high, Instant highTime, double low, Instant lowTime,
+                  double close, //
                   double atr, double rsi, double ema, double sma,
                   double volume, Integer timeFrame, //
                   String timeFrameUnit ,
@@ -53,6 +57,8 @@ public class Candle
         this.fromDate = fromDate;
         this.open = open;
         this.high = high;
+        this.highTime = highTime;
+        this.lowTime = lowTime;
         this.low = low;
         this.close = close;
         this.atr = atr;

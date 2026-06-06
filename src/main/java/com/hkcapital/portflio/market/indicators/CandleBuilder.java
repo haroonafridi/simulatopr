@@ -15,7 +15,6 @@ import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +24,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 @Component
 public class CandleBuilder
@@ -69,23 +67,23 @@ public class CandleBuilder
         return new CandleBuilder();
     }
 
-    public CandleBuilder addAndUpdateCandle(final CandleDto subcandle)
+    public CandleBuilder addAndUpdateCandle(final CandleDto subCandle)
     {
         if (candles.isEmpty())
         {
-            addCandle(subcandle, timeFrame, interval);
+            addCandle(subCandle, timeFrame, interval);
             return this;
         }
         CandleDto mainCandle = candles.get(candles.size() - 1);
-        if (isSameTimeFrame(mainCandle, subcandle))
+        if (isSameTimeFrame(mainCandle, subCandle))
         {
-            CandleDto updatedCandle = updateCandle(mainCandle, subcandle);
+            CandleDto updatedCandle = updateCandle(mainCandle, subCandle);
             candles.set(candles.size() - 1, updatedCandle);
         } //
         else
         {
             CandleDto closedCandle = mainCandle;
-            addCandle(subcandle, timeFrame, interval);
+            addCandle(subCandle, timeFrame, interval);
             Double rsiValue = rsi.onCandleAdd(closedCandle, 14);
             Double atrVal = atr.onCandleAdd(closedCandle);
             Double emaVal = ema.onPrice(closedCandle.getClose());
@@ -114,7 +112,9 @@ public class CandleBuilder
                     .instrumentID(Integer.parseInt(closedCandle.getInstrument()))
                     .close(closedCandle.getClose())
                     .low(closedCandle.getLow())
+                    .lowTime(closedCandle.getLowTime())
                     .high(closedCandle.getHigh())
+                    .highTime(closedCandle.getHighTime())
                     .open(closedCandle.getOpen())
                     .fromDate(closedCandle.getTime())
                     .atr(atrVal)
@@ -230,8 +230,17 @@ public class CandleBuilder
 
     private CandleDto updateCandle(final CandleDto candle, final CandleDto subCandle)
     {
-        candle.setLow(min(candle.getLow(), subCandle.getLow()));
-        candle.setHigh(max(candle.getHigh(), subCandle.getHigh()));
+        if (subCandle.getLow() < candle.getLow())
+        {
+            candle.setLow(subCandle.getLow());
+            candle.setLowTime(subCandle.getLowTime());
+        }
+
+        if (subCandle.getHigh() > candle.getHigh())
+        {
+            candle.setHigh(subCandle.getHigh());
+            candle.setHighTime(subCandle.getHighTime());
+        }
         candle.setClose(subCandle.getClose());
         candle.setTime(subCandle.getTime());
         return candle;
@@ -242,9 +251,11 @@ public class CandleBuilder
         if (subCandle.getTime() != null && subCandle.getTimeFramesUnit() != null && interval != null)
         {
             Instant bucketTime = ChronoFieldUtil.bucketStart(subCandle.getTime(), subCandle.getTimeFramesUnit(), interval);
+
             candles.add(new CandleDto(subCandle.getInstrument(),
-                    subCandle.getOpen(), subCandle.getLow(), subCandle.getHigh(),
-                    subCandle.getClose(), bucketTime.truncatedTo(ChronoUnit.SECONDS), timeTimeFramesUnit, interval));
+                    subCandle.getOpen(), subCandle.getLow(), subCandle.getTime(), subCandle.getHigh(),
+                    subCandle.getTime(), subCandle.getClose(),
+                    bucketTime.truncatedTo(ChronoUnit.SECONDS), timeTimeFramesUnit, interval));
         }
 
     }
@@ -381,4 +392,7 @@ public class CandleBuilder
     {
         return sma;
     }
+
 }
+
+

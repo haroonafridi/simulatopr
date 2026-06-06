@@ -162,7 +162,7 @@ class Gold_MarketStructure_07_05_UT
                 .bandType(BandType.LOW)
                 .lowerBound(4660d)
                 .upperBound(4670d)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .marketVisitCount(1)
                 .build();
 
@@ -174,7 +174,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4680d)
                 .marketVisitCount(0)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -185,7 +185,7 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(5)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -198,7 +198,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4700d)
                 .marketVisitCount(23)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -210,7 +210,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4710d)
                 .marketVisitCount(20)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -222,7 +222,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4720d)
                 .marketVisitCount(7)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -234,7 +234,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4730d)
                 .marketVisitCount(7)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -246,7 +246,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4740d)
                 .marketVisitCount(20)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -258,7 +258,7 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4750d)
                 .marketVisitCount(7)
                 .timeFrame(15)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -269,7 +269,7 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(2)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .build();
         MarketPriceBand hb10 = MarketPriceBand
                 .builder()
@@ -288,7 +288,7 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4770d)
                 .upperBound(4780d)
                 .marketVisitCount(2)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -299,7 +299,7 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4780d)
                 .upperBound(4790d)
                 .marketVisitCount(0)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -309,7 +309,7 @@ class Gold_MarketStructure_07_05_UT
                 .bandType(BandType.LOW)
                 .lowerBound(4790d)
                 .upperBound(4800d)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .marketVisitCount(0)
                 .build();
         MarketPriceBand hb14 = MarketPriceBand
@@ -319,7 +319,7 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4800d)
                 .upperBound(4810d)
                 .marketVisitCount(0)
-                .initialVisitedTime(DateTimeUtil.localDateTimeFrom("2026-05-31T13:53:37.754973700"))
+                .initialVisitedTime(DateTimeUtil.toInstant("2026-05-31T13:53:37.754973700"))
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -336,8 +336,8 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4690d)
                 .marketVisitCount(5)
                 .timeFrame(15)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
         MarketPriceBand lb1 = MarketPriceBand
@@ -347,8 +347,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(23)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -359,8 +359,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4700d)
                 .upperBound(4710d)
                 .marketVisitCount(20)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -371,8 +371,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(7)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -383,8 +383,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(7)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -396,8 +396,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(20)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -409,8 +409,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(7)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -422,8 +422,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(2)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -435,8 +435,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(0)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -453,8 +453,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(0)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -466,8 +466,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(11)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -479,8 +479,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4700d)
                 .upperBound(4710d)
                 .marketVisitCount(16)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -492,8 +492,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(22)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -505,8 +505,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(5)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -518,8 +518,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(9)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -531,8 +531,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(13)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -544,8 +544,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(12)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -557,8 +557,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(3)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -575,8 +575,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4660d)
                 .upperBound(4670d)
                 .marketVisitCount(0)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -588,8 +588,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4670d)
                 .upperBound(4680d)
                 .marketVisitCount(0)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -601,8 +601,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4680d)
                 .upperBound(4690d)
                 .marketVisitCount(1)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -614,8 +614,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4690d)
                 .upperBound(4700d)
                 .marketVisitCount(11)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -628,8 +628,8 @@ class Gold_MarketStructure_07_05_UT
                 .upperBound(4710d)
                 .marketVisitCount(16)
                 .timeFrame(15)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
 
@@ -640,8 +640,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4710d)
                 .upperBound(4720d)
                 .marketVisitCount(22)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -653,8 +653,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4720d)
                 .upperBound(4730d)
                 .marketVisitCount(5)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -666,8 +666,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4730d)
                 .upperBound(4740d)
                 .marketVisitCount(9)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -679,8 +679,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4740d)
                 .upperBound(4750d)
                 .marketVisitCount(13)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -692,8 +692,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4750d)
                 .upperBound(4760d)
                 .marketVisitCount(12)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -705,8 +705,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4760d)
                 .upperBound(4770d)
                 .marketVisitCount(3)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -718,8 +718,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4770d)
                 .upperBound(4780d)
                 .marketVisitCount(0)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -731,8 +731,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4780d)
                 .upperBound(4790d)
                 .marketVisitCount(1)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -744,8 +744,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4790d)
                 .upperBound(4800d)
                 .marketVisitCount(0)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();
@@ -757,8 +757,8 @@ class Gold_MarketStructure_07_05_UT
                 .lowerBound(4800d)
                 .upperBound(4810d)
                 .marketVisitCount(1)
-                .initialVisitedTime(LocalDateTime.now())
-                .lastVisitedTime(LocalDateTime.now())
+                .initialVisitedTime(Instant.now())
+                .lastVisitedTime(Instant.now())
                 .timeFrame(15)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .build();

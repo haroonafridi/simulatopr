@@ -2,7 +2,7 @@ package com.hkcapital.portflio.market.structure;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -31,8 +31,8 @@ public class BandGenerator
                             .bandKey(new BandKey(bandType, (int) lowerBound, (int) upperBound))
                             .marketVisitCount(0)
                             .lowerBound(lowerBound)
-                            .initialVisitedTime(LocalDateTime.now())
-                            .lastVisitedTime(LocalDateTime.now())
+                            .initialVisitedTime(Instant.now())
+                            .lastVisitedTime(Instant.now())
                             .upperBound(upperBound)
                             .timeFrame(timeFrame)
                             .timeFrameUnit(timeFrameUnit)

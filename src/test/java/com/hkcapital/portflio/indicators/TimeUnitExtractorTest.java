@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 
 class TimeUnitExtractorTest
 {
+    private final String date = "2026-06-01 19:48:59.384058";
     @Test
     public void testTemoralExtraction()
     {
@@ -23,4 +25,12 @@ class TimeUnitExtractorTest
         Assertions.assertEquals(hr, 19);
         Assertions.assertEquals(day, 4); //Thursday
     }
+
+    @Test
+    public void convert()
+    {
+        System.out.println(Instant.now());
+
+    }
+
 }

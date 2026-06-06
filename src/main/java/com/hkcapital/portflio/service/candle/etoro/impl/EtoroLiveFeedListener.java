@@ -309,7 +309,8 @@ public class EtoroLiveFeedListener implements Listener
 
     public CandleDto toCandle(final Tick tick, TimeFramesUnit timeFramesUnit, Integer interval)
     {
-        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getVal(), tick.getTime(),
+        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(),tick.getTime(),
+                tick.getVal(), tick.getTime(), tick.getVal(), tick.getTime(),
                 timeFramesUnit, interval);
     }
 

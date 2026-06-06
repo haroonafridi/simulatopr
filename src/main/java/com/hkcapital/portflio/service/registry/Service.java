@@ -15,12 +15,10 @@ public interface Service
     String EtoroAPIConfiguration = "EtoroAPIInformationService";
 
     String OrderManagerService = "OrderManagerService";
-
     String EtoroWebSocketManagerService = "EtoroWebSocketManagerService";
     String MarketStructureManagerCache = "MarketStructureManagerCache";
-
     String SRMatrixService = "SRMatrixService";
-
     String ProfileService = "ProfileService";
+    String EtoroApiService = "EtoroApiService";
 
 }

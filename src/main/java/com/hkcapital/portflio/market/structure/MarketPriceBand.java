@@ -3,6 +3,7 @@ package com.hkcapital.portflio.market.structure;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 
@@ -18,8 +19,8 @@ public class MarketPriceBand implements Comparable<MarketPriceBand>
     private Double lowerBound;
     private Double upperBound;
     private Integer marketVisitCount;
-    private LocalDateTime initialVisitedTime;
-    private LocalDateTime lastVisitedTime;
+    private Instant initialVisitedTime;
+    private Instant lastVisitedTime;
     private long timeDifference;
 
     private Integer timeFrame;
@@ -30,8 +31,8 @@ public class MarketPriceBand implements Comparable<MarketPriceBand>
     public MarketPriceBand(BandType bandType, BandKey bandKey,
                            Double lowerBound, Double upperBound,
                            Integer marketVisitCount,
-                           LocalDateTime initialVisitedTime,
-                           LocalDateTime lastVisitedTime,
+                           Instant initialVisitedTime,
+                           Instant lastVisitedTime,
                            Integer timeFrame,
                            TimeFramesUnit timeFrameUnit)
     {
@@ -68,7 +69,7 @@ public class MarketPriceBand implements Comparable<MarketPriceBand>
         this.marketVisitCount = marketVisitCount;
     }
 
-    public void updateTime(LocalDateTime updatedVisitTime) //
+    public void updateTime(Instant updatedVisitTime) //
     {
         this.lastVisitedTime = updatedVisitTime;
     }

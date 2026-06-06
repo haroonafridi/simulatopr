@@ -181,6 +181,24 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     }
 
     @Override
+    public EtoroOrder findByorderID(Long orderId)
+    {
+        return orderRepository.findByorderID(orderId);
+    }
+
+    @Override
+    public EtoroOrder closeEtoroOrder(EtoroOrder etoroOrder)
+    {
+        return orderRepository.save(etoroOrder);
+    }
+
+    @Override
+    public EtoroOrder addEtoroOrder(EtoroOrder etoroOrder)
+    {
+        return orderRepository.save(etoroOrder);
+    }
+
+    @Override
     public void process(LiveInstrumentRate instrumentRate, SignalBuilder signalBuilder)
     {
 
@@ -530,4 +548,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 .timeFrame(timeFram)
                 .build();
     }
+
+
 }

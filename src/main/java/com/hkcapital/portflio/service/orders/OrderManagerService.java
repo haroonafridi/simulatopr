@@ -24,4 +24,10 @@ public interface OrderManagerService extends Service , MarketFeedSubscriber
 
     List<EtoroOrder> fetchAndCloseEtoroOrder();
 
+    EtoroOrder findByorderID(Long orderId);
+
+    EtoroOrder closeEtoroOrder(EtoroOrder etoroOrder);
+
+    EtoroOrder addEtoroOrder(EtoroOrder etoroOrder);
+
 }
