@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -220,9 +221,16 @@ public class CandleBuilder
         ObjectNode marketStructureJson = convertStructureToNode(structure);
         // 2. Wrap it in your main root logger payload
         ObjectNode root = objectMapper.createObjectNode();
-        root.put("uuid", uuid);
-        root.set("marketStructure", marketStructureJson);
+        ObjectNode priceRange = objectMapper.createObjectNode();
+        priceRange.put("low", structure.getPriceRange().getLow());
+        priceRange.put("high", structure.getPriceRange().getHigh());
 
+        root.put("uuid", uuid);
+        root.put("ticker", "XAUUSD");
+        root.put("marketDate", structure.getMarketDate().format(DateTimeFormatter.ISO_DATE));
+        root.put("creationDate", structure.getCreationDate().format(DateTimeFormatter.ISO_DATE));
+        root.put("previousDayRange", priceRange);
+        root.set("marketStructure", marketStructureJson);
         // 3. Serialize to string and save to the database
         String band = objectMapper.writeValueAsString(root);
         return band;

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @Getter
 @Builder
@@ -12,5 +14,12 @@ import lombok.Getter;
 public class MarketStructureJsonWrapper
 {
     private String uuid;
-    private MarketStructure marketStructure;
+    private String ticker;
+    private LocalDate marketDate;
+    private LocalDate creationDate;
+    private PreviousDayMarketRangeDTO previousDayRange;
+    private MarketStructureDTO marketStructure;
 }
+
+
+

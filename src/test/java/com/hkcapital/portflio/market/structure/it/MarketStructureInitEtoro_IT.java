@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -95,6 +96,7 @@ class MarketStructureInitEtoro_IT
                         .modus(Modus.builder().mod(10)
                                 .subtract(10).build())
                         .priceRange(range)
+                        .marketDate(LocalDate.now())
                         .build();
         marketStructure.init(candlesList);
         Assertions.assertEquals(92, candlesList.size());

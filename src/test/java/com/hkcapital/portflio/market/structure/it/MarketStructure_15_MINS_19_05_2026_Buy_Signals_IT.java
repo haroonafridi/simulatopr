@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebSocketClientAbstract_IT
 {
@@ -46,6 +47,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .marketSession(null)
                 .objectMapper(objectMapper)
                 .instrument(gold)
+                .marketDate(LocalDate.now())
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .intervals(2)
                 .timeFrame(1)
@@ -61,6 +63,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .marketSession(null)
                 .objectMapper(objectMapper)
                 .instrument(gold)
+                .marketDate(LocalDate.now())
                 .childMarketStructure(structure1Min)
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .intervals(4)
@@ -78,6 +81,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .objectMapper(objectMapper)
                 .childMarketStructure(structure5Min)
                 .instrument(gold)
+                .marketDate(LocalDate.now())
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .intervals(8)
                 .timeFrame(15)
@@ -93,6 +97,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .childMarketStructure(structure15Min)
                 .objectMapper(objectMapper)
                 .instrument(gold)
+                .marketDate(LocalDate.now())
                 .timeFrameUnit(TimeFramesUnit.MINUTE)
                 .timeFrame(30)
                 .intervals(15)
@@ -109,6 +114,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .childMarketStructure(structure30Min)
                 .objectMapper(objectMapper)
                 .instrument(gold)
+                .marketDate(LocalDate.now())
                 .timeFrameUnit(TimeFramesUnit.HOUR)
                 .timeFrame(1)
                 .intervals(30)
@@ -125,6 +131,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .childMarketStructure(structure1Hour)
                 .objectMapper(objectMapper)
                 .instrument(gold)
+                .marketDate(LocalDate.now())
                 .timeFrameUnit(TimeFramesUnit.HOUR)
                 .timeFrame(4)
                 .intervals(40)

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NavigableSet;
@@ -27,6 +28,8 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     private final Logger logger = LoggerFactory.getLogger(MarketStructure.class);
     private final PriceRange priceRange;
     private final MarketSession marketSession;
+    private final LocalDate creationDate = LocalDate.now();
+    private final LocalDate marketDate;
     private final int intervals;
     private NavigableSet<MarketPriceBand> upperBands;
     private NavigableSet<MarketPriceBand> lowerBands;
@@ -64,7 +67,8 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                            final ObjectMapper objectMapper,
                            final Integer timeFrame,
                            final TimeFramesUnit timeFrameUnit,
-                           final MarketStructure childMarketStructure
+                           final MarketStructure childMarketStructure,
+                           final LocalDate marketDate
     )
     {
         this.priceRange = priceRange;
@@ -80,6 +84,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         lowerBands = BandGenerator.of(range, BandType.LOW, intervals, timeFrame, timeFrameUnit);
         this.childMarketStructure = childMarketStructure;
         this.objectMapper = objectMapper;
+        this.marketDate = marketDate;
         orderCache = new OrderCache();
     }
 
@@ -312,6 +317,11 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
             }
         }
         return Optional.empty();
+    }
+
+    public LocalDate getCreationDate()
+    {
+        return creationDate;
     }
 
     @Override

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ class Gold_MarketStructure_07_05_Process_Ticks_UT
                         .intervals(8)
                         .marketSession(MarketSession.builder().build())
                         .instrument(instrument)
+                        .marketDate(LocalDate.now())
                         .marketTypes(MarketTypes.GOLD_15_MIN)
                         .objectMapper(mapper)
                         .modus(Modus.builder().mod(8)

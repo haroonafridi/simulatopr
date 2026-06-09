@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -96,6 +97,7 @@ class MarketStructureFlushEtoro_IT
                         .marketSession(marketSession)
                         .modus(Modus.builder().mod(10)
                                 .subtract(10).build())
+                        .marketDate(LocalDate.now())
                         .priceRange(range)
                         .build();
         marketStructure.init(candlesList);

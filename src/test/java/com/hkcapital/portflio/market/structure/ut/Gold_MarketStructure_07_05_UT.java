@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ class Gold_MarketStructure_07_05_UT
                         .marketSession(MarketSession.builder().build())
                         .modus(Modus.builder().mod(10)
                                 .subtract(10).build())
+                        .marketDate(LocalDate.now())
                         .objectMapper(mapper)
                         .timeFrame(15)
                         .timeFrameUnit(TimeFramesUnit.MINUTE)
