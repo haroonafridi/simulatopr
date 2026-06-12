@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.service.schedule;
+package com.hkcapital.portflio.service.schedule.impl;
 
 public interface ScheduleService
 {

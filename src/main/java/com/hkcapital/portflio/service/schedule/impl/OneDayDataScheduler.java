@@ -4,7 +4,6 @@ import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
-import com.hkcapital.portflio.service.schedule.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

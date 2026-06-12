@@ -25,5 +25,18 @@ public interface EtoroCandleService extends Service
             LocalDateTime endDate
     );
 
+    List<Candle> findByTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(
+            Integer timeFrame,
+            String timeFrameUnit,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
+    List<Candle> findByInstrumentIDAndCreationDateTimeBetween(
+            Integer instrumentID,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
     void removeAll();
 }

@@ -67,7 +67,6 @@ public class SwingSideMenuWithJTree extends JFrame {
                         navTree.setSelectionPath(path);
                         JPopupMenu menu = new JPopupMenu();
                         JMenuItem refresh = new JMenuItem("Refresh");
-
                         menu.add(refresh);
                         menu.show(navTree, e.getX(), e.getY());
                     }

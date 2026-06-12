@@ -21,4 +21,6 @@ public interface Service
     String ProfileService = "ProfileService";
     String EtoroApiService = "EtoroApiService";
 
+    String LiveInstrumentFeedService = "LiveInstrumentFeedService";
+
 }

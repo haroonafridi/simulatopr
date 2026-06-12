@@ -1,7 +1,6 @@
 package com.hkcapital.portflio.service.schedule.impl;
 
 import com.hkcapital.portflio.market.structure.*;
-import com.hkcapital.portflio.service.schedule.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,11 +15,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service("MarketStructureCSVGenerator")
-public class MarketStructureCSVGenerator implements ScheduleService
+public class MarketStructureCSVScheduler implements ScheduleService
 {
-    private Logger logger = LoggerFactory.getLogger(MarketStructureCSVGenerator.class);
+    private Logger logger = LoggerFactory.getLogger(MarketStructureCSVScheduler.class);
     private final MarketStructureManagerCache marketStructureManagerCache;
-    public MarketStructureCSVGenerator(MarketStructureManagerCache marketStructureManagerCache)
+    public MarketStructureCSVScheduler(MarketStructureManagerCache marketStructureManagerCache)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
     }

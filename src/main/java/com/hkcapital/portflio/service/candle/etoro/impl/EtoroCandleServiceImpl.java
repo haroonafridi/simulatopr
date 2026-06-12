@@ -82,6 +82,18 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
                 endDate);
     }
 
+    @Override
+    public List<Candle> findByTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(Integer timeFrame, String timeFrameUnit, LocalDateTime startDate, LocalDateTime endDate)
+    {
+        return candleRepository.findByTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(timeFrame, timeFrameUnit, startDate, endDate);
+    }
+
+    @Override
+    public List<Candle> findByInstrumentIDAndCreationDateTimeBetween(Integer instrumentID, LocalDateTime startDate, LocalDateTime endDate)
+    {
+        return candleRepository.findByInstrumentIDAndCreationDateTimeBetween(instrumentID, startDate, endDate);
+    }
+
 
     @Override
     public void removeAll()

@@ -19,4 +19,12 @@ public interface CandleRepository extends JpaRepository<Candle, Integer>
             LocalDateTime endDate
     );
 
+    List<Candle> findByTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(
+            Integer timeFrame,
+            String timeFrameUnit,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
+    List<Candle> findByInstrumentIDAndCreationDateTimeBetween(Integer instrumentID, LocalDateTime startDate, LocalDateTime endDate);
 }

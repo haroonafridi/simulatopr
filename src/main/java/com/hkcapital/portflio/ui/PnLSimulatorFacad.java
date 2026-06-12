@@ -10,6 +10,7 @@ import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.marketfeed.LiveInstrumentFeedService;
 import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
@@ -21,6 +22,8 @@ import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.service.tradingsessions.TradingSessionsService;
 import com.hkcapital.portflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portflio.ui.panels.configuartion.panels.ConfigurationPanel;
+import com.hkcapital.portflio.ui.panels.csvdata.dialogues.CSVDataDialogue;
+import com.hkcapital.portflio.ui.panels.csvdata.panels.CSVDataPanel;
 import com.hkcapital.portflio.ui.panels.etoro.configuartion.dialogues.EtoroOrdersDialogue;
 import com.hkcapital.portflio.ui.panels.etoro.configuartion.panels.EtoroOrdersPanel;
 import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentDialogue;
@@ -66,6 +69,7 @@ public class PnLSimulatorFacad
     private DataObject<String, String> dataObject = new DataObject<>();
     private final MarketStructureManagerCache marketStructureManagerCache;
     private final EtoroApiConfiguration etoroApiConfiguration;
+    private final LiveInstrumentFeedService liveInstrumentFeedService;
 
 
 
@@ -85,6 +89,7 @@ public class PnLSimulatorFacad
                              EtoroApiConfiguration etoroApiConfiguration,
                              MarketStructureManagerCache marketStructureManagerCache,
                              EtoroApiService etoroApiService,
+                             LiveInstrumentFeedService liveInstrumentFeedService,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -103,6 +108,7 @@ public class PnLSimulatorFacad
         this.etoroApiConfiguration = etoroApiConfiguration;
         this.etoroApiService = etoroApiService;
         this.marketStructureManagerCache = marketStructureManagerCache;
+        this.liveInstrumentFeedService = liveInstrumentFeedService;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -118,6 +124,7 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.ProfileService, this.profileService);
         serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
         serviceRegistery.putService(Service.MarketStructureManagerCache, this.marketStructureManagerCache);
+        serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
 
     }
 
@@ -159,6 +166,7 @@ public class PnLSimulatorFacad
         brokers.add(etoro);
         etoro.add(new DefaultMutableTreeNode("Brokers API"));
         etoro.add(new DefaultMutableTreeNode("Orders"));
+        etoro.add(new DefaultMutableTreeNode("Generate CSV Data"));
         DefaultMutableTreeNode configuration = new DefaultMutableTreeNode("Configuration:");
 
         configuration.add(new DefaultMutableTreeNode("Positions and Leverage"));
@@ -279,6 +287,14 @@ public class PnLSimulatorFacad
                         new SRMatrixPanel(serviceRegistery, null));
                 srMatrixPanel.setVisible(true);
             }
+
+            if (nodeObject.toString().equals("Generate CSV Data"))
+            {
+                // Optional: handle folders or intermediate nodes
+                CSVDataDialogue csvDataDialogue = new CSVDataDialogue(mainFrame,  new CSVDataPanel(serviceRegistery));
+                csvDataDialogue.setVisible(true);
+            }
+
         });
         this.marketStructureManagerCache.openMarket();
         etoroWebSocketManagerService.subscribeAndSchedule();
