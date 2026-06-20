@@ -11,6 +11,7 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestClient;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -22,7 +23,12 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
     @Test
     public void shouldCreateBuySignal_gold_19_05_2026() throws InterruptedException
     {
+        RestClient restClient = RestClient.create();
+        restClient.post().uri("http://localhost:8081/etoro/init")
+                .body(DepositDto.builder().initial(5000)
+                        .build()).retrieve().body(String.class);
         liveInstrumentFeedRepository.deleteAll();
+
         getEtoroCandleService().removeAll();
 
         Instrument gold = Instrument.builder()

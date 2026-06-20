@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public record BandKey(
         BandType bandType,
         int lowerBound,
-        int upperBound) {
-
+        int upperBound)
+{
     @JsonValue
     @Override
     public String toString() {
