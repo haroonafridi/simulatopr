@@ -41,6 +41,7 @@ public class EtoroMarketOrderDto implements JSON , Serializable
     private TimeFrame timeFrame;
 
 
+
     @Override
     public String toJson()
     {
@@ -50,11 +51,14 @@ public class EtoroMarketOrderDto implements JSON , Serializable
                 "\"Leverage\": " + leverage + ",\n" +
                 "\"Amount\": " + amount + ",\n" +
                 "\"StopLossRate\": " + stopLossRate + ",\n" +
-                "\"TakeProfitRate\": " + takeProfitRate + ",\n" +//CalcUtils.calculateTargetPrice(24950, 20, 50, 2) + ",\n" +
+                "\"TakeProfitRate\": " + takeProfitRate + ",\n" +
                 "\"IsTslEnabled\": " + isTslEnabled + ",\n" +
                 "\"IsNoStopLoss\": " + isNoStopLoss + ",\n" +
-                "\"IsNoTakeProfit\": " + isNoTakeProfit + "\n" +
-                "\n}";
+                "\"IsNoTakeProfit\": " + isNoTakeProfit + ",\n" +
+                "\"Bid\": " + bid + ",\n" +
+                "\"Ask\": " + ask + "\n" +
+                "\n" +
+                "}";
     }
 
 }

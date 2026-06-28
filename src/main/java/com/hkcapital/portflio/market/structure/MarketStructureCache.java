@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +23,9 @@ import com.hkcapital.portflio.service.registry.Service;
 
 @Component
 @Slf4j
-public class MarketStructureManagerCache implements Service
+public class MarketStructureCache implements Service
 {
-    private Logger logger = LoggerFactory.getLogger(MarketStructureManagerCache.class);
+    private Logger logger = LoggerFactory.getLogger(MarketStructureCache.class);
     private final Map<MarketTypes, MarketStructure> structures =
             new ConcurrentHashMap<>();
     private final EtoroCandleService candleService;
@@ -34,9 +33,9 @@ public class MarketStructureManagerCache implements Service
 
     private final ObjectMapper objectMapper;
 
-    public MarketStructureManagerCache(final EtoroCandleService candleService,
-                                       final InstrumentService instrumentService,
-                                       final ObjectMapper objectMapper)
+    public MarketStructureCache(final EtoroCandleService candleService,
+                                final InstrumentService instrumentService,
+                                final ObjectMapper objectMapper)
     {
         this.candleService = candleService;
         this.instrumentService = instrumentService;
@@ -214,10 +213,15 @@ public class MarketStructureManagerCache implements Service
         register(MarketTypes.GOLD_4_HOUR, struct4Hour);
     }
 
+
     public void initDefaultMarket(MarketStructure structure,
                                   final MarketTypes marketKey)
     {
         register(marketKey, structure);
     }
 
+    public Map<MarketTypes, MarketStructure> getStructures()
+    {
+        return structures;
+    }
 }

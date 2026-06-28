@@ -23,7 +23,7 @@ public class CandleCSVGeneratorScheduler implements ScheduleService
     private Logger logger = LoggerFactory.getLogger(CandleCSVGeneratorScheduler.class);
     private final EtoroCandleService candleService;
     private static final DateTimeFormatter FILE_FORMAT =
-            DateTimeFormatter.ofPattern("yyyy_MM_dd");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public CandleCSVGeneratorScheduler(final EtoroCandleService candleService)
     {
@@ -56,7 +56,7 @@ public class CandleCSVGeneratorScheduler implements ScheduleService
 
         LocalDate today = LocalDate.now();
 
-        String folderName = "D:/gold_data/"+today.format(DateTimeFormatter.ofPattern("yyyy_MM_dd"))+"/candle/";
+        String folderName = "D:/gold_data/"+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/candle/";
 
         String fileName = "gold_candle_" + today.format(FILE_FORMAT) + ".csv";
         try

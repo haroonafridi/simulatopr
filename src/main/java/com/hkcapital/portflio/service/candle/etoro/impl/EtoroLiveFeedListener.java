@@ -8,9 +8,8 @@ import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
-import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.service.api.etoro.impl.StartWebSocketRunner;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
@@ -53,7 +52,7 @@ public class EtoroLiveFeedListener implements Listener
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
 
-    private final MarketStructureManagerCache marketStructureManagerCache;
+    private final MarketStructureCache marketStructureManagerCache;
 
     private volatile WebSocket webSocket;
 
@@ -100,7 +99,7 @@ public class EtoroLiveFeedListener implements Listener
                                  InstrumentService instrumentService,
                                  ObjectMapper objectMapper,
                                  EtoroCandleService etoroCandleService,
-                                 MarketStructureManagerCache marketStructureManagerCache,
+                                 MarketStructureCache marketStructureManagerCache,
                                  Bandlogger bandlogger)
     {
         this.apiConfiguration = apiConfiguration;

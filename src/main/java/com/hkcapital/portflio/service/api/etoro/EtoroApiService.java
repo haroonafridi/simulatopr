@@ -22,6 +22,8 @@ public interface EtoroApiService extends Service
 
     EtoroPortfolioResponseDTO etoroPortfolio();
 
+    String etoroPortfolioAsString();
+
     EtoroOrderDetailsResponseDTO createMarketOrder(EtoroMarketOrderDto etoroMarketOrderDto) throws JsonProcessingException;
 
     List<Long> getOpenPositions(EtoroMarketOrderDto etoroMarketOrderDto, //

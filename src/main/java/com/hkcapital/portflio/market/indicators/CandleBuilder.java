@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hkcapital.portflio.market.structure.MarketStructure;
-import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.market.structure.MarketTypes;
 import com.hkcapital.portflio.model.BandLogger;
 import com.hkcapital.portflio.model.Candle;
@@ -38,7 +38,7 @@ public class CandleBuilder
     private final EMA ema = new EMA(14);
     private final SMA sma = new SMA(14);
     private EtoroCandleService candleService = null;
-    private MarketStructureManagerCache marketStructureManagerCache;
+    private MarketStructureCache marketStructureManagerCache;
 
     private Bandlogger bandlogger;
 
@@ -293,7 +293,7 @@ public class CandleBuilder
     }
 
 
-    public CandleBuilder marketStructureManagerCache(MarketStructureManagerCache marketStructureManagerCache)
+    public CandleBuilder marketStructureManagerCache(MarketStructureCache marketStructureManagerCache)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
         return this;

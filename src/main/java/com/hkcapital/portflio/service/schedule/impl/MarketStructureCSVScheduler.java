@@ -18,8 +18,8 @@ import java.util.List;
 public class MarketStructureCSVScheduler implements ScheduleService
 {
     private Logger logger = LoggerFactory.getLogger(MarketStructureCSVScheduler.class);
-    private final MarketStructureManagerCache marketStructureManagerCache;
-    public MarketStructureCSVScheduler(MarketStructureManagerCache marketStructureManagerCache)
+    private final MarketStructureCache marketStructureManagerCache;
+    public MarketStructureCSVScheduler(MarketStructureCache marketStructureManagerCache)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
     }

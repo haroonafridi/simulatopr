@@ -3,7 +3,7 @@ package com.hkcapital.portflio.ui.panels.strategy;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.broker.etoro.master.Instruments;
-import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.model.Strategy;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -63,7 +63,7 @@ public class StrategyHeaderPanel extends UIBag
 
     private final OrderManagerService orderManagerService;
 
-    private final MarketStructureManagerCache marketStructureManagerCache;
+    private final MarketStructureCache marketStructureManagerCache;
 
 
     public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
@@ -73,7 +73,7 @@ public class StrategyHeaderPanel extends UIBag
         this.strategyService = (StrategyService) serviceRegistery.getService(Service.StrategyService);
         this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
         this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
-        this.marketStructureManagerCache = (MarketStructureManagerCache) serviceRegistery.getService(Service.MarketStructureManagerCache);;
+        this.marketStructureManagerCache = (MarketStructureCache) serviceRegistery.getService(Service.MarketStructureManagerCache);;
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 

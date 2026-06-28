@@ -25,7 +25,7 @@ public class TickCSVScheduler implements ScheduleService
     private Logger logger = LoggerFactory.getLogger(TickCSVScheduler.class);
     private final LiveInstrumentFeedRepository liveInstrumentFeedRepository;
     private static final DateTimeFormatter FILE_FORMAT =
-            DateTimeFormatter.ofPattern("yyyy_MM_dd");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public TickCSVScheduler(final LiveInstrumentFeedRepository liveInstrumentFeedRepository)
     {
@@ -44,7 +44,7 @@ public class TickCSVScheduler implements ScheduleService
         String data = LiveInstrumentFeedCsvGenerator.generate(feed);
         LocalDate today = LocalDate.now();
 
-        String folderName = "D:/gold_data/"+today.format(DateTimeFormatter.ofPattern("yyyy_MM_dd"))+"/tick/";
+        String folderName = "D:/gold_data/"+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/tick/";
 
         String fileName = "gold_tick_" + today.format(FILE_FORMAT) + ".csv";
         try

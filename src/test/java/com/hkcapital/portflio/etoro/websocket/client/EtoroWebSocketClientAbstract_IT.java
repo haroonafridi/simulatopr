@@ -2,8 +2,9 @@ package com.hkcapital.portflio.etoro.websocket.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
-import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
@@ -17,8 +18,6 @@ import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import org.glassfish.tyrus.server.Server;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,7 +47,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
     @Autowired
     protected EtoroCandleService etoroCandleService;
     @Autowired
-    protected MarketStructureManagerCache marketStructureCache;
+    protected MarketStructureCache marketStructureCache;
     @Autowired
     protected StrategyService strategyService;
     @Autowired
@@ -61,11 +60,16 @@ public abstract class EtoroWebSocketClientAbstract_IT
     protected OrderManagerService orderManagerService;
     @Autowired
     protected Bandlogger bandlogger;
+
+    private EtoroLiveFeedListener etoroLiveFeedService;
+
+    @Autowired
+    protected EtoroApiService etoroApiService;
     public WebSocket connect(Instrument instrument) throws InterruptedException
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
         HttpClient client = HttpClient.newHttpClient();
-        EtoroLiveFeedListener etoroLiveFeedService = new EtoroLiveFeedListener(etoroApiConfiguration, //
+        etoroLiveFeedService = new EtoroLiveFeedListener(etoroApiConfiguration, //
                 marketFeedObserver, //
                 liveResponseMapper, //
                 instrumentService, //
@@ -83,26 +87,15 @@ public abstract class EtoroWebSocketClientAbstract_IT
     }
 
 
-    void ping()
+    public void subscribeDataFeed(WebSocket ws, String date)
     {
-        marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
-        HttpClient client = HttpClient.newHttpClient();
-        EtoroLiveFeedListener etoroLiveFeedService = new EtoroLiveFeedListener(etoroApiConfiguration, //
-                marketFeedObserver, //
-                liveResponseMapper, //
-                instrumentService, //
-                objectMapper, //
-                etoroCandleService, //
-                marketStructureCache,
-                bandlogger);  //add market cache here
-        WebSocket ws = client.newWebSocketBuilder()
-                .buildAsync(
-                        URI.create("ws://localhost:8025/ws/etoro"),
-                        etoroLiveFeedService)
-                .join();
-        ws.sendText("ping", true);
+        ws.sendText(date, true);
     }
 
+
+    public EtoroLiveFeedListener getEtoroLiveFeedService(){
+        return etoroLiveFeedService;
+    }
     void shouldReconnect()
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
@@ -132,7 +125,8 @@ public abstract class EtoroWebSocketClientAbstract_IT
                   "operation": "Authenticate",
                   "data": {
                     "userKey": "%s",
-                    "apiKey": "%s"
+                    "apiKey": "%s",
+                    "date" : "01-01-2026"
                   }
                 }
                 """.formatted(
@@ -182,7 +176,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
         return etoroCandleService;
     }
 
-    public MarketStructureManagerCache getMarketStructureCache()
+    public MarketStructureCache getMarketStructureCache()
     {
         return marketStructureCache;
     }

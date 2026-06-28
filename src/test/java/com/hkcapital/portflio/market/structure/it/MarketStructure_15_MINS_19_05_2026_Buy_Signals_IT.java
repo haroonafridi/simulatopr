@@ -3,30 +3,43 @@ package com.hkcapital.portflio.market.structure.it;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.etoro.websocket.client.EtoroWebSocketClientAbstract_IT;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
-import com.hkcapital.portflio.market.structure.MarketStructure;
-import com.hkcapital.portflio.market.structure.MarketTypes;
-import com.hkcapital.portflio.market.structure.Modus;
-import com.hkcapital.portflio.market.structure.PreviousDayMarketRange;
+import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
+import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClient;
 
-import java.time.Instant;
+import java.net.http.WebSocket;
+import java.nio.file.Path;
 import java.time.LocalDate;
 
 public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebSocketClientAbstract_IT
 {
     @Autowired
     private LiveInstrumentFeedRepository liveInstrumentFeedRepository;
+    @Autowired
+    private EtoroOrderRepository etoroOrderRepository;
+
+    final static String previousDayCandle = "2026-06-24";
+    final static String tradingSession = "2026-06-25";
+    private static final String PATH = "D:/gold_data/" + previousDayCandle + "/candle/gold_candle_"
+            .concat(previousDayCandle).concat(".csv");
+
     @Test
     public void shouldCreateBuySignal_gold_19_05_2026() throws InterruptedException
     {
+
+        CandleHelper candleHelper = new CandleHelper(Path.of(PATH));
+
         RestClient restClient = RestClient.create();
+
         restClient.post().uri("http://localhost:8081/etoro/init")
                 .body(DepositDto.builder().initial(5000)
                         .build()).retrieve().body(String.class);
+
+        etoroOrderRepository.deleteAll();
         liveInstrumentFeedRepository.deleteAll();
 
         getEtoroCandleService().removeAll();
@@ -35,13 +48,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .etoroInstrumentId(18)
                 .build();
 
-        final PreviousDayMarketRange
-                priceRange = PreviousDayMarketRange.builder()
-                .instrument(gold)
-                .date(Instant.now())
-                .low(4481.19)
-                .high(4589.41)
-                .build();
+        final PreviousDayMarketRange priceRange = candleHelper.getPreviousDayMarketRange();
 
         final Modus modus1Min = Modus.builder().mod(2).subtract(2).build();
 
@@ -59,6 +66,8 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .timeFrame(1)
                 .build();
 
+        structure1Min.init(candleHelper.candleListOf(1, TimeFramesUnit.MINUTE.getUnit()));
+
         final Modus modus5Min = Modus.builder().mod(4).subtract(4).build();
 
         MarketStructure structure5Min = MarketStructure.builder().priceRange(priceRange)
@@ -75,6 +84,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .intervals(4)
                 .timeFrame(5)
                 .build();
+        structure1Min.init(candleHelper.candleListOf(5, TimeFramesUnit.MINUTE.getUnit()));
 
         final Modus modus15Min = Modus.builder().mod(8).subtract(8).build();
 
@@ -93,6 +103,8 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .timeFrame(15)
                 .build();
 
+        structure15Min.init(candleHelper.candleListOf(15, TimeFramesUnit.MINUTE.getUnit()));
+
         final Modus modus30Min = Modus.builder().mod(15).subtract(15).build();
         MarketStructure structure30Min = MarketStructure.builder().priceRange(priceRange)
                 .modus(Modus.builder()
@@ -108,6 +120,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .timeFrame(30)
                 .intervals(15)
                 .build();
+        structure30Min.init(candleHelper.candleListOf(30, TimeFramesUnit.MINUTE.getUnit()));
 
         final Modus modus1Hour = Modus.builder().mod(30).subtract(30).build();
 
@@ -125,6 +138,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .timeFrame(1)
                 .intervals(30)
                 .build();
+        structure1Hour.init(candleHelper.candleListOf(1, TimeFramesUnit.HOUR.getUnit()));
 
         final Modus modus4Hour = Modus.builder().mod(40).subtract(40).build();
 
@@ -142,17 +156,26 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
                 .timeFrame(4)
                 .intervals(40)
                 .build();
+        structure4Hour.init(candleHelper.candleListOf(4, TimeFramesUnit.HOUR.getUnit()));
 
-        getMarketStructureCache().initDefaultMarket(structure4Hour,
+        MarketStructureCache cache = getMarketStructureCache();
+
+        cache.initDefaultMarket(structure4Hour,
                 MarketTypes.GOLD_4_HOUR);
 
-
         TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
-
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
+        WebSocket ws = connect(gold);
+        String data = "{ data:  { value : %s} }".formatted(tradingSession);
+        subscribeDataFeed(ws, data);
 
-        connect(gold);
+        while (true)
+        {
+            String portfolValue = restClient.get()
+                    .uri("http://localhost:8081/etoro/portfolio-value")
+                    .retrieve().body(String.class);
+            System.out.println(portfolValue);
+        }
 
-        Thread.sleep(10000 * 16000);
     }
 }

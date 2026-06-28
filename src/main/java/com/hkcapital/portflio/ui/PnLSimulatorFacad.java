@@ -3,7 +3,7 @@ package com.hkcapital.portflio.ui;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.hkcapital.portflio.DataObject;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
-import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.TradingSessions;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
@@ -67,7 +67,7 @@ public class PnLSimulatorFacad
     private final EtoroApiService etoroApiService;
     private final EtoroApiConfiguration etoroApiInformationService;
     private DataObject<String, String> dataObject = new DataObject<>();
-    private final MarketStructureManagerCache marketStructureManagerCache;
+    private final MarketStructureCache marketStructureManagerCache;
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final LiveInstrumentFeedService liveInstrumentFeedService;
 
@@ -87,7 +87,7 @@ public class PnLSimulatorFacad
                              SRMatrixService srMatrixService,
                              ProfileService profileService,
                              EtoroApiConfiguration etoroApiConfiguration,
-                             MarketStructureManagerCache marketStructureManagerCache,
+                             MarketStructureCache marketStructureManagerCache,
                              EtoroApiService etoroApiService,
                              LiveInstrumentFeedService liveInstrumentFeedService,
                              ServiceRegistery<Service> serviceRegistery)

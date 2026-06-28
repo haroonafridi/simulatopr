@@ -2,7 +2,9 @@ package com.hkcapital.portflio.broker.etoro.dto.portfolio;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class EtoroPortfolioResponseDTO
+import java.io.Serializable;
+
+public class EtoroPortfolioResponseDTO implements Serializable
 {
     @JsonProperty("clientPortfolio")
     private EtoroClientPortfolioDTO clientPortfolio;

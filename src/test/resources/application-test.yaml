@@ -1,11 +1,11 @@
 etoro:
-  api-key: myApiKey
-  user-key: myUserKey
+  api-key: dummyApiKey
+  user-key: dummyUserKey
   limit-order-url: https://public-api.etoro.com/api/v1/trading/execution/demo/limit-orders
-  market-order-url: http://localhost:8080/etoro/saveOrder
+  market-order-url: http://localhost:8081/etoro/market-open-orders/by-amount
   instrument-candle-data-url: https://public-api.etoro.com/api/v1/market-data/instruments/
   order-information-url: https://public-api.etoro.com/api/v1/trading/info/demo/orders/
-  portfolio-information-url: http://localhost:8080/etoro/portfolio
+  portfolio-information-url: http://localhost:8081/etoro/portfolio
   url: ws://localhost:8025/ws/etoro
 
   spring:

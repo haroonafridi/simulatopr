@@ -2,7 +2,7 @@ package com.hkcapital.portflio.service.api.etoro.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
-import com.hkcapital.portflio.market.structure.MarketStructureManagerCache;
+import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
@@ -36,7 +36,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
     private final MarketFeedDbWriterSub marketFeedDbWriter;
     private final BuySellSignalGeneratorSub buySellManager;
 
-    private final MarketStructureManagerCache marketStructureManagerCache;
+    private final MarketStructureCache marketStructureManagerCache;
 
     private final EtoroCandleService etoroCandleService;
 
@@ -54,7 +54,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                                             final MarketFeedDbWriterSub marketFeedDbWriter,
                                             final BuySellSignalGeneratorSub buySellManager,
                                             final EtoroCandleService etoroCandleService,
-                                            final MarketStructureManagerCache marketStructureManagerCache,
+                                            final MarketStructureCache marketStructureManagerCache,
                                             final Bandlogger bandlogger)
     {
 

@@ -2,15 +2,15 @@ package com.hkcapital.portflio.service.api.etoro.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.JSON;
+import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroLimitOrderDto;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroOrderDetailsResponseDTO;
 import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
-import com.hkcapital.portflio.values.order.OrderTypes;
 import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderManagerServiceImpl;
+import com.hkcapital.portflio.values.order.OrderTypes;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -18,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class EtoroApiServiceImpl implements EtoroApiService
@@ -118,16 +118,16 @@ public class EtoroApiServiceImpl implements EtoroApiService
 
     @Override
     public List<Long> getOpenPositions(EtoroMarketOrderDto etoroMarketOrderDto, //
-                                               EtoroPortfolioResponseDTO portfolioResponseDTO)
+                                       EtoroPortfolioResponseDTO portfolioResponseDTO)
     {
-        List<Long> openPositions = portfolioResponseDTO.getClientPortfolio()
-                .getPositions().stream()
-                .filter(p -> p.getInstrumentId().intValue()
-                        == etoroMarketOrderDto.getInstrumentId())
-                .collect(Collectors.toList())
-                .stream().map(o -> o.getOrderId())
-                .collect(Collectors.toList());
-        return openPositions;
+//        List<Long> openPositions = portfolioResponseDTO.getClientPortfolio()
+//                .getPositions().stream()
+//                .filter(p -> p.getInstrumentId().intValue() == etoroMarketOrderDto.getInstrumentId())
+//                .collect(Collectors.toList())
+//                .stream().map(o -> o.getOrderId())
+//                .collect(Collectors.toList());
+
+        return new ArrayList<>(); //openPositions;
     }
 
     @Override
@@ -147,7 +147,8 @@ public class EtoroApiServiceImpl implements EtoroApiService
             {
                 throw new RuntimeException(e);
             }
-            return objectMapper.readValue(response.getBody(), EtoroPortfolioResponseDTO.class);
+            EtoroPortfolioResponseDTO responseDto = objectMapper.readValue(response.getBody(), EtoroPortfolioResponseDTO.class);
+            return responseDto;
 
         } catch (JsonProcessingException e)
         {
@@ -155,4 +156,23 @@ public class EtoroApiServiceImpl implements EtoroApiService
         }
     }
 
+    @Override
+    public String etoroPortfolioAsString()
+    {
+        HttpResponse<String> response = null;
+        try
+        {
+            response = Unirest.get(etoroApiConfiguration.getPortfolioInformationUrl())//
+                    .header(etoroApiConfiguration.getXRequestId(), UUID.randomUUID().toString())//
+                    .header(etoroApiConfiguration.getXApiKey(), etoroApiConfiguration.getApiKey())//
+                    .header(etoroApiConfiguration.getXUserKey(), etoroApiConfiguration.getUserKey()).asString();
+            logger.info("portfolio response = [{}]", response.getBody());
+        } catch (UnirestException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return response.getBody();
+
+    }
 }
+
