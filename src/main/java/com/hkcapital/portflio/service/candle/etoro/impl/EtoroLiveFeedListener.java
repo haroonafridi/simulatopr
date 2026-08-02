@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -183,12 +184,15 @@ public class EtoroLiveFeedListener implements Listener
                     candleBuilder30Min.setCandleService(etoroCandleService);
                     candleBuilder1Hour.setCandleService(etoroCandleService);
                     candleBuilder4Hour.setCandleService(etoroCandleService);
-                    candleBuilder1Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 1));
-                    candleBuilder5Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 5));
-                    candleBuilder15Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 15));
-                    candleBuilder30Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 30));
-                    candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 1));
-                    candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 4));
+                    SwingUtilities.invokeLater(() -> {
+                        candleBuilder1Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 1));
+                        candleBuilder5Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 5));
+                        candleBuilder15Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 15));
+                        candleBuilder30Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 30));
+                        candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 1));
+                        candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 4));
+                    });
+
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }
 

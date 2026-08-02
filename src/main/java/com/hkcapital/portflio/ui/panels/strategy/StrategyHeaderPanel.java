@@ -52,6 +52,8 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JButton openMarket = new JButton("Open Market");
 
+    private final JButton showLiveMarket = new JButton("Show live market");
+
     private final JTable strategyTable;
     private final StrategyTableModel<Strategy> tableModel;
 
@@ -81,7 +83,6 @@ public class StrategyHeaderPanel extends UIBag
                 "Description:", "Active:"}, strategyService.findAll());
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
-
         topPanel.add(strategyNameLabel);
         topPanel.add(strategyName);
         topPanel.add(capitalAllocatedLabel);
@@ -93,7 +94,8 @@ public class StrategyHeaderPanel extends UIBag
         topPanel.add(saveStrategy);
         topPanel.add(removeButton);
         topPanel.add(automaticTrading);
-        topPanel.add(closeMarket);
+        topPanel.add(showLiveMarket);
+        //topPanel.add(closeMarket);
         topPanel.add(openMarket);
         add(topPanel, BorderLayout.NORTH);
         strategyTable = new JTable(tableModel);
@@ -160,6 +162,15 @@ public class StrategyHeaderPanel extends UIBag
         openMarket.addActionListener(a ->
         {
             marketStructureManagerCache.openMarket();
+        });
+
+        showLiveMarket.addActionListener(e->
+        {
+            if(TradingConfiguration.SHOW_TRADING) {
+                TradingConfiguration.SHOW_TRADING = Boolean.FALSE;
+            } else {
+                TradingConfiguration.SHOW_TRADING = Boolean.TRUE;
+            }
         });
 
         strategyTable.addMouseListener(new StrategyEditDialogueMouseHandler(tableModel, strategyTable, strategyService));

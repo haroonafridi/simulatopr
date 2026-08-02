@@ -134,6 +134,8 @@ public class PositionActionsPanel extends UIBag
         positionTable.addMouseListener(new PositionEditDialogueMouseHandler(positionTableModel, positionTable, positionService));
         JMenuItem buy = new JMenuItem("Buy");
         JMenuItem sell = new JMenuItem("Sell");
+        JMenuItem activatePosition = new JMenuItem("Activate Position");
+        JMenuItem deActivatePosition = new JMenuItem("Deactivate Position");
         JMenuItem placeBuyOrder = new JMenuItem("Place buy order immediately");
         JMenuItem placeSellOrder = new JMenuItem("Place sell order immediately");
 
@@ -141,11 +143,13 @@ public class PositionActionsPanel extends UIBag
         JMenuItem updateMarketConditions = new JMenuItem("Update Market Conditions");
 
         positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
-                new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions})));
+                new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions,
+                        activatePosition, deActivatePosition})));
 
         buy.addActionListener(new BuyActionListener(positionTableModel, serviceRegistery, positionTable));
         sell.addActionListener(new SellActionListener(positionTableModel, serviceRegistery, positionTable));
-
+        deActivatePosition.addActionListener(new DeactivatePositionActionListener(positionTableModel, serviceRegistery, positionTable));
+        activatePosition.addActionListener(new ActivatePositionActionListener(positionTableModel, serviceRegistery, positionTable));
         placeBuyOrder.addActionListener(new ImmediateBuyOrderActionListener(positionTableModel, serviceRegistery, positionTable));
 
         placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, serviceRegistery, positionTable));

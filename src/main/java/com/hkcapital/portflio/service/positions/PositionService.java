@@ -23,5 +23,7 @@ public interface PositionService extends Service
 
     void removeAll(List<Position> positionList);
 
+    void removeAll();
+
 
 }

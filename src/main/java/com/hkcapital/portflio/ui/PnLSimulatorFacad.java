@@ -20,6 +20,8 @@ import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.service.tradingsessions.TradingSessionsService;
+import com.hkcapital.portflio.ui.chart.dialogue.MarketStructureDialogue;
+import com.hkcapital.portflio.ui.chart.panel.MarketStructureChartPanel;
 import com.hkcapital.portflio.ui.panels.configuartion.dialogues.ConfigurationDialogue;
 import com.hkcapital.portflio.ui.panels.configuartion.panels.ConfigurationPanel;
 import com.hkcapital.portflio.ui.panels.csvdata.dialogues.CSVDataDialogue;
@@ -180,6 +182,8 @@ public class PnLSimulatorFacad
         DefaultMutableTreeNode models = new DefaultMutableTreeNode("Models");
         models.add(new DefaultMutableTreeNode("SR-Matrix"));
         models.add(new DefaultMutableTreeNode("BRP-Model"));
+        DefaultMutableTreeNode charts = new DefaultMutableTreeNode("Charts");
+        charts.add(new DefaultMutableTreeNode("Market Structure"));
 
         root.add(settings);
         root.add(instruments);
@@ -187,6 +191,7 @@ public class PnLSimulatorFacad
         root.add(configuration);
         root.add(marketConditions);
         root.add(models);
+        root.add(charts);
         JTree navigationTree = new JTree(root);
         JScrollPane treeScrollPane = new JScrollPane(navigationTree);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Navigation"));
@@ -295,12 +300,17 @@ public class PnLSimulatorFacad
                 csvDataDialogue.setVisible(true);
             }
 
+            if (nodeObject.toString().equals("Market Structure"))
+            {
+                // Optional: handle folders or intermediate nodes
+                MarketStructureDialogue marketStructureDialogue = new MarketStructureDialogue(mainFrame,
+                        new MarketStructureChartPanel(serviceRegistery, this.marketStructureManagerCache));
+                marketStructureDialogue.setVisible(true);
+            }
+
         });
         this.marketStructureManagerCache.openMarket();
         etoroWebSocketManagerService.subscribeAndSchedule();
     }
-
-
-
 
 }

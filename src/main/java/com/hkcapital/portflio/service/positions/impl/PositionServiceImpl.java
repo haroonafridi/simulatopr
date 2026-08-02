@@ -62,6 +62,12 @@ public class PositionServiceImpl implements PositionService
     }
 
     @Override
+    public void removeAll()
+    {
+        removeAll(findAll());
+    }
+
+    @Override
     public List<Position> findByStrategyId(Integer id)
     {
         return positionPnLRepository.findByStrategyId(id);

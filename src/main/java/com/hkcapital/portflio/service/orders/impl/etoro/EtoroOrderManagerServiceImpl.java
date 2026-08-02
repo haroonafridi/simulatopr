@@ -262,32 +262,71 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                     logger.info("no of positions found {} ", positions.size());
                     for (Position position : positions)
                     {
-                        final SRMatrix srMatrix = position.getSrMatrix();
-                        final Instrument inst = position.getInstrument();
-                        final Integer leverage = position.getConfiguration().getLev();
-                        final Integer srTimeFrame = srMatrix.getTimeFrame();
-                        final String srTimeFrameUnit = srMatrix.getTimeFrameUnit();
-                        final double support = srMatrix.getSupport();
-                        final double resistance = srMatrix.getResistance();
-
-                        logger.info("processing positions for S/R timeframe = {} with unit = {}", srTimeFrameUnit, srTimeFrame);
-
-                        //if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 1)
-                       // {
-                            logger.info("Processing 1 hour timeframe");
-                            processOneHourTimeFrame(instrumentRate, maxSlippage, ask, bid, position, inst, leverage, support, resistance);
-                       // }
-
-                        if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 4)
+                        if(position.getActive())
                         {
-                            logger.info("Processing 4 hour timeframe");
-                            processFourHourTimeFrame(instrumentRate, position, inst);
+                            final SRMatrix srMatrix = position.getSrMatrix();
+                            final Instrument inst = position.getInstrument();
+                            final Integer srTimeFrame = srMatrix.getTimeFrame();
+                            final String srTimeFrameUnit = srMatrix.getTimeFrameUnit();
+                            logger.info("processing positions for S/R timeframe = {} with unit = {}", srTimeFrameUnit, srTimeFrame);
+                            if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 4)
+                            {
+                                logger.info("Processing 4 hour timeframe");
+                                processFourHourTimeFrame(instrumentRate, position, inst);
+                            }
+                            if (srTimeFrameUnit.equals(TimeFramesUnit.MINUTE.getUnit()) && srTimeFrame == 15)
+                            {
+                                logger.info("Processing 15 mins timeframe");
+                                process15MinuteTimeFrame(instrumentRate, position, inst);
+                            }
                         }
-
                     }
                 }
             }
 
+        }
+    }
+
+
+    private void process15MinuteTimeFrame(LiveInstrumentRate instrumentRate,
+                                           Position position,
+                                           Instrument inst)
+    {
+
+        final Double ask = instrumentRate.getAsk();
+        final Double bid = instrumentRate.getBid();
+        final Double maxSlippage = inst.getMaxSlippage();
+        final Integer leverage = position.getConfiguration().getLev();
+        final Double support = position.getSrMatrix().getSupport();
+        final Double resistance = position.getSrMatrix().getResistance();
+        TimeFrame timeFrame = new TimeFrame(15, TimeFramesUnit.MINUTE.getUnit());
+        final Double slippage = Math.abs(ask - bid);
+        if (slippage > inst.getMaxSlippage())
+        {
+            logger.info("Unusual price detected cannot process order slippage = {} , max allowed slippage = {} ", slippage, inst.getMaxSlippage());
+            return;
+        }
+        logger.info("Support and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10,  support + 10, instrumentRate.getAsk());
+        if (instrumentRate.getAsk() >= support - 3 && instrumentRate.getAsk() <= support)
+        {
+            logger.info("Buy order successfully placed for Timeframe = 15 minute");
+            Double sl = ask - 20;
+            Double tp = resistance-5;
+            createAndSaveMarketOrder((buildBuyOrder(instrumentRate, maxSlippage,
+                    sl, tp, //
+                    position, inst, leverage, "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
+                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame)));
+            return;
+        }
+
+        if (instrumentRate.getBid() >= resistance-2 && instrumentRate.getBid() <= resistance + 5) //
+        {
+            Double sl = resistance+10;
+            Double tp = resistance - 20;
+            logger.info("Sell order successfully placed for timeframe 4 hour");
+            createAndSaveMarketOrder((buildSellOrder(instrumentRate, null,
+                    null, position, inst, "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
+                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame)));
         }
     }
 
@@ -369,12 +408,18 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         final Double support = position.getSrMatrix().getSupport();
         final Double resistance = position.getSrMatrix().getResistance();
         TimeFrame timeFrame = new TimeFrame(4, TimeFramesUnit.HOUR.getUnit());
+        final Double slippage = Math.abs(ask - bid);
+        if (slippage > inst.getMaxSlippage())
+        {
+            logger.info("Unusual price detected cannot process order slippage = {} , max allowed slippage = {} ", slippage, inst.getMaxSlippage());
+            return;
+        }
         logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10,  support + 10, instrumentRate.getAsk());
-        if (instrumentRate.getAsk() >= support - 10 && instrumentRate.getAsk() <= support + 10)
+        if (instrumentRate.getAsk() >= support - 10 && instrumentRate.getAsk() <= support)
         {
             logger.info("Buy order successfully placed for timeframe 4 hour");
-            Double sl = null;//ask - 10; //position.getStopLoss();
-            Double tp = null;//ask + 10; //position.getTakeProfit();
+            Double sl = ask - 20;
+            Double tp = resistance-5;
             createAndSaveMarketOrder((buildBuyOrder(instrumentRate, maxSlippage,
                     sl, tp, //
                     position, inst, leverage, "Timeframe = 4 hour , support = " + support + " Resistance = " + resistance + " " +
@@ -382,14 +427,15 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             return;
         }
 
-        if (instrumentRate.getAsk() >= resistance && instrumentRate.getAsk() <= resistance + 20) //
+        if (instrumentRate.getBid() >= resistance-2 && instrumentRate.getBid() <= resistance + 5) //
         {
-            Double sl = null;//ask + 10;//position.getStopLoss();
-            Double tp = null; //ask - 10;//position.getTakeProfit();
+            Double sl = resistance+10;
+            Double tp = resistance - 30;
             logger.info("Sell order successfully placed for timeframe 4 hour");
-            createAndSaveMarketOrder((buildSellOrder(instrumentRate, null,
-                    null, position, inst, "Timeframe = 4 hour , support = " + support + " Resistance = " + resistance + " " +
-                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame)));
+            EtoroMarketOrderDto marketOrder = buildSellOrder(instrumentRate, sl,
+                    tp, position, inst, "Timeframe = 4 hour , support = " + support + " Resistance = " + resistance + " " +
+                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame);
+            createAndSaveMarketOrder(marketOrder);
         }
     }
 
@@ -456,7 +502,8 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 .isBuy(false)
                 .leverage(position.getLeverage())
                 .amount(position.getCurrentPositionEquity())//
-                .stopLossRate(sl).takeProfitRate(tp)//
+                .stopLossRate(sl)
+                .takeProfitRate(tp)//
                 .isTslEnabled(null)
                 .isNoTakeProfit(null)
                 .isNoStopLoss(null)//

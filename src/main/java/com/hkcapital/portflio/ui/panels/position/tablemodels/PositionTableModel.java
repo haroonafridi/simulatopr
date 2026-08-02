@@ -26,7 +26,8 @@ public class PositionTableModel<E> extends TableModel
             "Resistance",
             "Time Frame",
             "Time Frame Unite",
-            "leverage"
+            "leverage",
+            "active"
     };
     private List<Position> data;
 
@@ -107,6 +108,8 @@ public class PositionTableModel<E> extends TableModel
                 return position.getSrMatrix().getTimeFrameUnit();//
             case 17:
                 return position.getConfiguration().getLev();
+            case 18:
+                return position.getActive();
             default:
                 return null;
         }
