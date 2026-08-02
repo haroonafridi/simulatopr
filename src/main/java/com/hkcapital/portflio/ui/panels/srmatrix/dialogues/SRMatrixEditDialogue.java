@@ -24,14 +24,27 @@ public class SRMatrixEditDialogue extends JDialog {
     private final JLabel supportLabel = new JLabel("Support:");
     private final JTextField support = new NumberTextField(30);
 
+    private final JLabel lSupportToleranceLabel = new JLabel("L.Support Tolerance.");
+    private final NumberTextField lSupportTolerance = new NumberTextField(40, 0);
+    private final JLabel rSupportToleranceLabel = new JLabel("R.Support Tolerance.");
+    private final NumberTextField rSupportTolerance = new NumberTextField(40, 0);
+
     private final JLabel resistanceLabel = new JLabel("Resistance:");
     private final JTextField resistance = new NumberTextField(30);
 
+    private final JLabel lResistanceToleranceLabel = new JLabel("L.Resistance Tolerance.");
+    private final NumberTextField lResistanceTolerance = new NumberTextField(40, 0);
+    private final JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
+    private final NumberTextField rResistanceTolerance = new NumberTextField(40, 0);
     private final JLabel timeFrameLabel = new JLabel("TimeFrame:");
     private final JTextField timeFrame = new NumberTextField(30);
 
+
     private final JComboBox<String> timeFrameUnit =
-            new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), TimeFramesUnit.WEEK.getUnit()});
+            new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(),
+                    TimeFramesUnit.HOUR.getUnit(),
+                    TimeFramesUnit.DAY.getUnit(),
+                    TimeFramesUnit.WEEK.getUnit()});
 
     private final JCheckBox active = new JCheckBox("Active");
 
@@ -95,13 +108,19 @@ public class SRMatrixEditDialogue extends JDialog {
         mainPanel.add(creationDateLabel);
         mainPanel.add(creationDate);
         mainPanel.add(Box.createVerticalStrut(8));
-
+        mainPanel.add(lSupportToleranceLabel);
+        mainPanel.add(lSupportTolerance);
         mainPanel.add(supportLabel);
         mainPanel.add(support);
+        mainPanel.add(rSupportToleranceLabel);
+        mainPanel.add(rSupportTolerance);
         mainPanel.add(Box.createVerticalStrut(8));
-
+        mainPanel.add(lResistanceToleranceLabel);
+        mainPanel.add(lResistanceTolerance);
         mainPanel.add(resistanceLabel);
         mainPanel.add(resistance);
+        mainPanel.add(rResistanceToleranceLabel);
+        mainPanel.add(rResistanceTolerance);
         mainPanel.add(Box.createVerticalStrut(8));
 
         mainPanel.add(timeFrameLabel);
@@ -129,12 +148,14 @@ public class SRMatrixEditDialogue extends JDialog {
         try {
             srMatrix.setActive(active.isSelected());
             srMatrix.setResistance(Double.parseDouble(resistance.getText()));
+            srMatrix.setL_r_tolerance(Double.parseDouble(lResistanceTolerance.getText()));
+            srMatrix.setR_r_tolerance(Double.parseDouble(rResistanceTolerance.getText()));
             srMatrix.setSupport(Double.parseDouble(support.getText()));
+            srMatrix.setL_s_tolerance(Double.parseDouble(lSupportTolerance.getText()));
+            srMatrix.setR_s_tolerance(Double.parseDouble(rSupportTolerance.getText()));
             srMatrix.setTimeFrame(Integer.parseInt(timeFrame.getText()));
             srMatrix.setTimeFrameUnit(timeFrameUnit.getSelectedItem().toString());
-
             srMatrixService.updateSRMatrix(srMatrix);
-
             dispose();
 
         } catch (NumberFormatException ex) {

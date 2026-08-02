@@ -33,7 +33,6 @@ public class SRMatrixTableModel<E> extends TableModel
             {
                 return srMatrix.getId();
             }
-
             case 1:
             {
                 return srMatrix.getInstrument().getName();
@@ -46,22 +45,41 @@ public class SRMatrixTableModel<E> extends TableModel
             {
                 return srMatrix.getSupport();
             }
+
             case 4:
             {
-                return srMatrix.getResistance();
+                return srMatrix.getL_s_tolerance();
             }
 
             case 5:
             {
-                return srMatrix.getTimeFrame();
+                return srMatrix.getR_s_tolerance();
             }
 
             case 6:
             {
-                return srMatrix.getTimeFrameUnit();
+                return srMatrix.getResistance();
             }
 
             case 7:
+            {
+                return srMatrix.getL_r_tolerance();
+            }
+
+            case 8:
+            {
+                return srMatrix.getR_r_tolerance();
+            }
+
+            case 9:
+            {
+                return srMatrix.getTimeFrame();
+            }
+            case 10:
+            {
+                return srMatrix.getTimeFrameUnit();
+            }
+            case 11:
             {
                 return  srMatrix.getActive();
             }

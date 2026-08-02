@@ -297,7 +297,11 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         final Double bid = instrumentRate.getBid();
         final Double maxSlippage = inst.getMaxSlippage();
         final Integer leverage = position.getConfiguration().getLev();
+        final Double lSupportTol = Math.abs(position.getSrMatrix().getL_s_tolerance());
+        final Double rSupportTol = Math.abs(position.getSrMatrix().getR_s_tolerance());
         final Double support = position.getSrMatrix().getSupport();
+        final Double lResistanceTol = Math.abs(position.getSrMatrix().getL_r_tolerance());
+        final Double rResistanceTol = Math.abs(position.getSrMatrix().getR_r_tolerance());
         final Double resistance = position.getSrMatrix().getResistance();
         TimeFrame timeFrame = new TimeFrame(15, TimeFramesUnit.MINUTE.getUnit());
         final Double slippage = Math.abs(ask - bid);
@@ -307,7 +311,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             return;
         }
         logger.info("Support and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10,  support + 10, instrumentRate.getAsk());
-        if (instrumentRate.getAsk() >= support - 3 && instrumentRate.getAsk() <= support)
+        if (instrumentRate.getAsk() >= support - lSupportTol && instrumentRate.getAsk() <= support+rSupportTol)
         {
             logger.info("Buy order successfully placed for Timeframe = 15 minute");
             Double sl = ask - 20;
@@ -319,7 +323,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             return;
         }
 
-        if (instrumentRate.getBid() >= resistance-2 && instrumentRate.getBid() <= resistance + 5) //
+        if (instrumentRate.getBid() >= resistance-lResistanceTol && instrumentRate.getBid() <= resistance + rResistanceTol) //
         {
             Double sl = resistance+10;
             Double tp = resistance - 20;
@@ -405,7 +409,11 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         final Double bid = instrumentRate.getBid();
         final Double maxSlippage = inst.getMaxSlippage();
         final Integer leverage = position.getConfiguration().getLev();
+        final Double lSupportTol = Math.abs(position.getSrMatrix().getL_s_tolerance());
+        final Double rSupportTol = Math.abs(position.getSrMatrix().getR_s_tolerance());
         final Double support = position.getSrMatrix().getSupport();
+        final Double lResistanceTol = Math.abs(position.getSrMatrix().getL_r_tolerance());
+        final Double rResistanceTol = Math.abs(position.getSrMatrix().getR_r_tolerance());
         final Double resistance = position.getSrMatrix().getResistance();
         TimeFrame timeFrame = new TimeFrame(4, TimeFramesUnit.HOUR.getUnit());
         final Double slippage = Math.abs(ask - bid);
@@ -415,7 +423,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             return;
         }
         logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10,  support + 10, instrumentRate.getAsk());
-        if (instrumentRate.getAsk() >= support - 10 && instrumentRate.getAsk() <= support)
+        if (instrumentRate.getAsk() >= support - lSupportTol && instrumentRate.getAsk() <= support+rSupportTol)
         {
             logger.info("Buy order successfully placed for timeframe 4 hour");
             Double sl = ask - 20;
@@ -427,7 +435,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
             return;
         }
 
-        if (instrumentRate.getBid() >= resistance-2 && instrumentRate.getBid() <= resistance + 5) //
+        if (instrumentRate.getBid() >= resistance-lResistanceTol && instrumentRate.getBid() <= resistance + rResistanceTol) //
         {
             Double sl = resistance+10;
             Double tp = resistance - 30;

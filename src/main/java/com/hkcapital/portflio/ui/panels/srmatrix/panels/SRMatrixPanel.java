@@ -28,11 +28,18 @@ public class SRMatrixPanel extends UIBag
 {
     private final ServiceRegistery<Service> serviceRegistery;
     private final SRMatrixService srMatrixService;
-    private final JLabel supportLabel = new JLabel("Support");
+    private final JLabel supportLabel = new JLabel("Support.");
+    private final JLabel lSupportToleranceLabel = new JLabel("L.Support Tolerance.");
+    private final NumberTextField lSupportTolerance = new NumberTextField(40);
+    private final JLabel rSupportToleranceLabel = new JLabel("R.Support Tolerance.");
+    private final NumberTextField rSupportTolerance = new NumberTextField(40);
     private final NumberTextField support = new NumberTextField(40);
-    private final JLabel resistenceLabel = new JLabel("Resistence");
-    private final NumberTextField resistence = new NumberTextField(40);
-
+    private final JLabel resistenceLabel = new JLabel("Resistance");
+    private final JLabel lResistanceToleranceLabel = new JLabel("L.Resistance Tolerance.");
+    private final NumberTextField lResistanceTolerance = new NumberTextField(40);
+    private final JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
+    private final NumberTextField rResistanceTolerance = new NumberTextField(40);
+    private final NumberTextField resistance = new NumberTextField(40);
     private final JLabel timeFrameLabel = new JLabel("Timeframe");
     private final NumberTextField timeFrame = new NumberTextField(40);
 
@@ -94,7 +101,8 @@ public class SRMatrixPanel extends UIBag
         }
 
         tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
-                "Support", "Resistance", "Time Frame", "TimeFrame Unite", "Active"
+                "Support", "L.Support Tolerance" , "R.Support Tolerance", "Resistance","L.Resistance Tolerance" ,
+                "R.Resistance Tolerance", "Time Frame", "TimeFrame Unite", "Active"
         }, //
                 srMatrixService.findAll());
 
@@ -108,8 +116,16 @@ public class SRMatrixPanel extends UIBag
         srMatrixInputPanel.add(this.instrumentList);
         srMatrixInputPanel.add(supportLabel);
         srMatrixInputPanel.add(support);
+        srMatrixInputPanel.add(lSupportToleranceLabel);
+        srMatrixInputPanel.add(lSupportTolerance);
+        srMatrixInputPanel.add(rSupportToleranceLabel);
+        srMatrixInputPanel.add(rSupportTolerance);
         srMatrixInputPanel.add(resistenceLabel);
-        srMatrixInputPanel.add(resistence);
+        srMatrixInputPanel.add(resistance);
+        srMatrixInputPanel.add(lResistanceToleranceLabel);
+        srMatrixInputPanel.add(lResistanceTolerance);
+        srMatrixInputPanel.add(rResistanceToleranceLabel);
+        srMatrixInputPanel.add(rResistanceTolerance);
         srMatrixInputPanel.add(timeFrameLabel);
         srMatrixInputPanel.add(timeFrame);
         srMatrixInputPanel.add(timeFrameUnit);
@@ -160,9 +176,7 @@ public class SRMatrixPanel extends UIBag
         {
             SwingUtilities.getWindowAncestor(this).dispose();
         });
-
         srMatrixTable.addMouseListener(new SRMatrixEditDialogueMouseClickHandler());
-
     }
 
 
@@ -184,7 +198,6 @@ public class SRMatrixPanel extends UIBag
 
                 Integer srMatrixId = (Integer) srMatrixTable.getModel() //
                         .getValueAt(srMatrixTable.getSelectedRow(), 0);
-                // Frame frame = (Frame) SwingUtilities.getWindowAncestor(null);
                 new SRMatrixEditDialogue(srMatrixService, srMatrixId);
             }
         }
@@ -198,7 +211,11 @@ public class SRMatrixPanel extends UIBag
                 .timeFrameUnit(this.timeFrameUnit.getSelectedItem().toString())
                 .instrument((Instrument) this.instrumentList.getModel().getSelectedItem())
                 .support(this.support.getDoubleValue())
-                .resistance(this.resistence.getDoubleValue())
+                .l_s_tolerance(this.lSupportTolerance.getDoubleValue())
+                .r_s_tolerance(this.rSupportTolerance.getDoubleValue())
+                .resistance(this.resistance.getDoubleValue())
+                .l_r_tolerance(this.lResistanceTolerance.getDoubleValue())
+                .r_r_tolerance(this.rResistanceTolerance.getDoubleValue())
                 .active(this.active.isSelected())
                 .build();
         srMatrixService.addSRMatrix(srMatrix);

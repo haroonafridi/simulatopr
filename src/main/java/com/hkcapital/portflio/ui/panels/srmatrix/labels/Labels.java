@@ -6,7 +6,11 @@ public enum Labels
     SRMatrix("SRMatrix:"),
     Name("Name"),
     Support("Support:"),
-    Resistance("Resistence:"),
+    LSupportTolerance("L.Support Tolerance:"),
+    RSupportTolerance("R.Support Tolerance:"),
+    Resistance("Resistance:"),
+    LResistanceTolerance("L.Resistance Tolerance:"),
+    RResistanceTolerance("R.Resistance Tolerance:"),
     TimeFrame("TimeFrame:"),
     TimeFrameUnit("TimeFrame Unit:"),
 

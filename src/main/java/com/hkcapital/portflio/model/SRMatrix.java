@@ -41,4 +41,40 @@ public class SRMatrix
     @Column(name = "r_r_tolerance")
     private Double r_r_tolerance;
     private Boolean active;
+
+    public Double getL_r_tolerance()
+    {
+        if (l_r_tolerance == null)
+        {
+            return 0d;
+        }
+        return l_r_tolerance;
+    }
+
+    public Double getR_r_tolerance()
+    {
+        if (r_r_tolerance == null)
+        {
+            return 0d;
+        }
+        return r_r_tolerance;
+    }
+
+    public Double getL_s_tolerance()
+    {
+        if (l_s_tolerance == null)
+        {
+            return 0d;
+        }
+        return l_s_tolerance;
+    }
+
+    public Double getR_s_tolerance()
+    {
+        if (r_s_tolerance == null)
+        {
+            return 0d;
+        }
+        return r_s_tolerance;
+    }
 }
