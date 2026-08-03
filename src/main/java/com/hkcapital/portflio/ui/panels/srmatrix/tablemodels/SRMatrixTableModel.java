@@ -48,12 +48,12 @@ public class SRMatrixTableModel<E> extends TableModel
 
             case 4:
             {
-                return srMatrix.getL_s_tolerance();
+                return srMatrix.getLeftSupportTolerance();
             }
 
             case 5:
             {
-                return srMatrix.getR_s_tolerance();
+                return srMatrix.getRightSupportTolerance();
             }
 
             case 6:
@@ -63,23 +63,33 @@ public class SRMatrixTableModel<E> extends TableModel
 
             case 7:
             {
-                return srMatrix.getL_r_tolerance();
+                return srMatrix.getLeftResistanceTolerance();
             }
 
             case 8:
             {
-                return srMatrix.getR_r_tolerance();
+                return srMatrix.getRightResistanceTolerance();
             }
 
             case 9:
             {
+                return srMatrix.getTakeProfit();
+            }
+
+            case 10:
+            {
+                return srMatrix.getStopLoss();
+            }
+
+            case 11:
+            {
                 return srMatrix.getTimeFrame();
             }
-            case 10:
+            case 12:
             {
                 return srMatrix.getTimeFrameUnit();
             }
-            case 11:
+            case 13:
             {
                 return  srMatrix.getActive();
             }

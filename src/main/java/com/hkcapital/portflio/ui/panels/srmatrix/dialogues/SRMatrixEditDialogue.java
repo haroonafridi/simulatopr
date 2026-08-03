@@ -10,7 +10,6 @@ import java.awt.*;
 import java.time.format.DateTimeFormatter;
 
 public class SRMatrixEditDialogue extends JDialog {
-
     private final SRMatrixService srMatrixService;
     private final Integer smMatrixId;
     private final SRMatrix srMatrix;
@@ -20,18 +19,19 @@ public class SRMatrixEditDialogue extends JDialog {
 
     private final JLabel creationDateLabel = new JLabel("Creation Date:");
     private final JTextField creationDate = new JTextField(30);
-
     private final JLabel supportLabel = new JLabel("Support:");
     private final JTextField support = new NumberTextField(30);
-
     private final JLabel lSupportToleranceLabel = new JLabel("L.Support Tolerance.");
     private final NumberTextField lSupportTolerance = new NumberTextField(40, 0);
     private final JLabel rSupportToleranceLabel = new JLabel("R.Support Tolerance.");
     private final NumberTextField rSupportTolerance = new NumberTextField(40, 0);
+    private final JLabel takeProfitLabel = new JLabel("Take Profit.");
+    private final NumberTextField takeProfit = new NumberTextField(40);
 
+    private final JLabel stopLossLabel = new JLabel("Stop Loss");
+    private final NumberTextField stopLoss = new NumberTextField(40);
     private final JLabel resistanceLabel = new JLabel("Resistance:");
     private final JTextField resistance = new NumberTextField(30);
-
     private final JLabel lResistanceToleranceLabel = new JLabel("L.Resistance Tolerance.");
     private final NumberTextField lResistanceTolerance = new NumberTextField(40, 0);
     private final JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
@@ -86,11 +86,15 @@ public class SRMatrixEditDialogue extends JDialog {
                         .format(DateTimeFormatter.ofPattern("d MMM uuuu"))
         );
         creationDate.setEnabled(false);
-
         support.setText(String.valueOf(srMatrix.getSupport()));
         resistance.setText(String.valueOf(srMatrix.getResistance()));
+        takeProfit.setText(String.valueOf(srMatrix.getTakeProfit()));
+        stopLoss.setText(String.valueOf(srMatrix.getStopLoss()));
         timeFrame.setText(String.valueOf(srMatrix.getTimeFrame()));
-
+        lResistanceTolerance.setText(String.valueOf(srMatrix.getLeftResistanceTolerance()));
+        rResistanceTolerance.setText(String.valueOf(srMatrix.getRightResistanceTolerance()));
+        lSupportTolerance.setText(String.valueOf(srMatrix.getLeftSupportTolerance()));
+        rSupportTolerance.setText(String.valueOf(srMatrix.getRightSupportTolerance()));
         timeFrameUnit.setSelectedItem(srMatrix.getTimeFrameUnit());
         active.setSelected(srMatrix.getActive());
     }
@@ -117,29 +121,27 @@ public class SRMatrixEditDialogue extends JDialog {
         mainPanel.add(Box.createVerticalStrut(8));
         mainPanel.add(lResistanceToleranceLabel);
         mainPanel.add(lResistanceTolerance);
+        mainPanel.add(takeProfitLabel);
+        mainPanel.add(takeProfit);
+        mainPanel.add(stopLossLabel);
+        mainPanel.add(stopLoss);
         mainPanel.add(resistanceLabel);
         mainPanel.add(resistance);
         mainPanel.add(rResistanceToleranceLabel);
         mainPanel.add(rResistanceTolerance);
         mainPanel.add(Box.createVerticalStrut(8));
-
         mainPanel.add(timeFrameLabel);
         mainPanel.add(timeFrame);
         mainPanel.add(timeFrameUnit);
         mainPanel.add(Box.createVerticalStrut(8));
-
         mainPanel.add(active);
         mainPanel.add(Box.createVerticalStrut(12));
-
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(save);
         buttonPanel.add(cancel);
-
         mainPanel.add(buttonPanel);
-
         save.addActionListener(e -> save());
         cancel.addActionListener(e -> dispose());
-
         setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
     }
@@ -153,11 +155,12 @@ public class SRMatrixEditDialogue extends JDialog {
             srMatrix.setSupport(Double.parseDouble(support.getText()));
             srMatrix.setL_s_tolerance(Double.parseDouble(lSupportTolerance.getText()));
             srMatrix.setR_s_tolerance(Double.parseDouble(rSupportTolerance.getText()));
+            srMatrix.setTakeProfit(Double.parseDouble(takeProfit.getText()));
+            srMatrix.setStopLoss(Double.parseDouble(stopLoss.getText()));
             srMatrix.setTimeFrame(Integer.parseInt(timeFrame.getText()));
             srMatrix.setTimeFrameUnit(timeFrameUnit.getSelectedItem().toString());
             srMatrixService.updateSRMatrix(srMatrix);
             dispose();
-
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(
                     this,

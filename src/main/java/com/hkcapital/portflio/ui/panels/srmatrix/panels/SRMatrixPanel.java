@@ -34,22 +34,23 @@ public class SRMatrixPanel extends UIBag
     private final JLabel rSupportToleranceLabel = new JLabel("R.Support Tolerance.");
     private final NumberTextField rSupportTolerance = new NumberTextField(40);
     private final NumberTextField support = new NumberTextField(40);
-    private final JLabel resistenceLabel = new JLabel("Resistance");
+    private final JLabel resistanceLabel = new JLabel("Resistance");
     private final JLabel lResistanceToleranceLabel = new JLabel("L.Resistance Tolerance.");
     private final NumberTextField lResistanceTolerance = new NumberTextField(40);
     private final JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
     private final NumberTextField rResistanceTolerance = new NumberTextField(40);
     private final NumberTextField resistance = new NumberTextField(40);
+
+    private final JLabel takeProfitLabel = new JLabel("Take Profit.");
+    private final NumberTextField takeProfit = new NumberTextField(40);
+    private final JLabel stopLossLabel = new JLabel("Stop Loss");
+    private final NumberTextField stopLoss = new NumberTextField(40);
     private final JLabel timeFrameLabel = new JLabel("Timeframe");
     private final NumberTextField timeFrame = new NumberTextField(40);
-
     JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), TimeFramesUnit.WEEK.getUnit()});
-
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
-
     private final JLabel activeLable = new JLabel("Active");
     private final JCheckBox active = new JCheckBox();
-
     private final JTable srMatrixTable;
     private final SRMatrixTableModel tableModel;
 
@@ -102,7 +103,7 @@ public class SRMatrixPanel extends UIBag
 
         tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
                 "Support", "L.Support Tolerance" , "R.Support Tolerance", "Resistance","L.Resistance Tolerance" ,
-                "R.Resistance Tolerance", "Time Frame", "TimeFrame Unite", "Active"
+                "R.Resistance Tolerance","Take Profit", "Stop Loss", "Time Frame", "TimeFrame Unite", "Active"
         }, //
                 srMatrixService.findAll());
 
@@ -120,12 +121,16 @@ public class SRMatrixPanel extends UIBag
         srMatrixInputPanel.add(lSupportTolerance);
         srMatrixInputPanel.add(rSupportToleranceLabel);
         srMatrixInputPanel.add(rSupportTolerance);
-        srMatrixInputPanel.add(resistenceLabel);
+        srMatrixInputPanel.add(resistanceLabel);
         srMatrixInputPanel.add(resistance);
         srMatrixInputPanel.add(lResistanceToleranceLabel);
         srMatrixInputPanel.add(lResistanceTolerance);
         srMatrixInputPanel.add(rResistanceToleranceLabel);
         srMatrixInputPanel.add(rResistanceTolerance);
+        srMatrixInputPanel.add(takeProfitLabel);
+        srMatrixInputPanel.add(takeProfit);
+        srMatrixInputPanel.add(stopLossLabel);
+        srMatrixInputPanel.add(stopLoss);
         srMatrixInputPanel.add(timeFrameLabel);
         srMatrixInputPanel.add(timeFrame);
         srMatrixInputPanel.add(timeFrameUnit);
@@ -183,7 +188,6 @@ public class SRMatrixPanel extends UIBag
     public class SRMatrixEditDialogueMouseClickHandler extends MouseAdapter
     {
 
-
         public SRMatrixEditDialogueMouseClickHandler()
         {
 
@@ -216,6 +220,8 @@ public class SRMatrixPanel extends UIBag
                 .resistance(this.resistance.getDoubleValue())
                 .l_r_tolerance(this.lResistanceTolerance.getDoubleValue())
                 .r_r_tolerance(this.rResistanceTolerance.getDoubleValue())
+                .takeProfit(this.takeProfit.getDoubleValue())
+                .stopLoss(this.stopLoss.getDoubleValue())
                 .active(this.active.isSelected())
                 .build();
         srMatrixService.addSRMatrix(srMatrix);

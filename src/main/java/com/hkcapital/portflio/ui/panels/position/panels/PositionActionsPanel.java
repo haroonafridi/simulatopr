@@ -49,7 +49,7 @@ public class PositionActionsPanel extends UIBag
     private final JButton configurationButton = new JButton("Add Configuration");
 
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
-    private final NumberTextField positionSizeInPercent = new NumberTextField(30);
+    private final NumberTextField positionSizeInPercent = new NumberTextField(30, 10);
 
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
     final private StrategyHeaderPanel strategyHeaderPanel;
@@ -81,10 +81,7 @@ public class PositionActionsPanel extends UIBag
         positionSizePanel.add(positionSizeLabel);
         positionSizePanel.add(positionSizeInPercent);
         positionSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
         //Opening capital panel
-
-
         JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3, 0));
 
         MarketConditionsSourcePanel marketConditionsSourcePanel = new MarketConditionsSourcePanel();
@@ -95,7 +92,6 @@ public class PositionActionsPanel extends UIBag
 
         SRMatrixSourcePanel srMatrixAndSourcePanel = new SRMatrixSourcePanel();
         srMatrixAndSourcePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
 
         capitalPanel = new CapitalPanel(serviceRegistery);
         this.frame = owner;
@@ -112,6 +108,7 @@ public class PositionActionsPanel extends UIBag
         buttonPanel.add(removePositionAll);
 
         add(positionPanelParametersPanel);
+        add(positionSizePanel);
         add(capitalPanel);
         add(buttonPanel);
         marketConditionsSourcePanel.add(marketConditionsButton);
@@ -121,7 +118,6 @@ public class PositionActionsPanel extends UIBag
         configurationAndSourcePanel.add(srMatrixAndSourcePanel);
         configurationAndSourcePanel.add(configurationSourcePanel);
         positionPanelParametersPanel.add(configurationAndSourcePanel);
-        positionPanelParametersPanel.add(positionSizePanel);
         marketConditionsButton.addActionListener(new OpenMarketConditionsDialogueListener(marketConditionsSourcePanel, serviceRegistery, frame));
         configurationButton.addActionListener(new OpenConfigurationDialogueListener(configurationSourcePanel, serviceRegistery, frame));
         srMatrixButton.addActionListener(new OpenSRMatrixDialogueListener(srMatrixAndSourcePanel, serviceRegistery, frame));
@@ -138,18 +134,26 @@ public class PositionActionsPanel extends UIBag
         JMenuItem deActivatePosition = new JMenuItem("Deactivate Position");
         JMenuItem placeBuyOrder = new JMenuItem("Place buy order immediately");
         JMenuItem placeSellOrder = new JMenuItem("Place sell order immediately");
+        JMenuItem shortPosition = new JMenuItem("Mark Position as Short");
+        JMenuItem longPosition = new JMenuItem("Mark Position as Long");
+        JMenuItem shortAndPosition = new JMenuItem("Mark Position as Long and Short");
 
         JMenuItem updateSrMatrix = new JMenuItem("Update SR-Matrix");
         JMenuItem updateMarketConditions = new JMenuItem("Update Market Conditions");
 
         positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
                 new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions,
-                        activatePosition, deActivatePosition})));
+                        activatePosition, deActivatePosition, shortPosition, longPosition, shortAndPosition})));
 
         buy.addActionListener(new BuyActionListener(positionTableModel, serviceRegistery, positionTable));
         sell.addActionListener(new SellActionListener(positionTableModel, serviceRegistery, positionTable));
         deActivatePosition.addActionListener(new DeactivatePositionActionListener(positionTableModel, serviceRegistery, positionTable));
         activatePosition.addActionListener(new ActivatePositionActionListener(positionTableModel, serviceRegistery, positionTable));
+
+        shortPosition.addActionListener(new ActivatePositionAsShortActionListener(positionTableModel, serviceRegistery, positionTable));
+        longPosition.addActionListener(new ActivatePositionAsLongActionListener(positionTableModel, serviceRegistery, positionTable));
+        shortAndPosition.addActionListener(new ActivatePositionAsShortAndLongActionListener(positionTableModel, serviceRegistery, positionTable));
+
         placeBuyOrder.addActionListener(new ImmediateBuyOrderActionListener(positionTableModel, serviceRegistery, positionTable));
 
         placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, serviceRegistery, positionTable));

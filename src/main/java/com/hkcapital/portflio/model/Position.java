@@ -59,4 +59,11 @@ public class Position implements Serializable
     private Double takeProfit;
     @Column(name = "active")
     private Boolean active = true;
+    @Column(name = "is_short")
+    private Boolean isShort = false;
+    @Column(name = "is_long")
+    private Boolean isLong = true;
+    @Column(name = "is_short_long")
+    private Boolean isShortLong = false;
+
 }

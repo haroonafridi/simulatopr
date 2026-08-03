@@ -40,9 +40,15 @@ public class SRMatrix
     private Double l_r_tolerance;
     @Column(name = "r_r_tolerance")
     private Double r_r_tolerance;
+
+    @Column(name = "take_profit")
+    private Double takeProfit;
+
+    @Column(name = "stop_loss")
+    private Double stopLoss;
     private Boolean active;
 
-    public Double getL_r_tolerance()
+    public Double getLeftResistanceTolerance()
     {
         if (l_r_tolerance == null)
         {
@@ -51,7 +57,7 @@ public class SRMatrix
         return l_r_tolerance;
     }
 
-    public Double getR_r_tolerance()
+    public Double getRightResistanceTolerance()
     {
         if (r_r_tolerance == null)
         {
@@ -60,7 +66,7 @@ public class SRMatrix
         return r_r_tolerance;
     }
 
-    public Double getL_s_tolerance()
+    public Double getLeftSupportTolerance()
     {
         if (l_s_tolerance == null)
         {
@@ -69,7 +75,7 @@ public class SRMatrix
         return l_s_tolerance;
     }
 
-    public Double getR_s_tolerance()
+    public Double getRightSupportTolerance()
     {
         if (r_s_tolerance == null)
         {
