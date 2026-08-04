@@ -65,5 +65,15 @@ public class Position implements Serializable
     private Boolean isLong = true;
     @Column(name = "is_short_long")
     private Boolean isShortLong = false;
+    @Column(name = "execution_count")
+    private Integer executionCount;
 
+    public Integer getExecutionCount()
+    {
+        if(executionCount == null)
+        {
+            return 0;
+        }
+        return executionCount;
+    }
 }

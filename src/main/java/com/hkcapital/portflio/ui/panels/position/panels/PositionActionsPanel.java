@@ -43,13 +43,15 @@ public class PositionActionsPanel extends UIBag
     private final JButton addPosition = new JButton("Add Position");
     private final JButton removePosition = new JButton("Remove Position");
     private final JButton removePositionAll = new JButton("Remove All Positions");
-
     private final JButton marketConditionsButton = new JButton("Add Market conditions");
     private final JButton srMatrixButton = new JButton("Add SR Matrix");
     private final JButton configurationButton = new JButton("Add Configuration");
 
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
     private final NumberTextField positionSizeInPercent = new NumberTextField(30, 10);
+
+    private final JLabel positionExecutionCountLabel = new JLabel("Position Execution Count");
+    private final NumberTextField positionExecutionCount = new NumberTextField(30, 1);
 
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
     final private StrategyHeaderPanel strategyHeaderPanel;
@@ -80,6 +82,8 @@ public class PositionActionsPanel extends UIBag
         //positionSizePanel.setBorder(BorderFactory.createTitledBorder("Position Size:"));
         positionSizePanel.add(positionSizeLabel);
         positionSizePanel.add(positionSizeInPercent);
+        positionSizePanel.add(positionExecutionCountLabel);
+        positionSizePanel.add(positionExecutionCount);
         positionSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         //Opening capital panel
         JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3, 0));
@@ -194,7 +198,6 @@ public class PositionActionsPanel extends UIBag
         this.runningCapitalPanel = runningCapitalPanel;
     }
 
-
     public PositionTableModel getPositionTableModel()
     {
         return positionTableModel;
@@ -223,6 +226,15 @@ public class PositionActionsPanel extends UIBag
             return positionSizeInPercent.getDoubleValue();
         }
         return null;
+    }
+
+    public Integer getPositionExecutionCount()
+    {
+        if (positionExecutionCount.getText() != null)
+        {
+            return positionExecutionCount.getIntValue();
+        }
+        return 0;
     }
 
 

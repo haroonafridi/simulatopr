@@ -12,16 +12,16 @@ public class PositionTableModel<E> extends TableModel
             "Position Id",
             "Instrument Name",
             "Allowed Slippage",
-            "Etoro Instrument Id",
+            //"Etoro Instrument Id",
             "% Capital Deploy:",
             "Position equity",
             "Total Exposure",
-            "Allowed Fire Power",
-            "Remaining Fire Power:",
-            "Capital Remaining Firepower:",
-            "day low",
-            "day high",
-            "% move",
+//            "Allowed Fire Power",
+//            "Remaining Fire Power:",
+//            "Capital Remaining Firepower:",
+//            "day low",
+//            "day high",
+//            "% move",
             "Support",
             "Resistance",
             "Take Profit",
@@ -32,7 +32,8 @@ public class PositionTableModel<E> extends TableModel
             "Time Frame",
             "Time Frame Unite",
             "leverage",
-            "active"
+            "active",
+            "Position Execution Count"
     };
     private List<Position> data;
 
@@ -83,48 +84,50 @@ public class PositionTableModel<E> extends TableModel
                 return position.getInstrument().getName();
             case 2:
                 return position.getInstrument().getMaxSlippage();
+//            case 3:
+//                return position.getInstrument().getEtoroInstrumentId();
             case 3:
-                return position.getInstrument().getEtoroInstrumentId();
-            case 4:
                 return position.getPercentCapitalDeployed();
-            case 5:
+            case 4:
                 return position.getCurrentPositionEquity();
-            case 6:
+            case 5:
                 return position.getCurrentPositionEquity() * position.getConfiguration().getLev();
-            case 7:
-                return position.getAllowedFirePower();
-            case 8:
-                return position.getRemainingFirepower();
-            case 9:
-                return position.getCapitalRemainingFirePower();
-            case 10:
-                return position.getMarketConditions().getDayLow();
-            case 11:
-                return position.getMarketConditions().getDayHigh();
-            case 12:
-                return position.getMarketConditions().getPercentMove();//
-            case 13:
+//            case 7:
+//                return position.getAllowedFirePower();
+//            case 8:
+//                return position.getRemainingFirepower();
+//            case 9:
+//                return position.getCapitalRemainingFirePower();
+//            case 10:
+//                return position.getMarketConditions().getDayLow();
+//            case 11:
+//                return position.getMarketConditions().getDayHigh();
+//            case 12:
+//                return position.getMarketConditions().getPercentMove();//
+            case 6:
                 return position.getSrMatrix().getSupport();//
-            case 14:
+            case 7:
                 return position.getSrMatrix().getResistance();//
-            case 15:
+            case 8:
                 return position.getSrMatrix().getTakeProfit();//
-            case 16:
+            case 9:
                 return position.getSrMatrix().getStopLoss();//
-            case 17:
+            case 10:
                 return position.getIsShort();
-            case 18:
+            case 11:
                 return position.getIsLong();
-            case 19:
+            case 12:
                 return position.getIsShortLong();
-            case 20:
+            case 13:
                 return position.getSrMatrix().getTimeFrame();//
-            case 21:
+            case 14:
                 return position.getSrMatrix().getTimeFrameUnit();//
-            case 22:
+            case 15:
                 return position.getConfiguration().getLev();
-            case 23:
+            case 16:
                 return position.getActive();
+            case 17:
+                return position.getExecutionCount();
             default:
                 return null;
         }

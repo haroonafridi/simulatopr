@@ -87,6 +87,7 @@ public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
                                 TimeFrameOrderProcessor timeFrameOrderProcessor =
                                         new FourHoursTimeFrameOrderProcessorImpl(inst, position,
                                                 orderManagerService,
+                                                positionService,
                                                 marketStructureCache);
                                 timeFrameOrderProcessor.process(instrumentRate, signalBuilder);
                             }
@@ -96,6 +97,7 @@ public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
                                 TimeFrameOrderProcessor timeFrameOrderProcessor =
                                         new FifteenMinuteTimeFrameOrderProcessorImpl(inst, position,
                                                 orderManagerService,
+                                                positionService,
                                                 marketStructureCache);
                                 timeFrameOrderProcessor.process(instrumentRate, signalBuilder);
                             }
