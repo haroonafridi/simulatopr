@@ -1,27 +1,21 @@
 package com.hkcapital.portflio.service.orders.impl.etoro;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroOrderDetailsResponseDTO;
 import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioPositionDTO;
 import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
-import com.hkcapital.portflio.market.indicators.CandleBuilder;
-import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
-import com.hkcapital.portflio.market.structure.MarketAction;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
-import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.model.Position;
-import com.hkcapital.portflio.model.SRMatrix;
-import com.hkcapital.portflio.model.Strategy;
 import com.hkcapital.portflio.model.etoro.EtoroOrder;
 import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
-import com.hkcapital.portflio.service.orders.*;
+import com.hkcapital.portflio.service.orders.OrderManagerService;
+import com.hkcapital.portflio.service.orders.TimeFrameOrderProcessor;
+import com.hkcapital.portflio.service.orders.TimeFrameOrderProcessorImpl;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.values.order.OrderStatus;
@@ -70,10 +64,11 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     {
         logger.info("Sending order to etoro!!");
         TimeFrameOrderProcessor orderProcessor =
-                new TimeFrameOrderProcessorImpl(instrumentService,strategyService,
-                        positionService, marketStructureCache,this);
-        orderProcessor.process(instrumentRate,signalBuilder);
+                new TimeFrameOrderProcessorImpl(instrumentService, strategyService,
+                        positionService, marketStructureCache, this);
+        orderProcessor.process(instrumentRate, signalBuilder);
     }
+
     /**
      * Create a makert order directly in etoro and in local database
      *
@@ -86,20 +81,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         logger.info("Send and saving etoro order for instrument [{}]", etoroMarketOrderDto.getInstrumentId());
         try
         {
-            final List<EtoroOrder> orders = //
-                    orderRepository.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnit( //
-                            etoroMarketOrderDto.getInstrumentId(), //
-                            OrderTypes.AUTO.getOrderType(),
-                            OrderStatus.SENT.getOrderStatus(),
-                            etoroMarketOrderDto.getTimeFrame().timeFrame(),
-                            etoroMarketOrderDto.getTimeFrame().timeFrameUnit()); //
-
-            if (orders.size() > 0)
-            {
-                logger.error("open order already exist for instrument  {}", etoroMarketOrderDto.getInstrumentId());
-                return null;
-            }
-
             final EtoroOrderDetailsResponseDTO orderResponse = //
                     etoroApiService.createMarketOrder(etoroMarketOrderDto);
 
@@ -134,11 +115,13 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         orderRepository.save(etoroOrder);
         return etoroOrder;
     }
+
     @Override
     public List<EtoroOrder> findByInstrumentIDAndOderType(Integer InstrumentID, String oderType)
     {
         return orderRepository.findByInstrumentIDAndOderType(InstrumentID, oderType);
     }
+
     @Override
     public EtoroOrder closeEtoroOrder(final Integer etoroOrderId)
     {
@@ -146,11 +129,13 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         order.setStatus(OrderStatus.CLOSED.getOrderStatus());
         return orderRepository.save(order);
     }
+
     @Override
     public List<EtoroOrder> findByInstrumentID(final Integer InstrumentID)
     {
         return orderRepository.findByInstrumentID(InstrumentID);
     }
+
     @Override
     public List<EtoroOrder> fetchAndCloseEtoroOrder()
     {
@@ -176,6 +161,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         });
         return closedOrder;
     }
+
     @Override
     public EtoroOrder findByorderID(Long orderId)
     {
@@ -192,6 +178,19 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     public EtoroOrder addEtoroOrder(EtoroOrder etoroOrder)
     {
         return orderRepository.save(etoroOrder);
+    }
+
+    @Override
+    public List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(Integer InstrumentID, String oderType, String status, //
+                                                                                                       Integer timeFrame, String timeFrameUnit, boolean isBuy)
+    {
+        return orderRepository.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy( //
+                InstrumentID, //
+                oderType,
+                status,
+                timeFrame,
+                timeFrameUnit,
+                isBuy);
     }
 
 

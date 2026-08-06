@@ -15,13 +15,14 @@ public interface EtoroOrderRepository extends JpaRepository<EtoroOrder, Integer>
 
     List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatus(Integer InstrumentID, String oderType, String status);
 
-    List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnit
+    List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy
             (
                     Integer InstrumentID,
                     String oderType,
                     String status,
                     Integer timeFrame,
-                    String timeFrameUnit
+                    String timeFrameUnit,
+                    boolean isBuy
             );
 
     List<EtoroOrder> findByInstrumentID(Integer InstrumentID);

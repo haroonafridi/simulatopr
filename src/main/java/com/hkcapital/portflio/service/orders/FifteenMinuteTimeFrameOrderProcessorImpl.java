@@ -1,17 +1,25 @@
 package com.hkcapital.portflio.service.orders;
 
+import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
+import com.hkcapital.portflio.market.structure.OrderType;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.Position;
+import com.hkcapital.portflio.model.etoro.EtoroOrder;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderUtil;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.values.order.OrderStatus;
+import com.hkcapital.portflio.values.order.OrderTypes;
 import com.hkcapital.portflio.values.timeframe.TimeFrame;
+import com.ib.client.protobuf.OrderStatusProto;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @Slf4j
 public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
@@ -66,7 +74,8 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
             logger.info("Unusual price detected cannot process order slippage = {} , max allowed slippage = {} ", slippage, inst.getMaxSlippage());
             return;
         }
-        logger.info("Support and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10, support + 10, instrumentRate.getAsk());
+        logger.info("Support and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - lSupportTol, support + rSupportTol,
+                instrumentRate.getAsk());
         if ((instrumentRate.getAsk() >= support - lSupportTol && instrumentRate.getAsk() <= support + rSupportTol)
                 && position.getIsLong() &&
                 position.getExecutionCount() != null &&
@@ -75,16 +84,33 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
             logger.info("Buy order successfully placed for Timeframe = 15 minute");
             Double tp = position.getSrMatrix().getTakeProfit();
             Double sl = position.getSrMatrix().getStopLoss();
-            orderManagerService.createAndSaveMarketOrder((EtoroOrderUtil.buildBuyOrder(instrumentRate, maxSlippage,
+
+            EtoroMarketOrderDto buyOrder = (EtoroOrderUtil.buildBuyOrder(instrumentRate, maxSlippage,
                     tp, sl, //
                     position, inst, leverage, "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
-                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame)));
-            int executionCount = position.getExecutionCount();
-            executionCount = executionCount-1;
-            position.setExecutionCount(executionCount);
-            positionService.updatePosition(position);
+                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame));
+
+            List<EtoroOrder> orders =
+                    orderManagerService.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(buyOrder.getInstrumentId(),
+                            OrderTypes.AUTO.getOrderType(), OrderStatus.SENT.getOrderStatus(),
+                            buyOrder.getTimeFrame().timeFrame(),
+                            buyOrder.getTimeFrame().timeFrameUnit(),
+                            buyOrder.getIsBuy());
+
+            if(orders.size() == 0)
+            {
+                orderManagerService.createAndSaveMarketOrder(buyOrder);
+                int executionCount = position.getExecutionCount();
+                executionCount = executionCount-1;
+                position.setExecutionCount(executionCount);
+                positionService.updatePosition(position);
+            }
             return;
         }
+
+        logger.info("Resistance and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", resistance - lResistanceTol,
+                resistance + rResistanceTol,
+                instrumentRate.getBid());
 
         if ((instrumentRate.getBid() >= resistance - lResistanceTol && instrumentRate.getBid() <= resistance + rResistanceTol)
                 && position.getIsShort() &&
@@ -94,13 +120,26 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
             Double sl = position.getSrMatrix().getStopLoss();
             Double tp = position.getSrMatrix().getTakeProfit();
             logger.info("Sell order successfully placed for timeframe 4 hour");
-            orderManagerService.createAndSaveMarketOrder((EtoroOrderUtil.buildSellOrder(instrumentRate, sl,
+
+            EtoroMarketOrderDto saleOrder = EtoroOrderUtil.buildSellOrder(instrumentRate, sl,
                     tp, position, inst, "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
-                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame)));
-            int executionCount = position.getExecutionCount();
-            executionCount = executionCount-1;
-            position.setExecutionCount(executionCount);
-            positionService.updatePosition(position);
+                            "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame);
+
+          List<EtoroOrder> orders =
+                  orderManagerService.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(saleOrder.getInstrumentId(),
+                          OrderTypes.AUTO.getOrderType(), OrderStatus.SENT.getOrderStatus(),
+                    saleOrder.getTimeFrame().timeFrame(),
+                    saleOrder.getTimeFrame().timeFrameUnit(),
+                    saleOrder.getIsBuy());
+            if(orders.size() == 0)
+            {
+                orderManagerService.createAndSaveMarketOrder(saleOrder);
+                int executionCount = position.getExecutionCount();
+                executionCount = executionCount-1;
+                position.setExecutionCount(executionCount);
+                positionService.updatePosition(position);
+            }
+
         }
     }
 }
