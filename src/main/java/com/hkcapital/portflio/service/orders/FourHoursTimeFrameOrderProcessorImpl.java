@@ -64,14 +64,15 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
             logger.info("Unusual price detected cannot process order slippage = {} , max allowed slippage = {} ", slippage, inst.getMaxSlippage());
             return;
         }
-        logger.info("Placing Buy order for timeframe 4 hour");
-        logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10, support + 10, instrumentRate.getAsk());
         if ((instrumentRate.getAsk() >= support - lSupportTol
                 && instrumentRate.getAsk() <= support + rSupportTol)
                 && position.getIsLong() &&
                 position.getExecutionCount()!=null &&
                 position.getExecutionCount() > 0)
         {
+            logger.info("Placing Buy order for timeframe 4 hour");
+            logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10, support + 10, instrumentRate.getAsk());
+
             Double tp = position.getSrMatrix().getTakeProfit();
             Double sl = position.getSrMatrix().getStopLoss();
 
@@ -106,8 +107,7 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
         {
             Double sl = position.getSrMatrix().getStopLoss();
             Double tp = position.getSrMatrix().getTakeProfit();
-            logger.info("Sell order successfully placed for timeframe 4 hour");
-
+            logger.info("Placing Buy order for timeframe 4 hour");
             EtoroMarketOrderDto saleOrder = EtoroOrderUtil.buildSellOrder(instrumentRate, sl,
                     tp, position, inst, "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
                             "bid = " + bid + "ask = " + ask + " SL = " + sl + " TP = " + tp, timeFrame);
