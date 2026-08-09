@@ -2,39 +2,38 @@ package com.hkcapital.portflio.ui.panels.srmatrix.dialogues;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.SRMatrix;
+import com.hkcapital.portflio.model.SRMatrixTolerance;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 
-public class SRMatrixEditDialogue extends JDialog {
-    private final SRMatrixService srMatrixService;
-    private final Integer srMatrixId;
-    private final SRMatrix srMatrix;
+public class SRMatrixToleranceEditDialogue extends JDialog {
+    private final SRMatrixToleranceService sRMatrixToleranceService;
+    private final Integer srMatrixToleranceId;
+    private final SRMatrixTolerance sRMatrixTolerance;
     private final JLabel instrumentNameLabel = new JLabel("Name:");
     private final JTextField instrumentName = new JTextField(20);
-
     private final JLabel creationDateLabel = new JLabel("Creation Date:");
     private final JTextField creationDate = new JTextField(30);
-    private final JLabel supportLabel = new JLabel("Support:");
-    private final JTextField support = new NumberTextField(30);
     private final JLabel lSupportToleranceLabel = new JLabel("L.Support Tolerance.");
     private final NumberTextField lSupportTolerance = new NumberTextField(40, 0);
     private final JLabel rSupportToleranceLabel = new JLabel("R.Support Tolerance.");
     private final NumberTextField rSupportTolerance = new NumberTextField(40, 0);
-    private final JLabel takeProfitLabel = new JLabel("Take Profit.");
-    private final NumberTextField takeProfit = new NumberTextField(40);
 
-    private final JLabel stopLossLabel = new JLabel("Stop Loss");
-    private final NumberTextField stopLoss = new NumberTextField(40);
     private final JLabel resistanceLabel = new JLabel("Resistance:");
-    private final JTextField resistance = new NumberTextField(30);
     private final JLabel lResistanceToleranceLabel = new JLabel("L.Resistance Tolerance.");
     private final NumberTextField lResistanceTolerance = new NumberTextField(40, 0);
     private final JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
     private final NumberTextField rResistanceTolerance = new NumberTextField(40, 0);
+
+    private final JLabel takeProfitPercentLabel = new JLabel("Take Profit %");
+    private final NumberTextField takeProfitPercent = new NumberTextField(40, 0);
+    private final JLabel stopLossPercentLabel = new JLabel("Take Profit %");
+    private final NumberTextField stopLossPercent = new NumberTextField(40, 0);
     private final JLabel timeFrameLabel = new JLabel("TimeFrame:");
     private final JTextField timeFrame = new NumberTextField(30);
 
@@ -50,23 +49,19 @@ public class SRMatrixEditDialogue extends JDialog {
     private final JButton save = new JButton("Save");
     private final JButton cancel = new JButton("Cancel");
 
-    public SRMatrixEditDialogue(SRMatrixService srMatrixService,
-                                Integer srMatrixId) {
+    public SRMatrixToleranceEditDialogue(SRMatrixToleranceService sRMatrixToleranceService,
+                                         Integer srMatrixToleranceId) {
 
-        //super(owner, "", true); // modal dialog
-
-        this.srMatrixService = srMatrixService;
-        this.srMatrixId = srMatrixId;
-        this.srMatrix = srMatrixService.findById(srMatrixId);
-
+        this.sRMatrixToleranceService = sRMatrixToleranceService;
+        this.srMatrixToleranceId = srMatrixToleranceId;
+        this.sRMatrixTolerance = sRMatrixToleranceService.findById(srMatrixToleranceId);
         initializeFields();
         buildUI();
-
-        setTitle("SR-Matrix for [" +
-                srMatrix.getInstrument().getName() +
+        setTitle("SR-Matrix Tolerance for [" +
+                sRMatrixTolerance.getInstrument().getName() +
                 "] TimeFrame = [" +
-                srMatrix.getTimeFrame() + "-" +
-                srMatrix.getTimeFrameUnit() + "]");
+                sRMatrixTolerance.getTimeFrame() + "-" +
+                sRMatrixTolerance.getTimeFrameUnit() + "]");
 
         pack();
         setLocationRelativeTo(null);
@@ -76,25 +71,24 @@ public class SRMatrixEditDialogue extends JDialog {
 
     private void initializeFields() {
 
-        instrumentName.setText(srMatrix.getInstrument().getName());
+        instrumentName.setText(sRMatrixTolerance.getInstrument().getName());
         instrumentName.setEnabled(false);
 
         creationDate.setText(
-                srMatrix.getCreationDate()
+                sRMatrixTolerance.getCreationDate()
                         .format(DateTimeFormatter.ofPattern("d MMM uuuu"))
         );
         creationDate.setEnabled(false);
-        support.setText(String.valueOf(srMatrix.getSupport()));
-        resistance.setText(String.valueOf(srMatrix.getResistance()));
-        takeProfit.setText(String.valueOf(srMatrix.getTakeProfit()));
-        stopLoss.setText(String.valueOf(srMatrix.getStopLoss()));
-        timeFrame.setText(String.valueOf(srMatrix.getTimeFrame()));
-        lResistanceTolerance.setText(String.valueOf(srMatrix.getLeftResistanceTolerance()));
-        rResistanceTolerance.setText(String.valueOf(srMatrix.getRightResistanceTolerance()));
-        lSupportTolerance.setText(String.valueOf(srMatrix.getLeftSupportTolerance()));
-        rSupportTolerance.setText(String.valueOf(srMatrix.getRightSupportTolerance()));
-        timeFrameUnit.setSelectedItem(srMatrix.getTimeFrameUnit());
-        active.setSelected(srMatrix.getActive());
+
+        timeFrame.setText(String.valueOf(sRMatrixTolerance.getTimeFrame()));
+        lResistanceTolerance.setText(String.valueOf(sRMatrixTolerance.getL_r_tolerance_percent()));
+        rResistanceTolerance.setText(String.valueOf(sRMatrixTolerance.getR_r_tolerance_percent()));
+        lSupportTolerance.setText(String.valueOf(sRMatrixTolerance.getL_s_tolerance_percent()));
+        rSupportTolerance.setText(String.valueOf(sRMatrixTolerance.getL_s_tolerance_percent()));
+        takeProfitPercent.setText(String.valueOf(sRMatrixTolerance.getTakeProfitPercent()));
+        stopLossPercent.setText(String.valueOf(sRMatrixTolerance.getStopLossPercent()));
+        timeFrameUnit.setSelectedItem(sRMatrixTolerance.getTimeFrameUnit());
+        active.setSelected(sRMatrixTolerance.getActive());
     }
 
     private void buildUI() {
@@ -102,35 +96,29 @@ public class SRMatrixEditDialogue extends JDialog {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
         mainPanel.add(instrumentNameLabel);
         mainPanel.add(instrumentName);
         mainPanel.add(Box.createVerticalStrut(8));
-
         mainPanel.add(creationDateLabel);
         mainPanel.add(creationDate);
         mainPanel.add(Box.createVerticalStrut(8));
-        mainPanel.add(timeFrameLabel);
-        mainPanel.add(timeFrame);
-        mainPanel.add(timeFrameUnit);
-        mainPanel.add(Box.createVerticalStrut(8));
         mainPanel.add(lSupportToleranceLabel);
         mainPanel.add(lSupportTolerance);
-        mainPanel.add(supportLabel);
-        mainPanel.add(support);
         mainPanel.add(rSupportToleranceLabel);
         mainPanel.add(rSupportTolerance);
         mainPanel.add(Box.createVerticalStrut(8));
         mainPanel.add(lResistanceToleranceLabel);
         mainPanel.add(lResistanceTolerance);
-        mainPanel.add(takeProfitLabel);
-        mainPanel.add(takeProfit);
-        mainPanel.add(stopLossLabel);
-        mainPanel.add(stopLoss);
-        mainPanel.add(resistanceLabel);
-        mainPanel.add(resistance);
         mainPanel.add(rResistanceToleranceLabel);
         mainPanel.add(rResistanceTolerance);
+        mainPanel.add(takeProfitPercentLabel);
+        mainPanel.add(takeProfitPercent);
+        mainPanel.add(stopLossPercentLabel);
+        mainPanel.add(stopLossPercent);
+        mainPanel.add(Box.createVerticalStrut(8));
+        mainPanel.add(timeFrameLabel);
+        mainPanel.add(timeFrame);
+        mainPanel.add(timeFrameUnit);
         mainPanel.add(Box.createVerticalStrut(8));
         mainPanel.add(active);
         mainPanel.add(Box.createVerticalStrut(12));
@@ -146,18 +134,16 @@ public class SRMatrixEditDialogue extends JDialog {
 
     private void save() {
         try {
-            srMatrix.setActive(active.isSelected());
-            srMatrix.setResistance(Double.parseDouble(resistance.getText()));
-            srMatrix.setL_r_tolerance(Double.parseDouble(lResistanceTolerance.getText()));
-            srMatrix.setR_r_tolerance(Double.parseDouble(rResistanceTolerance.getText()));
-            srMatrix.setSupport(Double.parseDouble(support.getText()));
-            srMatrix.setL_s_tolerance(Double.parseDouble(lSupportTolerance.getText()));
-            srMatrix.setR_s_tolerance(Double.parseDouble(rSupportTolerance.getText()));
-            srMatrix.setTakeProfit(Double.parseDouble(takeProfit.getText()));
-            srMatrix.setStopLoss(Double.parseDouble(stopLoss.getText()));
-            srMatrix.setTimeFrame(Integer.parseInt(timeFrame.getText()));
-            srMatrix.setTimeFrameUnit(timeFrameUnit.getSelectedItem().toString());
-            srMatrixService.updateSRMatrix(srMatrix);
+            sRMatrixTolerance.setActive(active.isSelected());
+            sRMatrixTolerance.setL_r_tolerance_percent(Double.parseDouble(lResistanceTolerance.getText()));
+            sRMatrixTolerance.setR_r_tolerance_percent(Double.parseDouble(rResistanceTolerance.getText()));
+            sRMatrixTolerance.setL_s_tolerance_percent(Double.parseDouble(lSupportTolerance.getText()));
+            sRMatrixTolerance.setR_s_tolerance_percent(Double.parseDouble(rSupportTolerance.getText()));
+            sRMatrixTolerance.setTakeProfitPercent(Double.parseDouble(takeProfitPercent.getText()));
+            sRMatrixTolerance.setStopLossPercent(Double.parseDouble(stopLossPercent.getText()));
+            sRMatrixTolerance.setTimeFrame(Integer.parseInt(timeFrame.getText()));
+            sRMatrixTolerance.setTimeFrameUnit(timeFrameUnit.getSelectedItem().toString());
+            sRMatrixToleranceService.updateSRMatrixTolerance(sRMatrixTolerance);
             dispose();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(

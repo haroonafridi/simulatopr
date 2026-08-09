@@ -40,11 +40,13 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
         this.positionService = positionService;
         this.marketStructureCache = marketStructureCache;
     }
+
     @Override
     public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
         process(liveInstrumentRate, position, instrument);
     }
+
     private void process(LiveInstrumentRate instrumentRate, Position position, Instrument inst)
     {
         final Double ask = instrumentRate.getAsk();
@@ -64,10 +66,10 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
             logger.info("Unusual price detected cannot process order slippage = {} , max allowed slippage = {} ", slippage, inst.getMaxSlippage());
             return;
         }
-        if ((instrumentRate.getAsk() >= support - lSupportTol
-                && instrumentRate.getAsk() <= support + rSupportTol)
+        if ((instrumentRate.getAsk() >= lSupportTol
+                && instrumentRate.getAsk() <= rSupportTol)
                 && position.getIsLong() &&
-                position.getExecutionCount()!=null &&
+                position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0)
         {
             logger.info("Placing Buy order for timeframe 4 hour");
@@ -88,11 +90,11 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
                             buyOrder.getTimeFrame().timeFrameUnit(),
                             buyOrder.getIsBuy());
 
-            if(orders.size() == 0)
+            if (orders.size() == 0)
             {
                 orderManagerService.createAndSaveMarketOrder(buyOrder);
                 int executionCount = position.getExecutionCount();
-                executionCount = executionCount-1;
+                executionCount = executionCount - 1;
                 position.setExecutionCount(executionCount);
                 positionService.updatePosition(position);
             }
@@ -100,7 +102,7 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
         }
 
 
-        if ((instrumentRate.getBid() >= resistance - lResistanceTol && instrumentRate.getBid() <= resistance + rResistanceTol)
+        if ((instrumentRate.getBid() >= lResistanceTol && instrumentRate.getBid() <= rResistanceTol)
                 && position.getIsShort() &&
                 position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0) //

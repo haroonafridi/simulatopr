@@ -2,6 +2,7 @@ package com.hkcapital.portflio.service.srmatrix;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.SRMatrix;
+import com.hkcapital.portflio.model.SRMatrixTolerance;
 import com.hkcapital.portflio.service.registry.Service;
 
 import java.util.List;
@@ -24,7 +25,10 @@ public interface SRMatrixService extends Service
 
     SRMatrix getReferenceById(Integer id);
 
-    List<SRMatrix> findByTimeFrameAndTimeFrameUnitAndInstrument(Integer timeFrame, String timeFrameUnit,
+    List<SRMatrix> findByTimeFrameAndTimeFrameUnitAndInstrument(Integer timeFrame,
+                                                                String timeFrameUnit,
                                                                 Instrument instrument);
+
+    SRMatrix preparSRMatrix(SRMatrixTolerance srMatrixTolerance, Double support, Double resistance, boolean isLong);
 
 }

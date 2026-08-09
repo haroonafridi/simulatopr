@@ -23,7 +23,10 @@ import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixSourcePanel;
 import com.hkcapital.portflio.ui.panels.strategy.StrategyHeaderPanel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -148,6 +151,47 @@ public class PositionActionsPanel extends UIBag
         positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
                 new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions,
                         activatePosition, deActivatePosition, shortPosition, longPosition, shortAndPosition})));
+
+        positionTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column)
+            {
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                Position r = positionService.findById ((Integer)table.getModel().getValueAt(row,0));
+                if(isSelected) {
+                    c.setFont(new Font("Arial", Font.BOLD, 14));
+                    c.setBackground(Color.BLUE);
+                    c.setForeground(Color.WHITE);
+                    return c;
+                }
+                if (!r.getActive())
+                {
+                    c.setBackground(Color.CYAN);
+                    return c;
+                }
+                if (r.getIsShort())
+                {
+                    c.setFont(new Font("Arial", Font.PLAIN, 12));
+                    c.setForeground(Color.BLACK);
+                    c.setBackground(Color.RED);
+                    return c;
+                }
+                if (r.getIsLong())
+                {  c.setFont(new Font("Arial", Font.PLAIN, 12));
+                    c.setForeground(Color.BLACK);
+                    c.setBackground(Color.green);
+                    return c;
+                }
+                return c;
+            }
+        });
 
         buy.addActionListener(new BuyActionListener(positionTableModel, serviceRegistery, positionTable));
         sell.addActionListener(new SellActionListener(positionTableModel, serviceRegistery, positionTable));

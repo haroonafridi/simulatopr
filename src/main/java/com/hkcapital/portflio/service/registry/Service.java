@@ -11,13 +11,12 @@ public interface Service
     String TradingSessionsService = "TradingSessionsService";
     String TradingTimeFramesService = "TradingTimeFramesService";
     String EtoroCandleService = "EtoroCandleService";
-
     String EtoroAPIConfiguration = "EtoroAPIInformationService";
-
     String OrderManagerService = "OrderManagerService";
     String EtoroWebSocketManagerService = "EtoroWebSocketManagerService";
     String MarketStructureManagerCache = "MarketStructureManagerCache";
     String SRMatrixService = "SRMatrixService";
+    String SRMatrixToleranceService = "SRMatrixToleranceService";
     String ProfileService = "ProfileService";
     String EtoroApiService = "EtoroApiService";
 

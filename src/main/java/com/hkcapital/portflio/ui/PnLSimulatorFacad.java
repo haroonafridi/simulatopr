@@ -18,6 +18,7 @@ import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.profile.ProfileService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.service.tradingsessions.TradingSessionsService;
 import com.hkcapital.portflio.ui.chart.dialogue.MarketStructureDialogue;
@@ -34,7 +35,9 @@ import com.hkcapital.portflio.ui.panels.marketconditions.dialogues.MarketConditi
 import com.hkcapital.portflio.ui.panels.marketconditions.panels.MarketConditionsPanel;
 import com.hkcapital.portflio.ui.panels.position.panels.PositionActionsPanel;
 import com.hkcapital.portflio.ui.panels.srmatrix.dialogues.SRMatrixDialogue;
+import com.hkcapital.portflio.ui.panels.srmatrix.dialogues.SRMatrixToleranceDialogue;
 import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixPanel;
+import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixTolerancePanel;
 import com.hkcapital.portflio.ui.panels.strategy.StrategyHeaderPanel;
 import com.hkcapital.portflio.ui.panels.tradingsessions.TradingSessionDialogue;
 import com.hkcapital.portflio.ui.panels.tradingsessions.TradingSessionPanel;
@@ -72,9 +75,7 @@ public class PnLSimulatorFacad
     private final MarketStructureCache marketStructureManagerCache;
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final LiveInstrumentFeedService liveInstrumentFeedService;
-
-
-
+    private final SRMatrixToleranceService sRMatrixToleranceService;
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
                              StrategyService strategyService,
@@ -92,6 +93,7 @@ public class PnLSimulatorFacad
                              MarketStructureCache marketStructureManagerCache,
                              EtoroApiService etoroApiService,
                              LiveInstrumentFeedService liveInstrumentFeedService,
+                             SRMatrixToleranceService sRMatrixToleranceService,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -106,6 +108,7 @@ public class PnLSimulatorFacad
         this.etoroApiInformationService = apiInformationService;
         this.etoroWebSocketManagerService = etoroWebSocketManagerService;
         this.srMatrixService = srMatrixService;
+        this.sRMatrixToleranceService = sRMatrixToleranceService;
         this.profileService = profileService;
         this.etoroApiConfiguration = etoroApiConfiguration;
         this.etoroApiService = etoroApiService;
@@ -122,12 +125,12 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.EtoroAPIConfiguration, this.etoroApiInformationService);
         serviceRegistery.putService(Service.EtoroWebSocketManagerService, this.etoroApiInformationService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
+        serviceRegistery.putService(Service.SRMatrixToleranceService, this.sRMatrixToleranceService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.ProfileService, this.profileService);
         serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
         serviceRegistery.putService(Service.MarketStructureManagerCache, this.marketStructureManagerCache);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
-
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
@@ -181,6 +184,7 @@ public class PnLSimulatorFacad
         marketConditions.add(new DefaultMutableTreeNode("Economic Calendar"));
         DefaultMutableTreeNode models = new DefaultMutableTreeNode("Models");
         models.add(new DefaultMutableTreeNode("SR-Matrix"));
+        models.add(new DefaultMutableTreeNode("SR-Matrix Tolerance"));
         models.add(new DefaultMutableTreeNode("BRP-Model"));
         DefaultMutableTreeNode charts = new DefaultMutableTreeNode("Charts");
         charts.add(new DefaultMutableTreeNode("Market Structure"));
@@ -283,6 +287,14 @@ public class PnLSimulatorFacad
                 TradingSessionDialogue instrumentDialogue = new TradingSessionDialogue(mainFrame, //
                         new TradingSessionPanel(serviceRegistery));
                 instrumentDialogue.setVisible(true);
+            }
+
+            if (nodeObject.toString().equals("SR-Matrix Tolerance"))
+            {
+                // Optional: handle folders or intermediate nodes
+                SRMatrixToleranceDialogue srMatrixPanel = new SRMatrixToleranceDialogue(mainFrame, //
+                        new SRMatrixTolerancePanel(serviceRegistery, null));
+                srMatrixPanel.setVisible(true);
             }
 
             if (nodeObject.toString().equals("SR-Matrix"))

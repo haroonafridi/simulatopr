@@ -2,22 +2,19 @@ package com.hkcapital.portflio.ui.panels.srmatrix.panels;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.model.Position;
-import com.hkcapital.portflio.model.SRMatrix;
 import com.hkcapital.portflio.model.SRMatrixTolerance;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
-import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.buttons.ButtonLabels;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
 import com.hkcapital.portflio.ui.panels.position.tablemodels.PositionTableModel;
-import com.hkcapital.portflio.ui.panels.srmatrix.dialogues.SRMatrixEditDialogue;
+import com.hkcapital.portflio.ui.panels.srmatrix.dialogues.SRMatrixToleranceEditDialogue;
 import com.hkcapital.portflio.ui.panels.srmatrix.labels.Labels;
-import com.hkcapital.portflio.ui.panels.srmatrix.tablemodels.SRMatrixTableModel;
+import com.hkcapital.portflio.ui.panels.srmatrix.tablemodels.SRMatrixToleranceTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,79 +23,56 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class SRMatrixPanel extends UIBag
+public class SRMatrixTolerancePanel extends UIBag
 {
     private final ServiceRegistery<Service> serviceRegistery;
-    private final SRMatrixService srMatrixService;
     private final SRMatrixToleranceService sRMatrixToleranceService;
-
-    private final JLabel longPositionLabel = new JLabel("Long Position");
-    private final JCheckBox longPosition = new JCheckBox();
-    private final JLabel supportLabel = new JLabel("Support.");
     private final JLabel lSupportToleranceLabel = new JLabel("L.Support Tolerance.");
     private final NumberTextField lSupportTolerance = new NumberTextField(40);
     private final JLabel rSupportToleranceLabel = new JLabel("R.Support Tolerance.");
     private final NumberTextField rSupportTolerance = new NumberTextField(40);
-    private final NumberTextField support = new NumberTextField(40);
-    private final JLabel resistanceLabel = new JLabel("Resistance");
     private final JLabel lResistanceToleranceLabel = new JLabel("L.Resistance Tolerance.");
     private final NumberTextField lResistanceTolerance = new NumberTextField(40);
-    private final JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
     private final NumberTextField rResistanceTolerance = new NumberTextField(40);
-    private final NumberTextField resistance = new NumberTextField(40);
 
-    private final JLabel takeProfitLabel = new JLabel("Take Profit.");
+    private final JLabel takeProfitLabel = new JLabel("Take Profit %");
     private final NumberTextField takeProfit = new NumberTextField(40);
-    private final JLabel stopLossLabel = new JLabel("Stop Loss");
+    private final JLabel stopLossLabel = new JLabel("Stop loss %");
     private final NumberTextField stopLoss = new NumberTextField(40);
+
     private final JLabel timeFrameLabel = new JLabel("Timeframe");
     private final NumberTextField timeFrame = new NumberTextField(40);
-    JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), //
-            TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), //
-            TimeFramesUnit.WEEK.getUnit()});
+    JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), TimeFramesUnit.WEEK.getUnit()});
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
     private final JLabel activeLabel = new JLabel("Active");
     private final JCheckBox active = new JCheckBox();
     private final JTable srMatrixTable;
-    private final SRMatrixTableModel tableModel;
-
+    private final SRMatrixToleranceTableModel tableModel;
     private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
     private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
     private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
     private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
-
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
-
     private final JButton selectSrMatrix = new JButton(ButtonLabels.Select.getLabel());
-
     private final InstrumentService instrumentService;
     final SRMatrixSourcePanel srMatrixSourcePanel;
-    final PositionService positionService;
-    private Integer positionId;
-    private Integer strategyId;
-    private PositionTableModel positionTableModel;
 
-    public SRMatrixPanel(final ServiceRegistery serviceRegistery,
-                         final SRMatrixSourcePanel srMatrixSourcePanel,
-                         PositionTableModel positionTableModel, //
-                         Integer positionId, Integer strategyId) //
+    public SRMatrixTolerancePanel(final ServiceRegistery serviceRegistery,
+                                  final SRMatrixSourcePanel srMatrixSourcePanel,
+
+                                  Integer positionId, Integer strategyId) //
     {
         this(serviceRegistery, srMatrixSourcePanel);
-        this.positionId = positionId;
-        this.strategyId = strategyId;
-        this.positionTableModel = positionTableModel;
     }
 
-    public SRMatrixPanel(final ServiceRegistery serviceRegistery,
-                         final SRMatrixSourcePanel srMatrixSourcePanel)
+    public SRMatrixTolerancePanel(final ServiceRegistery serviceRegistery,
+                                  final SRMatrixSourcePanel srMatrixSourcePanel)
     {
-        super(SRMatrixPanel.class);
+        super(SRMatrixTolerancePanel.class);
         this.srMatrixSourcePanel = srMatrixSourcePanel;
         this.serviceRegistery = serviceRegistery;
-        this.srMatrixService = (SRMatrixService) this.serviceRegistery.getService(Service.SRMatrixService);
-        this.sRMatrixToleranceService = (SRMatrixToleranceService) this.serviceRegistery.getService(Service.SRMatrixToleranceService);
+        this.sRMatrixToleranceService = (SRMatrixToleranceService)this.serviceRegistery.getService(Service.SRMatrixToleranceService);
         this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
-        this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
 
         List<Instrument> instrumentList = instrumentService.findAll();
 
@@ -107,11 +81,11 @@ public class SRMatrixPanel extends UIBag
             this.instrumentList.addItem(instrument);
         }
 
-        tableModel = new SRMatrixTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
-                "Support", "L.Support Tolerance" , "R.Support Tolerance", "Resistance","L.Resistance Tolerance" ,
-                "R.Resistance Tolerance","Take Profit", "Stop Loss", "Time Frame", "TimeFrame Unite", "Active"
+        tableModel = new SRMatrixToleranceTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Name.getLabel(), "Date",
+                "L.Support Tolerance %" , "R.Support Tolerance %","L.Resistance Tolerance %" ,
+                "R.Resistance Tolerance %", "Take Profit %" , "Stop Loss %", "Time Frame", "TimeFrame Unite", "Active"
         }, //
-        srMatrixService.findAll());
+        sRMatrixToleranceService.findAll());
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(Labels.SRMatrix.getLabel()));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -120,27 +94,22 @@ public class SRMatrixPanel extends UIBag
         // Row 0: Instrument label + text field
         JPanel srMatrixInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         srMatrixInputPanel.add(this.instrumentList);
-        srMatrixInputPanel.add(longPositionLabel);
-        srMatrixInputPanel.add(longPosition);
-        srMatrixInputPanel.add(supportLabel);
-        srMatrixInputPanel.add(support);
-        srMatrixInputPanel.add(resistanceLabel);
-        srMatrixInputPanel.add(resistance);
-        srMatrixInputPanel.add(timeFrameLabel);
-        srMatrixInputPanel.add(timeFrame);
-        srMatrixInputPanel.add(timeFrameUnit);
         srMatrixInputPanel.add(lSupportToleranceLabel);
         srMatrixInputPanel.add(lSupportTolerance);
         srMatrixInputPanel.add(rSupportToleranceLabel);
         srMatrixInputPanel.add(rSupportTolerance);
         srMatrixInputPanel.add(lResistanceToleranceLabel);
         srMatrixInputPanel.add(lResistanceTolerance);
+        JLabel rResistanceToleranceLabel = new JLabel("R.Resistance Tolerance.");
         srMatrixInputPanel.add(rResistanceToleranceLabel);
         srMatrixInputPanel.add(rResistanceTolerance);
         srMatrixInputPanel.add(takeProfitLabel);
         srMatrixInputPanel.add(takeProfit);
         srMatrixInputPanel.add(stopLossLabel);
         srMatrixInputPanel.add(stopLoss);
+        srMatrixInputPanel.add(timeFrameLabel);
+        srMatrixInputPanel.add(timeFrame);
+        srMatrixInputPanel.add(timeFrameUnit);
         srMatrixInputPanel.add(activeLabel);
         srMatrixInputPanel.add(active);
         gbc.gridx = 0;
@@ -157,7 +126,7 @@ public class SRMatrixPanel extends UIBag
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
         buttonPanel.add(readButton);
-        buttonPanel.add(selectSrMatrix);
+        //buttonPanel.add(selectSrMatrix);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -179,47 +148,13 @@ public class SRMatrixPanel extends UIBag
         add(scrollPane, gbc);
         saveButton.addActionListener(e -> save());
         removeButton.addActionListener(e -> remove());
-        readButton.addActionListener(e -> srMatrixService.findAll());
-        selectSrMatrix.addActionListener(e -> selectSrMatrix());
+        readButton.addActionListener(e -> sRMatrixToleranceService.findAll());
 
         closeButton.addActionListener(e ->
         {
             SwingUtilities.getWindowAncestor(this).dispose();
         });
-
         srMatrixTable.addMouseListener(new SRMatrixEditDialogueMouseClickHandler());
-
-        timeFrameUnit.addActionListener(e -> //
-        {
-            Instrument ins = (Instrument) this.instrumentList.getSelectedItem();
-
-            SRMatrixTolerance sRMatrixTolerance = this.sRMatrixToleranceService.findByInstrumentAndTimeFrameAndTimeFrameUnitAndActive(ins,
-                    this.timeFrame.getIntValue(),
-                    this.timeFrameUnit.getSelectedItem().toString(), true);
-
-//            if (this.stopLoss.isNull() || this.takeProfit.isNull())//
-//            {
-//                JOptionPane.showMessageDialog(this, "Support / Resistance cannot be null!", "SR-Matrix Tolerance Error",
-//                        JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
-
-            if (sRMatrixTolerance == null)//
-            {
-                JOptionPane.showMessageDialog(this, "No SR-Matrix Tolerance found", "SR-Matrix Tolerance Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            SRMatrix srMatrix = srMatrixService.preparSRMatrix(sRMatrixTolerance, this.support.getDoubleValue(),
-                    this.resistance.getDoubleValue(), longPosition.isSelected());
-            this.takeProfit.setText(srMatrix.getTakeProfit().toString());
-            this.stopLoss.setText(srMatrix.getStopLoss().toString());
-            this.lResistanceTolerance.setText(srMatrix.getL_r_tolerance().toString());
-            this.rResistanceTolerance.setText(srMatrix.getR_r_tolerance().toString());
-            this.rSupportTolerance.setText(srMatrix.getR_s_tolerance().toString());
-            this.lSupportTolerance.setText(srMatrix.getL_s_tolerance().toString());
-        });
     }
 
 
@@ -238,30 +173,28 @@ public class SRMatrixPanel extends UIBag
 
                 Integer srMatrixId = (Integer) srMatrixTable.getModel() //
                         .getValueAt(srMatrixTable.getSelectedRow(), 0);
-                new SRMatrixEditDialogue(srMatrixService, srMatrixId);
+                new SRMatrixToleranceEditDialogue(sRMatrixToleranceService, srMatrixId);
             }
         }
     }
 
     public void save()
     {
-        SRMatrix srMatrix = SRMatrix.builder()
+        SRMatrixTolerance sRMatrixTolerance = SRMatrixTolerance.builder()
                 .creationDate(LocalDateTime.now())
                 .timeFrame(this.timeFrame.getIntValue())
                 .timeFrameUnit(this.timeFrameUnit.getSelectedItem().toString())
                 .instrument((Instrument) this.instrumentList.getModel().getSelectedItem())
-                .support(this.support.getDoubleValue())
-                .l_s_tolerance(this.lSupportTolerance.getDoubleValue())
-                .r_s_tolerance(this.rSupportTolerance.getDoubleValue())
-                .resistance(this.resistance.getDoubleValue())
-                .l_r_tolerance(this.lResistanceTolerance.getDoubleValue())
-                .r_r_tolerance(this.rResistanceTolerance.getDoubleValue())
-                .takeProfit(this.takeProfit.getDoubleValue())
-                .stopLoss(this.stopLoss.getDoubleValue())
+                .l_s_tolerance_percent(this.lSupportTolerance.getDoubleValue())
+                .r_s_tolerance_percent(this.rSupportTolerance.getDoubleValue())
+                .l_r_tolerance_percent(this.lResistanceTolerance.getDoubleValue())
+                .r_r_tolerance_percent(this.rResistanceTolerance.getDoubleValue())
+                .takeProfitPercent(this.takeProfit.getDoubleValue())
+                .stopLossPercent(this.stopLoss.getDoubleValue())
                 .active(this.active.isSelected())
                 .build();
-        srMatrixService.addSRMatrix(srMatrix);
-        tableModel.addRow(srMatrix);
+        sRMatrixToleranceService.addSRMatrixTolerance(sRMatrixTolerance);
+        tableModel.addRow(sRMatrixTolerance);
     }
 
     public void remove()
@@ -269,8 +202,8 @@ public class SRMatrixPanel extends UIBag
         int selectedRow = srMatrixTable.getSelectedRow();
         if (selectedRow >= 0)
         {
-            SRMatrix srMatrix = (SRMatrix) tableModel.removeRow(selectedRow);
-            srMatrixService.removeSRMatrix(srMatrix);
+            SRMatrixTolerance sRMatrixTolerance = (SRMatrixTolerance) tableModel.removeRow(selectedRow);
+            sRMatrixToleranceService.removeSRMatrixTolerance(sRMatrixTolerance);
         } else
         {
             JOptionPane.showMessageDialog(this, "Please select an SRMatrix to remove.",
@@ -285,27 +218,26 @@ public class SRMatrixPanel extends UIBag
     }
 
 
-    public void selectSrMatrix()
-    {
-        int selectedRow = srMatrixTable.getSelectedRow();
-        SRMatrix srMatrix = (SRMatrix) tableModel.getElements().get(selectedRow);
-        if (positionId != null)
-        {
-            Position position = positionService.findById(positionId);
-            SRMatrix srm = srMatrixService.getReferenceById(srMatrix.getId());
-            position.setSrMatrix(srm);
-            positionService.updatePosition(position);
-            List<Position> positionList = positionService.findByStrategyId(strategyId);
-            positionTableModel.updateData(positionList);
-        } else
-        {
-            srMatrixSourcePanel.getId().setText(srMatrix.getId().toString());
-            srMatrixSourcePanel.getSupport().setText(srMatrix.getSupport().toString());
-            srMatrixSourcePanel.getResistance().setText(srMatrix.getResistance().toString());
-            srMatrixSourcePanel.getTimeFrame().setText(srMatrix.getTimeFrame().toString());
-            srMatrixSourcePanel.getTimeFrameUnit().setText(srMatrix.getTimeFrameUnit());
-            srMatrixSourcePanel.getActive().setSelected(srMatrix.getActive());
-        }
-        SwingUtilities.getWindowAncestor(this).dispose();
-    }
+//    public void selectSrMatrix()
+//    {
+//        int selectedRow = srMatrixTable.getSelectedRow();
+//        SRMatrix srMatrix = (SRMatrix) tableModel.getElements().get(selectedRow);
+//        if (positionId != null)
+//        {
+//            Position position = positionService.findById(positionId);
+//            SRMatrixTolerance srm = sRMatrixToleranceService.getReferenceById(srMatrix.getId());
+//            positionService.updatePosition(position);
+//            List<Position> positionList = positionService.findByStrategyId(strategyId);
+//            positionTableModel.updateData(positionList);
+//        } else
+//        {
+//            srMatrixSourcePanel.getId().setText(srMatrix.getId().toString());
+//            srMatrixSourcePanel.getSupport().setText(srMatrix.getSupport().toString());
+//            srMatrixSourcePanel.getResistance().setText(srMatrix.getResistance().toString());
+//            srMatrixSourcePanel.getTimeFrame().setText(srMatrix.getTimeFrame().toString());
+//            srMatrixSourcePanel.getTimeFrameUnit().setText(srMatrix.getTimeFrameUnit());
+//            srMatrixSourcePanel.getActive().setSelected(srMatrix.getActive());
+//        }
+//        SwingUtilities.getWindowAncestor(this).dispose();
+//    }
 }

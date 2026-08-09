@@ -74,9 +74,8 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
             logger.info("Unusual price detected cannot process order slippage = {} , max allowed slippage = {} ", slippage, inst.getMaxSlippage());
             return;
         }
-        logger.info("Support and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - lSupportTol, support + rSupportTol,
-                instrumentRate.getAsk());
-        if ((instrumentRate.getAsk() >= support - lSupportTol && instrumentRate.getAsk() <= support + rSupportTol)
+
+        if ((instrumentRate.getAsk() >=  lSupportTol && instrumentRate.getAsk() <= rSupportTol)
                 && position.getIsLong() &&
                 position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0)
@@ -108,11 +107,7 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
             return;
         }
 
-        logger.info("Resistance and price 15 minute timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", resistance - lResistanceTol,
-                resistance + rResistanceTol,
-                instrumentRate.getBid());
-
-        if ((instrumentRate.getBid() >= resistance - lResistanceTol && instrumentRate.getBid() <= resistance + rResistanceTol)
+        if ((instrumentRate.getBid() >= lResistanceTol && instrumentRate.getBid() <= rResistanceTol)
                 && position.getIsShort() &&
                 position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0) //

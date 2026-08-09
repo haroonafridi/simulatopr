@@ -113,11 +113,11 @@ public class PositionTableModel<E> extends TableModel
             case 9:
                 return position.getSrMatrix().getStopLoss();//
             case 10:
-                return position.getIsShort();
+                return position.getIsShort() ? "SHORT" : "";
             case 11:
-                return position.getIsLong();
+                return position.getIsLong() ? "LONG" : "";
             case 12:
-                return position.getIsShortLong();
+                return position.getIsShortLong() ? "BOTH" : "";
             case 13:
                 return position.getSrMatrix().getTimeFrame();//
             case 14:

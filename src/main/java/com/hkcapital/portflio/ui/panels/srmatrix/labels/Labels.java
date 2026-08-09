@@ -11,6 +11,15 @@ public enum Labels
     Resistance("Resistance:"),
     LResistanceTolerance("L.Resistance Tolerance:"),
     RResistanceTolerance("R.Resistance Tolerance:"),
+
+    LSupportTolerancePercent("L.Support Tolerance %:"),
+    RSupportTolerancePercent("R.Support Tolerance %:"),
+    LResistanceTolerancePercent("L.Resistance Tolerance %:"),
+    RResistanceTolerancePercent("R.Resistance Tolerance %:"),
+
+    TakeProfitPercent("Take Profit %:"),
+    StopLossPercent("Stop Loss %:"),
+
     TimeFrame("TimeFrame:"),
     TimeFrameUnit("TimeFrame Unit:"),
 

@@ -2,6 +2,7 @@ package com.hkcapital.portflio.service.srmatrix.impl;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.SRMatrix;
+import com.hkcapital.portflio.model.SRMatrixTolerance;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixRepository;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import org.springframework.data.domain.Sort;
@@ -64,14 +65,24 @@ public class SRMatrixServiceImpl implements SRMatrixService
     }
 
     @Override
-    public SRMatrix getReferenceById(Integer id) {
-       return srMatrixRepository.getReferenceById(id);
+    public SRMatrix getReferenceById(Integer id)
+    {
+        return srMatrixRepository.getReferenceById(id);
     }
 
     @Override
     public List<SRMatrix> findByTimeFrameAndTimeFrameUnitAndInstrument(Integer timeFrame, String timeFrameUnit, Instrument instrument)
     {
         return srMatrixRepository.findByTimeFrameAndTimeFrameUnitAndInstrument(timeFrame, timeFrameUnit, instrument);
+    }
+
+    @Override
+    public SRMatrix preparSRMatrix(SRMatrixTolerance srMatrixTolerance,
+                                   Double support,
+                                   Double resistance,
+                                   boolean isLong)
+    {
+        return SRMatrixUtil.prepare(srMatrixTolerance, support, resistance, isLong).get();
     }
 
 }
