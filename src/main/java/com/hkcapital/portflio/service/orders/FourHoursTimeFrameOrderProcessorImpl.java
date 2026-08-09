@@ -10,6 +10,7 @@ import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderUtil;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.values.order.OrderStatus;
 import com.hkcapital.portflio.values.order.OrderTypes;
 import com.hkcapital.portflio.values.timeframe.TimeFrame;
@@ -68,9 +69,9 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
         }
         if ((instrumentRate.getAsk() >= lSupportTol
                 && instrumentRate.getAsk() <= rSupportTol)
-                && position.getIsLong() &&
-                position.getExecutionCount() != null &&
-                position.getExecutionCount() > 0)
+                && position.getPositionType()!=null && position.getPositionType().equals(PositionType.BUY.getValue())
+                && position.getExecutionCount() != null
+                && position.getExecutionCount() > 0)
         {
             logger.info("Placing Buy order for timeframe 4 hour");
             logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10, support + 10, instrumentRate.getAsk());
@@ -103,7 +104,7 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
 
 
         if ((instrumentRate.getBid() >= lResistanceTol && instrumentRate.getBid() <= rResistanceTol)
-                && position.getIsShort() &&
+                && position.getPositionType()!=null && position.getPositionType().equals(PositionType.SELL.getValue()) &&
                 position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0) //
         {

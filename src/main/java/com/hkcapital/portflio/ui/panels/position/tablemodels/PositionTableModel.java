@@ -26,9 +26,7 @@ public class PositionTableModel<E> extends TableModel
             "Resistance",
             "Take Profit",
             "Stop Loss",
-            "Short Position",
-            "Long Position",
-            "Short/Long Position",
+            "Position Type",
             "Time Frame",
             "Time Frame Unite",
             "leverage",
@@ -113,20 +111,16 @@ public class PositionTableModel<E> extends TableModel
             case 9:
                 return position.getSrMatrix().getStopLoss();//
             case 10:
-                return position.getIsShort() ? "SHORT" : "";
+                return position.getPositionType();
             case 11:
-                return position.getIsLong() ? "LONG" : "";
-            case 12:
-                return position.getIsShortLong() ? "BOTH" : "";
-            case 13:
                 return position.getSrMatrix().getTimeFrame();//
-            case 14:
+            case 12:
                 return position.getSrMatrix().getTimeFrameUnit();//
-            case 15:
+            case 13:
                 return position.getConfiguration().getLev();
-            case 16:
-                return position.getActive();
-            case 17:
+            case 14:
+                return position.getActive() ? "YES" : "NO";
+            case 15:
                 return position.getExecutionCount();
             default:
                 return null;

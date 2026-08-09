@@ -3,6 +3,7 @@ package com.hkcapital.portflio.ui.panels.position.listeners;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.ui.panels.position.tablemodels.PositionTableModel;
 
@@ -39,9 +40,7 @@ public class ActivatePositionAsLongActionListener implements ActionListener
         Integer id = (Integer) tableModel.getValueAt(positionTableTable.getSelectedRow(), 0);
         PositionService positionService  = (PositionService)serviceRegistery.getService(Service.PositionService);
         Position position = positionService.findById(id);
-        position.setIsShort(Boolean.FALSE);
-        position.setIsLong(Boolean.TRUE);
-        position.setIsShortLong(Boolean.FALSE);
+        position.setPositionType(PositionType.BUY.getValue());
         positionService.updatePosition(position);
         tableModel.updateData(positionService.findByStrategyId(position.getStrategy().getId()));
     }

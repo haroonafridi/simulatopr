@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.positions.PositionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,12 +60,8 @@ public class Position implements Serializable
     private Double takeProfit;
     @Column(name = "active")
     private Boolean active = true;
-    @Column(name = "is_short")
-    private Boolean isShort = false;
-    @Column(name = "is_long")
-    private Boolean isLong = true;
-    @Column(name = "is_short_long")
-    private Boolean isShortLong = false;
+    @Column(name = "position_type")
+    private String positionType = PositionType.BUY.getValue();
     @Column(name = "execution_count")
     private Integer executionCount;
 

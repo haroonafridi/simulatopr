@@ -11,6 +11,7 @@ import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderUtil;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.values.order.OrderStatus;
 import com.hkcapital.portflio.values.order.OrderTypes;
 import com.hkcapital.portflio.values.timeframe.TimeFrame;
@@ -76,7 +77,7 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
         }
 
         if ((instrumentRate.getAsk() >=  lSupportTol && instrumentRate.getAsk() <= rSupportTol)
-                && position.getIsLong() &&
+                && position.getPositionType()!=null && position.getPositionType().equals(PositionType.BUY.getValue()) &&
                 position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0)
         {
@@ -108,7 +109,7 @@ public class FifteenMinuteTimeFrameOrderProcessorImpl implements TimeFrameOrderP
         }
 
         if ((instrumentRate.getBid() >= lResistanceTol && instrumentRate.getBid() <= rResistanceTol)
-                && position.getIsShort() &&
+                && position.getPositionType()!=null && position.getPositionType().equals(PositionType.SELL.getValue()) &&
                 position.getExecutionCount() != null &&
                 position.getExecutionCount() > 0) //
         {

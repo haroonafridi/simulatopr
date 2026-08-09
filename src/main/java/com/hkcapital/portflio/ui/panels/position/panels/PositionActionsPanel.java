@@ -8,6 +8,7 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.ui.UIBag;
@@ -176,14 +177,14 @@ public class PositionActionsPanel extends UIBag
                     c.setBackground(Color.CYAN);
                     return c;
                 }
-                if (r.getIsShort())
+                if (r.getPositionType() != null && r.getPositionType().equals(PositionType.SELL.getValue()))
                 {
                     c.setFont(new Font("Arial", Font.PLAIN, 12));
                     c.setForeground(Color.BLACK);
                     c.setBackground(Color.RED);
                     return c;
                 }
-                if (r.getIsLong())
+                if (r.getPositionType() != null && r.getPositionType().equals(PositionType.BUY.getValue()))
                 {  c.setFont(new Font("Arial", Font.PLAIN, 12));
                     c.setForeground(Color.BLACK);
                     c.setBackground(Color.green);
