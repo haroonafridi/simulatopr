@@ -3,6 +3,7 @@ package com.hkcapital.portflio.service.schedule.impl;
 import com.hkcapital.portflio.model.LiveInstrumentFeed;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import com.hkcapital.portflio.service.csv.impl.LiveInstrumentFeedCsvGenerator;
+import com.hkcapital.portflio.service.env.EnvService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,18 +25,25 @@ public class TickCSVScheduler implements ScheduleService
 {
     private Logger logger = LoggerFactory.getLogger(TickCSVScheduler.class);
     private final LiveInstrumentFeedRepository liveInstrumentFeedRepository;
+    private final EnvService envService;
     private static final DateTimeFormatter FILE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public TickCSVScheduler(final LiveInstrumentFeedRepository liveInstrumentFeedRepository)
+    public TickCSVScheduler(final LiveInstrumentFeedRepository liveInstrumentFeedRepository,
+                            EnvService envService)
     {
         this.liveInstrumentFeedRepository = liveInstrumentFeedRepository;
+        this.envService = envService;
     }
 
     @Scheduled(cron = "0 1 23 * * MON-FRI")
     @Override
     public void run()
     {
+        String pathProd ="D:/gold_data/";
+        String pathDev ="D:/gold_data_dev/";
+        String pathSim ="D:/gold_data_sim/";
+
         logger.info("Generating ticker csv file ");
         ZoneId zone = ZoneId.systemDefault();
         final Instant fromDate = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0).atZone(zone).toInstant();
@@ -44,7 +52,15 @@ public class TickCSVScheduler implements ScheduleService
         String data = LiveInstrumentFeedCsvGenerator.generate(feed);
         LocalDate today = LocalDate.now();
 
-        String folderName = "D:/gold_data/"+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/tick/";
+        String folderName = pathProd+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/tick/";
+
+        if(envService.getActiveProfile().equals("dev")) {
+            folderName =  pathDev+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/tick/";
+        }
+
+        if(envService.getActiveProfile().equals("simulation")) {
+            folderName =  pathSim+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/tick/";
+        }
 
         String fileName = "gold_tick_" + today.format(FILE_FORMAT) + ".csv";
         try

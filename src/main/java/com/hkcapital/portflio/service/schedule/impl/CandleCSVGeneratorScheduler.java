@@ -3,6 +3,7 @@ package com.hkcapital.portflio.service.schedule.impl;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.csv.impl.CandleCSVBuilder;
+import com.hkcapital.portflio.service.env.EnvService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,12 +23,15 @@ public class CandleCSVGeneratorScheduler implements ScheduleService
 {
     private Logger logger = LoggerFactory.getLogger(CandleCSVGeneratorScheduler.class);
     private final EtoroCandleService candleService;
+    private final EnvService envService;
     private static final DateTimeFormatter FILE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public CandleCSVGeneratorScheduler(final EtoroCandleService candleService)
+    public CandleCSVGeneratorScheduler(final EtoroCandleService candleService,
+                                       final EnvService envService)
     {
         this.candleService = candleService;
+        this.envService = envService;
     }
 
     @Scheduled(cron = "0 5 23 * * MON-FRI")
@@ -54,9 +58,23 @@ public class CandleCSVGeneratorScheduler implements ScheduleService
 
         String data = CandleCSVBuilder.buildCSV(candle);
 
+        String pathProd = "D:/gold_data/";
+        String pathDev = "D:/gold_data_dev/";
+        String pathSim = "D:/gold_data_sim/";
+
         LocalDate today = LocalDate.now();
 
-        String folderName = "D:/gold_data/"+today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"/candle/";
+        String folderName = pathProd + today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/candle/";
+
+        if (envService.getActiveProfile().equals("dev"))
+        {
+            folderName = pathDev + today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/candle/";
+        }
+
+        if (envService.getActiveProfile().equals("simulation"))
+        {
+            folderName = pathSim + today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/candle/";
+        }
 
         String fileName = "gold_candle_" + today.format(FILE_FORMAT) + ".csv";
         try
