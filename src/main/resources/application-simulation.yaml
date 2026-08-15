@@ -7,16 +7,17 @@ etoro:
   order-information-url: https://public-api.etoro.com/api/v1/trading/info/demo/orders/
   portfolio-information-url: http://localhost:8081/etoro/portfolio
   url: ws://localhost:8025/ws/etoro
+  simulation-date:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/strategy-unit-test
+    url: jdbc:mysql://localhost:3306/strategy-simulation
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
-      show-sql: true
+    ddl-auto: update
+    show-sql: true
   server:
-      port: 8086
+    port: 8087

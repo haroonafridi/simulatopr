@@ -1,12 +1,14 @@
 package com.hkcapital.portflio.market.structure.it;
 
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
+import com.hkcapital.portflio.broker.etoro.simulation.SimulationHelper;
 import com.hkcapital.portflio.etoro.websocket.client.EtoroWebSocketClientAbstract_IT;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.*;
-import com.hkcapital.portflio.model.*;
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
+import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.positions.PositionService;
@@ -19,7 +21,6 @@ import org.springframework.web.client.RestClient;
 import java.net.http.WebSocket;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebSocketClientAbstract_IT
 {
@@ -37,6 +38,11 @@ public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebS
     private SRMatrixService sRMatrixService;
     @Autowired
     private PositionService positionService;
+    @Autowired
+    private ServiceRegistery serviceRegistery;
+
+    SimulationHelper simulationHelper =
+            new SimulationHelper(RestClient.create(), serviceRegistery);
     final static String previousDayCandle = "2026-07-30";
     final static String tradingSession = "2026-07-31";
     private static final String PATH = "D:/gold_data/" + previousDayCandle + "/candle/gold_candle_"
@@ -48,83 +54,9 @@ public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebS
 
         CandleHelper candleHelper = new CandleHelper(Path.of(PATH));
 
-        RestClient restClient = RestClient.create();
+        simulationHelper.cleanAndInitPortfolio(5000);
 
-        restClient.post().uri("http://localhost:8081/etoro/init")
-                .body(DepositDto.builder().initial(5000)
-                        .build()).retrieve().body(String.class);
-        etoroOrderRepository.deleteAll();
-        liveInstrumentFeedRepository.deleteAll();
-        positionService.removeAll();
-        configurationService.removeAll();
-        marketConditionsService.removeAll();
-        sRMatrixService.removeAll();
-        strategyService.removeAll();
-        getEtoroCandleService().removeAll();
-
-        Instrument gold = instrumentService.addInstrument(Instrument.builder()
-                .name("GOLD")
-                .instrumentDesc("Gold Test")
-                .active(true)
-                .maxSlippage(1.75)
-                .etoroInstrumentId(18)
-                .build());
-
-        Strategy strategy = strategyService.addStrategy(Strategy.builder()
-                .active(true)
-                .description("Gold Test Strategy")
-                .name("Gold Test Strategy")
-                .capitalAllocated(10000d)
-                .creationDate(LocalDateTime.now()).build());
-
-        MarketConditions marketConditions = marketConditionsService.addMarketCondition(MarketConditions.builder()
-                .instrument(gold)
-                .dayLow(4020d)
-                .dayHigh(4111d).build());
-
-        SRMatrix s15Min = sRMatrixService.addSRMatrix(SRMatrix.builder().active(true)
-                .instrument(gold)
-                .resistance(4056d)
-                .support(4028d)
-                .timeFrame(15)
-                .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
-                .build());
-
-        SRMatrix s4Hour = sRMatrixService.addSRMatrix(SRMatrix.builder().active(true)
-                .instrument(gold)
-                .resistance(4105d)
-                .support(4028d)
-                .timeFrame(4)
-                .timeFrameUnit(TimeFramesUnit.HOUR.getUnit())
-                .build());
-
-        Configuration configuration = configurationService.addConfiguration(Configuration.builder()
-                .lev(20)
-                .maxPercentAllowedPerInstrument(2d)
-                .percentAllocationAllowed(15d)
-                .noOfInsutrments(1)
-                .build());
-
-        positionService.add(Position.builder()
-                .currentPositionEquity(50d)
-                .leverage(20)
-                .instrument(gold)
-                .srMatrix(s15Min)
-                .strategy(strategy)
-                .active(true)
-                .marketConditions(marketConditions)
-                .configuration(configuration).build());
-
-        positionService.add(Position.builder()
-                .currentPositionEquity(250d)
-                .leverage(20)
-                .instrument(gold)
-                .srMatrix(s4Hour)
-                .strategy(strategy)
-                .active(true)
-                .marketConditions(marketConditions)
-                .configuration(configuration)
-                .build());
+        Instrument gold = simulationHelper.findInstrumentByEtoroId(18);
 
         final PreviousDayMarketRange priceRange = candleHelper.getPreviousDayMarketRange();
 
@@ -254,10 +186,7 @@ public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebS
 
         while (true)
         {
-            String portfolValue = restClient.get()
-                    .uri("http://localhost:8081/etoro/portfolio-value")
-                    .retrieve().body(String.class);
-            System.out.println(portfolValue);
+            //System.out.println(SimulationHelper.getPortfolioValue());
         }
 
     }

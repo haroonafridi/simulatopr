@@ -7,6 +7,7 @@ etoro:
   order-information-url: https://public-api.etoro.com/api/v1/trading/info/real/orders/
   portfolio-information-url: https://public-api.etoro.com/api/v1/trading/info/portfolio
   url: wss://ws.etoro.com/ws
+  simulation-date:
 
 spring:
   datasource:

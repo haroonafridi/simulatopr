@@ -3,12 +3,15 @@ package com.hkcapital.portflio.service.api.etoro.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
+import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.candle.etoro.impl.EtoroLiveFeedListener;
+import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
+import com.hkcapital.portflio.service.registry.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +29,11 @@ public class StartWebSocketRunner implements Runnable
 
     private final MarketStructureCache marketStructureManagerCache;
     private final ObjectMapper objectMapper;
-
     private final Bandlogger bandlogger;
 
+    private final EnvService envService;
+
+    private final ServiceRegistery<Service> serviceRegistery;
     public StartWebSocketRunner(EtoroApiConfiguration etoroApiConfiguration,
                                 MarketFeedObserver marketFeedObserver,
                                 LiveResponseMapper liveResponseMapper,
@@ -36,7 +41,9 @@ public class StartWebSocketRunner implements Runnable
                                 ObjectMapper objectMapper,
                                 EtoroCandleService etoroCandleService,
                                 MarketStructureCache marketStructureManagerCache,
-                                Bandlogger bandlogger)
+                                Bandlogger bandlogger,
+                                EnvService envService,
+                                ServiceRegistery serviceRegistery)
     {
         this.etoroApiConfiguration = etoroApiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
@@ -46,6 +53,8 @@ public class StartWebSocketRunner implements Runnable
         this.etoroCandleService = etoroCandleService;
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.bandlogger = bandlogger;
+        this.envService = envService;
+        this.serviceRegistery = serviceRegistery;
     }
 
     @Override
@@ -57,7 +66,7 @@ public class StartWebSocketRunner implements Runnable
                         URI.create(etoroApiConfiguration.getUrl()),
                         new EtoroLiveFeedListener(etoroApiConfiguration, marketFeedObserver,
                                 liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
-                                marketStructureManagerCache, bandlogger))
+                                marketStructureManagerCache, bandlogger, envService, serviceRegistery))
                 .join();
     }
 }

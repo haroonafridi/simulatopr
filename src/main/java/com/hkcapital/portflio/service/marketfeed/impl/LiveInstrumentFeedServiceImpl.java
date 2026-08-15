@@ -22,4 +22,10 @@ public class LiveInstrumentFeedServiceImpl implements LiveInstrumentFeedService
     {
         return liveInstrumentFeedRepository.findByFeedDateBetween(start, end);
     }
+
+    @Override
+    public void removeAll()
+    {
+        liveInstrumentFeedRepository.deleteAll();
+    }
 }

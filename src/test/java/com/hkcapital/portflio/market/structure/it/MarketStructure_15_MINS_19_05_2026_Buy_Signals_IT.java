@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.market.structure.it;
 
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
+import com.hkcapital.portflio.broker.etoro.simulation.SimulationHelper;
 import com.hkcapital.portflio.etoro.websocket.client.EtoroWebSocketClientAbstract_IT;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.*;
@@ -9,7 +10,6 @@ import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRe
 import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.RestClient;
 
 import java.net.http.WebSocket;
 import java.nio.file.Path;
@@ -32,13 +32,7 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
     {
 
         CandleHelper candleHelper = new CandleHelper(Path.of(PATH));
-
-        RestClient restClient = RestClient.create();
-
-        restClient.post().uri("http://localhost:8081/etoro/init")
-                .body(DepositDto.builder().initial(5000)
-                        .build()).retrieve().body(String.class);
-
+        //SimulationHelper.cleanAndInitPortfolio(5000);
         etoroOrderRepository.deleteAll();
         liveInstrumentFeedRepository.deleteAll();
 
@@ -171,10 +165,10 @@ public class MarketStructure_15_MINS_19_05_2026_Buy_Signals_IT extends EtoroWebS
 
         while (true)
         {
-            String portfolValue = restClient.get()
-                    .uri("http://localhost:8081/etoro/portfolio-value")
-                    .retrieve().body(String.class);
-            System.out.println(portfolValue);
+//            String portfolValue = restClient.get()
+//                    .uri("http://localhost:8081/etoro/portfolio-value")
+//                    .retrieve().body(String.class);
+           // System.out.println(portfolValue);
         }
 
     }

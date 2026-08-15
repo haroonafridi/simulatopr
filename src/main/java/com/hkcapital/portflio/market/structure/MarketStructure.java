@@ -108,70 +108,8 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
 
         Optional<MarketPriceBand> lB2 = lb.findNthMostVisitedLowBand(1);
 
-        //Distance dh1 = getDistance(liveInstrumentRate.getAsk(), hB1.get().getUpperBound());
-
-        //Distance dh2 = getDistance(liveInstrumentRate.getAsk(), hB2.get().getUpperBound());
-
         Distance dl1 = getDistance(liveInstrumentRate.getAsk(), lB1.get().getLowerBound());
 
-        // Distance dl2 = getDistance(liveInstrumentRate.getAsk(), lB2.get().getLowerBound());
-
-        // buy side
-        //double sl = lB1.get().getLowerBound() - (2 * pTBelow);
-
-        // double tp = hB1.get().getUpperBound() - (2 * pTAbove);
-
-        if (dl1.isAbove())
-        {
-            logger.info(" points above = {}, top = {} , price = {} ", dl1.absPoints(), pTAbove, liveInstrumentRate.getAsk());
-            if (dl1.absPoints() >= pTAbove && pTAbove >= dl1.absPoints())
-            {
-
-                OrderLogger orderLogger =
-                        OrderLogger.builder()
-                                .marketPriceBand(lB1.get()).distance(dl1)
-                                .absPoint(dl1.absPoints())
-                                .orderType(OrderType.BUY)
-                                .pTBelow(pTAbove)
-                                .orderCount(buySignal)
-                                .instant(Instant.now())
-                                .price(liveInstrumentRate.getAsk())
-                                .build();
-                try
-                {
-                    String order = objectMapper.writeValueAsString(orderLogger);
-                    logger.info("{}", order);
-                } catch (JsonProcessingException e)
-                {
-                    logger.info("cannot write buy order to logger");
-                }
-                Order buyOrder = Order.builder()
-                        .orderType(OrderType.BUY)
-                        .openPrice(liveInstrumentRate.getAsk())
-                        .tp(liveInstrumentRate.getAsk() + 10d)
-                        .sl(liveInstrumentRate.getAsk() - 10)
-                        .leverage(20)
-                        .brokerSent(false)
-                        .time(LocalDateTime.now())
-                        .status("OPEN")
-                        .info("BUY order opened at price [" + liveInstrumentRate.getAsk() + "]")
-                        .build();
-                buySignal = buySignal + 1;
-
-                long openOrders = orderCache.getOrdersCache().entrySet()
-                        .stream().filter(order -> order.getValue().getOrderType().equals(OrderType.BUY) &&
-                                order.getValue().getStatus().equals("OPEN"))
-                        .count();
-                if (openOrders == 0)
-                {
-                    logger.info("opening order {} ", buyOrder);
-                    orderCache.register(OrderType.BUY.getValue() + "-" + buySignal, buyOrder);
-                } else
-                {
-                    logger.info("Cannot open order , {} order(s) exist", openOrders);
-                }
-            }
-        }
         orderCache.process(liveInstrumentRate, objectMapper);
     }
 

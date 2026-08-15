@@ -3,7 +3,6 @@ package com.hkcapital.portflio.market.indicators;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.market.structure.MarketTypes;
@@ -13,9 +12,6 @@ import com.hkcapital.portflio.model.CandleSource;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
-import com.hkcapital.portflio.ui.chart.MarketCloseChart;
-import com.hkcapital.portflio.ui.chart.dialogue.MarketStructureDialogue;
-import com.hkcapital.portflio.ui.chart.panel.MarketStructureChartPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -43,8 +39,6 @@ public class CandleBuilder
     private final SMA sma = new SMA(14);
     private EtoroCandleService candleService = null;
     private MarketStructureCache marketStructureManagerCache;
-
-    private static MarketCloseChart instance;
 
     private Bandlogger bandlogger;
 
@@ -135,24 +129,6 @@ public class CandleBuilder
                     .build();
 
             MarketStructure structure = marketStructureManagerCache.get(MarketTypes.GOLD_4_HOUR);
-
-            if(TradingConfiguration.SHOW_TRADING)
-            {
-                if (instance == null)
-                {
-                    instance = new MarketCloseChart(marketStructureManagerCache, this);
-                    instance.display();
-
-                }
-                else
-                {
-                    if(!instance.isVisible())
-                    {
-                        instance.setVisible(Boolean.TRUE);
-                    }
-                    instance.updatePlot();
-                }
-            }
 
             if (structure != null)
             {

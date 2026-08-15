@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.candle.etoro.impl.EtoroLiveFeedListener;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
@@ -65,6 +67,11 @@ public abstract class EtoroWebSocketClientAbstract_IT
 
     @Autowired
     protected EtoroApiService etoroApiService;
+
+    @Autowired
+    protected EnvService envService;
+    @Autowired
+    protected ServiceRegistery serviceRegistery;
     public WebSocket connect(Instrument instrument) throws InterruptedException
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
@@ -76,7 +83,9 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 objectMapper,
                 etoroCandleService,
                 marketStructureCache,
-                bandlogger);  //add market cache here
+                bandlogger,
+                envService,
+                serviceRegistery);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),
@@ -107,7 +116,9 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 objectMapper, //
                 etoroCandleService, //
                 marketStructureCache,
-                bandlogger); // //add market cache here
+                bandlogger,
+                envService,
+                serviceRegistery); // //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create("ws://localhost:8025/ws/etoro"),

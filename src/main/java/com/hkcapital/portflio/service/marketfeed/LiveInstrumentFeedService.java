@@ -9,4 +9,5 @@ import java.util.List;
 public interface LiveInstrumentFeedService extends Service
 {
     List<LiveInstrumentFeed> findByFeedDateBetween(Instant start, Instant end);
+    void removeAll();
 }

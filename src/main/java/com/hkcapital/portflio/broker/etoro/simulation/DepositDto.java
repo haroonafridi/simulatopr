@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.market.structure.it;
+package com.hkcapital.portflio.broker.etoro.simulation;
 
 import lombok.Builder;
 import lombok.Data;

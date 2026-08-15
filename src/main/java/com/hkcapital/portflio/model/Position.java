@@ -2,10 +2,7 @@ package com.hkcapital.portflio.model;
 
 import com.hkcapital.portflio.service.positions.PositionType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -15,6 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Builder
+@ToString
 public class Position implements Serializable
 {
     @Id

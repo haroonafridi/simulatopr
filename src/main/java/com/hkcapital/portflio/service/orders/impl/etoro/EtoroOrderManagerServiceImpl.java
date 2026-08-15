@@ -193,5 +193,11 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 isBuy);
     }
 
+    @Override
+    public void removeAll()
+    {
+        orderRepository.deleteAll();
+    }
+
 
 }

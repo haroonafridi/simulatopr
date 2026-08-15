@@ -8,7 +8,7 @@ import com.hkcapital.portflio.service.registry.Service;
 
 import java.util.List;
 
-public interface OrderManagerService extends Service , MarketFeedSubscriber
+public interface OrderManagerService extends Service, MarketFeedSubscriber
 {
     EtoroOrder createAndSaveMarketOrder(final EtoroMarketOrderDto etoroMarketOrderDto);
 
@@ -39,5 +39,7 @@ public interface OrderManagerService extends Service , MarketFeedSubscriber
                     String timeFrameUnit,
                     boolean isBuy
             );
+
+    void removeAll();
 
 }

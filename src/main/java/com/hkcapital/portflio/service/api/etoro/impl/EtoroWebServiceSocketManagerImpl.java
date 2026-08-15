@@ -3,13 +3,15 @@ package com.hkcapital.portflio.service.api.etoro.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
+import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
-import com.hkcapital.portflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
-import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
+import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
+import com.hkcapital.portflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
+import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,10 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
 
     private final Bandlogger bandlogger;
 
+    private final EnvService envService;
+
+    private final ServiceRegistery serviceRegistery;
+
     public EtoroWebServiceSocketManagerImpl(final com.hkcapital.portflio.service.srmatrix.SRMatrixService srMatrixService, //
                                             final OrderManagerService orderManagerService, //
                                             final InstrumentService instrumentService, //
@@ -55,7 +61,9 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                                             final BuySellSignalGeneratorSub buySellManager,
                                             final EtoroCandleService etoroCandleService,
                                             final MarketStructureCache marketStructureManagerCache,
-                                            final Bandlogger bandlogger)
+                                            final Bandlogger bandlogger,
+                                            final EnvService envService,
+                                            final ServiceRegistery serviceRegistery)
     {
 
         this.orderManagerService = orderManagerService;
@@ -72,6 +80,8 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         marketFeedObserver.addMarketFeedSubscriber(orderManagerService);
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.bandlogger = bandlogger;
+        this.envService = envService;
+        this.serviceRegistery = serviceRegistery;
     }
 
     @Override
@@ -81,7 +91,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         StartWebSocketRunner startWebSocket = //
                 new StartWebSocketRunner(etoroApiConfiguration, marketFeedObserver, //
                         liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
-                        marketStructureManagerCache, bandlogger);
+                        marketStructureManagerCache, bandlogger, envService, serviceRegistery);
         new Thread(startWebSocket).start();
 
         ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();

@@ -1,6 +1,8 @@
 package com.hkcapital.portflio.ui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.hkcapital.portflio.DataObject;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
@@ -47,6 +49,9 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.multi.MultiLookAndFeel;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.plaf.synth.SynthLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
@@ -143,6 +148,13 @@ public class PnLSimulatorFacad
             looAndFeel = new MetalLookAndFeel();
             font =  new Font("Roboto Mono", Font.PLAIN, 12);
         }
+
+        if ("simulation".equals(activeProfile))
+        {
+            looAndFeel = new MetalLookAndFeel();
+            font =  new Font("Roboto Mono", Font.PLAIN, 10);
+        }
+
         UIManager.setLookAndFeel(looAndFeel);
         UIManager.put("defaultFont", font);
         JFrame mainFrame = new JFrame("HK-Capital [" + activeProfile + "]");
