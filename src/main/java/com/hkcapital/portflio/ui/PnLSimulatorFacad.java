@@ -5,6 +5,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.hkcapital.portflio.DataObject;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portflio.broker.etoro.simulation.SimulationHelper;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.TradingSessions;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -46,6 +47,7 @@ import com.hkcapital.portflio.ui.panels.tradingsessions.TradingSessionPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -153,6 +155,9 @@ public class PnLSimulatorFacad
         {
             looAndFeel = new MetalLookAndFeel();
             font =  new Font("Roboto Mono", Font.PLAIN, 10);
+            SimulationHelper simulationHelper =
+                    new SimulationHelper(RestClient.create(), serviceRegistery);
+            simulationHelper.cleanAndInitPortfolio(5000);
         }
 
         UIManager.setLookAndFeel(looAndFeel);
@@ -168,7 +173,6 @@ public class PnLSimulatorFacad
         rootGbc.gridx = 0;
         rootGbc.weightx = 0.2; // 20% of total width
         rootGbc.weighty = 1.0; // full height
-
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Strategy Simulator");
 

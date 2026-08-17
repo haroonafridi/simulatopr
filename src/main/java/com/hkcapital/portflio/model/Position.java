@@ -1,8 +1,12 @@
 package com.hkcapital.portflio.model;
 
 import com.hkcapital.portflio.service.positions.PositionType;
+import com.hkcapital.portflio.service.positions.dto.PositionDTO;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -12,7 +16,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Builder
-@ToString
 public class Position implements Serializable
 {
     @Id
@@ -65,10 +68,39 @@ public class Position implements Serializable
 
     public Integer getExecutionCount()
     {
-        if(executionCount == null)
+        if (executionCount == null)
         {
             return 0;
         }
         return executionCount;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "/";
+    }
+
+    public PositionDTO buildPositionDTO()
+    {
+        return PositionDTO.builder()
+                .configuration(configuration.buildDTO())
+                .marketConditions(marketConditions.buildMarketConditionsDTO())
+                .instrument(instrument.buildDto())
+                .srMatrix(srMatrix.buildDTO())
+                //.tradingSessions(tradingSessions.buildTradingSessionsDTO())
+                .percentCapitalDeployed(percentCapitalDeployed)
+                .currentPositionEquity(currentPositionEquity)
+                .allowedFirePower(allowedFirePower)
+                .remainingFirepower(remainingFirepower)
+                .capitalRemainingFirePower(capitalRemainingFirePower)
+                .portfolioValue(portfolioValue)
+                .leverage(leverage)
+                .stopLoss(stopLoss)
+                .takeProfit(takeProfit)
+                .active(active)
+                .positionType(positionType)
+                .executionCount(executionCount)
+                .build();
     }
 }

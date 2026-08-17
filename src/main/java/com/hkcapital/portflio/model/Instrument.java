@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,5 +38,18 @@ public class Instrument
     public String toString()
     {
         return name;
+    }
+
+    public InstrumentDTO buildDto()
+    {
+        return InstrumentDTO.builder()
+                .name(name)
+                .url(url)
+                .instrumentTicker(instrumentTicker)
+                .instrumentDesc(instrumentDesc)
+                .etoroInstrumentId(etoroInstrumentId)
+                .maxSlippage(maxSlippage)
+                .active(active)
+                .build();
     }
 }

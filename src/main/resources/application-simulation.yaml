@@ -8,6 +8,8 @@ etoro:
   portfolio-information-url: http://localhost:8081/etoro/portfolio
   url: ws://localhost:8025/ws/etoro
   simulation-date:
+  simulation-portfolio-init: http://localhost:8081/etoro/init
+  simulation-portfolio-value: http://localhost:8081/etoro/portfolio-value
 
 spring:
   datasource:

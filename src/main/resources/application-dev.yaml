@@ -8,6 +8,8 @@ etoro:
     portfolio-information-url: https://public-api.etoro.com/api/v1/trading/info/demo/portfolio
     url: wss://ws.etoro.com/ws
     simulation-date:
+    simulation-portfolio-init:
+    simulation-portfolio-value:
 
 spring:
     datasource:

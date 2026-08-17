@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.configuration.dto.ConfigurationDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +27,8 @@ public class Configuration
     @Column(name = "max_percent_allowed_per_instrument")
     private Double maxPercentAllowedPerInstrument;
     private Integer lev;
-    public Configuration( Double percentAllocationAllowed, //
+
+    public Configuration(Double percentAllocationAllowed, //
                          Integer noOfInstruments, //
                          Integer noOfPositionsPerInstruments, //
                          Double maxPercentAllowedPerInstrument,
@@ -37,5 +39,16 @@ public class Configuration
         this.noOfPositionsPerInstruments = noOfPositionsPerInstruments;
         this.maxPercentAllowedPerInstrument = maxPercentAllowedPerInstrument;
         this.lev = lev;
+    }
+
+    public ConfigurationDTO buildDTO()
+    {
+        return ConfigurationDTO.builder()
+                .percentAllocationAllowed(percentAllocationAllowed)
+                .noOfInsutrments(noOfInsutrments)
+                .noOfPositionsPerInstruments(noOfPositionsPerInstruments)
+                .maxPercentAllowedPerInstrument(maxPercentAllowedPerInstrument)
+                .lev(lev)
+                .build();
     }
 }

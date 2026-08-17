@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.marketconditions.dto.MarketConditionsDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +27,16 @@ public class MarketConditions
     private Double dayHigh;
     @Column(name = "percent_move")
     private Double percentMove;
+
+
+    public MarketConditionsDTO buildMarketConditionsDTO()
+    {
+        return MarketConditionsDTO.builder()
+                .instrumentDTO(instrument.buildDto())
+                .dayHigh(dayHigh)
+                .dayLow(dayLow)
+                .percentMove(percentMove)
+                .build();
+    }
 
 }

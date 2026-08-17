@@ -6,11 +6,15 @@ import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.market.structure.MarketTypes;
+import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.*;
+import org.jfree.chart.panel.CrosshairOverlay;
 import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
@@ -24,11 +28,12 @@ import org.jfree.data.xy.OHLCDataItem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.NavigableSet;
 
 public class LiveMarketChart extends JFrame
@@ -40,26 +45,40 @@ public class LiveMarketChart extends JFrame
     private JComboBox<String> unitCombo;
     private JComboBox<String> bandsCombo;
 
-    private double minClose = 4200d;
-    private double maxClose = 4500d;
-    private Crosshair yCrosshair;
+    private double minClose = 4300;
+    private double maxClose = 4400;
+    private Crosshair xCrosshair = new Crosshair(
+            Double.NaN,
+            Color.GRAY,
+            new BasicStroke(1.0f)
+    );
+
+    private Crosshair yCrosshair = new Crosshair(
+            Double.NaN,
+            Color.GRAY,
+            new BasicStroke(1.0f)
+    );
+
+    CrosshairOverlay crosshairOverlay = new CrosshairOverlay();
     XYPlot plot;
     private MarketStructureCache marketStructureCache;
     private SignalBuilder signalBuilder;
     private final EtoroCandleService etoroCandleService;
-
+    private final ServiceRegistery serviceRegistery;
     DateAxis xAxis = new DateAxis("Time");
     NumberAxis yAxis = new NumberAxis("Close Price");
 
     public LiveMarketChart(MarketStructureCache marketStructureCache,
                            SignalBuilder signalBuilder,
-                           EtoroCandleService etoroCandleService
+                           ServiceRegistery serviceRegistery
     )
     {
 
+        this.serviceRegistery = serviceRegistery;
         this.marketStructureCache = marketStructureCache;
         this.signalBuilder = signalBuilder;
-        this.etoroCandleService = etoroCandleService;
+
+        this.etoroCandleService = (EtoroCandleService) serviceRegistery.getService(EtoroCandleService.EtoroCandleService);
 
         setTitle("Live - Market Information of GOLD");
         // ================= DATA =================
@@ -69,21 +88,39 @@ public class LiveMarketChart extends JFrame
 
         // ================= CHART =================
 
+        List<CandleDto> candleDtoList =
+                this.etoroCandleService.findCandleDtoByInstrumentIDAndCreationDateTimeBetween(18,
+                        LocalDateTime.of(2026, 8, 14, 0, 0, 1),
+                        LocalDateTime.of(2026, 8, 14, 23, 59, 59));
+
+        candleDtoList.stream().mapToDouble(e -> e.getHigh()).max().ifPresent(e ->
+        {
+            maxClose = e;
+        });
+
+        candleDtoList.stream().mapToDouble(e -> e.getLow()).min().ifPresent(e ->
+        {
+            minClose = e;
+        });
+
+        yCrosshair.setLabelVisible(true);
+
+        crosshairOverlay.addDomainCrosshair(xCrosshair);
+        crosshairOverlay.addRangeCrosshair(yCrosshair);
+
         yAxis.setRange(minClose, maxClose);
-        yAxis.setTickUnit(new NumberTickUnit(10));
-        LocalDate today = LocalDate.now();
-        Date startOfDay = Date.from(today.atStartOfDay(ZoneId.systemDefault()).plusHours(10).toInstant());
-        Date endOfDay = Date.from(today.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
-        xAxis.setRange(new DateRange(startOfDay, endOfDay));
+        yAxis.setTickUnit(ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 5));
+        xAxis.setRange(ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 5));
         xAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 30));
         xAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
 
         CandlestickRenderer renderer = new CandlestickRenderer();
         renderer.setAutoWidthMethod(CandlestickRenderer.WIDTHMETHOD_SMALLEST);
 
+
         ArrayList<OHLCDataItem> ohlc = new ArrayList<>();
 
-        this.signalBuilder.getCandleBuilder1Min().getCandles().forEach(c ->
+        candleDtoList.forEach(c ->
         {
             Date candleDate = new Date(c.getTime().toEpochMilli());
             ohlc.add(new OHLCDataItem(
@@ -101,6 +138,7 @@ public class LiveMarketChart extends JFrame
 
         plot = new XYPlot(ds, xAxis, yAxis, renderer);
 
+
         JFreeChart chart = new JFreeChart(
                 "Gold Live Chart",
                 JFreeChart.DEFAULT_TITLE_FONT,
@@ -110,6 +148,8 @@ public class LiveMarketChart extends JFrame
 
         chartPanel = new ChartPanel(chart);
 
+        chartPanel.addOverlay(crosshairOverlay);
+
         String[] timeframes = {"1", "5", "15", "30", "4"};
 
         timeframeCombo = new JComboBox<>(timeframes);
@@ -117,7 +157,6 @@ public class LiveMarketChart extends JFrame
         String[] units = {"MINUTE", "HOUR", "DAY"};
         unitCombo = new JComboBox<>(units);
         unitCombo.setSelectedItem("MINUTE");
-
         String[] bands = {"UPPER", "LOWER"};
         bandsCombo = new JComboBox<>(bands);
         bandsCombo.setSelectedItem("UPPER");
@@ -134,6 +173,37 @@ public class LiveMarketChart extends JFrame
         setSize(1100, 700);
         setLocationRelativeTo(null);
         autoFitChart();
+
+        chartPanel.addChartMouseListener(new ChartMouseListener()
+        {
+            @Override
+            public void chartMouseMoved(ChartMouseEvent event)
+            {
+                if (event.getTrigger().getPoint() == null) return;
+
+                Rectangle2D dataArea = chartPanel.getScreenDataArea();
+
+                double x = plot.getDomainAxis().java2DToValue(
+                        event.getTrigger().getX(),
+                        dataArea,
+                        plot.getDomainAxisEdge()
+                );
+
+                double y = plot.getRangeAxis().java2DToValue(
+                        event.getTrigger().getY(),
+                        dataArea,
+                        plot.getRangeAxisEdge()
+                );
+
+                xCrosshair.setValue(x);
+                yCrosshair.setValue(y);
+            }
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent event)
+            {
+            }
+        });
     }
 
     public void display()
@@ -146,6 +216,7 @@ public class LiveMarketChart extends JFrame
     public void handleMarketTick()
     {
         // Always modify Swing components on the Event Dispatch Thread (EDT)
+
         SwingUtilities.invokeLater(() ->
         {
             org.jfree.data.xy.OHLCDataItem[] dataArray = null;
@@ -168,7 +239,9 @@ public class LiveMarketChart extends JFrame
                             ))
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
-                    drawPlot(dataArray, 2, 30);
+                    drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 1),
+                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 1),
+                            ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 1));
                 }
 
                 if (timeframeCombo.getSelectedItem().equals("5"))
@@ -186,7 +259,9 @@ public class LiveMarketChart extends JFrame
                             ))
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
-                    drawPlot(dataArray, 4, 30);
+                    drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 5),
+                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 5),
+                            ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 5));
                 }
 
 
@@ -205,7 +280,9 @@ public class LiveMarketChart extends JFrame
                             ))
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
-                    drawPlot(dataArray, 8, 30);
+                    drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 15),
+                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 5),
+                            ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 15));
                 }
 
 
@@ -224,7 +301,9 @@ public class LiveMarketChart extends JFrame
                             ))
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
-                    drawPlot(dataArray, 15, 30);
+                    drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 30),
+                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 30),
+                            ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 30));
                 }
             }
 
@@ -245,7 +324,9 @@ public class LiveMarketChart extends JFrame
                             ))
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
-                    drawPlot(dataArray, 20, 30);
+                    drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.HOUR, 1),
+                            ChartUtil.createDateRange(TimeFramesUnit.HOUR, 1),
+                            ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.HOUR, 1));
                 }
 
                 if (timeframeCombo.getSelectedItem().equals("4"))
@@ -263,24 +344,26 @@ public class LiveMarketChart extends JFrame
                             ))
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
-                    drawPlot(dataArray, 40, 30);
+                    drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.HOUR, 4),
+                            ChartUtil.createDateRange(TimeFramesUnit.HOUR, 4),
+                            ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.HOUR, 4));
                 }
             }
         });
     }
 
-    private void drawPlot(org.jfree.data.xy.OHLCDataItem[] dataArray, int yAxixTick, int xAxisTick)
+    private void drawPlot(org.jfree.data.xy.OHLCDataItem[] dataArray, //
+                          NumberTickUnit yAxisTick, //
+                          DateRange xAxisRange,
+                          DateTickUnit xAxisTick)
     {
         org.jfree.data.xy.DefaultOHLCDataset dynamicDataset =
                 new org.jfree.data.xy.DefaultOHLCDataset("Live Data", dataArray);
         plot.setDataset(dynamicDataset);
-        LocalDate today = LocalDate.now();
-        Date startOfDay = Date.from(today.atStartOfDay(ZoneId.systemDefault()).plusDays(-1).toInstant());
-        Date endOfDay = Date.from(today.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
-        yAxis.setRange(4300, 4400);
-        yAxis.setTickUnit(new NumberTickUnit(yAxixTick));
-        xAxis.setRange(new DateRange(startOfDay, endOfDay));
-        xAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, xAxisTick));
+        yAxis.setRange(minClose, maxClose);
+        yAxis.setTickUnit(yAxisTick);
+        xAxis.setRange(xAxisRange);
+        xAxis.setTickUnit(xAxisTick);
         xAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
     }
 
@@ -446,5 +529,6 @@ public class LiveMarketChart extends JFrame
         xAxis.setAutoRange(true);
         chartPanel.repaint();
     }
+
 
 }

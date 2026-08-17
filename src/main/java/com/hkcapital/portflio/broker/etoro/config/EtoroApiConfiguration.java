@@ -25,6 +25,9 @@ public class EtoroApiConfiguration implements Service
     private String portfolioInformationUrl;
     private String url;
 
+    private String simulationPortfolioInit;
+    private String simulationPortfolioValue;
+
     private String simulationDate;
 
     public String getXRequestId()

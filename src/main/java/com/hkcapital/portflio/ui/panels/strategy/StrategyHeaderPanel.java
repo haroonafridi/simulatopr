@@ -10,6 +10,8 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
+import com.hkcapital.portflio.service.strategy.StrategyExporter;
+import com.hkcapital.portflio.service.strategy.StrategyExporterImpl;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
@@ -29,220 +31,694 @@ import java.util.List;
 public class StrategyHeaderPanel extends UIBag
 {
     private final StrategyService strategyService;
-    private final JLabel strategyNameLabel = new JLabel("Strategy Name:");
-    private final JTextField strategyName = new JTextField(20);
-    private final JLabel strategyDescriptionLabel = new JLabel("Strategy Description:");
 
-    private final JTextField strategyDescription = new JTextField(40);
-    private final JLabel capitalAllocatedLabel = new JLabel("Capital Allocated");
-    private final JTextField capitalAllocated = new NumberTextField(40);
+    private final JLabel strategyNameLabel =
+            new JLabel("Strategy Name:");
 
-    private final JCheckBox active = new JCheckBox();
+    private final JTextField strategyName =
+            new JTextField(20);
 
-    private final JButton refreshStrategy = new JButton("Refresh");
-    private final JButton saveStrategy = new JButton("Save");
-    private final JButton cancelButton = new JButton("Cancel");
-    private final JButton removeButton = new JButton("Remove");
+    private final JLabel strategyDescriptionLabel =
+            new JLabel("Strategy Description:");
 
-    private final JButton manualOrderButton = new JButton("Create Market Order");
+    private final JTextField strategyDescription =
+            new JTextField(30);
 
-    private final JButton automaticTrading = new JButton("Activate Auto Trading");
+    private final JLabel capitalAllocatedLabel =
+            new JLabel("Capital Allocated:");
 
-    private final JButton closeMarket = new JButton("Close Market");
+    private final JTextField capitalAllocated =
+            new NumberTextField(20);
 
-    private final JButton openMarket = new JButton("Open Market");
+    private final JCheckBox active =
+            new JCheckBox("Active");
 
-    private final JButton showLiveMarket = new JButton("Show live market");
+    // Buttons
+    private final JButton refreshStrategy =
+            new JButton("Refresh");
 
+    private final JButton saveStrategy =
+            new JButton("Save");
+
+    private final JButton cancelButton =
+            new JButton("Cancel");
+
+    private final JButton removeButton =
+            new JButton("Remove");
+
+    private final JButton manualOrderButton =
+            new JButton("Create Market Order");
+
+    private final JButton automaticTrading =
+            new JButton("Activate Auto Trading");
+
+    private final JButton closeMarket =
+            new JButton("Close Market");
+
+    private final JButton openMarket =
+            new JButton("Open Market");
+
+    private final JButton showLiveMarket =
+            new JButton("Show Live Market");
+
+    private final JButton exportStrategyButton =
+            new JButton("Export Strategy");
+    private final JButton importStrategyButton =
+            new JButton("Import Strategy");
     private final JTable strategyTable;
     private final StrategyTableModel<Strategy> tableModel;
-
     private PositionActionsPanel positionActionsPanel;
-
     private final PositionService positionService;
-
     private final ServiceRegistery<Service> serviceRegistery;
-
     private final OrderManagerService orderManagerService;
-
     private final MarketStructureCache marketStructureManagerCache;
 
-
-    public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
+    public StrategyHeaderPanel(
+            final ServiceRegistery<Service> serviceRegistery)
     {
         super(StrategyHeaderPanel.class);
+
         this.serviceRegistery = serviceRegistery;
-        this.strategyService = (StrategyService) serviceRegistery.getService(Service.StrategyService);
-        this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
-        this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
-        this.marketStructureManagerCache = (MarketStructureCache) serviceRegistery.getService(Service.MarketStructureManagerCache);;
-        setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("⚙ Strategy Details"));
 
-        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed",
-                "Description:", "Active:"}, strategyService.findAll());
+        this.strategyService =
+                (StrategyService) serviceRegistery
+                        .getService(Service.StrategyService);
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
-        topPanel.add(strategyNameLabel);
-        topPanel.add(strategyName);
-        topPanel.add(capitalAllocatedLabel);
-        topPanel.add(capitalAllocated);
-        topPanel.add(strategyDescriptionLabel);
-        topPanel.add(strategyDescription);
-        topPanel.add(active);
-        topPanel.add(refreshStrategy);
-        topPanel.add(saveStrategy);
-        topPanel.add(removeButton);
-        topPanel.add(automaticTrading);
-        topPanel.add(showLiveMarket);
-        //topPanel.add(closeMarket);
-        topPanel.add(openMarket);
-        add(topPanel, BorderLayout.NORTH);
-        strategyTable = new JTable(tableModel);
+        this.positionService =
+                (PositionService) serviceRegistery
+                        .getService(Service.PositionService);
+
+        this.orderManagerService =
+                (OrderManagerService) serviceRegistery
+                        .getService(Service.OrderManagerService);
+
+        this.marketStructureManagerCache =
+                (MarketStructureCache) serviceRegistery
+                        .getService(Service.MarketStructureManagerCache);
+
+
+        // ============================================================
+        // MAIN PANEL
+        // ============================================================
+
+        setLayout(new BorderLayout(5, 5));
+
+        setBorder(
+                BorderFactory.createTitledBorder(
+                        "Strategy Details"
+                )
+        );
+
+
+        // ============================================================
+        // TABLE MODEL
+        // ============================================================
+
+        tableModel = new StrategyTableModel<>(
+                new String[]{
+                        "Id",
+                        "Name",
+                        "Capital Deployed",
+                        "Description",
+                        "Active"
+                },
+                strategyService.findAll()
+        );
+
+
+        // ============================================================
+        // HEADER PANEL
+        //
+        // Row 1 = fields
+        // Row 2 = buttons
+        // ============================================================
+
+        JPanel headerPanel = new JPanel();
+
+        headerPanel.setLayout(
+                new BoxLayout(
+                        headerPanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        // ============================================================
+        // ROW 1 - FIELDS
+        // ============================================================
+
+        JPanel fieldsPanel =
+                new JPanel(new GridBagLayout());
+
+        GridBagConstraints fieldGbc =
+                new GridBagConstraints();
+
+        fieldGbc.insets =
+                new Insets(5, 5, 5, 5);
+
+        fieldGbc.anchor =
+                GridBagConstraints.WEST;
+
+        fieldGbc.gridy = 0;
+
+        // Strategy name label
+        fieldGbc.gridx = 0;
+        fieldGbc.weightx = 0;
+        fieldGbc.fill = GridBagConstraints.NONE;
+
+        fieldsPanel.add(
+                strategyNameLabel,
+                fieldGbc
+        );
+
+        // Strategy name
+        fieldGbc.gridx = 1;
+
+        fieldsPanel.add(
+                strategyName,
+                fieldGbc
+        );
+
+        // Capital label
+        fieldGbc.gridx = 2;
+
+        fieldsPanel.add(
+                capitalAllocatedLabel,
+                fieldGbc
+        );
+
+        // Capital
+        fieldGbc.gridx = 3;
+
+        fieldsPanel.add(
+                capitalAllocated,
+                fieldGbc
+        );
+
+        // Description label
+        fieldGbc.gridx = 4;
+
+        fieldsPanel.add(
+                strategyDescriptionLabel,
+                fieldGbc
+        );
+
+        // Description field
+        fieldGbc.gridx = 5;
+        fieldGbc.weightx = 1.0;
+        fieldGbc.fill =
+                GridBagConstraints.HORIZONTAL;
+
+        fieldsPanel.add(
+                strategyDescription,
+                fieldGbc
+        );
+
+        // Active checkbox
+        fieldGbc.gridx = 6;
+        fieldGbc.weightx = 0;
+        fieldGbc.fill =
+                GridBagConstraints.NONE;
+
+        fieldsPanel.add(
+                active,
+                fieldGbc
+        );
+
+        // ============================================================
+        // ROW 2 - BUTTONS
+        // ============================================================
+
+        JPanel buttonsPanel =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.LEFT,
+                                5,
+                                5
+                        )
+                );
+
+        buttonsPanel.add(refreshStrategy);
+        buttonsPanel.add(saveStrategy);
+        buttonsPanel.add(cancelButton);
+        buttonsPanel.add(removeButton);
+        buttonsPanel.add(manualOrderButton);
+        buttonsPanel.add(automaticTrading);
+        buttonsPanel.add(showLiveMarket);
+        buttonsPanel.add(openMarket);
+        buttonsPanel.add(exportStrategyButton);
+        buttonsPanel.add(importStrategyButton);
+
+        // ============================================================
+        // ADD HEADER ROWS
+        // ============================================================
+        headerPanel.add(buttonsPanel);
+        headerPanel.add(fieldsPanel);
+
+        add(
+                headerPanel,
+                BorderLayout.NORTH
+        );
+
+        // ============================================================
+        // STRATEGY TABLE
+        // ============================================================
+
+        strategyTable =
+                new JTable(tableModel);
+
         int rowCountToShow = 50;
-        int rowHeight = strategyTable.getRowHeight();          // default row height
-        int tableHeaderHeight = strategyTable.getTableHeader().getPreferredSize().height;
-        int preferredHeight = rowHeight * rowCountToShow + tableHeaderHeight;
+
+        int rowHeight =
+                strategyTable.getRowHeight();
+
+        int tableHeaderHeight =
+                strategyTable
+                        .getTableHeader()
+                        .getPreferredSize()
+                        .height;
+
+        int preferredHeight =
+                rowHeight * rowCountToShow
+                        + tableHeaderHeight;
+
 
         strategyTable.setFillsViewportHeight(true);
-        strategyTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        strategyTable.setPreferredScrollableViewportSize(new Dimension(500, preferredHeight));
-        JScrollPane scrollPane = new JScrollPane(strategyTable);
-        add(scrollPane, BorderLayout.CENTER);
-        saveStrategy.addActionListener(new SaveStrategyButtonListener(strategyService, tableModel, this));
-        refreshStrategy.addActionListener(e-> {
-                int selectedRow = strategyTable.getSelectedRow();
-                if (selectedRow >= 0)
-                {
-                    System.out.println("Refreshing Strategy!!");
-                    Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
-                    setHeaderFieldsFromRow(strategy);
-                    List<Position> positionList = positionService.findByStrategyId(strategy.getId());
-                    positionActionsPanel.getPositionTableModel().updateData(positionList);
-                }
-        });
-        strategyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        strategyTable.getSelectionModel().addListSelectionListener(e ->
+
+        strategyTable.setAutoResizeMode(
+                JTable.AUTO_RESIZE_ALL_COLUMNS
+        );
+
+        strategyTable.setPreferredScrollableViewportSize(
+                new Dimension(
+                        500,
+                        preferredHeight
+                )
+        );
+
+        strategyTable.setSelectionMode(
+                ListSelectionModel.SINGLE_SELECTION
+        );
+
+
+        JScrollPane scrollPane =
+                new JScrollPane(strategyTable);
+
+        add(
+                scrollPane,
+                BorderLayout.CENTER
+        );
+
+
+        // ============================================================
+        // SAVE
+        // ============================================================
+
+        saveStrategy.addActionListener(
+                new SaveStrategyButtonListener(
+                        strategyService,
+                        tableModel,
+                        this
+                )
+        );
+
+
+        // ============================================================
+        // REFRESH
+        // ============================================================
+
+        refreshStrategy.addActionListener(e ->
         {
-            if (!e.getValueIsAdjusting())
-            {
-                int selectedRow = strategyTable.getSelectedRow();
-                if (selectedRow >= 0)
-                {
-                    Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
-                    setHeaderFieldsFromRow(strategy);
-                    List<Position> positionList = positionService.findByStrategyId(strategy.getId());
-                    positionActionsPanel.getPositionTableModel().updateData(positionList);
-                }
-            }
+            refreshSelectedStrategy();
         });
 
-        removeButton.addActionListener(new RemoveStrategyButtonListener(strategyTable, tableModel,
-                strategyService, this));
-        cancelButton.addActionListener(e -> clear());
-        manualOrderButton.addActionListener(m -> createMarketOrder());
-        automaticTrading.addActionListener(a ->
+
+        // ============================================================
+        // TABLE SELECTION
+        // ============================================================
+
+        strategyTable
+                .getSelectionModel()
+                .addListSelectionListener(e ->
+                {
+                    if (!e.getValueIsAdjusting())
+                    {
+                        refreshSelectedStrategy();
+                    }
+                });
+
+
+        // ============================================================
+        // REMOVE
+        // ============================================================
+
+        removeButton.addActionListener(
+                new RemoveStrategyButtonListener(
+                        strategyTable,
+                        tableModel,
+                        strategyService,
+                        this
+                )
+        );
+
+
+        // ============================================================
+        // CANCEL
+        // ============================================================
+
+        cancelButton.addActionListener(
+                e -> clear()
+        );
+
+
+        // ============================================================
+        // MANUAL ORDER
+        // ============================================================
+
+        manualOrderButton.addActionListener(
+                e -> createMarketOrder()
+        );
+
+
+        // ============================================================
+        // AUTOMATIC TRADING
+        // ============================================================
+
+        automaticTrading.addActionListener(e ->
         {
             if (TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
             {
-                TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.FALSE;
-                automaticTrading.setText("Activate Auto Trading");
-            } else
+                TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING =
+                        Boolean.FALSE;
+
+                automaticTrading.setText(
+                        "Activate Auto Trading"
+                );
+            }
+            else
             {
-                TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
-                automaticTrading.setText("Deactivate Auto Trading");
+                TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING =
+                        Boolean.TRUE;
+
+                automaticTrading.setText(
+                        "Deactivate Auto Trading"
+                );
             }
         });
 
-        closeMarket.addActionListener(a ->
+
+        // ============================================================
+        // CLOSE MARKET
+        // ============================================================
+
+        closeMarket.addActionListener(e ->
         {
             marketStructureManagerCache.closeMarket();
         });
 
-        openMarket.addActionListener(a ->
+
+        // ============================================================
+        // OPEN MARKET
+        // ============================================================
+
+        openMarket.addActionListener(e ->
         {
             marketStructureManagerCache.openMarket();
         });
 
-        showLiveMarket.addActionListener(e->
+
+        // ============================================================
+        // SHOW LIVE MARKET
+        // ============================================================
+
+        showLiveMarket.addActionListener(e ->
         {
-            if(TradingConfiguration.SHOW_TRADING) {
-                TradingConfiguration.SHOW_TRADING = Boolean.FALSE;
-            } else {
-                TradingConfiguration.SHOW_TRADING = Boolean.TRUE;
+            if (TradingConfiguration.SHOW_TRADING)
+            {
+                TradingConfiguration.SHOW_TRADING =
+                        Boolean.FALSE;
+            }
+            else
+            {
+                TradingConfiguration.SHOW_TRADING =
+                        Boolean.TRUE;
             }
         });
 
-        strategyTable.addMouseListener(new StrategyEditDialogueMouseHandler(tableModel, strategyTable, strategyService));
+        // ============================================================
+        // EXPORT STRATEGY HANDLER
+        // ============================================================
+        exportStrategyButton.addActionListener(e->
+        {
+            StrategyExporter strategyExporter =
+                    new StrategyExporterImpl(serviceRegistery);
+
+            int selectedRow =
+                    strategyTable.getSelectedRow();
+
+            if (selectedRow < 0)
+            {
+                return;
+            }
+
+            Strategy strategy =
+                    (Strategy)tableModel
+                            .getElements()
+                            .get(selectedRow);
+
+            strategyExporter.execute(strategy.getId());
+        });
+
+        // ============================================================
+        // TABLE DOUBLE CLICK / MOUSE HANDLER
+        // ============================================================
+
+        strategyTable.addMouseListener(
+                new StrategyEditDialogueMouseHandler(
+                        tableModel,
+                        strategyTable,
+                        strategyService
+                )
+        );
     }
+
+
+    // ================================================================
+    // REFRESH SELECTED STRATEGY
+    // ================================================================
+
+    private void refreshSelectedStrategy()
+    {
+        int selectedRow =
+                strategyTable.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            return;
+        }
+
+        Strategy strategy =
+                (Strategy)tableModel
+                        .getElements()
+                        .get(selectedRow);
+
+        setHeaderFieldsFromRow(strategy);
+
+
+        if (positionActionsPanel != null)
+        {
+            List<Position> positionList =
+                    positionService.findByStrategyId(
+                            strategy.getId()
+                    );
+
+            positionActionsPanel
+                    .getPositionTableModel()
+                    .updateData(positionList);
+        }
+    }
+
+
+    // ================================================================
+    // CREATE MARKET ORDER
+    // ================================================================
 
     @Transactional
     public void createMarketOrder()
     {
-
         if (true)
         {
-            throw new RuntimeException("Not Yet implemented");
+            throw new RuntimeException(
+                    "Not Yet implemented"
+            );
         }
-        StrategyService strategyService = (StrategyService) serviceRegistery.getService("StrategyService");
-        Strategy strategy = strategyService.findById(12);
-        List<Position> positionList = positionService.findByStrategyId(strategy.getId());
-        TimeFrame timeFrame = new TimeFrame(1, "hour");
-        EtoroMarketOrderDto etoroMarketOrderDto = new EtoroMarketOrderDto(Instruments.BTC.getInstrumentId(),
-                true, //
-                1, //
-                positionList.stream().findFirst().get().getAllowedFirePower(), //
-                null, //
-                null, //
-                null, //
-                null, //
-                null,
-                OrderTypes.MANUAL.getOrderType(),
-                null,
-                null,
-                null,
-                null,
-                "Manual Order from ui",
-                timeFrame);
-        orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto);
+
+        StrategyService strategyService =
+                (StrategyService)
+                        serviceRegistery
+                                .getService(
+                                        "StrategyService"
+                                );
+
+        Strategy strategy =
+                strategyService.findById(12);
+
+        List<Position> positionList =
+                positionService.findByStrategyId(
+                        strategy.getId()
+                );
+
+        TimeFrame timeFrame =
+                new TimeFrame(
+                        1,
+                        "hour"
+                );
+
+        EtoroMarketOrderDto etoroMarketOrderDto =
+                new EtoroMarketOrderDto(
+                        Instruments.BTC.getInstrumentId(),
+                        true,
+                        1,
+                        positionList
+                                .stream()
+                                .findFirst()
+                                .get()
+                                .getAllowedFirePower(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        OrderTypes.MANUAL.getOrderType(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        "Manual Order from ui",
+                        timeFrame
+                );
+
+        orderManagerService
+                .createAndSaveMarketOrder(
+                        etoroMarketOrderDto
+                );
     }
 
-    private void setHeaderFieldsFromRow(Strategy strategy)
+
+    // ================================================================
+    // SET HEADER FIELDS
+    // ================================================================
+
+    private void setHeaderFieldsFromRow(
+            Strategy strategy)
     {
-        active.setSelected(strategy.getActive());
-        strategyName.setText(strategy.getName());
-        strategyDescription.setText(strategy.getName());
+        active.setSelected(
+                strategy.getActive()
+        );
+
+        strategyName.setText(
+                strategy.getName()
+        );
+
+        strategyDescription.setText(
+                strategy.getDescription()
+        );
+
+        // If Strategy has a capital field, set it here.
+        // Example:
+        //
+        // capitalAllocated.setText(
+        //         String.valueOf(strategy.getCapitalAllocated())
+        // );
     }
+
+
+    // ================================================================
+    // GET SELECTED STRATEGY
+    // ================================================================
 
     public Strategy getStrategy()
     {
-        return (Strategy) tableModel.getElements().get(strategyTable.getSelectedRow());
+        int selectedRow =
+                strategyTable.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            return null;
+        }
+
+        return (Strategy)tableModel
+                .getElements()
+                .get(selectedRow);
     }
+
+
+    // ================================================================
+    // CLEAR
+    // ================================================================
 
     public void clear()
     {
         strategyName.setText(null);
+
         strategyDescription.setText(null);
-        positionActionsPanel.getPositionTableModel().updateData(null);
+
+        capitalAllocated.setText(null);
+
+        active.setSelected(false);
+
+        if (positionActionsPanel != null)
+        {
+            positionActionsPanel
+                    .getPositionTableModel()
+                    .updateData(null);
+        }
     }
 
 
-    public void setPositionActionsPanel(PositionActionsPanel positionActionsPanel)
+    // ================================================================
+    // SET POSITION ACTIONS PANEL
+    // ================================================================
+
+    public void setPositionActionsPanel(
+            PositionActionsPanel positionActionsPanel)
     {
-        this.positionActionsPanel = positionActionsPanel;
+        this.positionActionsPanel =
+                positionActionsPanel;
     }
 
+
+    // ================================================================
+    // CREATE STRATEGY
+    // ================================================================
 
     public Strategy createStrategy()
     {
-        Strategy strategy = Strategy.builder()
-                .name(strategyName.getText())
-                .description(strategyDescription.getText())
-                .creationDate(LocalDateTime.now())
-                .active(active.isSelected()).build();
+        Strategy strategy =
+                Strategy.builder()
+                        .name(
+                                strategyName.getText()
+                        )
+                        .description(
+                                strategyDescription.getText()
+                        )
+                        .creationDate(
+                                LocalDateTime.now()
+                        )
+                        .active(
+                                active.isSelected()
+                        )
+                        .build();
+
         strategyService.addStrategy(strategy);
+
         strategyName.setText(null);
+
         strategyDescription.setText(null);
+
+        capitalAllocated.setText(null);
+
+        active.setSelected(false);
+
         return strategy;
     }
 }

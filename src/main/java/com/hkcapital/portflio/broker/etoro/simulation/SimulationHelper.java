@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.broker.etoro.simulation;
 
+import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -10,8 +11,10 @@ import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.marketfeed.LiveInstrumentFeedService;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -20,7 +23,7 @@ import java.time.LocalDateTime;
 
 public class SimulationHelper
 {
-
+    private final ServiceRegistery serviceRegistery;
     private InstrumentService instrumentService;
     private LiveInstrumentFeedService liveInstrumentFeedService;
     private OrderManagerService orderManagerService;
@@ -28,11 +31,12 @@ public class SimulationHelper
     private MarketConditionsService marketConditionsService;
     private ConfigurationService configurationService;
     private SRMatrixService sRMatrixService;
+    private SRMatrixToleranceService sRMatrixToleranceService;
     private PositionService positionService;
     private EtoroCandleService etoroCandleService;
+    private EtoroApiConfiguration etoroApiConfiguration;
     private RestClient restClient;
 
-    private final ServiceRegistery serviceRegistery;
 
     public SimulationHelper(RestClient restClient,
                             ServiceRegistery serviceRegistery)
@@ -47,6 +51,8 @@ public class SimulationHelper
         this.sRMatrixService = (SRMatrixService) serviceRegistery.getService(Service.SRMatrixService);
         this.positionService = (PositionService) serviceRegistery.getService(Service.PositionService);
         this.etoroCandleService = (EtoroCandleService) serviceRegistery.getService(Service.EtoroCandleService);
+        this.etoroApiConfiguration = (EtoroApiConfiguration) serviceRegistery.getService(Service.EtoroAPIConfiguration);
+        this.sRMatrixToleranceService = (SRMatrixToleranceService) serviceRegistery.getService(Service.SRMatrixToleranceService);
         this.restClient = restClient;
 
     }
@@ -55,12 +61,13 @@ public class SimulationHelper
     public void cleanAndInitPortfolio(double value)
     {
 
+        positionService.removeAll();
         orderManagerService.removeAll();
         liveInstrumentFeedService.removeAll();
-        positionService.removeAll();
         configurationService.removeAll();
         marketConditionsService.removeAll();
         sRMatrixService.removeAll();
+        sRMatrixToleranceService.removeAll();
         strategyService.removeAll();
         etoroCandleService.removeAll();
         orderManagerService.removeAll();
@@ -84,24 +91,34 @@ public class SimulationHelper
 
         MarketConditions marketConditions = marketConditionsService.addMarketCondition(MarketConditions.builder()
                 .instrument(gold)
-                .dayLow(4020d)
-                .dayHigh(4111d)
+                .dayLow(4300d)
+                .dayHigh(4400d)
                 .build());
 
         SRMatrix s15Min = sRMatrixService.addSRMatrix(SRMatrix.builder().active(true)
                 .instrument(gold)
-                .resistance(4056d)
-                .support(4028d)
+                .l_r_tolerance(4325d)
+                .resistance(4330d)
+                .l_r_tolerance(4335d)
+                .support(4310d)
+                .takeProfit(4325d)
+                .stopLoss(4300d)
                 .timeFrame(15)
+                .creationDate(LocalDateTime.now())
                 .timeFrameUnit(TimeFramesUnit.MINUTE.getUnit())
                 .build());
 
         SRMatrix s4Hour = sRMatrixService.addSRMatrix(SRMatrix.builder().active(true)
                 .instrument(gold)
-                .resistance(4105d)
-                .support(4028d)
+                .l_r_tolerance(4350d)
+                .resistance(4354d)
+                .l_r_tolerance(4360d)
+                .support(4310d)
+                .takeProfit(4330d)
+                .stopLoss(4300d)
                 .timeFrame(4)
                 .timeFrameUnit(TimeFramesUnit.HOUR.getUnit())
+                .creationDate(LocalDateTime.now())
                 .build());
 
         Configuration configuration = configurationService.addConfiguration(Configuration.builder()
@@ -118,6 +135,8 @@ public class SimulationHelper
                 .srMatrix(s15Min)
                 .strategy(strategy)
                 .active(true)
+                .executionCount(3)
+                .positionType(PositionType.BUY.getValue())
                 .marketConditions(marketConditions)
                 .configuration(configuration).build());
 
@@ -127,12 +146,14 @@ public class SimulationHelper
                 .instrument(gold)
                 .srMatrix(s4Hour)
                 .strategy(strategy)
+                .executionCount(3)
+                .positionType(PositionType.BUY.getValue())
                 .active(true)
                 .marketConditions(marketConditions)
                 .configuration(configuration)
                 .build());
 
-        restClient.post().uri("http://localhost:8081/etoro/init")
+        restClient.post().uri(etoroApiConfiguration.getSimulationPortfolioInit())
                 .body(DepositDto.builder().initial(value)
                         .build()).retrieve().body(String.class);
     }
@@ -140,7 +161,7 @@ public class SimulationHelper
     public String getPortfolioValue()
     {
         return restClient.get()
-                .uri("http://localhost:8081/etoro/portfolio-value")
+                .uri(etoroApiConfiguration.getSimulationPortfolioValue())
                 .retrieve().body(String.class);
     }
 

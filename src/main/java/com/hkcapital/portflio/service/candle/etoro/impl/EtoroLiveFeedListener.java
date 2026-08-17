@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
-import com.hkcapital.portflio.broker.etoro.simulation.SimulationHelper;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
@@ -25,7 +24,6 @@ import com.hkcapital.portflio.ui.chart.LiveMarketChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 import javax.swing.*;
 import java.net.URI;
@@ -150,19 +148,18 @@ public class EtoroLiveFeedListener implements Listener
         this.webSocket = webSocket;
         reconnecting = false;
         subscribedTopics.clear();
-        if(envService.getActiveProfile().equals("simulation")) {
+        if (envService.getActiveProfile().equals("simulation"))
+        {
             performAuthSimulation(webSocket, apiConfiguration);
-        }
-        else
+        } else
         {
             performAuth(webSocket, apiConfiguration);
         }
 
-        if(envService.getActiveProfile().equals("simulation"))
+        if (envService.getActiveProfile().equals("simulation"))
         {
-
             String data = "{ data:  { value : 2026-08-14} }";
-            webSocket.sendText(data,true).join();
+            webSocket.sendText(data, true).join();
         }
         webSocket.request(1);
     }
@@ -221,17 +218,16 @@ public class EtoroLiveFeedListener implements Listener
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }
 
-                if(TradingConfiguration.SHOW_TRADING)
+                if (TradingConfiguration.SHOW_TRADING)
                 {
                     if (instance == null)
                     {
-                        instance = new LiveMarketChart(marketStructureManagerCache, signalBuilder, etoroCandleService);
+                        instance = new LiveMarketChart(marketStructureManagerCache, signalBuilder, serviceRegistery);
                         instance.display();
 
-                    }
-                    else
+                    } else
                     {
-                        if(!instance.isVisible())
+                        if (!instance.isVisible())
                         {
                             instance.setVisible(Boolean.TRUE);
                         }
@@ -292,10 +288,6 @@ public class EtoroLiveFeedListener implements Listener
 
     private void performAuthSimulation(WebSocket ws, EtoroApiConfiguration apiInformation)
     {
-        SimulationHelper simulationHelper =
-                new SimulationHelper(RestClient.create(), serviceRegistery);
-        simulationHelper.cleanAndInitPortfolio(5000);
-
         String authMessage = """
                 {
                   "id": "%s",
@@ -315,8 +307,6 @@ public class EtoroLiveFeedListener implements Listener
 
         logger.info("Authentication sent");
     }
-
-
 
 
     public void subscribeInstrument(WebSocket webSocket, String instrumentId)
@@ -382,7 +372,7 @@ public class EtoroLiveFeedListener implements Listener
 
     public CandleDto toCandle(final Tick tick, TimeFramesUnit timeFramesUnit, Integer interval)
     {
-        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(),tick.getTime(),
+        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getTime(),
                 tick.getVal(), tick.getTime(), tick.getVal(), tick.getTime(),
                 timeFramesUnit, interval);
     }

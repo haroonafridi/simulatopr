@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.srmatrix.dto.SRMatrixDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -82,5 +83,24 @@ public class SRMatrix
             return 0d;
         }
         return r_s_tolerance;
+    }
+
+    public SRMatrixDTO buildDTO()
+    {
+        return SRMatrixDTO.builder()
+                .creationDate(creationDate)
+                .timeFrame(timeFrame)
+                .timeFrameUnit(timeFrameUnit)
+                .instrumentDTO(instrument.buildDto())
+                .l_s_tolerance(l_s_tolerance)
+                .r_s_tolerance(r_s_tolerance)
+                .support(support)
+                .resistance(resistance)
+                .l_r_tolerance(l_r_tolerance)
+                .r_r_tolerance(r_r_tolerance)
+                .takeProfit(takeProfit)
+                .stopLoss(stopLoss)
+                .active(active)
+                .build();
     }
 }
