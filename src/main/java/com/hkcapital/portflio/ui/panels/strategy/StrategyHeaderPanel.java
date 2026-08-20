@@ -10,8 +10,8 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
-import com.hkcapital.portflio.service.strategy.StrategyExporter;
-import com.hkcapital.portflio.service.strategy.StrategyExporterImpl;
+import com.hkcapital.portflio.service.strategy.StrategyImportExportManager;
+import com.hkcapital.portflio.service.strategy.StrategyImportExportManagerImpl;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
@@ -31,6 +31,8 @@ import java.util.List;
 public class StrategyHeaderPanel extends UIBag
 {
     private final StrategyService strategyService;
+
+    StrategyImportExportManager strategyImporterExporter;
 
     private final JLabel strategyNameLabel =
             new JLabel("Strategy Name:");
@@ -115,6 +117,8 @@ public class StrategyHeaderPanel extends UIBag
         this.marketStructureManagerCache =
                 (MarketStructureCache) serviceRegistery
                         .getService(Service.MarketStructureManagerCache);
+
+        strategyImporterExporter = new StrategyImportExportManagerImpl(serviceRegistery);
 
 
         // ============================================================
@@ -469,9 +473,6 @@ public class StrategyHeaderPanel extends UIBag
         // ============================================================
         exportStrategyButton.addActionListener(e->
         {
-            StrategyExporter strategyExporter =
-                    new StrategyExporterImpl(serviceRegistery);
-
             int selectedRow =
                     strategyTable.getSelectedRow();
 
@@ -485,7 +486,12 @@ public class StrategyHeaderPanel extends UIBag
                             .getElements()
                             .get(selectedRow);
 
-            strategyExporter.execute(strategy.getId());
+            strategyImporterExporter.exportStrategy(strategy.getId());
+
+        });
+
+        importStrategyButton.addActionListener(e-> {
+            strategyImporterExporter.importStrategy();
         });
 
         // ============================================================
