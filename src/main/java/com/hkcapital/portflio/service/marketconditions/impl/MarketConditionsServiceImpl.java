@@ -1,8 +1,9 @@
 package com.hkcapital.portflio.service.marketconditions.impl;
 
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.MarketConditions;
 import com.hkcapital.portflio.model.Strategy;
-import com.hkcapital.portflio.repository.marketconditions.MarketconditionsRepository;
+import com.hkcapital.portflio.repository.marketconditions.MarketConditionsRepository;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -13,23 +14,23 @@ import java.util.Optional;
 @Service
 public class MarketConditionsServiceImpl implements MarketConditionsService
 {
-    private final MarketconditionsRepository marketconditionsRepository;
+    private final MarketConditionsRepository marketconRepo;
 
-    public MarketConditionsServiceImpl(MarketconditionsRepository marketconditionsRepository)
+    public MarketConditionsServiceImpl(MarketConditionsRepository marketconditionsRepository)
     {
-        this.marketconditionsRepository = marketconditionsRepository;
+        this.marketconRepo = marketconditionsRepository;
     }
 
     @Override
     public MarketConditions addMarketCondition(MarketConditions marketCondition)
     {
-        return marketconditionsRepository.save(marketCondition);
+        return marketconRepo.save(marketCondition);
     }
 
     @Override
     public void removeMarketCondition(MarketConditions marketCondition)
     {
-        marketconditionsRepository.delete(marketCondition);
+        marketconRepo.delete(marketCondition);
     }
 
     @Override
@@ -41,32 +42,43 @@ public class MarketConditionsServiceImpl implements MarketConditionsService
     @Override
     public void removeById(Integer id)
     {
-        marketconditionsRepository.findById(id) //
-                .ifPresent(marketConditions -> marketconditionsRepository.delete(marketConditions));
+        marketconRepo.findById(id) //
+                .ifPresent(marketConditions -> marketconRepo.delete(marketConditions));
     }
 
     @Override
     public List<MarketConditions> findAll()
     {
-        return marketconditionsRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return marketconRepo.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     @Override
     public MarketConditions findById(Integer id)
     {
-        Optional<MarketConditions> marketCondition = marketconditionsRepository.findById(id);
+        Optional<MarketConditions> marketCondition = marketconRepo.findById(id);
         return !marketCondition.isEmpty() ? marketCondition.get() : null;
     }
 
     @Override
     public void removeAll()
     {
-        marketconditionsRepository.deleteAll();
+        marketconRepo.deleteAll();
     }
 
     @Override
-    public MarketConditions getReferenceById(Integer id) //
+    public MarketConditions findReferenceById(Integer id) //
     {
-        return marketconditionsRepository.getReferenceById(id);
+        return marketconRepo.getReferenceById(id);
+    }
+
+    @Override
+    public MarketConditions //
+    findByInstrumentAndDayLowAndDayHighAndPercentMove(Instrument instrument,
+                                                      Double dayLow,
+                                                      Double dayHigh,
+                                                      Double percentMove)
+    {
+        return marketconRepo. //
+                findByInstrumentAndDayLowAndDayHighAndPercentMove(instrument, dayLow, dayHigh, percentMove);
     }
 }

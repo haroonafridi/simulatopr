@@ -3,7 +3,7 @@ package com.hkcapital.portflio.etoro;
 import com.hkcapital.portflio.repository.candle.CandleRepository;
 import com.hkcapital.portflio.repository.configuration.ConfigurationRepository;
 import com.hkcapital.portflio.repository.instrument.InstrumentRepository;
-import com.hkcapital.portflio.repository.marketconditions.MarketconditionsRepository;
+import com.hkcapital.portflio.repository.marketconditions.MarketConditionsRepository;
 import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portflio.repository.positions.PositionRepository;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixRepository;
@@ -23,7 +23,7 @@ public class DbCleaner
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
-    private MarketconditionsRepository marketconditionsRepository;
+    private MarketConditionsRepository marketconditionsRepository;
     @Autowired
     private EtoroOrderRepository orderRepository;
     @Autowired

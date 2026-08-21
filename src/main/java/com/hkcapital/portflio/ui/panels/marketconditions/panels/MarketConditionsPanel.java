@@ -177,7 +177,7 @@ public class MarketConditionsPanel extends UIBag
         MarketConditions marketConditions = (MarketConditions) tableModel.getElements().get(selectedRow);
         if (positionId != null)
         {
-            MarketConditions mkrConditions = marketconditionsService.getReferenceById(marketConditions.getId());
+            MarketConditions mkrConditions = marketconditionsService.findReferenceById(marketConditions.getId());
             Position position = positionService.findById(positionId);
             position.setMarketConditions(mkrConditions);
             positionService.updatePosition(position);

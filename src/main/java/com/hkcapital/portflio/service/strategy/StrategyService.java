@@ -21,4 +21,6 @@ public interface StrategyService extends Service
 
     void removeAll();
 
+    Strategy findByIdOrderByActiveDesc(Integer id);
+
 }

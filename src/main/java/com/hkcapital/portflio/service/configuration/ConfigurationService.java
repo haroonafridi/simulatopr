@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.service.configuration;
 
 import com.hkcapital.portflio.model.Configuration;
+import com.hkcapital.portflio.service.configuration.dto.ConfigurationDTO;
 import com.hkcapital.portflio.service.registry.Service;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface ConfigurationService extends Service
 
     void removeConfiguration(Configuration configuration);
 
-    Configuration updateConfigration(Configuration configuration);
+    Configuration updateConfiguration(Configuration configuration);
 
     void removeAll();
 
@@ -20,4 +21,6 @@ public interface ConfigurationService extends Service
     List<Configuration> findAll();
 
     void removeById(Integer id);
+
+    Configuration findByConfiguration(ConfigurationDTO configurationDTO);
 }

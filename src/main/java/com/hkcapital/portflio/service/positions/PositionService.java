@@ -26,4 +26,8 @@ public interface PositionService extends Service
     void removeAll();
 
 
+    List<Position> findByStrategyIdOrderByActive(Integer id, boolean active);
+
+    List<Position> findByStrategyIdAndActivePositionsOrderByActive(Integer id, boolean active);
+
 }

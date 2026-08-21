@@ -90,7 +90,9 @@ public class MarketStructureCSVScheduler implements ScheduleService
         MarketStructureJsonWrapper marketStructureJsonWrapper = MarketStructureJsonWrapper.builder()
                 .marketStructure(hour4Dto)
                 .creationDate(LocalDate.now()).previousDayRange(dayRange).build();
+
         StringBuilder data = new StringBuilder("price_band");
+
         data.append(",").append("band_type").append(",").append("lowerBound").append(",")
                 .append("upperBound").append(",").append("timeFrame").append(",")
                 .append("timeFrameUnit").append(",").append("initialVisitedTime").append(",")

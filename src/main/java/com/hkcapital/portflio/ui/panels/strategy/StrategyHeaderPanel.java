@@ -37,6 +37,8 @@ public class StrategyHeaderPanel extends UIBag
     private final JLabel strategyNameLabel =
             new JLabel("Strategy Name:");
 
+    private final JCheckBox activePositions = new JCheckBox("Active Positions");
+    private final JCheckBox allPositions = new JCheckBox("All Positions");
     private final JTextField strategyName =
             new JTextField(20);
 
@@ -79,10 +81,8 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JButton openMarket =
             new JButton("Open Market");
-
     private final JButton showLiveMarket =
             new JButton("Show Live Market");
-
     private final JButton exportStrategyButton =
             new JButton("Export Strategy");
     private final JButton importStrategyButton =
@@ -120,6 +120,7 @@ public class StrategyHeaderPanel extends UIBag
 
         strategyImporterExporter = new StrategyImportExportManagerImpl(serviceRegistery);
 
+        activePositions.setSelected(Boolean.TRUE);
 
         // ============================================================
         // MAIN PANEL
@@ -261,6 +262,8 @@ public class StrategyHeaderPanel extends UIBag
                         )
                 );
 
+        buttonsPanel.add(allPositions);
+        buttonsPanel.add(activePositions);
         buttonsPanel.add(refreshStrategy);
         buttonsPanel.add(saveStrategy);
         buttonsPanel.add(cancelButton);
@@ -417,8 +420,7 @@ public class StrategyHeaderPanel extends UIBag
                 automaticTrading.setText(
                         "Activate Auto Trading"
                 );
-            }
-            else
+            } else
             {
                 TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING =
                         Boolean.TRUE;
@@ -460,8 +462,7 @@ public class StrategyHeaderPanel extends UIBag
             {
                 TradingConfiguration.SHOW_TRADING =
                         Boolean.FALSE;
-            }
-            else
+            } else
             {
                 TradingConfiguration.SHOW_TRADING =
                         Boolean.TRUE;
@@ -471,7 +472,7 @@ public class StrategyHeaderPanel extends UIBag
         // ============================================================
         // EXPORT STRATEGY HANDLER
         // ============================================================
-        exportStrategyButton.addActionListener(e->
+        exportStrategyButton.addActionListener(e ->
         {
             int selectedRow =
                     strategyTable.getSelectedRow();
@@ -482,7 +483,7 @@ public class StrategyHeaderPanel extends UIBag
             }
 
             Strategy strategy =
-                    (Strategy)tableModel
+                    (Strategy) tableModel
                             .getElements()
                             .get(selectedRow);
 
@@ -490,7 +491,8 @@ public class StrategyHeaderPanel extends UIBag
 
         });
 
-        importStrategyButton.addActionListener(e-> {
+        importStrategyButton.addActionListener(e ->
+        {
             strategyImporterExporter.importStrategy();
         });
 
@@ -523,23 +525,30 @@ public class StrategyHeaderPanel extends UIBag
         }
 
         Strategy strategy =
-                (Strategy)tableModel
+                (Strategy) tableModel
                         .getElements()
                         .get(selectedRow);
 
         setHeaderFieldsFromRow(strategy);
-
-
+        List<Position> positionList;
         if (positionActionsPanel != null)
         {
-            List<Position> positionList =
-                    positionService.findByStrategyId(
-                            strategy.getId()
-                    );
+            if (allPositions.isSelected())
+            {
+                positionList = positionService.findByStrategyIdOrderByActive(strategy.getId(), false);
+            }
+            else
+            {
+                if (activePositions.isSelected())
+                {
+                    positionList = positionService.findByStrategyIdAndActivePositionsOrderByActive(strategy.getId(), true);
+                } else
+                {
+                    positionList = positionService.findByStrategyIdAndActivePositionsOrderByActive(strategy.getId(), false);
+                }
+            }
 
-            positionActionsPanel
-                    .getPositionTableModel()
-                    .updateData(positionList);
+            positionActionsPanel.getPositionTableModel().updateData(positionList);
         }
     }
 
@@ -652,7 +661,7 @@ public class StrategyHeaderPanel extends UIBag
             return null;
         }
 
-        return (Strategy)tableModel
+        return (Strategy) tableModel
                 .getElements()
                 .get(selectedRow);
     }

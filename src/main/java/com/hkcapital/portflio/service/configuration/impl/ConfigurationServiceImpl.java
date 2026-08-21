@@ -3,6 +3,7 @@ package com.hkcapital.portflio.service.configuration.impl;
 import com.hkcapital.portflio.model.Configuration;
 import com.hkcapital.portflio.repository.configuration.ConfigurationRepository;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.configuration.dto.ConfigurationDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class ConfigurationServiceImpl implements ConfigurationService
     }
 
     @Override
-    public Configuration updateConfigration(Configuration configuration)
+    public Configuration updateConfiguration(Configuration configuration)
     {
         return configurationRepository.save(configuration);
     }
@@ -61,5 +62,17 @@ public class ConfigurationServiceImpl implements ConfigurationService
     {
         configurationRepository.findById(id) //
                 .ifPresent(configuration -> configurationRepository.delete(configuration));
+    }
+
+    @Override
+    public Configuration findByConfiguration(ConfigurationDTO configDTO)
+    {
+        return configurationRepository.findByPercentAllocationAllowedAndNoOfInsutrmentsAndNoOfPositionsPerInstrumentsAndMaxPercentAllowedPerInstrumentAndLev(
+                configDTO.getPercentAllocationAllowed(),
+                configDTO.getNoOfInsutrments(),
+                configDTO.getNoOfPositionsPerInstruments(),
+                configDTO.getMaxPercentAllowedPerInstrument(),
+                configDTO.getLev()
+        );
     }
 }

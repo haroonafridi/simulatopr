@@ -3,7 +3,9 @@ package com.hkcapital.portflio.service.srmatrix.impl;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.SRMatrix;
 import com.hkcapital.portflio.model.SRMatrixTolerance;
+import com.hkcapital.portflio.repository.srmatrix.SRMatrixFilter;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixRepository;
+import com.hkcapital.portflio.repository.srmatrix.SRMatrixSpecification;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,12 @@ public class SRMatrixServiceImpl implements SRMatrixService
     public void removeById(Integer id)
     {
         srMatrixRepository.findById(id).ifPresent(strategy -> srMatrixRepository.delete(strategy));
+    }
+
+    @Override
+    public List<SRMatrix> findByFilter(SRMatrixFilter filter)
+    {
+        return srMatrixRepository.findAll(SRMatrixSpecification.byFilter(filter));
     }
 
     @Override

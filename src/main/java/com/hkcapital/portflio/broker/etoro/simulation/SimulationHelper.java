@@ -35,7 +35,6 @@ public class SimulationHelper
     private EtoroApiConfiguration etoroApiConfiguration;
     private RestClient restClient;
 
-
     public SimulationHelper(RestClient restClient,
                             ServiceRegistery serviceRegistery)
     {

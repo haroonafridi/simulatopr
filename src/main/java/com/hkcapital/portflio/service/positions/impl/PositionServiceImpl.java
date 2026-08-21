@@ -6,8 +6,6 @@ import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.repository.positions.PositionRepository;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.ui.panels.position.PositionParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,6 +66,22 @@ public class PositionServiceImpl implements PositionService
     }
 
     @Override
+    public List<Position> findByStrategyIdOrderByActive(Integer id, boolean active)
+    {
+        if (active)
+        {
+            return positionPnLRepository.findByStrategyIdOrderByActiveAsc(id);
+        }
+        return positionPnLRepository.findByStrategyIdOrderByActiveDesc(id);
+    }
+
+    @Override
+    public List<Position> findByStrategyIdAndActivePositionsOrderByActive(Integer id, boolean active)
+    {
+        return positionPnLRepository.findByStrategyIdAndActive(id, active);
+    }
+
+    @Override
     public List<Position> findByStrategyId(Integer id)
     {
         return positionPnLRepository.findByStrategyId(id);
@@ -93,7 +107,8 @@ public class PositionServiceImpl implements PositionService
         Double remainingFirePower = allowedFirePower - capital;
 
         return new PositionParameters(percentCapitalDeployed, capital, pnl, percentPnl, allowedFirePower,
-                remainingFirePower , remainingCapital, configuration.getLev());
+                remainingFirePower, remainingCapital, configuration.getLev());
     }
+
 
 }

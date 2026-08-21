@@ -10,4 +10,8 @@ import java.util.List;
 public interface PositionRepository extends JpaRepository<Position, Integer>
 {
   List<Position> findByStrategyId(Integer id);
+  List<Position> findByStrategyIdOrderByActiveDesc(Integer id);
+  List<Position> findByStrategyIdOrderByActiveAsc(Integer id);
+
+  List<Position> findByStrategyIdAndActive(Integer id, boolean active);
 }

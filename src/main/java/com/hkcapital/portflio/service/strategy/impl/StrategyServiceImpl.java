@@ -61,4 +61,10 @@ public class StrategyServiceImpl implements StrategyService
         strategyRepository.deleteAll();
     }
 
+    @Override
+    public Strategy findByIdOrderByActiveDesc(Integer id)
+    {
+        return strategyRepository.findByIdOrderByActiveDesc(id);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.hkcapital.portflio.service.srmatrix;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.SRMatrix;
 import com.hkcapital.portflio.model.SRMatrixTolerance;
+import com.hkcapital.portflio.repository.srmatrix.SRMatrixFilter;
 import com.hkcapital.portflio.service.registry.Service;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public interface SRMatrixService extends Service
 
     void removeById(Integer id);
 
+
     void removeAll();
 
     SRMatrix getReferenceById(Integer id);
@@ -30,5 +32,7 @@ public interface SRMatrixService extends Service
                                                                 Instrument instrument);
 
     SRMatrix preparSRMatrix(SRMatrixTolerance srMatrixTolerance, Double support, Double resistance, boolean isLong);
+
+    List<SRMatrix> findByFilter(SRMatrixFilter filter);
 
 }

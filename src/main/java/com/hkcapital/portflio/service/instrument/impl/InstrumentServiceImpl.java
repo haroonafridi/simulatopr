@@ -74,4 +74,10 @@ public class InstrumentServiceImpl implements InstrumentService
         return instrumentRepository.findByActive(active);
     }
 
+    @Override
+    public Instrument findByInstrumentTicker(String instrumentTicker)
+    {
+        return instrumentRepository.findByInstrumentTicker(instrumentTicker);
+    }
+
 }
