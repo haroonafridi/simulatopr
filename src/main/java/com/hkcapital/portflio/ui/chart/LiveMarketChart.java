@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.ui.chart;
 
+import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketPriceBand;
@@ -44,6 +45,8 @@ public class LiveMarketChart extends JFrame
     private JComboBox<String> timeframeCombo;
     private JComboBox<String> unitCombo;
     private JComboBox<String> bandsCombo;
+
+    private JButton showHide = new JButton("Hide");
 
     private double minClose = 4300;
     private double maxClose = 4400;
@@ -166,6 +169,7 @@ public class LiveMarketChart extends JFrame
         toolBar.add(new JLabel("Unit:"));
         toolBar.add(unitCombo);
         toolBar.add(bandsCombo);
+        toolBar.add(showHide);
         // ================= LAYOUT =================
         setLayout(new BorderLayout());
         add(toolBar, BorderLayout.NORTH);
@@ -203,6 +207,17 @@ public class LiveMarketChart extends JFrame
             public void chartMouseClicked(ChartMouseEvent event)
             {
             }
+        });
+
+        showHide.addActionListener(e -> {
+            TradingConfiguration.showHide();
+
+            if(TradingConfiguration.SHOW_TRADING) {
+                setVisible(true);
+            } else {
+                setVisible(false);
+            }
+
         });
     }
 

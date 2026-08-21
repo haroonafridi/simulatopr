@@ -458,15 +458,7 @@ public class StrategyHeaderPanel extends UIBag
 
         showLiveMarket.addActionListener(e ->
         {
-            if (TradingConfiguration.SHOW_TRADING)
-            {
-                TradingConfiguration.SHOW_TRADING =
-                        Boolean.FALSE;
-            } else
-            {
-                TradingConfiguration.SHOW_TRADING =
-                        Boolean.TRUE;
-            }
+            TradingConfiguration.showHide();
         });
 
         // ============================================================
