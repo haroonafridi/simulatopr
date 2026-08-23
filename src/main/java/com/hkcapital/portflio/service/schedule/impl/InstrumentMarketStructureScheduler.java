@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service("InstrumentMarketStructureGenerator")
 public class InstrumentMarketStructureScheduler implements ScheduleService
@@ -23,7 +24,9 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
     private final InstrumentService instService;
     private final InstrumentMarketStructureService instMarkStrctrSrv;
 
-    public InstrumentMarketStructureScheduler(MarketStructureCache marketStructureManagerCache, InstrumentService instService, InstrumentMarketStructureService instMarkStrctrSrv)
+    public InstrumentMarketStructureScheduler(MarketStructureCache marketStructureManagerCache,
+                                              InstrumentService instService,
+                                              InstrumentMarketStructureService instMarkStrctrSrv)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.instService = instService;
@@ -44,7 +47,7 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
         logger.info("Creating instrument bands in db");
         Instrument inst = instService.findByEtoroInstrumentId(18);
         MarketStructure hour4 = marketStructureManagerCache.get(MarketTypes.GOLD_4_HOUR);
-        if(hour4 != null)
+        if (hour4 != null)
         {
             MarketStructure hour1 = hour4.getChildMarketStructure();
             MarketStructure mins30 = hour1.getChildMarketStructure();
@@ -109,10 +112,17 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
 
 
     }
+
     private void createStructure(Instrument inst, MarketPriceBand ms)
     {
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+
+        String timestamp = LocalDateTime.now().format(formatter);
+
         InstrumentMarketStructure instrumentMarketStructure =
-                InstrumentMarketStructure.builder().instrument(inst)
+                InstrumentMarketStructure.builder()
+                        .instrument(inst)
                         .bandKey(ms.getBandKey().toString())
                         .marketVisitCount(ms.getMarketVisitCount())
                         .initialVisitedTime(ms.getInitialVisitedTime())
@@ -121,7 +131,9 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
                         .lowerBound(ms.getLowerBound())
                         .timeDifference(ms.getTimeDifference())
                         .timeFrame(ms.getTimeFrame())
+                        .timeFrameUnit(ms.getTimeFrameUnit().getUnit())
                         .bandType(ms.getBandType().getValue())
+                        .marketStructureKey("generator_" + timestamp)
                         .creationDate(LocalDateTime.now())
                         .build();
         instMarkStrctrSrv.add(instrumentMarketStructure);

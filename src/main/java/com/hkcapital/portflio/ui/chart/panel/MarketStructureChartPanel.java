@@ -8,7 +8,6 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.ui.UIBag;
-import com.hkcapital.portflio.ui.panels.position.listeners.OpenSRMatrixDialogueListener;
 import com.hkcapital.portflio.ui.panels.srmatrix.dialogues.SRMatrixDialogue;
 import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixPanel;
 import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixSourcePanel;
@@ -44,6 +43,7 @@ import java.time.temporal.ChronoField;
 import java.util.Date;
 import java.util.List;
 import java.util.NavigableSet;
+
 @Component
 public class MarketStructureChartPanel extends UIBag
 {
@@ -198,7 +198,8 @@ public class MarketStructureChartPanel extends UIBag
             );
         });
 
-        liveCandles.addActionListener(e-> {
+        liveCandles.addActionListener(e ->
+        {
             processCandle(null, null);
         });
         liveBands.addActionListener(e ->
@@ -449,7 +450,8 @@ public class MarketStructureChartPanel extends UIBag
     }
 
 
-    public void processCandle(String timeframe, String unit) {
+    public void processCandle(String timeframe, String unit)
+    {
 
         series.clear();
 
@@ -467,14 +469,17 @@ public class MarketStructureChartPanel extends UIBag
 
         LocalDate dateTimeTitle = null;
 
-        for (Candle candle : candles) {
+        for (Candle candle : candles)
+        {
 
             // Filter by timeframe and unit
-            if (!String.valueOf(candle.getTimeFrame()).equals(timeframe)) {
+            if (!String.valueOf(candle.getTimeFrame()).equals(timeframe))
+            {
                 continue;
             }
 
-            if (!unit.equalsIgnoreCase(candle.getTimeFrameUnit())) {
+            if (!unit.equalsIgnoreCase(candle.getTimeFrameUnit()))
+            {
                 continue;
             }
 
@@ -502,7 +507,8 @@ public class MarketStructureChartPanel extends UIBag
         yAxis.setLabelPaint(Color.RED);
         yAxis.setTickLabelPaint(Color.RED);
 
-        if (maxClose == minClose) {
+        if (maxClose == minClose)
+        {
             maxClose += 1.0;
             minClose -= 1.0;
         }
@@ -516,7 +522,8 @@ public class MarketStructureChartPanel extends UIBag
         xAxis.setTickLabelPaint(Color.GRAY);
         xAxis.setLabelPaint(Color.GRAY);
 
-        if (dateTimeTitle != null) {
+        if (dateTimeTitle != null)
+        {
             chartPanel.getChart().setTitle("Gold Chart of date " + dateTimeTitle);
         }
 
@@ -631,7 +638,6 @@ public class MarketStructureChartPanel extends UIBag
 
         } catch (Exception e)
         {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     "Error reading CSV: " + e.getMessage());
         }
@@ -702,7 +708,8 @@ public class MarketStructureChartPanel extends UIBag
     }
 
 
-    public void setFrame(Frame frame) {
+    public void setFrame(Frame frame)
+    {
         this.frame = frame;
     }
 

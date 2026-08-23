@@ -15,11 +15,13 @@ public interface Service
     String OrderManagerService = "OrderManagerService";
     String EtoroWebSocketManagerService = "EtoroWebSocketManagerService";
     String MarketStructureManagerCache = "MarketStructureManagerCache";
+
     String SRMatrixService = "SRMatrixService";
     String SRMatrixToleranceService = "SRMatrixToleranceService";
     String ProfileService = "ProfileService";
     String EtoroApiService = "EtoroApiService";
-
+    String EnvService = "EnvService";
     String LiveInstrumentFeedService = "LiveInstrumentFeedService";
+    String InstrumentMarketStructureService = "InstrumentMarketStructureService";
 
 }

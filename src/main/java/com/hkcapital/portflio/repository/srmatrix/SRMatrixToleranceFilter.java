@@ -12,32 +12,28 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SRMatrixFilter
+public class SRMatrixToleranceFilter
 {
 
-    private LocalDateTime creationDate;
+    private Integer instrumentId;
 
     private Integer timeFrame;
 
     private String timeFrameUnit;
 
-    private Integer instrumentId;
+    private Double l_s_tolerance_percent;
 
-    private Double l_s_tolerance;
+    private Double r_s_tolerance_percent;
 
-    private Double r_s_tolerance;
+    private Double l_r_tolerance_percent;
 
-    private Double support;
+    private Double r_r_tolerance_percent;
 
-    private Double resistance;
+    private Double takeProfitPercent;
 
-    private Double l_r_tolerance;
-
-    private Double r_r_tolerance;
-
-    private Double takeProfit;
-
-    private Double stopLoss;
+    private Double stopLossPercent;
     private Boolean active;
+
+    private LocalDateTime creationDate;
 
 }

@@ -138,6 +138,17 @@ public class SRMatrixSpecification
                 );
             }
 
+
+            if (sRMatrixFilter.getCreationDate() != null)
+            {
+                predicates.add(
+                        cb.equal(
+                                root.get("creationDate"),
+                                sRMatrixFilter.getCreationDate()
+                        )
+                );
+            }
+
             return cb.and(
                     predicates.toArray(new Predicate[0])
             );

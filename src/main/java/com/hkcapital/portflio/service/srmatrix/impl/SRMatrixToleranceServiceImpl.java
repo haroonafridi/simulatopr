@@ -1,8 +1,9 @@
 package com.hkcapital.portflio.service.srmatrix.impl;
 
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.model.SRMatrix;
 import com.hkcapital.portflio.model.SRMatrixTolerance;
-import com.hkcapital.portflio.repository.srmatrix.SRMatrixToleranceRepository;
+import com.hkcapital.portflio.repository.srmatrix.*;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,13 @@ public class SRMatrixToleranceServiceImpl implements SRMatrixToleranceService
     public SRMatrixTolerance findByInstrumentAndTimeFrameAndTimeFrameUnitAndActive(Instrument instrument, Integer timeFrame, String timeFrameUnit, boolean active)
     {
         return sRMatrixToleranceRepository.findByInstrumentAndTimeFrameAndTimeFrameUnitAndActive(instrument,timeFrame,timeFrameUnit,active);
+    }
+
+
+    @Override
+    public List<SRMatrixTolerance> findByFilter(SRMatrixToleranceFilter filter)
+    {
+        return sRMatrixToleranceRepository.findAll(SRMatrixToleranceSpecification.byFilter(filter));
     }
 
     @Override

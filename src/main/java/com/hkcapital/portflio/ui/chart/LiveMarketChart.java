@@ -528,7 +528,6 @@ public class LiveMarketChart extends JFrame
     {
         maxClose = signalBuilder.getCandleBuilder1Min().candles().stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
         minClose = signalBuilder.getCandleBuilder1Min().candles().stream().mapToDouble(c -> c.getHigh()).min().getAsDouble();
-        //autoFitChart();
     }
 
     private void autoFitChart()

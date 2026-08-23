@@ -69,7 +69,8 @@ public class SimulationHelper
         etoroCandleService.removeAll();
         orderManagerService.removeAll();
         instrumentService.removeAll();
-        StrategyImportExportManager strategyImportExportManager = new StrategyImportExportManagerImpl(serviceRegistery);
+        StrategyImportExportManager strategyImportExportManager = //
+                new StrategyImportExportManagerImpl(serviceRegistery);
         strategyImportExportManager.importStrategy();
         restClient.post().uri(etoroApiConfiguration.getSimulationPortfolioInit())
                 .body(DepositDto.builder().initial(value)

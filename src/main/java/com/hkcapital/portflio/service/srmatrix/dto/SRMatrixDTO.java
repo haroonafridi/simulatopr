@@ -40,6 +40,5 @@ public class SRMatrixDTO
 
     private Double stopLoss;
     private Boolean active;
-
-
+    
 }

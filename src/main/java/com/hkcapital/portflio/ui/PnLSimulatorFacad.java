@@ -1,8 +1,6 @@
 package com.hkcapital.portflio.ui;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.hkcapital.portflio.DataObject;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.simulation.SimulationHelper;
@@ -13,10 +11,12 @@ import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
-import com.hkcapital.portflio.service.marketfeed.LiveInstrumentFeedService;
-import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderManagerServiceImpl;
+import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
+import com.hkcapital.portflio.service.marketfeed.LiveInstrumentFeedService;
+import com.hkcapital.portflio.service.marketstructure.InstrumentMarketStructureService;
+import com.hkcapital.portflio.service.orders.impl.etoro.EtoroOrderManagerServiceImpl;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.profile.ProfileService;
 import com.hkcapital.portflio.service.registry.Service;
@@ -51,9 +51,6 @@ import org.springframework.web.client.RestClient;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.multi.MultiLookAndFeel;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-import javax.swing.plaf.synth.SynthLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
@@ -67,7 +64,6 @@ public class PnLSimulatorFacad
     private final StrategyService strategyService;
     private final MarketConditionsService marketConditionsService;
     private final InstrumentService instrumentService;
-
     private final PositionService positionPnLService;
     private final EtoroOrderManagerServiceImpl etoroOrderManagerService;
 
@@ -83,6 +79,11 @@ public class PnLSimulatorFacad
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final LiveInstrumentFeedService liveInstrumentFeedService;
     private final SRMatrixToleranceService sRMatrixToleranceService;
+    private final InstrumentMarketStructureService instrumentMarketStructureService;
+
+
+
+    private final EnvService envService;
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
                              StrategyService strategyService,
@@ -101,6 +102,8 @@ public class PnLSimulatorFacad
                              EtoroApiService etoroApiService,
                              LiveInstrumentFeedService liveInstrumentFeedService,
                              SRMatrixToleranceService sRMatrixToleranceService,
+                             EnvService envService,
+                             InstrumentMarketStructureService instrumentMarketStructureService,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -121,6 +124,8 @@ public class PnLSimulatorFacad
         this.etoroApiService = etoroApiService;
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.liveInstrumentFeedService = liveInstrumentFeedService;
+        this.instrumentMarketStructureService = instrumentMarketStructureService;
+        this.envService = envService;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -136,7 +141,9 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.ProfileService, this.profileService);
         serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
-        serviceRegistery.putService(Service.MarketStructureManagerCache, this.marketStructureManagerCache);
+        serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
+        serviceRegistery.putService(Service.InstrumentMarketStructureService, this.instrumentMarketStructureService);
+        serviceRegistery.putService(Service.EnvService, this.envService);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
     }
 
@@ -148,13 +155,13 @@ public class PnLSimulatorFacad
         if ("dev".equals(activeProfile))
         {
             looAndFeel = new MetalLookAndFeel();
-            font =  new Font("Roboto Mono", Font.PLAIN, 12);
+            font = new Font("Roboto Mono", Font.PLAIN, 12);
         }
 
         if ("simulation".equals(activeProfile))
         {
             looAndFeel = new MetalLookAndFeel();
-            font =  new Font("Roboto Mono", Font.PLAIN, 10);
+            font = new Font("Roboto Mono", Font.PLAIN, 10);
             SimulationHelper simulationHelper =
                     new SimulationHelper(RestClient.create(), serviceRegistery);
             simulationHelper.cleanAndInitPortfolio(5000);
@@ -265,7 +272,7 @@ public class PnLSimulatorFacad
             Object nodeObject = selectedNode.getUserObject();
 
 
-            if("Orders".equals(nodeObject.toString()))
+            if ("Orders".equals(nodeObject.toString()))
             {
                 EtoroOrdersDialogue configurationDialogue = //
                         new EtoroOrdersDialogue(mainFrame, new EtoroOrdersPanel(serviceRegistery, null));
@@ -324,7 +331,7 @@ public class PnLSimulatorFacad
             if (nodeObject.toString().equals("Generate CSV Data"))
             {
                 // Optional: handle folders or intermediate nodes
-                CSVDataDialogue csvDataDialogue = new CSVDataDialogue(mainFrame,  new CSVDataPanel(serviceRegistery));
+                CSVDataDialogue csvDataDialogue = new CSVDataDialogue(mainFrame, new CSVDataPanel(serviceRegistery));
                 csvDataDialogue.setVisible(true);
             }
 

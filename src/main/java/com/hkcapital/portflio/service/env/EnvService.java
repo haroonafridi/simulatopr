@@ -1,24 +1,12 @@
 package com.hkcapital.portflio.service.env;
 
+import com.hkcapital.portflio.service.registry.Service;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
-@Service
-public class EnvService
+
+public interface EnvService extends Service
 {
-    private final Environment environment;
-
-    public EnvService(Environment environment)
-    {
-        this.environment = environment;
-    }
-
-    public String getActiveProfile()
-    {
-        return Arrays.stream(environment.getActiveProfiles())
-                .findFirst()
-                .orElse("default");
-    }
+    String getActiveProfile();
 }

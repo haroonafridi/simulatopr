@@ -44,7 +44,7 @@ public class SRMatrixServiceImpl implements SRMatrixService
     @Override
     public List<SRMatrix> findAll()
     {
-        return srMatrixRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return srMatrixRepository.findAll(Sort.by(Sort.Direction.DESC, "creationDate"));
     }
 
     @Override

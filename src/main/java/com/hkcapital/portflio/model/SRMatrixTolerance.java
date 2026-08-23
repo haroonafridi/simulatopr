@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.srmatrix.dto.SRMatrixToleranceDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,5 +43,22 @@ public class SRMatrixTolerance
     private Boolean active = true;
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+
+    public SRMatrixToleranceDTO buildSRMatrixToleranceDTO() //
+    {
+        return SRMatrixToleranceDTO.builder().instrument(instrument.buildDto())
+                .timeFrame(timeFrame)
+                .timeFrameUnit(timeFrameUnit)
+                .r_s_tolerance_percent(r_s_tolerance_percent)
+                .r_r_tolerance_percent(r_r_tolerance_percent)
+                .l_s_tolerance_percent(l_s_tolerance_percent)
+                .l_r_tolerance_percent(l_r_tolerance_percent)
+                .stopLossPercent(stopLossPercent)
+                .takeProfitPercent(takeProfitPercent)
+                .active(active)
+                .creationDate(creationDate)
+                .build();
+    }
 
 }

@@ -28,4 +28,10 @@ public class InstrumentMarketStructureServiceImpl implements InstrumentMarketStr
     {
         return instMarkStrctrRepo.findAll();
     }
+
+    @Override
+    public List<InstrumentMarketStructure> findByMarketStructureKey(String marketStructureKey)
+    {
+        return instMarkStrctrRepo.findByMarketStructureKey(marketStructureKey);
+    }
 }

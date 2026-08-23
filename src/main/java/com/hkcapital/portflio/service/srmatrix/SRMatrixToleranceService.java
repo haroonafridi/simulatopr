@@ -2,9 +2,9 @@ package com.hkcapital.portflio.service.srmatrix;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.SRMatrixTolerance;
+import com.hkcapital.portflio.repository.srmatrix.SRMatrixToleranceFilter;
 import com.hkcapital.portflio.service.registry.Service;
 
-import java.time.Instant;
 import java.util.List;
 
 public interface SRMatrixToleranceService extends Service
@@ -21,9 +21,11 @@ public interface SRMatrixToleranceService extends Service
 
     SRMatrixTolerance findByInstrumentAndTimeFrameAndTimeFrameUnitAndActive(Instrument instrument, Integer timeFrame, String timeFrameUnit,
                                                                             boolean active);
+
     void removeById(Integer id);
 
     void removeAll();
 
+    List<SRMatrixTolerance> findByFilter(SRMatrixToleranceFilter filter);
 
 }

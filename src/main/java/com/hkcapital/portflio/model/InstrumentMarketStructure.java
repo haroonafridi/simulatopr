@@ -1,7 +1,5 @@
 package com.hkcapital.portflio.model;
 
-import com.hkcapital.portflio.market.structure.BandKey;
-import com.hkcapital.portflio.market.structure.BandType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,9 +29,9 @@ public class InstrumentMarketStructure
     private Instant lastVisitedTime;
     private long timeDifference;
     private Integer timeFrame;
-
+    private String timeFrameUnit;
     private LocalDateTime creationDate;
-
+    private String marketStructureKey;
     @ManyToOne(cascade = CascadeType.MERGE)
 
     @JoinColumn(name = "instrument_id", referencedColumnName = "id")
