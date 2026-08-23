@@ -37,8 +37,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StrategyHeaderPanel extends UIBag
 {
@@ -556,22 +559,29 @@ public class StrategyHeaderPanel extends UIBag
     private void openBandFileDialog() throws IOException
     {
 
-        File bandFile;
+//        File bandFile;
+//
+//        JFileChooser fileChooser = new JFileChooser();
+//
+//        fileChooser.setCurrentDirectory(new File("D:/hk-prod/market-data"));
+//
+//        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
+//
+//        int result = fileChooser.showOpenDialog(this);
 
-        JFileChooser fileChooser = new JFileChooser();
+//        if (result == JFileChooser.APPROVE_OPTION)
+        //       {
 
-        fileChooser.setCurrentDirectory(new File("D:/hk-prod/market-data"));
-
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION)
+        Set<File> files = listFiles();
+        for (File f : files)
         {
-
-            bandFile = fileChooser.getSelectedFile();
-            processBandCsv(bandFile);
+            System.out.println("File name => " + f.getName());
+            processBandCsv(f);
         }
+
+        JOptionPane.showMessageDialog(this, "Files successfully uploaded " + listFiles().size());
+
+        //      }
     }
 
 
@@ -584,7 +594,7 @@ public class StrategyHeaderPanel extends UIBag
 
         if (mrktStrList != null && mrktStrList.size() > 0)
         {
-            JOptionPane.showMessageDialog(this, "File already uploaded");
+            //JOptionPane.showMessageDialog(this, "File already uploaded");
             return;
         }
 
@@ -694,14 +704,10 @@ public class StrategyHeaderPanel extends UIBag
                                 .build();
                 instMarkStrctrSrv.add(instrumentMarketStructure);
             }
-
-            JOptionPane.showMessageDialog(this, "File successfully uploaded");
-
         } catch (Exception e)
         {
             JOptionPane.showMessageDialog(this, "Error reading CSV: " + e.getMessage());
         }
-
     }
 
 
@@ -723,6 +729,14 @@ public class StrategyHeaderPanel extends UIBag
             return dateTime;
         }
         return null;
+    }
+
+
+    private Set<File> listFiles()
+    {
+        return Stream.of(new File("D:/hk-prod/market-data").listFiles())
+                .filter(file -> !file.isDirectory() && file.getName().contains("_23-00-00"))
+                .collect(Collectors.toSet());
     }
 
 

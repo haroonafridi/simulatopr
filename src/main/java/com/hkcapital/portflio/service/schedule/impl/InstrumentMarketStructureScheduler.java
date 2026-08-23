@@ -109,8 +109,6 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
                 createStructure(inst, ms);
             });
         }
-
-
     }
 
     private void createStructure(Instrument inst, MarketPriceBand ms)
