@@ -13,6 +13,7 @@ import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.marketfeed.LiveInstrumentFeedService;
 import com.hkcapital.portflio.service.marketstructure.InstrumentMarketStructureService;
@@ -32,7 +33,9 @@ import com.hkcapital.portflio.ui.panels.csvdata.dialogues.CSVDataDialogue;
 import com.hkcapital.portflio.ui.panels.csvdata.panels.CSVDataPanel;
 import com.hkcapital.portflio.ui.panels.etoro.configuartion.dialogues.EtoroOrdersDialogue;
 import com.hkcapital.portflio.ui.panels.etoro.configuartion.panels.EtoroOrdersPanel;
+import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentConfDialogue;
 import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentDialogue;
+import com.hkcapital.portflio.ui.panels.instrument.panels.InstrumentConfPanel;
 import com.hkcapital.portflio.ui.panels.instrument.panels.InstrumentPanel;
 import com.hkcapital.portflio.ui.panels.marketconditions.dialogues.MarketConditionsDialogue;
 import com.hkcapital.portflio.ui.panels.marketconditions.panels.MarketConditionsPanel;
@@ -80,6 +83,7 @@ public class PnLSimulatorFacad
     private final LiveInstrumentFeedService liveInstrumentFeedService;
     private final SRMatrixToleranceService sRMatrixToleranceService;
     private final InstrumentMarketStructureService instrumentMarketStructureService;
+    private final InstrumentMarketStructureConfService instMrktStctrConfSrv;
 
 
 
@@ -104,6 +108,7 @@ public class PnLSimulatorFacad
                              SRMatrixToleranceService sRMatrixToleranceService,
                              EnvService envService,
                              InstrumentMarketStructureService instrumentMarketStructureService,
+                             InstrumentMarketStructureConfService instMrktStctrConfSrv,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -125,6 +130,7 @@ public class PnLSimulatorFacad
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.liveInstrumentFeedService = liveInstrumentFeedService;
         this.instrumentMarketStructureService = instrumentMarketStructureService;
+        this.instMrktStctrConfSrv = instMrktStctrConfSrv;
         this.envService = envService;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
@@ -143,6 +149,7 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
         serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
         serviceRegistery.putService(Service.InstrumentMarketStructureService, this.instrumentMarketStructureService);
+        serviceRegistery.putService(Service.InstrumentMarketStructureConfService, this.instMrktStctrConfSrv);
         serviceRegistery.putService(Service.EnvService, this.envService);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
     }
@@ -185,6 +192,7 @@ public class PnLSimulatorFacad
 
         DefaultMutableTreeNode instruments = new DefaultMutableTreeNode("Instruments");
         instruments.add(new DefaultMutableTreeNode("Instruments"));
+        instruments.add(new DefaultMutableTreeNode("Instruments Configuration"));
 
         DefaultMutableTreeNode settings = new DefaultMutableTreeNode("Settings");
         settings.add(new DefaultMutableTreeNode("Profile"));
@@ -222,7 +230,11 @@ public class PnLSimulatorFacad
         JTree navigationTree = new JTree(root);
         JScrollPane treeScrollPane = new JScrollPane(navigationTree);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Navigation"));
+        navigationTree.setPreferredSize(new Dimension(400, 400));
+        treeScrollPane.setPreferredSize(new Dimension(400, 400));
         rootPanel.add(treeScrollPane, rootGbc);
+
+
 
         // === RIGHT: Vertical split with Header + Actions ===
         rootGbc.gridx = 1;
@@ -302,6 +314,15 @@ public class PnLSimulatorFacad
                 InstrumentDialogue instrumentDialogue = new InstrumentDialogue(mainFrame, //
                         new InstrumentPanel(serviceRegistery));
                 instrumentDialogue.setVisible(true);
+            }
+
+
+            if (nodeObject.toString().equals("Instruments Configuration"))
+            {
+                // Optional: handle folders or intermediate nodes
+                InstrumentConfDialogue instrumentConfDialogue = new InstrumentConfDialogue(mainFrame, //
+                        new InstrumentConfPanel(serviceRegistery));
+                instrumentConfDialogue.setVisible(true);
             }
 
             if (nodeObject.toString().equals("Sessions"))

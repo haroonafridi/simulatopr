@@ -23,5 +23,6 @@ public interface Service
     String EnvService = "EnvService";
     String LiveInstrumentFeedService = "LiveInstrumentFeedService";
     String InstrumentMarketStructureService = "InstrumentMarketStructureService";
+    String InstrumentMarketStructureConfService = "InstrumentMarketStructureConfService";
 
 }

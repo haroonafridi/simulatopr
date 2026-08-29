@@ -26,6 +26,10 @@ public interface MarketConditionsService extends Service
                                                                        Double percentMove);
 
     void removeMarketCondition(MarketConditions marketCondition);
+
     void removeById(Integer id);
+
     void removeAll();
+
+    MarketConditions findByInstrumentOrderByIdDesc(Instrument instrument);
 }

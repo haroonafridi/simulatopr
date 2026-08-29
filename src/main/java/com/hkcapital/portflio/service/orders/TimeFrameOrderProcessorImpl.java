@@ -2,7 +2,6 @@ package com.hkcapital.portflio.service.orders;
 
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
-import com.hkcapital.portflio.market.structure.MarketAction;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.Position;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
 {
@@ -26,6 +26,7 @@ public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
     private final PositionService positionService;
     private final OrderManagerService orderManagerService;
     private final MarketStructureCache marketStructureCache;
+
     public TimeFrameOrderProcessorImpl(InstrumentService instrumentService,
                                        StrategyService strategyService,
                                        PositionService positionService,
@@ -42,64 +43,66 @@ public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
     @Override
     public void process(LiveInstrumentRate instrumentRate, SignalBuilder signalBuilder)
     {
-        Instrument instrument =
+        List<Instrument> instrumentList =
                 instrumentService.findAll()
                         .stream()
-                        .filter(Instrument::getActive)
-                        .findAny().get();
+                        .filter(Instrument::getActive).collect(Collectors.toList());
 
-        Double maxSlippage = instrument.getMaxSlippage();
-
-        if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null
-                && instrument.getEtoroInstrumentId().intValue() == instrumentRate.getInstrumentId().intValue())
+        if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
         {
-            if (TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
+            for (Instrument instrument : instrumentList)
             {
-                logger.info("Sending Automatic trade to etoro!");
-                Double ask = instrumentRate.getAsk();
-                Double bid = instrumentRate.getBid();
-                Double slippage = ask - bid;
-                logger.info("Instrument price received bid = [{}] , ask = [{}] slippage = [{}] , maxSlippage = [{}] sending order for execution", bid, ask, slippage, maxSlippage);
-                logger.info("No of candles generated {} ",
-                        signalBuilder.getCandleBuilder1Min().candles().size());
-                List<Strategy> strategies = //
-                        strategyService.findAll()//
-                                .stream()//
-                                .filter(Strategy::getActive)//
-                                .toList();
-                logger.info("no of strategies found {} ", strategies.size());
-                for (Strategy strategy : strategies)
+                if (instrument.getEtoroInstrumentId().intValue() == instrumentRate.getInstrumentId().intValue())
                 {
-                    final List<Position> positions = positionService.findByStrategyId(strategy.getId());
-                    logger.info("no of positions found {} ", positions.size());
-                    for (Position position : positions)
+                    if (TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
                     {
-                        if (position.getActive())
+                        logger.info("Sending Automatic trade to etoro!");
+                        Double ask = instrumentRate.getAsk();
+                        Double bid = instrumentRate.getBid();
+                        Double slippage = ask - bid;
+                        logger.info("Instrument price received bid = [{}] , ask = [{}] slippage = [{}] , maxSlippage = [{}] sending order for execution", bid, ask, slippage, instrument.getMaxSlippage());
+                        logger.info("No of candles generated {} ",
+                                signalBuilder.getCandleBuilder1Min().candles().size());
+                        List<Strategy> strategies = //
+                                strategyService.findAll()//
+                                        .stream()//
+                                        .filter(Strategy::getActive)//
+                                        .toList();
+                        logger.info("no of strategies found {} ", strategies.size());
+                        for (Strategy strategy : strategies)
                         {
-                            final SRMatrix srMatrix = position.getSrMatrix();
-                            final Instrument inst = position.getInstrument();
-                            final Integer srTimeFrame = srMatrix.getTimeFrame();
-                            final String srTimeFrameUnit = srMatrix.getTimeFrameUnit();
-                            logger.info("processing positions for S/R timeframe = {} with unit = {}", srTimeFrameUnit, srTimeFrame);
-                            if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 4)
+                            final List<Position> positions = positionService.findByStrategyId(strategy.getId());
+                            logger.info("no of positions found {} ", positions.size());
+                            for (Position position : positions)
                             {
-                                logger.info("Processing 4 hour timeframe");
-                                TimeFrameOrderProcessor timeFrameOrderProcessor =
-                                        new FourHoursTimeFrameOrderProcessorImpl(inst, position,
-                                                orderManagerService,
-                                                positionService,
-                                                marketStructureCache);
-                                timeFrameOrderProcessor.process(instrumentRate, signalBuilder);
-                            }
-                            if (srTimeFrameUnit.equals(TimeFramesUnit.MINUTE.getUnit()) && srTimeFrame == 15)
-                            {
-                                logger.info("Processing 15 minutes timeframe");
-                                TimeFrameOrderProcessor timeFrameOrderProcessor =
-                                        new FifteenMinuteTimeFrameOrderProcessorImpl(inst, position,
-                                                orderManagerService,
-                                                positionService,
-                                                marketStructureCache);
-                                timeFrameOrderProcessor.process(instrumentRate, signalBuilder);
+                                if (position.getActive())
+                                {
+                                    final SRMatrix srMatrix = position.getSrMatrix();
+                                    final Instrument inst = position.getInstrument();
+                                    final Integer srTimeFrame = srMatrix.getTimeFrame();
+                                    final String srTimeFrameUnit = srMatrix.getTimeFrameUnit();
+                                    logger.info("processing positions for S/R timeframe = {} with unit = {}", srTimeFrameUnit, srTimeFrame);
+                                    if (srTimeFrameUnit.equals(TimeFramesUnit.HOUR.getUnit()) && srTimeFrame == 4)
+                                    {
+                                        logger.info("Processing 4 hour timeframe");
+                                        TimeFrameOrderProcessor timeFrameOrderProcessor =
+                                                new FourHoursTimeFrameOrderProcessorImpl(inst, position,
+                                                        orderManagerService,
+                                                        positionService,
+                                                        marketStructureCache);
+                                        timeFrameOrderProcessor.process(instrumentRate, signalBuilder);
+                                    }
+                                    if (srTimeFrameUnit.equals(TimeFramesUnit.MINUTE.getUnit()) && srTimeFrame == 15)
+                                    {
+                                        logger.info("Processing 15 minutes timeframe");
+                                        TimeFrameOrderProcessor timeFrameOrderProcessor =
+                                                new FifteenMinuteTimeFrameOrderProcessorImpl(inst, position,
+                                                        orderManagerService,
+                                                        positionService,
+                                                        marketStructureCache);
+                                        timeFrameOrderProcessor.process(instrumentRate, signalBuilder);
+                                    }
+                                }
                             }
                         }
                     }

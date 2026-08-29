@@ -13,4 +13,8 @@ public interface MarketConditionsRepository extends JpaRepository<MarketConditio
                                                       Double dayLow,
                                                       Double dayHigh,
                                                       Double percentMove);
+
+
+    MarketConditions //
+    findByInstrumentOrderByIdDesc(Instrument instrument);
 }

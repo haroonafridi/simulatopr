@@ -172,7 +172,7 @@ public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebS
         MarketStructureCache cache = getMarketStructureCache();
 
         cache.initDefaultMarket(structure4Hour,
-                MarketTypes.GOLD_4_HOUR);
+                MarketTypes.GOLD_4_HOUR.getValue());
 
         TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
 

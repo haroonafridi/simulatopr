@@ -66,6 +66,12 @@ public class MarketConditionsServiceImpl implements MarketConditionsService
     }
 
     @Override
+    public MarketConditions findByInstrumentOrderByIdDesc(Instrument instrument)
+    {
+        return marketconRepo.findByInstrumentOrderByIdDesc(instrument);
+    }
+
+    @Override
     public MarketConditions findReferenceById(Integer id) //
     {
         return marketconRepo.getReferenceById(id);

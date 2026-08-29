@@ -4,6 +4,8 @@ public enum Labels
 {
     Id("Id:"),
     Instrument("Instrument:"),
+
+    InstrumentConfiguration("Instrument Configuration:"),
     Ticker("Ticker:"),
     Name("Name:"),
     MaxSlippage("Max Slippage:"),
@@ -11,7 +13,16 @@ public enum Labels
     Active("Active:"),
 
     Url("Url:"),
-    InstrumentPanel("Instrument Panel:");
+    InstrumentPanel("Instrument Panel:"),
+
+
+    TimeFrame("Time Frame:"),
+    TimeFrameUnit("Time Frame Unit:"),
+    Module("Module"),
+    Sub("Sub"),
+    Interval("Interval"),
+
+    StructureName("Structure Name");
 
     private String label;
 

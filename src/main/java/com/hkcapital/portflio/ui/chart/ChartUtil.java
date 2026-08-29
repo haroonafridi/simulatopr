@@ -1,12 +1,17 @@
 package com.hkcapital.portflio.ui.chart;
 
 
+import com.hkcapital.portflio.market.indicators.CandleBuilder;
+import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
+import com.hkcapital.portflio.model.Candle;
+import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.data.time.DateRange;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -14,7 +19,9 @@ import java.util.Date;
 public class ChartUtil
 {
     public static DateRange createDateRange(TimeFramesUnit timeFramesUnit,
-                                            Integer interval)
+                                            Integer interval,
+                                            SignalBuilder signalBuilder
+                                            )
     {
         LocalDate today = LocalDate.now();
 
@@ -32,9 +39,17 @@ public class ChartUtil
             {
                 case 1:
                 {
-                    startOfDay = Date.from(today.atStartOfDay(ZoneId.systemDefault())
-                            .plusDays(-1)
-                            .toInstant());
+                   CandleDto candle =
+                           signalBuilder.getCandleBuilder1Min().getCandles()
+                                   .get(signalBuilder.getCandleBuilder1Min()
+                                           .getCandles().size());
+
+                    LocalDate td = candle.getHighTime().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(-1);
+
+
+                    today.atStartOfDay(ZoneId.systemDefault()).plusDays(-1).toInstant();
+
+                    //startOfDay = Date.from();
 
                     endOfDay = Date.from(today.plusDays(1)
                             .atTime(23, 59, 59)

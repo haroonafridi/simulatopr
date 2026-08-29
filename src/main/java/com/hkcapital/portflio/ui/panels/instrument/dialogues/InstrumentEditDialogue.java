@@ -15,7 +15,6 @@ public class InstrumentEditDialogue extends JDialog
 
     final Instrument instrument;
 
-
     JLabel instrumentSymbolLabel = new JLabel("Symbol:");
     JTextField instrumentSymbol = new JTextField(20);
     JLabel instrumentNameLabel = new JLabel("Name:");
@@ -59,7 +58,6 @@ public class InstrumentEditDialogue extends JDialog
         panel1.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.PAGE_AXIS));
         panel2.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 15));
-
         createLayout(panel, instrument);
         dialog.setLayout(new BorderLayout());
         dialog.add(panel, BorderLayout.CENTER);

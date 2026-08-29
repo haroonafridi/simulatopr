@@ -64,39 +64,79 @@ public class EtoroLiveFeedListener implements Listener
 
     private volatile WebSocket webSocket;
 
-    CandleBuilder candleBuilder1Min = CandleBuilder
+    CandleBuilder candleBuilder1MinGold = CandleBuilder
             .build()
             .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(1);
-    CandleBuilder candleBuilder5Min = CandleBuilder
+    CandleBuilder candleBuilder5MinGold = CandleBuilder
             .build()
             .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(5);
-    CandleBuilder candleBuilder15Min = CandleBuilder
+    CandleBuilder candleBuilder15MinGold = CandleBuilder
             .build()
             .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(15);
-    CandleBuilder candleBuilder30Min = CandleBuilder
+    CandleBuilder candleBuilder30MinGold = CandleBuilder
             .build()
             .ofTimeFrame(TimeFramesUnit.MINUTE)
             .ofInterval(30);
-    CandleBuilder candleBuilder1Hour = CandleBuilder
+    CandleBuilder candleBuilder1HourGold = CandleBuilder
             .build()
             .ofTimeFrame(TimeFramesUnit.HOUR)
             .ofInterval(1);
-    CandleBuilder candleBuilder4Hour = CandleBuilder
+    CandleBuilder candleBuilder4HourGold = CandleBuilder
             .build()
             .ofTimeFrame(TimeFramesUnit.HOUR)
             .ofInterval(4);
 
-    SignalBuilder signalBuilder = SignalBuilder.builder()
-            .candleBuilder1Min(candleBuilder1Min)
-            .candleBuilder5Min(candleBuilder5Min)
-            .candleBuilder15Min(candleBuilder15Min)
-            .candleBuilder30Min(candleBuilder30Min)
-            .candleBuilder1Hour(candleBuilder1Hour)
-            .candleBuilder4Hour(candleBuilder4Hour)
+
+    CandleBuilder candleBuilder1MinNasdaq = CandleBuilder
+            .build()
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
+            .ofInterval(1);
+    CandleBuilder candleBuilder5MinNasdaq = CandleBuilder
+            .build()
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
+            .ofInterval(5);
+    CandleBuilder candleBuilder15MinNasdaq = CandleBuilder
+            .build()
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
+            .ofInterval(15);
+    CandleBuilder candleBuilder30MinNasdaq = CandleBuilder
+            .build()
+            .ofTimeFrame(TimeFramesUnit.MINUTE)
+            .ofInterval(30);
+    CandleBuilder candleBuilder1HourNasdaq = CandleBuilder
+            .build()
+            .ofTimeFrame(TimeFramesUnit.HOUR)
+            .ofInterval(1);
+    CandleBuilder candleBuilder4HourNasdaq = CandleBuilder
+            .build()
+            .ofTimeFrame(TimeFramesUnit.HOUR)
+            .ofInterval(4);
+
+
+
+
+    SignalBuilder signalBuilderGold = SignalBuilder.builder()
+            .candleBuilder1Min(candleBuilder1MinGold)
+            .candleBuilder5Min(candleBuilder5MinGold)
+            .candleBuilder15Min(candleBuilder15MinGold)
+            .candleBuilder30Min(candleBuilder30MinGold)
+            .candleBuilder1Hour(candleBuilder1HourGold)
+            .candleBuilder4Hour(candleBuilder4HourGold)
             .build();
+
+
+    SignalBuilder signalBuilderNasdaq = SignalBuilder.builder()
+            .candleBuilder1Min(candleBuilder1MinNasdaq)
+            .candleBuilder5Min(candleBuilder5MinNasdaq)
+            .candleBuilder15Min(candleBuilder15MinNasdaq)
+            .candleBuilder30Min(candleBuilder30MinNasdaq)
+            .candleBuilder1Hour(candleBuilder1HourNasdaq)
+            .candleBuilder4Hour(candleBuilder4HourNasdaq)
+            .build();
+
 
     private volatile boolean reconnecting = false;
 
@@ -121,24 +161,77 @@ public class EtoroLiveFeedListener implements Listener
         this.bandlogger = bandlogger;
         this.envService = envService;
         this.serviceRegistery = serviceRegistery;
-        candleBuilder1Min.marketStructureManagerCache(marketStructureManagerCache);
-        candleBuilder1Min.bandLogger(bandlogger);
-        candleBuilder1Min.objectMapper(objectMapper);
-        candleBuilder5Min.marketStructureManagerCache(marketStructureManagerCache);
-        candleBuilder5Min.bandLogger(bandlogger);
-        candleBuilder5Min.objectMapper(objectMapper);
-        candleBuilder15Min.marketStructureManagerCache(marketStructureManagerCache);
-        candleBuilder15Min.bandLogger(bandlogger);
-        candleBuilder15Min.objectMapper(objectMapper);
-        candleBuilder30Min.marketStructureManagerCache(marketStructureManagerCache);
-        candleBuilder30Min.bandLogger(bandlogger);
-        candleBuilder30Min.objectMapper(objectMapper);
-        candleBuilder1Hour.marketStructureManagerCache(marketStructureManagerCache);
-        candleBuilder1Hour.bandLogger(bandlogger);
-        candleBuilder1Hour.objectMapper(objectMapper);
-        candleBuilder4Hour.marketStructureManagerCache(marketStructureManagerCache);
-        candleBuilder4Hour.bandLogger(bandlogger);
-        candleBuilder4Hour.objectMapper(objectMapper);
+
+        List<Instrument> instrumentList = instrumentService.findByActive(Boolean.TRUE);
+
+        if(instrumentList.size() == 0)
+        {
+            return;
+        }
+        Instrument gold = instrumentList
+                .stream()
+                .filter(g->g.getEtoroInstrumentId() == 18)
+                .collect(Collectors.toList()).get(0);
+
+        Instrument nasdaq = instrumentList
+                .stream()
+                .filter(g->g.getEtoroInstrumentId() == 28)
+                .collect(Collectors.toList()).get(0);
+
+
+        candleBuilder1MinGold.setInstrument(gold);
+        candleBuilder5MinGold.setInstrument(gold);
+        candleBuilder15MinGold.setInstrument(gold);
+        candleBuilder30MinGold.setInstrument(gold);
+        candleBuilder1HourGold.setInstrument(gold);
+        candleBuilder4HourGold.setInstrument(gold);
+
+        candleBuilder1MinNasdaq.setInstrument(nasdaq);
+        candleBuilder5MinNasdaq.setInstrument(nasdaq);
+        candleBuilder15MinNasdaq.setInstrument(nasdaq);
+        candleBuilder30MinNasdaq.setInstrument(nasdaq);
+        candleBuilder1HourNasdaq.setInstrument(nasdaq);
+        candleBuilder4HourNasdaq.setInstrument(nasdaq);
+
+        candleBuilder1MinGold.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1MinGold.bandLogger(bandlogger);
+        candleBuilder1MinGold.objectMapper(objectMapper);
+        candleBuilder5MinGold.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder5MinGold.bandLogger(bandlogger);
+        candleBuilder5MinGold.objectMapper(objectMapper);
+        candleBuilder15MinGold.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder15MinGold.bandLogger(bandlogger);
+        candleBuilder15MinGold.objectMapper(objectMapper);
+        candleBuilder30MinGold.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder30MinGold.bandLogger(bandlogger);
+        candleBuilder30MinGold.objectMapper(objectMapper);
+        candleBuilder1HourGold.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1HourGold.bandLogger(bandlogger);
+        candleBuilder1HourGold.objectMapper(objectMapper);
+        candleBuilder4HourGold.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder4HourGold.bandLogger(bandlogger);
+        candleBuilder4HourGold.objectMapper(objectMapper);
+
+
+        candleBuilder1MinNasdaq.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1MinNasdaq.bandLogger(bandlogger);
+        candleBuilder1MinNasdaq.objectMapper(objectMapper);
+        candleBuilder5MinNasdaq.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder5MinNasdaq.bandLogger(bandlogger);
+        candleBuilder5MinNasdaq.objectMapper(objectMapper);
+        candleBuilder15MinNasdaq.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder15MinNasdaq.bandLogger(bandlogger);
+        candleBuilder15MinNasdaq.objectMapper(objectMapper);
+        candleBuilder30MinNasdaq.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder30MinNasdaq.bandLogger(bandlogger);
+        candleBuilder30MinNasdaq.objectMapper(objectMapper);
+        candleBuilder1HourNasdaq.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder1HourNasdaq.bandLogger(bandlogger);
+        candleBuilder1HourNasdaq.objectMapper(objectMapper);
+        candleBuilder4HourNasdaq.marketStructureManagerCache(marketStructureManagerCache);
+        candleBuilder4HourNasdaq.bandLogger(bandlogger);
+        candleBuilder4HourNasdaq.objectMapper(objectMapper);
+
     }
 
     @Override
@@ -196,33 +289,58 @@ public class EtoroLiveFeedListener implements Listener
                 LiveInstrumentRate liveInstrumentRate =
                         liveResponseMapper.mapResponse(data.toString());
 
-                if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
+                if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null
+                        && liveInstrumentRate.getInstrumentId() == 18)
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
-                    candleBuilder1Min.setCandleService(etoroCandleService);
-                    candleBuilder5Min.setCandleService(etoroCandleService);
-                    candleBuilder15Min.setCandleService(etoroCandleService);
-                    candleBuilder30Min.setCandleService(etoroCandleService);
-                    candleBuilder1Hour.setCandleService(etoroCandleService);
-                    candleBuilder4Hour.setCandleService(etoroCandleService);
+                    candleBuilder1MinGold.setCandleService(etoroCandleService);
+                    candleBuilder5MinGold.setCandleService(etoroCandleService);
+                    candleBuilder15MinGold.setCandleService(etoroCandleService);
+                    candleBuilder30MinGold.setCandleService(etoroCandleService);
+                    candleBuilder1HourGold.setCandleService(etoroCandleService);
+                    candleBuilder4HourGold.setCandleService(etoroCandleService);
                     SwingUtilities.invokeLater(() ->
                     {
-                        candleBuilder1Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 1));
-                        candleBuilder5Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 5));
-                        candleBuilder15Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 15));
-                        candleBuilder30Min.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 30));
-                        candleBuilder1Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 1));
-                        candleBuilder4Hour.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 4));
+                        candleBuilder1MinGold.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 1));
+                        candleBuilder5MinGold.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 5));
+                        candleBuilder15MinGold.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 15));
+                        candleBuilder30MinGold.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 30));
+                        candleBuilder1HourGold.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 1));
+                        candleBuilder4HourGold.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 4));
                     });
 
-                    marketFeedObserver.process(liveInstrumentRate, signalBuilder);
+                    marketFeedObserver.process(liveInstrumentRate, signalBuilderGold);
+                }
+
+
+                if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null
+                        && liveInstrumentRate.getInstrumentId() == 28)
+                {
+                    Tick tick = tickFromRate(liveInstrumentRate);
+                    candleBuilder1MinNasdaq.setCandleService(etoroCandleService);
+                    candleBuilder5MinNasdaq.setCandleService(etoroCandleService);
+                    candleBuilder15MinNasdaq.setCandleService(etoroCandleService);
+                    candleBuilder30MinNasdaq.setCandleService(etoroCandleService);
+                    candleBuilder1HourNasdaq.setCandleService(etoroCandleService);
+                    candleBuilder4HourNasdaq.setCandleService(etoroCandleService);
+                    SwingUtilities.invokeLater(() ->
+                    {
+                        candleBuilder1MinNasdaq.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 1));
+                        candleBuilder5MinNasdaq.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 5));
+                        candleBuilder15MinNasdaq.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 15));
+                        candleBuilder30MinNasdaq.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.MINUTE, 30));
+                        candleBuilder1HourNasdaq.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 1));
+                        candleBuilder4HourNasdaq.addAndUpdateCandle(toCandle(tick, TimeFramesUnit.HOUR, 4));
+                    });
+
+                    marketFeedObserver.process(liveInstrumentRate, signalBuilderGold);
                 }
 
                 if (TradingConfiguration.SHOW_TRADING)
                 {
                     if (instance == null)
                     {
-                        instance = new LiveMarketChart(marketStructureManagerCache, signalBuilder, serviceRegistery);
+                        instance = new LiveMarketChart(marketStructureManagerCache, signalBuilderGold, serviceRegistery);
                         instance.display();
 
                     } else
@@ -254,12 +372,12 @@ public class EtoroLiveFeedListener implements Listener
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason)
     {
         logger.warn("WebSocket closed [{}] {}", statusCode, reason);
-        candleBuilder1Min.flush();
-        candleBuilder5Min.flush();
-        candleBuilder15Min.flush();
-        candleBuilder30Min.flush();
-        candleBuilder1Hour.flush();
-        candleBuilder4Hour.flush();
+        candleBuilder1MinGold.flush();
+        candleBuilder5MinGold.flush();
+        candleBuilder15MinGold.flush();
+        candleBuilder30MinGold.flush();
+        candleBuilder1HourGold.flush();
+        candleBuilder4HourGold.flush();
         reconnect(apiConfiguration.getUrl());
         return CompletableFuture.completedFuture(null);
     }
