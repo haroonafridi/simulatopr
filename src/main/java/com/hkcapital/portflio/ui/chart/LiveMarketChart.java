@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.ui.chart;
 
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
+import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketPriceBand;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.stream.Collectors;
 
 public class LiveMarketChart extends JFrame
 {
@@ -251,8 +253,20 @@ public class LiveMarketChart extends JFrame
             {
                 if (timeframeCombo.getSelectedItem().equals("1"))
                 {
-                    candles =
-                            signalBuilder.getCandleBuilder1Min().candles();
+
+                    for (CandleBuilder candleBuilder : signalBuilder.getCandleBuilder())
+                    {
+                        for (CandleDto c : candleBuilder.getCandles())
+                        {
+                            if (c.getTimeFramesUnit().getUnit()
+                                    .equals(unitCombo.getSelectedItem()) && c.getInterval().intValue() ==
+                                    Integer.parseInt(timeframeCombo.getSelectedItem().toString()))
+                            {
+                                candles.add(c);
+                            }
+                        }
+                    }
+
                     dataArray = candles.stream()
                             .map(c -> new org.jfree.data.xy.OHLCDataItem(
                                     new java.util.Date(c.getTime().toEpochMilli()),
@@ -271,8 +285,20 @@ public class LiveMarketChart extends JFrame
 
                 if (timeframeCombo.getSelectedItem().equals("5"))
                 {
-                    candles =
-                            signalBuilder.getCandleBuilder5Min().candles();
+
+                    for (CandleBuilder candleBuilder : signalBuilder.getCandleBuilder())
+                    {
+                        for (CandleDto c : candleBuilder.getCandles())
+                        {
+                            if (c.getTimeFramesUnit().getUnit()
+                                    .equals(unitCombo.getSelectedItem()) && c.getInterval().intValue() ==
+                                    Integer.parseInt(timeframeCombo.getSelectedItem().toString()))
+                            {
+                                candles.add(c);
+                            }
+                        }
+                    }
+
                     dataArray = candles.stream()
                             .map(c -> new org.jfree.data.xy.OHLCDataItem(
                                     new java.util.Date(c.getTime().toEpochMilli()),
@@ -290,10 +316,23 @@ public class LiveMarketChart extends JFrame
                 }
 
 
+
                 if (timeframeCombo.getSelectedItem().equals("15"))
                 {
-                    candles =
-                            signalBuilder.getCandleBuilder15Min().candles();
+
+                    for (CandleBuilder candleBuilder : signalBuilder.getCandleBuilder())
+                    {
+                        for (CandleDto c : candleBuilder.getCandles())
+                        {
+                            if (c.getTimeFramesUnit().getUnit()
+                                    .equals(unitCombo.getSelectedItem()) && c.getInterval().intValue() ==
+                                    Integer.parseInt(timeframeCombo.getSelectedItem().toString()))
+                            {
+                                candles.add(c);
+                            }
+                        }
+                    }
+
                     dataArray = candles.stream()
                             .map(c -> new org.jfree.data.xy.OHLCDataItem(
                                     new java.util.Date(c.getTime().toEpochMilli()),
@@ -306,15 +345,28 @@ public class LiveMarketChart extends JFrame
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
                     drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 15),
-                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 5, null),
+                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 15, null),
                             ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 15));
                 }
 
 
+
                 if (timeframeCombo.getSelectedItem().equals("30"))
                 {
-                    candles =
-                            signalBuilder.getCandleBuilder30Min().candles();
+
+                    for (CandleBuilder candleBuilder : signalBuilder.getCandleBuilder())
+                    {
+                        for (CandleDto c : candleBuilder.getCandles())
+                        {
+                            if (c.getTimeFramesUnit().getUnit()
+                                    .equals(unitCombo.getSelectedItem()) && c.getInterval().intValue() ==
+                                    Integer.parseInt(timeframeCombo.getSelectedItem().toString()))
+                            {
+                                candles.add(c);
+                            }
+                        }
+                    }
+
                     dataArray = candles.stream()
                             .map(c -> new org.jfree.data.xy.OHLCDataItem(
                                     new java.util.Date(c.getTime().toEpochMilli()),
@@ -330,14 +382,27 @@ public class LiveMarketChart extends JFrame
                             ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 30, null),
                             ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 30));
                 }
+
             }
 
             if (unitCombo.getSelectedItem().equals(TimeFramesUnit.HOUR.getUnit()))
             {
                 if (timeframeCombo.getSelectedItem().equals("1"))
                 {
-                    candles =
-                            signalBuilder.getCandleBuilder1Hour().candles();
+
+                    for (CandleBuilder candleBuilder : signalBuilder.getCandleBuilder())
+                    {
+                        for (CandleDto c : candleBuilder.getCandles())
+                        {
+                            if (c.getTimeFramesUnit().getUnit()
+                                    .equals(unitCombo.getSelectedItem()) && c.getInterval().intValue() ==
+                                    Integer.parseInt(timeframeCombo.getSelectedItem().toString()))
+                            {
+                                candles.add(c);
+                            }
+                        }
+                    }
+
                     dataArray = candles.stream()
                             .map(c -> new org.jfree.data.xy.OHLCDataItem(
                                     new java.util.Date(c.getTime().toEpochMilli()),
@@ -354,10 +419,23 @@ public class LiveMarketChart extends JFrame
                             ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.HOUR, 1));
                 }
 
+
                 if (timeframeCombo.getSelectedItem().equals("4"))
                 {
-                    candles =
-                            signalBuilder.getCandleBuilder1Hour().candles();
+
+                    for (CandleBuilder candleBuilder : signalBuilder.getCandleBuilder())
+                    {
+                        for (CandleDto c : candleBuilder.getCandles())
+                        {
+                            if (c.getTimeFramesUnit().getUnit()
+                                    .equals(unitCombo.getSelectedItem()) && c.getInterval().intValue() ==
+                                    Integer.parseInt(timeframeCombo.getSelectedItem().toString()))
+                            {
+                                candles.add(c);
+                            }
+                        }
+                    }
+
                     dataArray = candles.stream()
                             .map(c -> new org.jfree.data.xy.OHLCDataItem(
                                     new java.util.Date(c.getTime().toEpochMilli()),
@@ -373,6 +451,7 @@ public class LiveMarketChart extends JFrame
                             ChartUtil.createDateRange(TimeFramesUnit.HOUR, 4, null),
                             ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.HOUR, 4));
                 }
+
             }
         });
     }
@@ -536,8 +615,8 @@ public class LiveMarketChart extends JFrame
 
     public void updatePlot()
     {
-        maxClose = signalBuilder.getCandleBuilder1Min().candles().stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
-        minClose = signalBuilder.getCandleBuilder1Min().candles().stream().mapToDouble(c -> c.getHigh()).min().getAsDouble();
+       // maxClose = signalBuilder.getCandleBuilder1Min().candles().stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
+       // minClose = signalBuilder.getCandleBuilder1Min().candles().stream().mapToDouble(c -> c.getHigh()).min().getAsDouble();
     }
 
     private void autoFitChart()

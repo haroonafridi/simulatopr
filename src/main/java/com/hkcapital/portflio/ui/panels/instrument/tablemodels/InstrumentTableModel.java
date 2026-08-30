@@ -58,6 +58,11 @@ public class InstrumentTableModel<E> extends TableModel
             case 6:
             {
 
+                return inst.getWithCandle();
+            }
+            case 7:
+            {
+
                 return inst.getActive();
             }
 

@@ -2,16 +2,22 @@ package com.hkcapital.portflio.service.candle.etoro.impl;
 
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import lombok.Builder;
-import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
-@Getter
 public class SignalBuilder
 {
-    private CandleBuilder candleBuilder1Min;
-    private CandleBuilder candleBuilder5Min;
-    private CandleBuilder candleBuilder15Min;
-    private CandleBuilder candleBuilder30Min;
-    private CandleBuilder candleBuilder1Hour;
-    private CandleBuilder candleBuilder4Hour;
+    private List<CandleBuilder> candleBuilder;
+
+    public List<CandleBuilder> getCandleBuilder()
+    {
+        if (candleBuilder == null)
+        {
+            return new ArrayList<>();
+        }
+
+        return candleBuilder;
+    }
 }

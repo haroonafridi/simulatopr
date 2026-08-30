@@ -411,6 +411,10 @@ public class CandleBuilder
         return sma;
     }
 
+    public Instrument getInstrument()
+    {
+        return instrument;
+    }
 }
 
 

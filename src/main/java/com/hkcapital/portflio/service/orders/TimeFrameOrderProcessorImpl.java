@@ -61,8 +61,6 @@ public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
                         Double bid = instrumentRate.getBid();
                         Double slippage = ask - bid;
                         logger.info("Instrument price received bid = [{}] , ask = [{}] slippage = [{}] , maxSlippage = [{}] sending order for execution", bid, ask, slippage, instrument.getMaxSlippage());
-                        logger.info("No of candles generated {} ",
-                                signalBuilder.getCandleBuilder1Min().candles().size());
                         List<Strategy> strategies = //
                                 strategyService.findAll()//
                                         .stream()//

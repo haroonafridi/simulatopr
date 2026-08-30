@@ -39,34 +39,39 @@ public class InstrumentConfTableModel<E> extends TableModel
 
             case 2:
             {
-                return instConf.getTimeFrameUnit();
+                return instConf.getMarketOrder();
             }
 
             case 3:
             {
-                return instConf.getTimeFrame();
+                return instConf.getTimeFrameUnit();
             }
+
             case 4:
             {
-                return instConf.getIntrvl();
+                return instConf.getTimeFrame();
             }
             case 5:
             {
-                return instConf.getModule();
+                return instConf.getIntrvl();
             }
             case 6:
+            {
+                return instConf.getModule();
+            }
+            case 7:
             {
 
                 return instConf.getSub();
             }
 
-            case 7:
+            case 8:
             {
 
                 return instConf.getStructureName();
             }
 
-            case 8:
+            case 9:
             {
 
                 return instConf.isActive();

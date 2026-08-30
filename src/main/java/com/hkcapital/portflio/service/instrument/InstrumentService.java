@@ -25,6 +25,8 @@ public interface InstrumentService  extends Service
 
     List<Instrument> findByActive(Boolean active);
 
+    List<Instrument> findByActiveAndWithCandle(Boolean active, Boolean withCandle);
+
 
     Instrument findByInstrumentTicker(String instrumentTicker);
 

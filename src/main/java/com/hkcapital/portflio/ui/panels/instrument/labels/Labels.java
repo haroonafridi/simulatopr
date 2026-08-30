@@ -11,7 +11,7 @@ public enum Labels
     MaxSlippage("Max Slippage:"),
     EtoroInstrumentId("Etoro Instrument Id:"),
     Active("Active:"),
-
+    WithCandle("With Candle:"),
     Url("Url:"),
     InstrumentPanel("Instrument Panel:"),
 
@@ -22,7 +22,9 @@ public enum Labels
     Sub("Sub"),
     Interval("Interval"),
 
-    StructureName("Structure Name");
+    StructureName("Structure Name"),
+
+    Order("Order");
 
     private String label;
 

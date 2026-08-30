@@ -42,7 +42,9 @@ public class InstrumentPanel extends UIBag
         this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
 
         tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(),Labels.Ticker.getLabel(), Labels.Name.getLabel(),
-        Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(), Labels.Active.getLabel()}, //
+        Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(),
+                Labels.WithCandle.getLabel(),
+                Labels.Active.getLabel()}, //
                 instrumentService.findAll());
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(Labels.InstrumentPanel.getLabel()));

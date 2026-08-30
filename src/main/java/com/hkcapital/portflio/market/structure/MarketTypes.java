@@ -11,14 +11,22 @@ public enum MarketTypes
     // GOLD_1_DAY("gold_1_day"),
     //GOLD_1_WEEK("gold_1_week"),
 
-    NASDAQ_1_MIN("nasdaq_5_mins"),
+    NASDAQ_1_MIN("nasdaq_1_mins"),
     NASDAQ_5_MIN("nasdaq_5_mins"),
     NASDAQ_15_MIN("nasdaq_15_mins"),
     NASDAQ_30_MIN("nasdaq_30_mins"),
     NASDAQ_1_HOUR("nasdaq_1_hour"),
-    NASDAQ_4_HOUR("nasdaq_4_hour");
+    NASDAQ_4_HOUR("nasdaq_4_hour"),
     // NASDAQ_1_DAY("nasdaq_1_day"),
     // NASDAQ_1_WEEK("nasdaq_1_week");
+
+
+    BTC_1_MIN("btc_1_mins"),
+    BTC_5_MIN("btc_5_mins"),
+    BTC_15_MIN("btc_15_mins"),
+    BTC_30_MIN("btc_30_mins"),
+    BTC_1_HOUR("btc_1_hour"),
+    BTC_4_HOUR("btc_4_hour");
 
 
     private String value;

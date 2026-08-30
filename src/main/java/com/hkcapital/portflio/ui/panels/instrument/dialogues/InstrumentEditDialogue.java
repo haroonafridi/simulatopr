@@ -27,6 +27,8 @@ public class InstrumentEditDialogue extends JDialog
     JTextField etoroInstrumentId = new NumberTextField(30);
     JLabel maxSlippageLabel = new JLabel("Slippage:");
     JTextField maxSlippage = new NumberTextField(30);
+
+    JCheckBox withCandle = new JCheckBox("With Candle");
     JCheckBox active = new JCheckBox("Active");
 
     JButton save = new JButton("Save");
@@ -50,6 +52,7 @@ public class InstrumentEditDialogue extends JDialog
         etoroInstrumentId.setText(instrument.getEtoroInstrumentId() != null ? "" + instrument.getEtoroInstrumentId() : "");
         maxSlippage.setText(instrument.getMaxSlippage() != null ? "" + instrument.getMaxSlippage() : "");
         active.setSelected(instrument.getActive() == null ? false : instrument.getActive());
+        withCandle.setSelected(instrument.getWithCandle() == null ? false : instrument.getWithCandle());
         JDialog dialog = new JDialog((Frame) null, "Instrument = [" + instrument.getName() + "]", true);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -90,6 +93,7 @@ public class InstrumentEditDialogue extends JDialog
         panel1.add(maxSlippageLabel);
         panel1.add(maxSlippage);
         panel1.add(active);
+        panel1.add(withCandle);
         panel2.add(scroll);
         JPanel buttonPanel = new JPanel();
         panel.add(panel1);
@@ -103,7 +107,7 @@ public class InstrumentEditDialogue extends JDialog
     {
         instrument.setName(instrumentName.getText());
         instrument.setActive(active.isSelected());
-        System.out.println("instrumentSymbol "+instrumentSymbol.getText());
+        instrument.setWithCandle(withCandle.isSelected());
         instrument.setInstrumentTicker(instrumentSymbol.getText());
         instrument.setInstrumentDesc(instrumentDescription.getText());
         instrument.setUrl(instrumentUrl.getText());

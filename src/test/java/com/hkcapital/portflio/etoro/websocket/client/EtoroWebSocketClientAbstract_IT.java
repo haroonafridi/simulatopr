@@ -13,6 +13,7 @@ import com.hkcapital.portflio.service.candle.etoro.impl.EtoroLiveFeedListener;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
@@ -72,6 +73,9 @@ public abstract class EtoroWebSocketClientAbstract_IT
     protected EnvService envService;
     @Autowired
     protected ServiceRegistery serviceRegistery;
+
+    @Autowired
+    protected InstrumentMarketStructureConfService instMrktStConf;
     public WebSocket connect(Instrument instrument) throws InterruptedException
     {
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
@@ -85,6 +89,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 marketStructureCache,
                 bandlogger,
                 envService,
+                instMrktStConf,
                 serviceRegistery);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
@@ -118,6 +123,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 marketStructureCache,
                 bandlogger,
                 envService,
+                instMrktStConf,
                 serviceRegistery); // //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(

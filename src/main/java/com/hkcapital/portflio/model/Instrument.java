@@ -34,6 +34,18 @@ public class Instrument
     @Column(name = "active")
     private Boolean active;
 
+    @Column(name = "with_candle")
+    private Boolean withCandle = false;
+
+    public Boolean getWithCandle()
+    {
+        if (withCandle == null)
+        {
+            return false;
+        }
+        return withCandle;
+    }
+
     @Override
     public String toString()
     {

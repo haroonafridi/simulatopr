@@ -9,6 +9,7 @@ import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
@@ -40,6 +41,8 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
 
     private final MarketStructureCache marketStructureManagerCache;
 
+    private final InstrumentMarketStructureConfService instMrktStrCon;
+
     private final EtoroCandleService etoroCandleService;
 
     private final Bandlogger bandlogger;
@@ -63,6 +66,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                                             final MarketStructureCache marketStructureManagerCache,
                                             final Bandlogger bandlogger,
                                             final EnvService envService,
+                                            final InstrumentMarketStructureConfService instMrktStrCon,
                                             final ServiceRegistery serviceRegistery)
     {
 
@@ -81,6 +85,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.bandlogger = bandlogger;
         this.envService = envService;
+        this.instMrktStrCon = instMrktStrCon;
         this.serviceRegistery = serviceRegistery;
     }
 
@@ -91,7 +96,8 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         StartWebSocketRunner startWebSocket = //
                 new StartWebSocketRunner(etoroApiConfiguration, marketFeedObserver, //
                         liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
-                        marketStructureManagerCache, bandlogger, envService, serviceRegistery);
+                        marketStructureManagerCache, bandlogger, envService,
+                        instMrktStrCon, serviceRegistery);
         new Thread(startWebSocket).start();
 
         ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();

@@ -39,10 +39,10 @@ public class ChartUtil
             {
                 case 1:
                 {
-                   CandleDto candle =
-                           signalBuilder.getCandleBuilder1Min().getCandles()
-                                   .get(signalBuilder.getCandleBuilder1Min()
-                                           .getCandles().size());
+                   CandleDto candle = null;
+//                           signalBuilder.getCandleBuilder1Min().getCandles()
+//                                   .get(signalBuilder.getCandleBuilder1Min()
+//                                           .getCandles().size());
 
                     LocalDate td = candle.getHighTime().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(-1);
 

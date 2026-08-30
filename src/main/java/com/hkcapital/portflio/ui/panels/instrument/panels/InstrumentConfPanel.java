@@ -20,7 +20,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 public class InstrumentConfPanel extends UIBag
@@ -68,7 +67,11 @@ public class InstrumentConfPanel extends UIBag
         this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
         this.instMarktStrConfService = (InstrumentMarketStructureConfService) this.serviceRegistery.getService(Service.InstrumentMarketStructureConfService);
 
-        instrumentConfTableModel = new InstrumentConfTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Ticker.getLabel(), Labels.TimeFrame.getLabel(), Labels.TimeFrameUnit.getLabel(), Labels.Module.getLabel(), //
+        instrumentConfTableModel = new InstrumentConfTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Ticker.getLabel(),
+                Labels.Order.getLabel(),
+                Labels.TimeFrame.getLabel(),
+                Labels.TimeFrameUnit.getLabel(),
+                Labels.Module.getLabel(), //
                 Labels.Sub.getLabel(), Labels.Interval.getLabel(), Labels.Active.getLabel()}, //
                 instMarktStrConfService.findAll());
 
