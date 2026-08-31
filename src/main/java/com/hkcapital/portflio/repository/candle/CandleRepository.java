@@ -26,5 +26,12 @@ public interface CandleRepository extends JpaRepository<Candle, Integer>
             LocalDateTime endDate
     );
 
-    List<Candle> findByInstrumentIDAndCreationDateTimeBetween(Integer instrumentID, LocalDateTime startDate, LocalDateTime endDate);
+    List<Candle> findByInstrumentIDAndCreationDateTimeBetween(
+            Integer instrumentID,
+            LocalDateTime startDate,
+            LocalDateTime endDate);
+
+    List<Candle> findByCreationDateTimeBetween(
+            LocalDateTime startDate,
+            LocalDateTime endDate);
 }

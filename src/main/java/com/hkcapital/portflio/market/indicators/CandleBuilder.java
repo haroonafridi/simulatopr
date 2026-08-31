@@ -194,7 +194,6 @@ public class CandleBuilder
                 }
             });
 
-
             candleService.save(candle);
             logger.info("Candle closed event fired: rsi = {}  atr = {}, ema = {} sma = {}, {} ", rsiValue, atrVal, emaVal, smaVal, closedCandle);
         }

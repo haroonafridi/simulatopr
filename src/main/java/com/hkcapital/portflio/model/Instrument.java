@@ -37,6 +37,33 @@ public class Instrument
     @Column(name = "with_candle")
     private Boolean withCandle = false;
 
+    @Column(name = "with_feed")
+    private Boolean withFeed = false;
+
+    @Column(name = "with_band")
+    private Boolean withBand = false;
+
+
+    public Boolean getWithFeed()
+    {
+        if (withFeed == null)
+        {
+            return false;
+        }
+
+        return withFeed;
+    }
+
+
+    public Boolean getWithBand()
+    {
+        if (withBand == null)
+        {
+            return false;
+        }
+        return withBand;
+    }
+
     public Boolean getWithCandle()
     {
         if (withCandle == null)

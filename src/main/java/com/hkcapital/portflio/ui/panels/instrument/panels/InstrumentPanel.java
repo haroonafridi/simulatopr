@@ -44,6 +44,8 @@ public class InstrumentPanel extends UIBag
         tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(),Labels.Ticker.getLabel(), Labels.Name.getLabel(),
         Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(),
                 Labels.WithCandle.getLabel(),
+                Labels.WithFeed.getLabel(),
+                Labels.WithBands.getLabel(),
                 Labels.Active.getLabel()}, //
                 instrumentService.findAll());
         setLayout(new GridBagLayout());
@@ -116,7 +118,6 @@ public class InstrumentPanel extends UIBag
             {
                 Integer instrumentId = (Integer) instrumentTable.getModel() //
                         .getValueAt(instrumentTable.getSelectedRow(), 0);
-                InstrumentEditDialogue instrumentEditDialogue = //
                         new InstrumentEditDialogue(frame, instrumentService, instrumentId);
             }
         }

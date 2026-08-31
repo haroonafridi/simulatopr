@@ -97,6 +97,17 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
         return candleRepository.findByInstrumentIDAndCreationDateTimeBetween(instrumentID, startDate, endDate);
     }
 
+
+    @Override
+    public List<Candle> findByCreationDateTimeBetween(
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    )
+    {
+        return candleRepository.findByCreationDateTimeBetween(startDate, endDate);
+    }
+
+
     @Override
     public List<CandleDto> findCandleDtoByInstrumentIDAndCreationDateTimeBetween(Integer instrumentID, LocalDateTime startDate, LocalDateTime endDate)
     {

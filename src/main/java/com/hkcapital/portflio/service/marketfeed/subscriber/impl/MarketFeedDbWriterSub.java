@@ -1,15 +1,19 @@
 package com.hkcapital.portflio.service.marketfeed.subscriber.impl;
 
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.LiveInstrumentFeed;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.marketfeed.subscriber.MarketFeedSubscriber;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MarketFeedDbWriterSub implements MarketFeedSubscriber
 {
     private final LiveInstrumentFeedRepository liveInstrumentFeedRepository;
@@ -23,8 +27,21 @@ public class MarketFeedDbWriterSub implements MarketFeedSubscriber
     public void process(LiveInstrumentRate liveRate, SignalBuilder signalBuilder)
     {
 
+
         if (liveRate.getInstrumentId() != null && liveRate.getAsk() != null && liveRate.getBid() != null)
         {
+            Instrument inst = signalBuilder
+                    .getInstruments()
+                    .stream()
+                    .filter(instrument -> instrument.getEtoroInstrumentId().intValue() ==
+                            liveRate.getInstrumentId().intValue())
+                    .collect(Collectors.toList())
+                    .stream().findFirst().get();
+
+            if (!inst.getWithFeed())
+            {
+                return;
+            }
             LiveInstrumentFeed liveInstrumentFeed = //
                     LiveInstrumentFeed.builder()
                             .instrumentId(liveRate.getInstrumentId())//

@@ -31,6 +31,10 @@ public class InstrumentEditDialogue extends JDialog
     JCheckBox withCandle = new JCheckBox("With Candle");
     JCheckBox active = new JCheckBox("Active");
 
+    JCheckBox withFeed = new JCheckBox("With Feed");
+
+    JCheckBox withBand = new JCheckBox("With Band");
+
     JButton save = new JButton("Save");
     JButton cancel = new JButton("Cancel");
 
@@ -53,6 +57,8 @@ public class InstrumentEditDialogue extends JDialog
         maxSlippage.setText(instrument.getMaxSlippage() != null ? "" + instrument.getMaxSlippage() : "");
         active.setSelected(instrument.getActive() == null ? false : instrument.getActive());
         withCandle.setSelected(instrument.getWithCandle() == null ? false : instrument.getWithCandle());
+        withFeed.setSelected(instrument.getWithFeed() == null ? false : instrument.getWithFeed());
+        withBand.setSelected(instrument.getWithBand() == null ? false : instrument.getWithFeed());
         JDialog dialog = new JDialog((Frame) null, "Instrument = [" + instrument.getName() + "]", true);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -94,6 +100,8 @@ public class InstrumentEditDialogue extends JDialog
         panel1.add(maxSlippage);
         panel1.add(active);
         panel1.add(withCandle);
+        panel1.add(withFeed);
+        panel1.add(withBand);
         panel2.add(scroll);
         JPanel buttonPanel = new JPanel();
         panel.add(panel1);
@@ -108,6 +116,8 @@ public class InstrumentEditDialogue extends JDialog
         instrument.setName(instrumentName.getText());
         instrument.setActive(active.isSelected());
         instrument.setWithCandle(withCandle.isSelected());
+        instrument.setWithFeed(withFeed.isSelected());
+        instrument.setWithBand(withBand.isSelected());
         instrument.setInstrumentTicker(instrumentSymbol.getText());
         instrument.setInstrumentDesc(instrumentDescription.getText());
         instrument.setUrl(instrumentUrl.getText());

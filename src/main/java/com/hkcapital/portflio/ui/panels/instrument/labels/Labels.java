@@ -12,6 +12,8 @@ public enum Labels
     EtoroInstrumentId("Etoro Instrument Id:"),
     Active("Active:"),
     WithCandle("With Candle:"),
+    WithFeed("With Feed:"),
+    WithBands("With Bands:"),
     Url("Url:"),
     InstrumentPanel("Instrument Panel:"),
 

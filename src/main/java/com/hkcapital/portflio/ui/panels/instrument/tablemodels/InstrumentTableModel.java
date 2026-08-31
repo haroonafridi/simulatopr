@@ -63,6 +63,16 @@ public class InstrumentTableModel<E> extends TableModel
             case 7:
             {
 
+                return inst.getWithFeed();
+            }
+            case 8:
+            {
+
+                return inst.getWithBand();
+            }
+            case 9:
+            {
+
                 return inst.getActive();
             }
 

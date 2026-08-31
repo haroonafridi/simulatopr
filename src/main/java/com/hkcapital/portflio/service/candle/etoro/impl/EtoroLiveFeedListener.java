@@ -119,6 +119,7 @@ public class EtoroLiveFeedListener implements Listener
                 signalBuilder.getCandleBuilder()
                         .add(candleBuilder);
             }
+            signalBuilder.getInstruments().add(inst);
         }
     }
 
@@ -183,7 +184,9 @@ public class EtoroLiveFeedListener implements Listener
                     {
                         signalBuilder.getCandleBuilder().forEach(candleBuilder ->
                         {
-                            if (liveInstrumentRate.getInstrumentId() == candleBuilder.getInstrument().getEtoroInstrumentId())
+                            if (liveInstrumentRate.getInstrumentId() == candleBuilder.getInstrument().getEtoroInstrumentId().intValue()
+                                    && candleBuilder.getInstrument().getWithCandle().booleanValue()
+                            )
                             {
                                 candleBuilder.addAndUpdateCandle(toCandle(tick, candleBuilder.getTimeFrame(), candleBuilder.getInterval()));
                             }
