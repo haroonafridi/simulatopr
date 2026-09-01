@@ -165,14 +165,16 @@ public class MarketStructureCache implements Service
                     marketStructure.init(candleList);
                     childMarketStructure = marketStructure;
                     parentConf = instMrktConf;
-
                 }
                 parentMarketStructure = childMarketStructure;
-                register(parentConf.getStructureName(), parentMarketStructure);
-            }
-            else
+                if (parentConf != null)
+                {
+                    register(parentConf.getStructureName(), parentMarketStructure);
+                }
+
+            } else
             {
-                log.info("Candle and Market bands will not be generarted for instrument [{}] ", inst.getInstrumentTicker());
+                log.info("Candle and Market bands will not be generarted for instrumentTicker [{}] ", inst.getInstrumentTicker());
             }
         }
     }

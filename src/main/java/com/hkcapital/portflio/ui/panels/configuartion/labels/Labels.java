@@ -7,7 +7,7 @@ public enum Labels
     PercentAllowedAllocation("% Allocation allowed:"),
     NoOfInstruments("No of Instruments:"),
     NoofPositionsPerinstruments(" No of Positions per instruments:"),
-    MaxPercentAllowedPerPosition("Max % percent allowed per instrument:"),
+    MaxPercentAllowedPerPosition("Max % percent allowed per instrumentTicker:"),
     Lev("Lev");
 
     private String label;

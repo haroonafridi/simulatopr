@@ -20,7 +20,7 @@ public class PreviousDayMarketRange implements PriceRange
     @Override
     public Instrument getInstrument()
     {
-        // instrument has to be added
+        // instrumentTicker has to be added
         return instrument;
     }
 

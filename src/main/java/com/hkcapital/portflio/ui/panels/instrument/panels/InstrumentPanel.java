@@ -140,7 +140,7 @@ public class InstrumentPanel extends UIBag
             instrumentName.setText(null);
         } else
         {
-            JOptionPane.showMessageDialog(this, "Please enter an instrument name.",
+            JOptionPane.showMessageDialog(this, "Please enter an instrumentTicker name.",
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -154,7 +154,7 @@ public class InstrumentPanel extends UIBag
             instrumentService.removeInstrument(instrument);
         } else
         {
-            JOptionPane.showMessageDialog(this, "Please select an instrument to remove.",
+            JOptionPane.showMessageDialog(this, "Please select an instrumentTicker to remove.",
                     "No Selection", JOptionPane.WARNING_MESSAGE);
         }
     }

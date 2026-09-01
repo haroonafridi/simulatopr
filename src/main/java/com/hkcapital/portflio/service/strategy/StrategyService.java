@@ -13,6 +13,8 @@ public interface StrategyService extends Service
 
     Strategy updateStrategy(Strategy strategy);
 
+    Strategy findByName(String name);
+
     List<Strategy> findAll();
 
     Strategy findById(Integer id);

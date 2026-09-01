@@ -37,6 +37,12 @@ public class StrategyServiceImpl implements StrategyService
     }
 
     @Override
+    public Strategy findByName(String name)
+    {
+        return strategyRepository.findByName(name);
+    }
+
+    @Override
     public List<Strategy> findAll()
     {
         return strategyRepository.findAll();

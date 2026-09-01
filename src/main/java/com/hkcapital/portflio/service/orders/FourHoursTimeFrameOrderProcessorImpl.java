@@ -74,7 +74,7 @@ public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProce
                 && position.getExecutionCount() > 0)
         {
             logger.info("Placing Buy order for timeframe 4 hour");
-            logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrument price = [{}] ", support - 10, support + 10, instrumentRate.getAsk());
+            logger.info("Support and price 4 hour timeframe low support = [{}] , high support = [{}]  instrumentTicker price = [{}] ", support - 10, support + 10, instrumentRate.getAsk());
 
             Double tp = position.getSrMatrix().getTakeProfit();
             Double sl = position.getSrMatrix().getStopLoss();

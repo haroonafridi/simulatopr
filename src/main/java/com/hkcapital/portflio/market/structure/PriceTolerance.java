@@ -11,7 +11,7 @@ public class PriceTolerance
 
     public static Double getPriceToleranceBelow(MarketTypes marketTypes, Instrument instrument)
     {
-       // if (instrument.getEtoroInstrumentId() == 18 && //
+       // if (instrumentTicker.getEtoroInstrumentId() == 18 && //
             //    MarketTypes.GOLD_15_MIN.equals(marketTypes))
        // {
             return 2d;
@@ -21,7 +21,7 @@ public class PriceTolerance
 
     public static Double getPriceToleranceAbove(MarketTypes marketTypes, Instrument instrument)
     {
-       // if (instrument.getEtoroInstrumentId() == 18 && //
+       // if (instrumentTicker.getEtoroInstrumentId() == 18 && //
             //    MarketTypes.GOLD_15_MIN.equals(marketTypes))
         //{
             return 3d;

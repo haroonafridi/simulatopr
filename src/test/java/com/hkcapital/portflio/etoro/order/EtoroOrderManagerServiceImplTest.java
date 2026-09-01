@@ -122,7 +122,7 @@ class EtoroOrderManagerServiceImplTest extends EtoroAbstractTest
         //THEN it throws EtoroOrderException
         Assertions.assertThrows(EtoroOrderException.class,
                 () -> orderManagerService.createAndSaveMarketOrder(etoroMarketOrderDto2),
-                "Open order already exist for instrument id = 18");
+                "Open order already exist for instrumentTicker id = 18");
     }
 
     private void assertAutoOrderEtoro(EtoroOrder persistedOrder)

@@ -22,7 +22,7 @@ public class SRMatrixToleranceSpecification
             {
                 predicates.add(
                         cb.equal(
-                                root.get("instrument").get("id"),
+                                root.get("instrumentTicker").get("id"),
                                 filter.getInstrumentId()
                         )
                 );

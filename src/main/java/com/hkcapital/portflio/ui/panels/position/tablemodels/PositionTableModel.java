@@ -89,7 +89,7 @@ public class PositionTableModel<E> extends TableModel
             case 4:
                 return position.getCurrentPositionEquity();
             case 5:
-                return position.getCurrentPositionEquity() * position.getConfiguration().getLev();
+                return position.getCurrentPositionEquity() * position.getLeverage();
 //            case 7:
 //                return position.getAllowedFirePower();
 //            case 8:
@@ -117,7 +117,7 @@ public class PositionTableModel<E> extends TableModel
             case 12:
                 return position.getSrMatrix().getTimeFrameUnit();//
             case 13:
-                return position.getConfiguration().getLev();
+                return position.getLeverage();
             case 14:
                 return position.getActive() ? "YES" : "NO";
             case 15:

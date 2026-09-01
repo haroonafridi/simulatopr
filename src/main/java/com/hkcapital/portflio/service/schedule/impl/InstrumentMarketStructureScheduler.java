@@ -44,7 +44,7 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
 
     private void extractAndCreateBands()
     {
-        logger.info("Creating instrument bands in db");
+        logger.info("Creating instrumentTicker bands in db");
         Instrument inst = instService.findByEtoroInstrumentId(18);
         MarketStructure hour4 = marketStructureManagerCache.get(MarketTypes.GOLD_4_HOUR);
         if (hour4 != null)

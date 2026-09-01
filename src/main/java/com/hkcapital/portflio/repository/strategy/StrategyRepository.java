@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface StrategyRepository extends JpaRepository<Strategy, Integer>
 {
     Strategy findByIdOrderByActiveDesc(Integer id);
+    Strategy findByName(String name);
 }

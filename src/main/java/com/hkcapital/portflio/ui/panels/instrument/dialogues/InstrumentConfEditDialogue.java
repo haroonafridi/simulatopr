@@ -87,33 +87,33 @@ public class InstrumentConfEditDialogue extends JDialog
 
     public void save()
     {
-//        instrument.setName(instrumentName.getText());
-//        instrument.setActive(active.isSelected());
+//        instrumentTicker.setName(instrumentName.getText());
+//        instrumentTicker.setActive(active.isSelected());
 //        System.out.println("instrumentSymbol "+instrumentSymbol.getText());
-//        instrument.setInstrumentTicker(instrumentSymbol.getText());
-//        instrument.setInstrumentDesc(instrumentDescription.getText());
-//        instrument.setUrl(instrumentUrl.getText());
+//        instrumentTicker.setInstrumentTicker(instrumentSymbol.getText());
+//        instrumentTicker.setInstrumentDesc(instrumentDescription.getText());
+//        instrumentTicker.setUrl(instrumentUrl.getText());
 //        if (maxSlippage.getText() == null)
 //        {
-//            instrument.setMaxSlippage(null);
+//            instrumentTicker.setMaxSlippage(null);
 //        } else if ("".equals((maxSlippage.getText())))
 //        {
-//            instrument.setMaxSlippage(null);
+//            instrumentTicker.setMaxSlippage(null);
 //        } else
 //        {
-//            instrument.setMaxSlippage(Double.parseDouble(maxSlippage.getText()));
+//            instrumentTicker.setMaxSlippage(Double.parseDouble(maxSlippage.getText()));
 //        }
 //        if (etoroInstrumentId.getText() == null)
 //        {
-//            instrument.setEtoroInstrumentId(null);
+//            instrumentTicker.setEtoroInstrumentId(null);
 //        } else if ("".equals((etoroInstrumentId.getText())))
 //        {
-//            instrument.setEtoroInstrumentId(null);
+//            instrumentTicker.setEtoroInstrumentId(null);
 //        } else
 //        {
-//            instrument.setEtoroInstrumentId(Integer.parseInt(etoroInstrumentId.getText()));
+//            instrumentTicker.setEtoroInstrumentId(Integer.parseInt(etoroInstrumentId.getText()));
 //        }
-//        instrumentService.updateInstrument(instrument);
+//        instrumentService.updateInstrument(instrumentTicker);
 //        SwingUtilities.getWindowAncestor(this).dispose();
     }
 

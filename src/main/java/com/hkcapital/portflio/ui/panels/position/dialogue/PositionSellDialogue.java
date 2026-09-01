@@ -49,7 +49,7 @@ public class PositionSellDialogue extends JDialog
     private final JLabel noOfPositionsPerInstrumentLabel = new JLabel("No Of Positions per Instrument:");
     private final JTextField noOfPositionsPerInstrument = new JTextField(20);
 
-    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max Percent Allowed Per instrument:");
+    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max Percent Allowed Per instrumentTicker:");
 
     private final JLabel positionSizeLabel = new JLabel("Position size:");
     private final JTextField positionSize = new JTextField(20);

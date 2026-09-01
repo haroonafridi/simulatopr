@@ -42,7 +42,7 @@ public class SRMatrixSpecification
             {
                 predicates.add(
                         cb.equal(
-                                root.get("instrument").get("id"),
+                                root.get("instrumentTicker").get("id"),
                                 sRMatrixFilter.getInstrumentId()
                         )
                 );

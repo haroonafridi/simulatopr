@@ -41,7 +41,7 @@ public class PositionEditDialogue extends JDialog
     private final JLabel noOfPositionsPerInstrumentLabel = new JLabel("No Of Positions per Instrument:");
     private final JTextField noOfPositionsPerInstrument = new JTextField(20);
 
-    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max Percent Allowed Per instrument:");
+    private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel("Max Percent Allowed Per instrumentTicker:");
     private final JTextField maxPercentAllowedPerInstrument = new JTextField(20);
 
     private final JLabel leverageLabel = new JLabel("Leverage:");
@@ -96,7 +96,7 @@ public class PositionEditDialogue extends JDialog
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Change positions details for instrument ["+position.getInstrument().getName()+"]"));
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Change positions details for instrumentTicker ["+position.getInstrument().getName()+"]"));
 
         JPanel marketConditionsPanel = new JPanel(new GridLayout(4, 2, 5, 5));
         JPanel marketConditionsPanelButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT,5,5));

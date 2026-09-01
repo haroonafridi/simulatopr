@@ -44,7 +44,7 @@ public class RemoveStrategyButtonListener implements ActionListener
             strategyService.removeStrategy(strategy);
             clear();
         } else {
-            JOptionPane.showMessageDialog(strategyHeaderPanel, "Please select an instrument to remove.",
+            JOptionPane.showMessageDialog(strategyHeaderPanel, "Please select an instrumentTicker to remove.",
                     "No Selection", JOptionPane.WARNING_MESSAGE);
         }
     }

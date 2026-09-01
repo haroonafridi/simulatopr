@@ -33,7 +33,7 @@ public class EtoroInstrumentCandleDataServiceImpl implements InstrumentDataServi
                                           String timeInterval,
                                           Integer pages)
     {
-        logger.info("Requesting candle data: instrument = [{}] timeframe = [{}]  ", instrument, timeInterval);
+        logger.info("Requesting candle data: instrumentTicker = [{}] timeframe = [{}]  ", instrument, timeInterval);
         try
         {
             final String url = etoroApiInformation.getInstrumentCandleDataUrl().concat(instrument.toString()).concat(FORWARD_SLASH)//
@@ -47,7 +47,7 @@ public class EtoroInstrumentCandleDataServiceImpl implements InstrumentDataServi
             return response.getBody();
         } catch (UnirestException e)
         {
-            logger.info("Error fethcing candle data for interval {}", timeInterval, " instrument {} ", instrument);
+            logger.info("Error fethcing candle data for interval {}", timeInterval, " instrumentTicker {} ", instrument);
             throw new RuntimeException(e);
         }
     }

@@ -10,7 +10,7 @@ public class EtoroMessageBuilder
         sb.append("{")
                 .append("\"messages\":[")
                 .append("{")
-                .append("\"topic\":\"instrument:").append(dto.getInstrumentId()).append("\",")
+                .append("\"topic\":\"instrumentTicker:").append(dto.getInstrumentId()).append("\",")
                 .append("\"content\":\"{")
                 .append("\\\"Ask\\\":\\\"").append(dto.getAsk()).append("\\\",")
                 .append("\\\"Bid\\\":\\\"").append(dto.getBid()).append("\\\",")

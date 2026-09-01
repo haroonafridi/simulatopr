@@ -220,7 +220,7 @@ public class InstrumentConfPanel extends UIBag
         } //
         else
         {
-            JOptionPane.showMessageDialog(this, "Please select an instrument configuration to remove.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select an instrumentTicker configuration to remove.", "No Selection", JOptionPane.WARNING_MESSAGE);
         }
     }
 

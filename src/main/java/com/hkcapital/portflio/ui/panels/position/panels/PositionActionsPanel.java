@@ -1,16 +1,18 @@
 package com.hkcapital.portflio.ui.panels.position.panels;
 
 import com.hkcapital.portflio.DataObject;
-import com.hkcapital.portflio.model.Configuration;
-import com.hkcapital.portflio.model.Position;
-import com.hkcapital.portflio.model.RunningCapital;
+import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.csv.CSVSRMatrixReader;
+import com.hkcapital.portflio.service.csv.StrategyPositionRecords;
+import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
 import com.hkcapital.portflio.ui.panels.capital.CapitalPanel;
@@ -26,8 +28,9 @@ import com.hkcapital.portflio.ui.panels.strategy.StrategyHeaderPanel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.io.File;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +42,8 @@ public class PositionActionsPanel extends UIBag
     private MarketConditionsService marketConditionsService;
     private ConfigurationService configurationService;
     private SRMatrixService srMatrixService;
+
+    private StrategyService strategyService;
     final private PositionService positionService;
     List<Position> positionPnLList = new ArrayList<>();
     PositionTableModel positionTableModel = new PositionTableModel(positionPnLList);
@@ -48,9 +53,10 @@ public class PositionActionsPanel extends UIBag
     private final JButton removePosition = new JButton("Remove Position");
     private final JButton removePositionAll = new JButton("Remove All Positions");
     private final JButton marketConditionsButton = new JButton("Add Market conditions");
+
+    private final JButton uploadPositionButton = new JButton("Upload Positions");
     private final JButton srMatrixButton = new JButton("Add SR Matrix");
     private final JButton configurationButton = new JButton("Add Configuration");
-
     private final JLabel positionSizeLabel = new JLabel("Position size in %:");
     private final NumberTextField positionSizeInPercent = new NumberTextField(30, 10);
 
@@ -63,6 +69,9 @@ public class PositionActionsPanel extends UIBag
     final ConfigurationSourcePanel configurationSourcePanel;
 
     final CapitalPanel capitalPanel;
+
+
+    private InstrumentService instrumentService;
 
 
     private final Frame frame;
@@ -114,6 +123,7 @@ public class PositionActionsPanel extends UIBag
         buttonPanel.add(addPosition);
         buttonPanel.add(removePosition);
         buttonPanel.add(removePositionAll);
+        buttonPanel.add(uploadPositionButton);
 
         add(positionPanelParametersPanel);
         add(positionSizePanel);
@@ -150,10 +160,11 @@ public class PositionActionsPanel extends UIBag
         JMenuItem updateMarketConditions = new JMenuItem("Update Market Conditions");
 
         positionTable.addMouseListener(new OpenBuySellContextMenuListener(positionTable, new BuySellMenu("Buy/Sell",
-                new JMenuItem[]{buy,placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions,
+                new JMenuItem[]{buy, placeBuyOrder, sell, placeSellOrder, updateSrMatrix, updateMarketConditions,
                         activatePosition, deActivatePosition, shortPosition, longPosition, shortAndPosition})));
 
-        positionTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        positionTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer()
+        {
             @Override
             public Component getTableCellRendererComponent(
                     JTable table,
@@ -165,8 +176,9 @@ public class PositionActionsPanel extends UIBag
             {
                 Component c = super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);
-                Position r = positionService.findById ((Integer)table.getModel().getValueAt(row,0));
-                if(isSelected) {
+                Position r = positionService.findById((Integer) table.getModel().getValueAt(row, 0));
+                if (isSelected)
+                {
                     c.setFont(new Font("Arial", Font.BOLD, 14));
                     c.setBackground(Color.BLUE);
                     c.setForeground(Color.WHITE);
@@ -185,7 +197,8 @@ public class PositionActionsPanel extends UIBag
                     return c;
                 }
                 if (r.getPositionType() != null && r.getPositionType().equals(PositionType.BUY.getValue()))
-                {  c.setFont(new Font("Arial", Font.PLAIN, 12));
+                {
+                    c.setFont(new Font("Arial", Font.PLAIN, 12));
                     c.setForeground(Color.BLACK);
                     c.setBackground(Color.green);
                     return c;
@@ -208,9 +221,14 @@ public class PositionActionsPanel extends UIBag
         placeSellOrder.addActionListener(new ImmediateSellOrderActionListener(positionTableModel, serviceRegistery, positionTable));
 
         updateSrMatrix.addActionListener(new UpdateSRMatrixOrderActionListener(positionTableModel, serviceRegistery, //
-                positionTable , strategyHeaderPanel));
+                positionTable, strategyHeaderPanel));
         updateMarketConditions.addActionListener(new UpdateMarketConditionsActionListener(positionTableModel, serviceRegistery, positionTable,
                 strategyHeaderPanel));
+
+        uploadPositionButton.addActionListener(e ->
+        {
+            openPositionsFileDialog();
+        });
 
 
     }
@@ -286,5 +304,104 @@ public class PositionActionsPanel extends UIBag
     public CapitalPanel getCapitalPanel()
     {
         return capitalPanel;
+    }
+
+
+    private void openPositionsFileDialog()
+    {
+        int recordProcessed = 0;
+        instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
+
+        strategyService = (StrategyService) serviceRegistery.getService(Service.StrategyService);
+
+        JFileChooser fileChooser = new JFileChooser();
+
+        fileChooser.setCurrentDirectory(new File("D:/hk-dev"));
+
+        fileChooser.setFileFilter(
+                new javax.swing.filechooser.FileNameExtensionFilter(
+                        "CSV Files", "csv"
+                )
+        );
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
+            Path path = Path.of(fileChooser.getSelectedFile().getPath());
+
+            List<StrategyPositionRecords> sRMatrixRecords = new CSVSRMatrixReader(path).upload(null);
+
+            List<Position> positions = new ArrayList<>();
+
+            for (StrategyPositionRecords sRMatrixRecord : sRMatrixRecords)
+            {
+
+                Strategy strategy = strategyService.findByName(sRMatrixRecord.strategyName());
+
+                if (strategy == null)
+                {
+                    strategy = strategyService.addStrategy(Strategy.builder()
+                            .name(sRMatrixRecord.strategyName())
+                            .description(sRMatrixRecord.strategyDesc())
+                            .capitalAllocated(sRMatrixRecord.capitalAllocated())
+                            .active(sRMatrixRecord.active())
+                            .build());
+                }
+
+                Instrument inst = instrumentService.findByInstrumentTicker(sRMatrixRecord.instrumentTicker());
+
+                if (inst == null)
+                {
+                    inst = instrumentService.addInstrument(Instrument.builder()
+                            .name(sRMatrixRecord.instrumentName())
+                            .instrumentTicker(sRMatrixRecord.instrumentTicker())
+                            .instrumentDesc(sRMatrixRecord.instrumentDesc())
+                            .url(sRMatrixRecord.url())
+                            .etoroInstrumentId(sRMatrixRecord.etoroId())
+                            .active(sRMatrixRecord.active())
+                            .withBand(sRMatrixRecord.withBand())
+                            .withFeed(sRMatrixRecord.withFeed())
+                            .withCandle(sRMatrixRecord.withCandle())
+                            .maxSlippage(sRMatrixRecord.slippage())
+                            .build());
+                }
+
+                SRMatrix srMatrix = SRMatrix.builder()
+                        .instrument(inst)
+                        .l_s_tolerance(sRMatrixRecord.lSupport())
+                        .support(sRMatrixRecord.support())
+                        .r_s_tolerance(sRMatrixRecord.rSupport())
+                        .timeFrameUnit(sRMatrixRecord.timeFrameUnit())
+                        .timeFrame(sRMatrixRecord.timeFrame())
+                        .l_r_tolerance(sRMatrixRecord.lResistance())
+                        .resistance(sRMatrixRecord.resistance())
+                        .r_r_tolerance(sRMatrixRecord.rResistance())
+                        .takeProfit(sRMatrixRecord.takeProfit())
+                        .stopLoss(sRMatrixRecord.stopLoss())
+                        .active(sRMatrixRecord.active())
+                        .creationDate(LocalDateTime.now())
+                        .build();
+
+                srMatrixService.addSRMatrix(srMatrix);
+
+                Position position = Position.builder()
+                        .instrument(inst)
+                        .stopLoss(sRMatrixRecord.stopLoss())
+                        .srMatrix(srMatrix)
+                        .takeProfit(sRMatrixRecord.takeProfit())
+                        .stopLoss(sRMatrixRecord.stopLoss())
+                        .positionType(sRMatrixRecord.positionType())
+                        .leverage(sRMatrixRecord.lev())
+                        .strategy(strategy)
+                        .currentPositionEquity(sRMatrixRecord.amount())
+                        .executionCount(sRMatrixRecord.executionCount())
+                        .active(sRMatrixRecord.active())
+                        .build();
+                positionService.add(position);
+                recordProcessed = recordProcessed + 1;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "No of position uploaded = [" + recordProcessed + "]");
     }
 }

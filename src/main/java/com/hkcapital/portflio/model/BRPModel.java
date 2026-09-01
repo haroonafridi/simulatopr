@@ -23,7 +23,7 @@ public class BRPModel
     private Integer timeFrame;
     @Column(name = "time_frame_unit")
     private String timeFrameUnit;
-    @Column(name = "instrument")
+    @Column(name = "instrumentTicker")
     private String instrument;
 
     @Column(name = "support")

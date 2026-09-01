@@ -92,7 +92,7 @@ public class EtoroApiServiceImpl implements EtoroApiService
             logger.info("Portfolio information successfully fetched: No of open positions found {}", openPositions.size());
             if (openPositions.size() > 0 && OrderTypes.AUTO.getOrderType().equals(etoroMarketOrderDto.getOrderType()))
             {
-                logger.info("Cannot open order, orders for instrument {} found", etoroMarketOrderDto.getInstrumentId(), openPositions);
+                logger.info("Cannot open order, orders for instrumentTicker {} found", etoroMarketOrderDto.getInstrumentId(), openPositions);
                 return null;
             }
 
