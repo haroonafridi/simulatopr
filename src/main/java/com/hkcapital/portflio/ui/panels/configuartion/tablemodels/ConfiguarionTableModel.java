@@ -9,7 +9,7 @@ import java.util.List;
 public class ConfiguarionTableModel<E> extends TableModel
 {
     final static String[] columnsName = new String[]{
-            Labels.Id.getLabel(), Labels.PercentAllowedAllocation.getLabel(),
+            Labels.Id.getLabel(), Labels.Code.getLabel(), Labels.PercentAllowedAllocation.getLabel(),
             Labels.NoOfInstruments.getLabel(),
             Labels.NoofPositionsPerinstruments.getLabel(),
             Labels.MaxPercentAllowedPerPosition.getLabel(),
@@ -41,27 +41,30 @@ public class ConfiguarionTableModel<E> extends TableModel
             {
                 return configuration.getId();
             }
-            case 1:
+            case 1: {
+                return configuration.getCode();
+            }
+            case 2:
             {
                 return configuration.getPercentAllocationAllowed();
             }
 
-            case 2:
+            case 3:
             {
                 return configuration.getNoOfInsutrments();
             }
 
-            case 3:
+            case 4:
             {
                 return configuration.getNoOfPositionsPerInstruments();
             }
 
-            case 4:
+            case 5:
             {
                 return configuration.getMaxPercentAllowedPerInstrument();
             }
 
-            case 5:
+            case 6:
             {
                 return configuration.getLev();
             }

@@ -14,21 +14,19 @@ public class ConfigurationSourcePanel extends UIBag
     private final ConfigurationService configurationService;
     private final JLabel idLabel = new JLabel((Labels.Id.getLabel()));
     private final NumberTextField id = new NumberTextField(60);
+    private final JLabel codeLabel = new JLabel(Labels.Code.getLabel());
+    private final JTextField code = new JTextField(10);
     private final JLabel percentAllocationAllowedLabel = new JLabel(Labels.PercentAllowedAllocation.getLabel());
-    private final NumberTextField percentAllocationAllowed = new NumberTextField(60);
+    private final NumberTextField percentAllocationAllowed = new NumberTextField(40);
 
     private final JLabel noOfInstrumentsLabel = new JLabel(Labels.NoOfInstruments.getLabel());
-    private final NumberTextField noOfInstrument = new NumberTextField(60);
-
+    private final NumberTextField noOfInstrument = new NumberTextField(40);
     private final JLabel noOfPositionsPerInstrumentLabel = new JLabel(Labels.NoofPositionsPerinstruments.getLabel());
-    private final NumberTextField noOfPositionsPerInstrument = new NumberTextField(60);
-
+    private final NumberTextField noOfPositionsPerInstrument = new NumberTextField(40);
     private final JLabel maxPercentAllowedPerInstrumentLabel = new JLabel(Labels.MaxPercentAllowedPerPosition.getLabel());
-    private final NumberTextField maxPercentAllowedPerInstrument = new NumberTextField(60);
-
+    private final NumberTextField maxPercentAllowedPerInstrument = new NumberTextField(40);
     private final JLabel levLabel = new JLabel(Labels.Lev.getLabel());
-    private final NumberTextField lev = new NumberTextField(60);
-
+    private final NumberTextField lev = new NumberTextField(40);
 
     public ConfigurationSourcePanel(ConfigurationService configurationService)
     {
@@ -38,6 +36,8 @@ public class ConfigurationSourcePanel extends UIBag
         add(idLabel);
         add(id);
         id.setEnabled(false);
+        add(codeLabel);
+        add(code);
         add(percentAllocationAllowed);
         add(percentAllocationAllowedLabel);
         add(percentAllocationAllowed);
@@ -84,6 +84,11 @@ public class ConfigurationSourcePanel extends UIBag
     public NumberTextField getId()
     {
         return id;
+    }
+
+    public JTextField getCode()
+    {
+        return code;
     }
 
     public Configuration getConfiguration()

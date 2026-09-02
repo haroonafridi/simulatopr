@@ -28,7 +28,12 @@ public record StrategyPositionRecords(
         boolean active,
         boolean withFeed,
         boolean withBand,
-        boolean withCandle
+        boolean withCandle,
+        String configCode,
+        double allocationAllowed,
+        int noOfInstruments,
+        int noOfPositionsPerInstruments,
+        double maxPercentAllowPercent
 )
 {
 }

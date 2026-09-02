@@ -20,6 +20,8 @@ public class ConfigurationPanel extends UIBag
     private final ConfigurationService configurationService;
     private final ConfigurationSourcePanel configurationSourcePanel;
 
+    private final JLabel codeLabel = new JLabel(Labels.Code.getLabel());
+    private final TextField code = new TextField(40);
     private final JLabel percentAllocationAllowedLabel = new JLabel(Labels.PercentAllowedAllocation.getLabel());
     private final NumberTextField percentAllocationAllowed = new NumberTextField(30);
 
@@ -60,7 +62,7 @@ public class ConfigurationPanel extends UIBag
         tableModel = new ConfiguarionTableModel<Configuration>(configurationService.findAll());
 
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder("Instrument Panel"));
+        setBorder(BorderFactory.createTitledBorder("Configuration Panel"));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -75,6 +77,10 @@ public class ConfigurationPanel extends UIBag
         innerGbc.fill = GridBagConstraints.HORIZONTAL;
         innerGbc.gridx = 0;
         innerGbc.gridy = 0;
+
+        configurationPanel.add(codeLabel, innerGbc);
+        innerGbc.gridx = 1;
+        configurationPanel.add(code, innerGbc);
 
         configurationPanel.add(percentAllocationAllowedLabel, innerGbc);
         innerGbc.gridx = 1;
@@ -168,7 +174,7 @@ public class ConfigurationPanel extends UIBag
 
     public void save()
     {
-        Configuration configuration = new Configuration(
+        Configuration configuration = new Configuration(code.getText(),
                 percentAllocationAllowed.getDoubleValue(),
                 noOfInstrument.getIntValue(),
                 noOfPositionsPerInstrument.getIntValue(),
@@ -195,6 +201,7 @@ public class ConfigurationPanel extends UIBag
 
     public void clear()
     {
+        code.setText(null);
         percentAllocationAllowed.setText(null);
         noOfInstrument.setText(null);
         noOfPositionsPerInstrument.setText(null);
@@ -207,6 +214,7 @@ public class ConfigurationPanel extends UIBag
     public void select()
     {
         Configuration configuration = (Configuration) tableModel.getElements().get(configurationTable.getSelectedRow());
+        configurationSourcePanel.getCode().setText(configuration.getCode());
         configurationSourcePanel.getId().setText(configuration.getId().toString());
         configurationSourcePanel.getLev().setText(configuration.getLev().toString());
         configurationSourcePanel.getPercentAllocationAllowed().setText(configuration.getPercentAllocationAllowed().toString());

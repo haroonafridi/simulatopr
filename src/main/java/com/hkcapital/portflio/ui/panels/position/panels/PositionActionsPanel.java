@@ -349,7 +349,21 @@ public class PositionActionsPanel extends UIBag
                             .build());
                 }
 
+                Configuration configuration = configurationService.findByCode(sRMatrixRecord.configCode());
+
                 Instrument inst = instrumentService.findByInstrumentTicker(sRMatrixRecord.instrumentTicker());
+
+                if (configuration == null) //
+                {
+                    configuration = configurationService.addConfiguration(Configuration.builder()
+                                    .code(sRMatrixRecord.configCode())
+                                    .lev(sRMatrixRecord.lev())
+                                    .percentAllocationAllowed(sRMatrixRecord.allocationAllowed())
+                                    .noOfInsutrments(sRMatrixRecord.noOfInstruments())
+                                    .noOfPositionsPerInstruments(sRMatrixRecord.noOfPositionsPerInstruments())
+                                    .maxPercentAllowedPerInstrument(sRMatrixRecord.maxPercentAllowPercent())
+                            .build());
+                }
 
                 if (inst == null)
                 {
@@ -366,6 +380,7 @@ public class PositionActionsPanel extends UIBag
                             .maxSlippage(sRMatrixRecord.slippage())
                             .build());
                 }
+
 
                 SRMatrix srMatrix = SRMatrix.builder()
                         .instrument(inst)
@@ -394,6 +409,7 @@ public class PositionActionsPanel extends UIBag
                         .positionType(sRMatrixRecord.positionType())
                         .leverage(sRMatrixRecord.lev())
                         .strategy(strategy)
+                        .configuration(configuration)
                         .currentPositionEquity(sRMatrixRecord.amount())
                         .executionCount(sRMatrixRecord.executionCount())
                         .active(sRMatrixRecord.active())

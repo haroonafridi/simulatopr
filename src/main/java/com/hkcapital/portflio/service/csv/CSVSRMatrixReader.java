@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CSVSRMatrixReader implements Reader<String, List<StrategyPositionRecords>>
 {
-    private static final int COLUMN_COUNT = 28;
+    private static final int COLUMN_COUNT = 33;
     private final Path file;
 
     public CSVSRMatrixReader(Path file)
@@ -47,11 +47,7 @@ public class CSVSRMatrixReader implements Reader<String, List<StrategyPositionRe
 
                 if (values.length < COLUMN_COUNT)
                 {
-                    throw new IllegalArgumentException(
-                            "Expected at least " + COLUMN_COUNT +
-                                    " columns, got " + values.length +
-                                    ": " + line
-                    );
+                    throw new IllegalArgumentException("Expected at least " + COLUMN_COUNT + " columns, got " + values.length + ": " + line);
                 }
 
                 StrategyPositionRecords instrument = new StrategyPositionRecords(
@@ -110,7 +106,12 @@ public class CSVSRMatrixReader implements Reader<String, List<StrategyPositionRe
 
                         Boolean.parseBoolean(values[26].trim()), // WITH_BAND
 
-                        Boolean.parseBoolean(values[27].trim())  // WITH_CANDLE
+                        Boolean.parseBoolean(values[27].trim()), // WITH_CANDLE
+                        values[28].trim(),  // CONFIG_CODE
+                        Double.parseDouble(values[29].trim()),  // ALLOCATION_ALLOWED
+                        Integer.parseInt(values[30].trim()),  // no of Instruments
+                        Integer.parseInt(values[31].trim()),  // no Of Positions per inst
+                        Double.parseDouble(values[32].trim())  // max allowed percent
                 );
 
                 srMatrixRecords.add(instrument);

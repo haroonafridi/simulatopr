@@ -3,6 +3,7 @@ package com.hkcapital.portflio.ui.panels.configuartion.labels;
 public enum Labels
 {
     Id("Id:"),
+    Code("Code"),
     Configuration("Configuration:"),
     PercentAllowedAllocation("% Allocation allowed:"),
     NoOfInstruments("No of Instruments:"),

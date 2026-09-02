@@ -75,4 +75,10 @@ public class ConfigurationServiceImpl implements ConfigurationService
                 configDTO.getLev()
         );
     }
+
+    @Override
+    public Configuration findByCode(String code)
+    {
+        return configurationRepository.findByCode(code);
+    }
 }

@@ -9,7 +9,9 @@ public interface ConfigurationRepository extends JpaRepository<Configuration, In
 {
     Configuration findByPercentAllocationAllowedAndNoOfInsutrmentsAndNoOfPositionsPerInstrumentsAndMaxPercentAllowedPerInstrumentAndLev(Double percentAllocationAllowed,
                                                                                                                                         Integer noOfInsutrments,
-                                                                                                                                        Integer noOfPositionsPerInstruments,
-                                                                                                                                        Double maxPercentAllowedPerInstrument,
+                                                                                                                                        Integer noOfPositionsPerInstruments, Double maxPercentAllowedPerInstrument,
                                                                                                                                         Integer lev);
+
+
+    Configuration findByCode(String conde);
 }

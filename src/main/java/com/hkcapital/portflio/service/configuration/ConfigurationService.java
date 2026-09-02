@@ -23,4 +23,6 @@ public interface ConfigurationService extends Service
     void removeById(Integer id);
 
     Configuration findByConfiguration(ConfigurationDTO configurationDTO);
+
+    Configuration findByCode(String code);
 }

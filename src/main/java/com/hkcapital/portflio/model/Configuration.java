@@ -26,14 +26,19 @@ public class Configuration
     private Integer noOfPositionsPerInstruments;
     @Column(name = "max_percent_allowed_per_instrument")
     private Double maxPercentAllowedPerInstrument;
+
+    @Column(name = "code")
+    private String code;
     private Integer lev;
 
-    public Configuration(Double percentAllocationAllowed, //
+    public Configuration(String code,
+                         Double percentAllocationAllowed, //
                          Integer noOfInstruments, //
                          Integer noOfPositionsPerInstruments, //
                          Double maxPercentAllowedPerInstrument,
                          Integer lev)
     {
+        this.code = code;
         this.percentAllocationAllowed = percentAllocationAllowed;
         this.noOfInsutrments = noOfInstruments;
         this.noOfPositionsPerInstruments = noOfPositionsPerInstruments;
@@ -45,7 +50,8 @@ public class Configuration
     {
         return ConfigurationDTO.builder()
                 .percentAllocationAllowed(percentAllocationAllowed)
-                .noOfInsutrments(noOfInsutrments)
+                .code(code)
+                .noOfInstruments(noOfInsutrments)
                 .noOfPositionsPerInstruments(noOfPositionsPerInstruments)
                 .maxPercentAllowedPerInstrument(maxPercentAllowedPerInstrument)
                 .lev(lev)

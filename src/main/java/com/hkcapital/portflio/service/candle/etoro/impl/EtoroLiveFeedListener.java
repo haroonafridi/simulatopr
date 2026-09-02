@@ -295,7 +295,7 @@ public class EtoroLiveFeedListener implements Listener
                   "id": "%s",
                   "operation": "Subscribe",
                   "data": {
-                    "topics": ["instrumentTicker:%s"],
+                    "topics": ["instrument:%s"],
                     "snapshot": true
                   }
                 }
@@ -305,7 +305,7 @@ public class EtoroLiveFeedListener implements Listener
 
         subscribedTopics.add(instrumentId);
 
-        logger.info("Subscribed instrumentTicker {}", instrumentId);
+        logger.info("Subscribed instrument {}", instrumentId);
     }
 
     private void reconnect(String url)
