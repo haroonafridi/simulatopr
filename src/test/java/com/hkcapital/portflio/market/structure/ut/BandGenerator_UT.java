@@ -49,7 +49,7 @@ class BandGenerator_UT
     public void shouldReturnPriceLowerBands()
     {
         NavigableSet<MarketPriceBand> lowerBands = //
-                BandGenerator.of(range, BandType.LOW, 10, 15, TimeFramesUnit.MINUTE);
+                BandGenerator.of(range, BandType.LOW, 10, 15, TimeFramesUnit.MINUTE, instrument);
 
         Assertions.assertAll("verify generated lower bands ", () ->
         {
@@ -79,7 +79,7 @@ class BandGenerator_UT
     public void shouldReturnPriceUpperrBands()
     {
         NavigableSet<MarketPriceBand> upperBands = //
-                BandGenerator.of(range, BandType.HIGH, 10, 15, TimeFramesUnit.MINUTE);
+                BandGenerator.of(range, BandType.HIGH, 10, 15, TimeFramesUnit.MINUTE, instrument);
 
         Assertions.assertAll("verify generated lower bands ", () ->
         {

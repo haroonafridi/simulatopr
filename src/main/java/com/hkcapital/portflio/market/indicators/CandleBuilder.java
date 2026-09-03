@@ -78,7 +78,7 @@ public class CandleBuilder
         return new CandleBuilder();
     }
 
-    public CandleBuilder addAndUpdateCandle(final CandleDto subCandle)
+    public CandleBuilder addAndUpdateCandle(final CandleDto subCandle, Instrument inst)
     {
         if (candles.isEmpty())
         {
@@ -120,7 +120,7 @@ public class CandleBuilder
             }
             Candle candle = com.hkcapital.portflio.model
                     .Candle.builder()
-                    .instrumentID(Integer.parseInt(closedCandle.getInstrument()))
+                    .instrumentID(closedCandle.getInstrument().getEtoroInstrumentId())
                     .close(closedCandle.getClose())
                     .low(closedCandle.getLow())
                     .lowTime(closedCandle.getLowTime())
@@ -128,6 +128,7 @@ public class CandleBuilder
                     .highTime(closedCandle.getHighTime())
                     .open(closedCandle.getOpen())
                     .fromDate(closedCandle.getTime())
+                    .instrument(inst)
                     .atr(atrVal)
                     .ema(emaVal)
                     .rsi(rsiValue)
@@ -273,7 +274,8 @@ public class CandleBuilder
             candles.add(new CandleDto(subCandle.getInstrument(),
                     subCandle.getOpen(), subCandle.getLow(), subCandle.getTime(), subCandle.getHigh(),
                     subCandle.getTime(), subCandle.getClose(),
-                    bucketTime.truncatedTo(ChronoUnit.SECONDS), timeTimeFramesUnit, interval));
+                    bucketTime.truncatedTo(ChronoUnit.SECONDS),
+                    timeTimeFramesUnit, interval));
         }
 
     }

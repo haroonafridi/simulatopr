@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.market.structure;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
+import com.hkcapital.portflio.model.Instrument;
 import lombok.*;
 
 import java.time.Instant;
@@ -21,6 +22,7 @@ public class MarketPriceBand implements Comparable<MarketPriceBand>
     private Integer marketVisitCount;
     private Instant initialVisitedTime;
     private Instant lastVisitedTime;
+    private Instrument instrument;
     private long timeDifference;
 
     private Integer timeFrame;
@@ -34,7 +36,8 @@ public class MarketPriceBand implements Comparable<MarketPriceBand>
                            Instant initialVisitedTime,
                            Instant lastVisitedTime,
                            Integer timeFrame,
-                           TimeFramesUnit timeFrameUnit)
+                           TimeFramesUnit timeFrameUnit,
+                           Instrument instrument)
     {
         this.bandType = bandType;
         this.bandKey = bandKey;
@@ -45,6 +48,7 @@ public class MarketPriceBand implements Comparable<MarketPriceBand>
         this.lastVisitedTime = lastVisitedTime;
         this.timeFrame = timeFrame;
         this.timeFrameUnit = timeFrameUnit;
+        this.instrument = instrument;
     }
 
     @Override

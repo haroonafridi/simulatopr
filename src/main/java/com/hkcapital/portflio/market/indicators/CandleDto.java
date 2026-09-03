@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.market.indicators;
 
+import com.hkcapital.portflio.model.Instrument;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.time.Instant;
 @ToString
 public class CandleDto
 {
-    private String instrument;
+    private Instrument instrument;
     private double open;
     private double low;
     private Instant lowTime;
@@ -26,7 +27,7 @@ public class CandleDto
 
     private Integer interval;
 
-    public String getInstrument()
+    public Instrument getInstrument()
     {
         return instrument;
     }

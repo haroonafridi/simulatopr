@@ -11,4 +11,7 @@ import java.util.List;
 public interface LiveInstrumentFeedRepository extends JpaRepository<LiveInstrumentFeed, Integer>
 {
     List<LiveInstrumentFeed> findByFeedDateBetween(Instant start, Instant end);
+
+    List<LiveInstrumentFeed> findByInstrumentIdAndFeedDateBetween(Integer instrumentId, Instant start, Instant end);
+
 }

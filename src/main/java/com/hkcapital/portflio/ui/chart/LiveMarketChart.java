@@ -94,7 +94,7 @@ public class LiveMarketChart extends JFrame
         // ================= CHART =================
 
         List<CandleDto> candleDtoList =
-                this.etoroCandleService.findCandleDtoByInstrumentIDAndCreationDateTimeBetween(18,
+                this.etoroCandleService.findCandleDtoByInstrumentIDAndCreationDateTimeBetween(null,
                         LocalDateTime.of(LocalDateTime.now().getYear(),
                                 LocalDateTime.now().getMonth(),
                                 LocalDateTime.now().getDayOfMonth(),

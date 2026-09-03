@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.market.structure;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
+import com.hkcapital.portflio.model.Instrument;
 
 import java.time.Instant;
 import java.util.NavigableSet;
@@ -10,7 +11,8 @@ public class BandGenerator
 {
     public static NavigableSet<MarketPriceBand> of(Range range, BandType bandType, //
                                                    int interval, Integer timeFrame, //
-                                                   TimeFramesUnit timeFrameUnit)
+                                                   TimeFramesUnit timeFrameUnit,
+                                                   Instrument instrument)
     {
         double upper = range.getHigh();
         double lower = range.getLow();
@@ -35,6 +37,7 @@ public class BandGenerator
                             .lastVisitedTime(Instant.now())
                             .upperBound(upperBound)
                             .timeFrame(timeFrame)
+                            .instrument(instrument)
                             .timeFrameUnit(timeFrameUnit)
                             .build();
             priceBands.add(marketPriceBand);

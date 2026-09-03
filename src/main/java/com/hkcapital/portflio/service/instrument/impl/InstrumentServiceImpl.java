@@ -65,7 +65,7 @@ public class InstrumentServiceImpl implements InstrumentService
     @Override
     public Instrument findByEtoroInstrumentId(Integer id)
     {
-        return null;
+        return instrumentRepository.findByEtoroInstrumentId(id);
     }
 
     @Override
@@ -85,5 +85,18 @@ public class InstrumentServiceImpl implements InstrumentService
     {
         return instrumentRepository.findByInstrumentTicker(instrumentTicker);
     }
+
+    @Override
+    public List<Instrument> findByActiveAndWithFeed(Boolean active, Boolean withFeed)
+    {
+        return instrumentRepository.findByActiveAndWithFeed(active, withFeed);
+    }
+
+    @Override
+    public List<Instrument> findByActiveAndWithBand(Boolean active, Boolean withBand)
+    {
+        return instrumentRepository.findByActiveAndWithBand(active, withBand);
+    }
+
 
 }

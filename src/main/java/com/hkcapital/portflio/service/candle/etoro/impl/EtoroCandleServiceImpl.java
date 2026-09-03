@@ -7,6 +7,7 @@ import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentCandles;
 import com.hkcapital.portflio.repository.candle.CandleRepository;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleResponseMapper;
@@ -40,7 +41,8 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
     }
 
     @Override
-    public void fetchAndSaveCandleInformation(final Integer instrumentId, final TimeFrame timeFrame, //
+    public void fetchAndSaveCandleInformation(final Integer instrumentId,
+                                              final TimeFrame timeFrame, //
                                               final Integer interval, //
                                               TimeFramesUnit timeTimeFramesUnit)
     {
@@ -72,13 +74,16 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
     @Override
     public Candle save(Candle candle)
     {
+        if(candle.getInstrument() == null) {
+            System.out.println("Candle is null!!");
+        }
         return candleRepository.save(candle);
     }
 
     @Override
-    public List<Candle> findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(Integer instrumentID, Integer timeFrame, String timeFrameUnit, LocalDateTime startDate, LocalDateTime endDate)
+    public List<Candle> findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(Instrument instrumentID, Integer timeFrame, String timeFrameUnit, LocalDateTime startDate, LocalDateTime endDate)
     {
-        return candleRepository.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(instrumentID,
+        return candleRepository.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(instrumentID.getEtoroInstrumentId(),
                 timeFrame,
                 timeFrameUnit,
                 startDate,
@@ -109,11 +114,12 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
 
 
     @Override
-    public List<CandleDto> findCandleDtoByInstrumentIDAndCreationDateTimeBetween(Integer instrumentID, LocalDateTime startDate, LocalDateTime endDate)
+    public List<CandleDto> findCandleDtoByInstrumentIDAndCreationDateTimeBetween(Instrument instrument, LocalDateTime startDate, LocalDateTime endDate)
     {
 
-        return candleRepository.findByInstrumentIDAndCreationDateTimeBetween(instrumentID, startDate, endDate).stream()
-                .map(c -> CandleDto.builder().instrument(String.valueOf(c.getInstrumentID()))
+        return candleRepository.findByInstrumentIDAndCreationDateTimeBetween(instrument.getEtoroInstrumentId(), startDate, endDate).stream()
+                .map(c -> CandleDto.builder()
+                        .instrument(c.getInstrument())
                         .open(c.getOpen())
                         .low(c.getLow())
                         .lowTime(c.getLowTime())

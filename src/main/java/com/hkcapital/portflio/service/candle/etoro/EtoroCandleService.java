@@ -4,6 +4,7 @@ import com.hkcapital.portflio.broker.etoro.master.TimeFrame;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.registry.Service;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public interface EtoroCandleService extends Service
 
     //creationDateTime
     List<Candle> findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(
-            Integer instrumentID,
+            Instrument instrumentID,
             Integer timeFrame,
             String timeFrameUnit,
             LocalDateTime startDate,
@@ -44,7 +45,7 @@ public interface EtoroCandleService extends Service
     );
 
     List<CandleDto> findCandleDtoByInstrumentIDAndCreationDateTimeBetween(
-            Integer instrumentID,
+            Instrument instrument,
             LocalDateTime startDate,
             LocalDateTime endDate
     );

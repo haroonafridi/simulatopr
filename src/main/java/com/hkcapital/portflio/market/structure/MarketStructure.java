@@ -11,12 +11,9 @@ import com.hkcapital.portflio.service.marketfeed.subscriber.MarketFeedSubscriber
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Optional;
@@ -25,7 +22,6 @@ import java.util.Optional;
 @Slf4j
 public class MarketStructure implements MarketFeedSubscriber, Flushable
 {
-    private final Logger logger = LoggerFactory.getLogger(MarketStructure.class);
     private final PriceRange priceRange;
     private final MarketSession marketSession;
     private final LocalDate creationDate = LocalDate.now();
@@ -80,8 +76,8 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         this.marketTypes = marketTypes;
         this.timeFrame = timeFrame;
         this.timeFrameUnit = timeFrameUnit;
-        upperBands = BandGenerator.of(range, BandType.HIGH, intervals, timeFrame, timeFrameUnit);
-        lowerBands = BandGenerator.of(range, BandType.LOW, intervals, timeFrame, timeFrameUnit);
+        upperBands = BandGenerator.of(range, BandType.HIGH, intervals, timeFrame, timeFrameUnit, instrument);
+        lowerBands = BandGenerator.of(range, BandType.LOW, intervals, timeFrame, timeFrameUnit, instrument);
         this.childMarketStructure = childMarketStructure;
         this.objectMapper = objectMapper;
         this.marketDate = marketDate;
@@ -130,12 +126,12 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
 
         if (lowerBands != null)
         {
-            lowerBands.forEach(b -> logger.info(b.toString()));
+            lowerBands.forEach(b -> log.info(b.toString()));
         }
 
         if (upperBands != null)
         {
-            upperBands.forEach(b -> logger.info(b.toString()));
+            upperBands.forEach(b -> log.info(b.toString()));
         }
     }
 
@@ -159,9 +155,13 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
                         .candle(candle).build();
         final Range newRange = RangeExtractor.of(candlePriceRange, modus);
         final NavigableSet<MarketPriceBand> newUpperBands = //
-                BandGenerator.of(newRange, BandType.HIGH, intervals, candle.getTimeFrame(), TimeFramesUnit.valueOf(candle.getTimeFrameUnit()));
+                BandGenerator.of(newRange, BandType.HIGH, intervals, candle.getTimeFrame(), //
+                        TimeFramesUnit.valueOf(candle.getTimeFrameUnit()), //
+                        candle.getInstrument()); //
         final NavigableSet<MarketPriceBand> newLowerBands = //
-                BandGenerator.of(newRange, BandType.LOW, intervals, candle.getTimeFrame(), TimeFramesUnit.valueOf(candle.getTimeFrameUnit()));
+                BandGenerator.of(newRange, BandType.LOW, intervals, candle.getTimeFrame(), //
+                        TimeFramesUnit.valueOf(candle.getTimeFrameUnit()), //
+                        candle.getInstrument());
         // merge HIGH bands
         addBands(newUpperBands, upperBands);
         // merge LOW bands
@@ -201,10 +201,10 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         {
             try
             {
-                logger.info(objectMapper.writeValueAsString(lowerBands));
+                log.info(objectMapper.writeValueAsString(lowerBands));
             } catch (JsonProcessingException e)
             {
-                logger.info("Error in logging lower bands");
+                log.info("Error in logging lower bands");
             }
         }
 
@@ -212,10 +212,10 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         {
             try
             {
-                logger.info(objectMapper.writeValueAsString(upperBands));
+                log.info(objectMapper.writeValueAsString(upperBands));
             } catch (JsonProcessingException e)
             {
-                logger.info("Error in logging upper bands");
+                log.info("Error in logging upper bands");
             }
         }
     }

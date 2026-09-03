@@ -1,28 +1,29 @@
 package com.hkcapital.portflio.service.schedule.impl;
 
-import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
-import com.hkcapital.portflio.market.structure.MarketTypes;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructure;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketstructure.InstrumentMarketStructureService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service("InstrumentMarketStructureGenerator")
+@Slf4j
 public class InstrumentMarketStructureScheduler implements ScheduleService
 {
-    private Logger logger = LoggerFactory.getLogger(InstrumentMarketStructureScheduler.class);
     private final MarketStructureCache marketStructureManagerCache;
     private final InstrumentService instService;
     private final InstrumentMarketStructureService instMarkStrctrSrv;
+
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     public InstrumentMarketStructureScheduler(MarketStructureCache marketStructureManagerCache,
                                               InstrumentService instService,
@@ -41,101 +42,72 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
 
     }
 
-
     private void extractAndCreateBands()
     {
-        logger.info("Creating instrumentTicker bands in db");
-        Instrument inst = instService.findByEtoroInstrumentId(18);
-        MarketStructure hour4 = marketStructureManagerCache.get(MarketTypes.GOLD_4_HOUR);
-        if (hour4 != null)
+        log.info("Creating instrumentTicker bands in db");
+
+        List<Instrument> insts = instService.findByActiveAndWithBand(true, true);
+
+        for (Instrument inst : insts)
         {
-            MarketStructure hour1 = hour4.getChildMarketStructure();
-            MarketStructure mins30 = hour1.getChildMarketStructure();
-            MarketStructure mins15 = mins30.getChildMarketStructure();
-            MarketStructure mins5 = mins15.getChildMarketStructure();
-            MarketStructure mins1 = mins5.getChildMarketStructure();
-            hour4.getUpperBands().forEach(ms ->
+            marketStructureManagerCache.getStructures().entrySet().forEach(el ->
             {
-                createStructure(inst, ms);
-            });
-            hour4.getLowerBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-            hour1.getUpperBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-            hour1.getLowerBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-            mins30.getUpperBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-            mins30.getLowerBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-            mins15.getUpperBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-
-            mins15.getLowerBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-
-
-            mins5.getUpperBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-
-            mins5.getLowerBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-
-            mins1.getUpperBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
-            });
-
-            mins1.getLowerBands().forEach(ms ->
-            {
-                createStructure(inst, ms);
+                createStructure(inst, el.getValue());
             });
         }
     }
 
-    private void createStructure(Instrument inst, MarketPriceBand ms)
+    private void createStructure(Instrument inst, MarketStructure el)
     {
-        DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
-        String timestamp = LocalDateTime.now().format(formatter);
+        if (el != null) //
+        {
+            final String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMATTER);
+            el.getLowerBands().forEach(e ->
+            {
+                InstrumentMarketStructure instrumentMarketStructure =
+                        InstrumentMarketStructure.builder()
+                                .instrument(inst)
+                                .bandKey(e.getBandKey().toString())
+                                .marketVisitCount(e.getMarketVisitCount())
+                                .initialVisitedTime(e.getInitialVisitedTime())
+                                .lastVisitedTime(e.getLastVisitedTime())
+                                .upperBound(e.getUpperBound())
+                                .lowerBound(e.getLowerBound())
+                                .timeDifference(e.getTimeDifference())
+                                .timeFrame(e.getTimeFrame())
+                                .timeFrameUnit(e.getTimeFrameUnit().getUnit())
+                                .bandType(e.getBandType().getValue())
+                                .instrument(e.getInstrument())
+                                .marketStructureKey("generator_" + timestamp)
+                                .creationDate(LocalDateTime.now())
+                                .build();
+                instMarkStrctrSrv.add(instrumentMarketStructure);
+            });
 
-        InstrumentMarketStructure instrumentMarketStructure =
-                InstrumentMarketStructure.builder()
-                        .instrument(inst)
-                        .bandKey(ms.getBandKey().toString())
-                        .marketVisitCount(ms.getMarketVisitCount())
-                        .initialVisitedTime(ms.getInitialVisitedTime())
-                        .lastVisitedTime(ms.getLastVisitedTime())
-                        .upperBound(ms.getUpperBound())
-                        .lowerBound(ms.getLowerBound())
-                        .timeDifference(ms.getTimeDifference())
-                        .timeFrame(ms.getTimeFrame())
-                        .timeFrameUnit(ms.getTimeFrameUnit().getUnit())
-                        .bandType(ms.getBandType().getValue())
-                        .marketStructureKey("generator_" + timestamp)
-                        .creationDate(LocalDateTime.now())
-                        .build();
-        instMarkStrctrSrv.add(instrumentMarketStructure);
+            el.getUpperBands().forEach(e ->
+            {
+                InstrumentMarketStructure instrumentMarketStructure =
+                        InstrumentMarketStructure.builder()
+                                .instrument(inst)
+                                .bandKey(e.getBandKey().toString())
+                                .marketVisitCount(e.getMarketVisitCount())
+                                .initialVisitedTime(e.getInitialVisitedTime())
+                                .lastVisitedTime(e.getLastVisitedTime())
+                                .upperBound(e.getUpperBound())
+                                .lowerBound(e.getLowerBound())
+                                .timeDifference(e.getTimeDifference())
+                                .timeFrame(e.getTimeFrame())
+                                .timeFrameUnit(e.getTimeFrameUnit().getUnit())
+                                .bandType(e.getBandType().getValue())
+                                .instrument(e.getInstrument())
+                                .marketStructureKey("generator_" + timestamp)
+                                .creationDate(LocalDateTime.now())
+                                .build();
+                instMarkStrctrSrv.add(instrumentMarketStructure);
+            });
+
+            createStructure(inst, el.getChildMarketStructure());
+        }
     }
-
-
 }

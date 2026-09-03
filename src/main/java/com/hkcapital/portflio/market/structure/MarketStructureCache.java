@@ -114,7 +114,7 @@ public class MarketStructureCache implements Service
 
                 List<InstrumentMarketStructureConf> instMrktConfs = instMarkeStrConfSrv.findByInstrumentAndActiveOrdeyByMarketOrder(inst, true);
 
-                List<Candle> highLow = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst.getEtoroInstrumentId(),
+                List<Candle> highLow = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst,
                         15,
                         TimeFramesUnit.MINUTE.getUnit(), start, end);
 
@@ -139,7 +139,7 @@ public class MarketStructureCache implements Service
                 InstrumentMarketStructureConf parentConf = null;
                 for (InstrumentMarketStructureConf instMrktConf : instMrktConfs)
                 {
-                    List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst.getEtoroInstrumentId(),
+                    List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst,
                             instMrktConf.getTimeFrame(),
                             instMrktConf.getTimeFrameUnit(), start, end);
 

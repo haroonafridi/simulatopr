@@ -42,6 +42,10 @@ public class Candle
     private  Double sma;
     private LocalDateTime creationDateTime;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "internal_instrument_id", referencedColumnName = "id")
+    private Instrument instrument;
+
     @Builder
     public Candle(int instrumentID, Instant fromDate, double open, //
                   double high, Instant highTime, double low, Instant lowTime,
@@ -51,7 +55,8 @@ public class Candle
                   String timeFrameUnit ,
                   String source,
                   String sourceTimeFrame,
-                  LocalDateTime creationDateTime)
+                  LocalDateTime creationDateTime,
+                  Instrument instrument)
     {
         this.instrumentID = instrumentID;
         this.fromDate = fromDate;
@@ -71,5 +76,6 @@ public class Candle
         this.source = source;
         this.sourceTimeFrame = sourceTimeFrame;
         this.creationDateTime = creationDateTime;
+        this.instrument =  instrument;
     }
 }

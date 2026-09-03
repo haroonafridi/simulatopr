@@ -30,5 +30,9 @@ public interface InstrumentService  extends Service
 
     Instrument findByInstrumentTicker(String instrumentTicker);
 
+    List<Instrument> findByActiveAndWithFeed(Boolean active, Boolean withFeed);
+
+    List<Instrument> findByActiveAndWithBand(Boolean active, Boolean withBand);
+
 
 }

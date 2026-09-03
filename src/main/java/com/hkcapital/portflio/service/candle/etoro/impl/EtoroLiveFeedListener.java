@@ -65,6 +65,7 @@ public class EtoroLiveFeedListener implements Listener
     private final MarketStructureCache marktStctrMgCache;
     private final InstrumentMarketStructureConfService instMarketStrConfSrv;
 
+    List<Instrument> candleInstruments;
     SignalBuilder signalBuilder = SignalBuilder.builder().build();
 
     private volatile boolean reconnecting = false;
@@ -92,6 +93,8 @@ public class EtoroLiveFeedListener implements Listener
         this.envService = envService;
         this.serRgstry = serviceRegistery;
         this.instMarketStrConfSrv = instMarketStrConfSrv;
+
+        candleInstruments = instrumentService.findByActiveAndWithCandle(Boolean.TRUE, Boolean.TRUE);
 
         List<Instrument> instrumentList = instrumentService.findByActive(Boolean.TRUE);
 
@@ -188,7 +191,11 @@ public class EtoroLiveFeedListener implements Listener
                                     && candleBuilder.getInstrument().getWithCandle().booleanValue()
                             )
                             {
-                                candleBuilder.addAndUpdateCandle(toCandle(tick, candleBuilder.getTimeFrame(), candleBuilder.getInterval()));
+                                CandleDto candleDto = toCandle(tick, candleBuilder.getTimeFrame(), candleBuilder.getInterval());
+                                if (candleDto != null)
+                                {
+                                    candleBuilder.addAndUpdateCandle(candleDto, candleBuilder.getInstrument());
+                                }
                             }
                         });
                     });
@@ -346,9 +353,16 @@ public class EtoroLiveFeedListener implements Listener
 
     public CandleDto toCandle(final Tick tick, TimeFramesUnit timeFramesUnit, Integer interval)
     {
-        return new CandleDto(tick.getInstrument(), tick.getVal(), tick.getVal(), tick.getTime(),
-                tick.getVal(), tick.getTime(), tick.getVal(), tick.getTime(),
-                timeFramesUnit, interval);
+        for (Instrument inst : candleInstruments)
+        {
+            if (Integer.parseInt(tick.getInstrument()) == inst.getEtoroInstrumentId())
+            {
+                return new CandleDto(inst, tick.getVal(), tick.getVal(), tick.getTime(),
+                        tick.getVal(), tick.getTime(), tick.getVal(), tick.getTime(),
+                        timeFramesUnit, interval);
+            }
+        }
+        return null;
     }
 
 }
