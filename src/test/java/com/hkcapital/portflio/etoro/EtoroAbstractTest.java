@@ -40,7 +40,7 @@ public abstract class EtoroAbstractTest
 
     private static final Instant MANUAL_ORDER_OPEN_TIME =
             Instant.parse("2026-02-01T10:00:00Z");
-    public static final int GOLD_ID = ETORO_INSTUMENTS.GOLD.getInstumentId();
+    public static final int GOLD_ID = 18;//ETORO_INSTUMENTS.GOLD.getInstumentId();
 
     public static final int AUTO_ORDER_ID_27 = 337970127;
     public static final int AUTO_ORDER_ID_28 = 337970128;

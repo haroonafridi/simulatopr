@@ -78,6 +78,9 @@ public class CandleBuilder
         return new CandleBuilder();
     }
 
+    public CandleBuilder addAndUpdateCandle(final CandleDto subCandle) {
+        return null;
+    }
     public CandleBuilder addAndUpdateCandle(final CandleDto subCandle, Instrument inst)
     {
         if (candles.isEmpty())

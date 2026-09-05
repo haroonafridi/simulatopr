@@ -44,6 +44,18 @@ public class InstrumentServiceImpl implements InstrumentService
     }
 
     @Override
+    public List<Instrument> findAllOrderByName()
+    {
+        return instrumentRepository.findAllByOrderByNameAsc();
+    }
+
+    @Override
+    public Instrument findByName(String name)
+    {
+        return instrumentRepository.findByName(name);
+    }
+
+    @Override
     public Instrument findById(Integer id)
     {
         Optional<Instrument>  instrument = instrumentRepository.findById(id);
@@ -97,6 +109,7 @@ public class InstrumentServiceImpl implements InstrumentService
     {
         return instrumentRepository.findByActiveAndWithBand(active, withBand);
     }
+
 
 
 }

@@ -58,7 +58,7 @@ class MarketStructureFlushEtoro_IT
         }
 
         List<Candle> candlesList = candleService
-                .findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(18,15,
+                .findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(null,15,
                         TimeFramesUnit.MINUTE.getUnit(), may112026_00_hr, may112026_23_hr);
 
         MarketSession marketSession = MarketSession.builder()

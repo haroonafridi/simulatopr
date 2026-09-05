@@ -72,7 +72,10 @@ public class InstrumentConfPanel extends UIBag
                 Labels.TimeFrame.getLabel(),
                 Labels.TimeFrameUnit.getLabel(),
                 Labels.Module.getLabel(), //
-                Labels.Sub.getLabel(), Labels.Interval.getLabel(), Labels.Active.getLabel()}, //
+                Labels.Sub.getLabel(),
+                Labels.Interval.getLabel(),
+                Labels.StructureName.getLabel(),
+                Labels.Active.getLabel()}, //
                 instMarktStrConfService.findAll());
 
         List<Instrument> instrumentList = instrumentService.findAll();
@@ -173,8 +176,7 @@ public class InstrumentConfPanel extends UIBag
             {
                 Integer instrumentId = (Integer) instrumentConfTable.getModel() //
                         .getValueAt(instrumentConfTable.getSelectedRow(), 0);
-                InstrumentConfEditDialogue instrumentEditDialogue = //
-                        new InstrumentConfEditDialogue(frame, instMarktStrConfService, instrumentId);
+                new InstrumentConfEditDialogue(frame, instMarktStrConfService, instrumentId);
             }
         }
     }

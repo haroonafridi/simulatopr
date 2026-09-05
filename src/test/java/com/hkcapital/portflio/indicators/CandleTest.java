@@ -12,7 +12,7 @@ class CandleTest
     @Test
     void shouldCreateCandle()
     {
-        CandleDto candle = new CandleDto("18", 5400.52, 5380.33, Instant.parse("2026-04-09T18:00:01.00Z"),
+        CandleDto candle = new CandleDto(null, 5400.52, 5380.33, Instant.parse("2026-04-09T18:00:01.00Z"),
                 5410.20, Instant.parse("2026-04-09T18:00:05.00Z"),
                 5405.55, Instant.parse("2026-04-09T18:00:06.00Z"), TimeFramesUnit.MINUTE, 15);
         Assertions.assertEquals(candle.getInstrument(), "18");

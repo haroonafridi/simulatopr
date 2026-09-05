@@ -6,6 +6,7 @@ import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.buttons.ButtonLabels;
+import com.hkcapital.portflio.ui.fields.NumberTextField;
 import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentEditDialogue;
 import com.hkcapital.portflio.ui.panels.instrument.labels.Labels;
 import com.hkcapital.portflio.ui.panels.instrument.tablemodels.InstrumentTableModel;
@@ -18,36 +19,38 @@ import java.awt.event.MouseEvent;
 public class InstrumentPanel extends UIBag
 {
 
-    private final ServiceRegistery<Service> serviceRegistery;
+    private final ServiceRegistery<Service> srvRgstry;
 
-    private final InstrumentService instrumentService;
+    private final InstrumentService insServ;
 
-    private final JLabel instrumentLabel = new JLabel("Instrument Name:");
-    private final JTextField instrumentName = new JTextField(30);
+    private final JLabel tckrLbl = new JLabel(Labels.Ticker.getLabel());
+    private final JTextField ticker = new JTextField(30);
 
-    private final JTable instrumentTable;
+    private final JLabel etoroIdLbl = new JLabel(Labels.Name.getLabel());
+    private final NumberTextField etoroId = new NumberTextField(30);
+    private final JLabel instNameLbl = new JLabel(Labels.Name.getLabel());
+    private final JTextField instName = new JTextField(30);
+    private final JTable instTable;
     private final InstrumentTableModel tableModel;
 
     private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
     private final JButton cancelButton = new JButton(ButtonLabels.Cancel.getLabel());
     private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
     private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
-
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
 
     public InstrumentPanel(final ServiceRegistery serviceRegistery)
     {
         super(InstrumentPanel.class);
-        this.serviceRegistery = serviceRegistery;
-        this.instrumentService = (InstrumentService) this.serviceRegistery.getService(Service.InstrumentService);
-
-        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(),Labels.Ticker.getLabel(), Labels.Name.getLabel(),
-        Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(),
+        this.srvRgstry = serviceRegistery;
+        this.insServ = (InstrumentService) this.srvRgstry.getService(Service.InstrumentService);
+        tableModel = new InstrumentTableModel<>(new String[]{Labels.Ticker.getLabel(), Labels.Name.getLabel(),
+                Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(),
                 Labels.WithCandle.getLabel(),
                 Labels.WithFeed.getLabel(),
                 Labels.WithBands.getLabel(),
                 Labels.Active.getLabel()}, //
-                instrumentService.findAll());
+                insServ.findAllOrderByName());
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(Labels.InstrumentPanel.getLabel()));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -55,9 +58,12 @@ public class InstrumentPanel extends UIBag
 
         // Row 0: Instrument label + text field
         JPanel instrumentInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        instrumentInputPanel.add(instrumentLabel);
-        instrumentInputPanel.add(instrumentName);
-
+        instrumentInputPanel.add(tckrLbl);
+        instrumentInputPanel.add(ticker);
+        instrumentInputPanel.add(instNameLbl);
+        instrumentInputPanel.add(instName);
+        instrumentInputPanel.add(etoroIdLbl);
+        instrumentInputPanel.add(etoroId);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -82,8 +88,8 @@ public class InstrumentPanel extends UIBag
         add(buttonPanel, gbc);
 
         // Row 2: Table inside scroll pane
-        instrumentTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(instrumentTable);
+        instTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(instTable);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -94,31 +100,33 @@ public class InstrumentPanel extends UIBag
         add(scrollPane, gbc);
         saveButton.addActionListener(e -> save());
         removeButton.addActionListener(e -> remove());
-        readButton.addActionListener(e -> instrumentService.findAll());
+        readButton.addActionListener(e -> insServ.findAll());
         cancelButton.addActionListener(e -> clear());
         closeButton.addActionListener(e ->
         {
             SwingUtilities.getWindowAncestor(this).dispose();
         });
-
-        instrumentTable.addMouseListener(new MouseClickHandler(this));
-
+        instTable.addMouseListener(new MouseClickHandler(this));
     }
 
-    public class MouseClickHandler extends  MouseAdapter {
+    public class MouseClickHandler extends MouseAdapter
+    {
 
         private JPanel frame;
-        public MouseClickHandler(JPanel frame) {
-           this.frame = frame;
+
+        public MouseClickHandler(JPanel frame)
+        {
+            this.frame = frame;
         }
+
         @Override
         public void mouseClicked(MouseEvent e)
         {
             if (e.getClickCount() == 2)
             {
-                Integer instrumentId = (Integer) instrumentTable.getModel() //
-                        .getValueAt(instrumentTable.getSelectedRow(), 0);
-                        new InstrumentEditDialogue(frame, instrumentService, instrumentId);
+                Integer instrumentId = (Integer) instTable.getModel() //
+                        .getValueAt(instTable.getSelectedRow(), 0);
+                new InstrumentEditDialogue(frame, insServ, instrumentId);
             }
         }
     }
@@ -126,32 +134,67 @@ public class InstrumentPanel extends UIBag
 
     public void save()
     {
-        String name = instrumentName.getText();
+        String name = instName.getText();
+
+        String instTicker = ticker.getText();
+
+        if (instTicker == null || instTicker.trim().isEmpty())
+        {
+            JOptionPane.showMessageDialog(this, "Instrument ticker should not be null!",
+                    "Instrument Error Message", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Instrument inst = insServ.findByInstrumentTicker(ticker.getText());
+
+        if (inst != null)
+        {
+            JOptionPane.showMessageDialog(this, "Instrument with ticker [" + ticker.getText() + "] already exist",
+                    "Instrument Error Message", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+
         if (name != null && !name.trim().isEmpty())
         {
+            String instName = name.trim();
+
+            inst = insServ.findByName(instName);
+
+            if (inst != null)
+            {
+                JOptionPane.showMessageDialog(this, "Instrument with name [" + instName + "] already exist",
+                        "Instrument Error Message", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             Instrument instrument = new Instrument();
             instrument.setName(name.trim());
-            if(instrument.getActive() == null) //
+            instrument.setInstrumentTicker(ticker.getText());
+            instrument.setEtoroInstrumentId(etoroId.getIntValue());
+            if (instrument.getActive() == null) //
             {
                 instrument.setActive(false);
             }
-            instrumentService.addInstrument(instrument);
+            insServ.addInstrument(instrument);
             tableModel.addRow(instrument);
-            instrumentName.setText(null);
+            this.instName.setText(null);
+            ticker.setText(null);
+            etoroId.setText(null);
         } else
         {
-            JOptionPane.showMessageDialog(this, "Please enter an instrumentTicker name.",
+            JOptionPane.showMessageDialog(this, "Please enter an instrument Ticker name.",
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     public void remove()
     {
-        int selectedRow = instrumentTable.getSelectedRow();
+        int selectedRow = instTable.getSelectedRow();
         if (selectedRow >= 0)
         {
             Instrument instrument = (Instrument) tableModel.removeRow(selectedRow);
-            instrumentService.removeInstrument(instrument);
+            insServ.removeInstrument(instrument);
         } else
         {
             JOptionPane.showMessageDialog(this, "Please select an instrumentTicker to remove.",
@@ -161,7 +204,7 @@ public class InstrumentPanel extends UIBag
 
     public void clear()
     {
-        instrumentName.setText(null);
+        instName.setText(null);
     }
 
 

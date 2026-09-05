@@ -19,4 +19,8 @@ public interface InstrumentRepository extends JpaRepository<Instrument, Integer>
     Instrument findByInstrumentTicker(String instrumentTicker);
 
     List<Instrument> findByActiveAndWithBand(Boolean active, Boolean withBand);
+
+    Instrument findByName(String name);
+
+    List<Instrument> findAllByOrderByNameAsc();
 }
