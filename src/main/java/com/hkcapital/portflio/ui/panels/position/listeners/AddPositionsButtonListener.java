@@ -78,9 +78,9 @@ public class AddPositionsButtonListener implements ActionListener
     {
         MarketConditions marketConditions = marketConditionsService.findById(marketConditionsSourcePanel.getPositionId().getIntValue());
         Position position = new Position();
-        position.setInstrument(marketConditions.getInstrument());
         Configuration configuration = configurationService.findById(configurationSourcePanel.getId().getIntValue());
         SRMatrix srMatrix = srMatrixService.findById(srMatrixSourcePanel.getId().intValue());
+        position.setInstrument(srMatrix.getInstrument());
         position.setConfiguration(configuration);
         position.setMarketConditions(marketConditions);
         position.setSrMatrix(srMatrix);
