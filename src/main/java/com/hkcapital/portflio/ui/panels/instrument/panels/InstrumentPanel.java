@@ -2,6 +2,7 @@ package com.hkcapital.portflio.ui.panels.instrument.panels;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portflio.service.api.etoro.EtoroInstrumentService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.ui.UIBag;
@@ -22,6 +23,7 @@ public class InstrumentPanel extends UIBag
     private final ServiceRegistery<Service> srvRgstry;
 
     private final InstrumentService insServ;
+    private final EtoroInstrumentService etoroInsServ;
 
     private final JLabel tckrLbl = new JLabel(Labels.Ticker.getLabel());
     private final JTextField ticker = new JTextField(30);
@@ -38,13 +40,15 @@ public class InstrumentPanel extends UIBag
     private final JButton closeButton = new JButton(ButtonLabels.Close.getLabel());
     private final JButton removeButton = new JButton(ButtonLabels.Remove.getLabel());
     private final JButton readButton = new JButton(ButtonLabels.Refresh.getLabel());
+    private final JButton updateEtoroIdButton = new JButton(ButtonLabels.UpdateEtoroId.getLabel());
 
     public InstrumentPanel(final ServiceRegistery serviceRegistery)
     {
         super(InstrumentPanel.class);
         this.srvRgstry = serviceRegistery;
         this.insServ = (InstrumentService) this.srvRgstry.getService(Service.InstrumentService);
-        tableModel = new InstrumentTableModel<>(new String[]{Labels.Ticker.getLabel(), Labels.Name.getLabel(),
+        this.etoroInsServ = (EtoroInstrumentService) this.srvRgstry.getService(Service.EtoroInstrumentService);
+        tableModel = new InstrumentTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Ticker.getLabel(), Labels.Name.getLabel(),
                 Labels.MaxSlippage.getLabel(), Labels.EtoroInstrumentId.getLabel(), Labels.Url.getLabel(),
                 Labels.WithCandle.getLabel(),
                 Labels.WithFeed.getLabel(),
@@ -78,6 +82,7 @@ public class InstrumentPanel extends UIBag
         buttonPanel.add(cancelButton);
         buttonPanel.add(closeButton);
         buttonPanel.add(readButton);
+        buttonPanel.add(updateEtoroIdButton);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -106,6 +111,25 @@ public class InstrumentPanel extends UIBag
         {
             SwingUtilities.getWindowAncestor(this).dispose();
         });
+
+        updateEtoroIdButton.addActionListener(e ->
+        {
+
+            int selectedRow = instTable.getSelectedRow();
+            if (selectedRow >= 0)
+            {
+                Integer instId = (Integer) tableModel.getValueAt(selectedRow, 0);
+                Instrument inst = insServ.findById(instId);
+                Integer etoroInstId = etoroInsServ.fetchInstrumentId(inst.getInstrumentTicker());
+                inst.setEtoroInstrumentId(etoroInstId);
+                insServ.updateInstrument(inst);
+            } else
+            {
+                JOptionPane.showMessageDialog(this, "Please select an instrumentTicker to Update.",
+                        "No Selection", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
         instTable.addMouseListener(new MouseClickHandler(this));
     }
 

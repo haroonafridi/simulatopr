@@ -81,23 +81,21 @@ public class ConfigurationPanel extends UIBag
         configurationPanel.add(codeLabel, innerGbc);
         innerGbc.gridx = 1;
         configurationPanel.add(code, innerGbc);
-
+        innerGbc.gridx = 0;
+        innerGbc.gridy++;
         configurationPanel.add(percentAllocationAllowedLabel, innerGbc);
         innerGbc.gridx = 1;
         configurationPanel.add(percentAllocationAllowed, innerGbc);
-
         innerGbc.gridx = 0;
         innerGbc.gridy++;
         configurationPanel.add(noOfInstrumentsLabel, innerGbc);
         innerGbc.gridx = 1;
         configurationPanel.add(noOfInstrument, innerGbc);
-
         innerGbc.gridx = 0;
         innerGbc.gridy++;
         configurationPanel.add(noOfPositionsPerInstrumentLabel, innerGbc);
         innerGbc.gridx = 1;
         configurationPanel.add(noOfPositionsPerInstrument, innerGbc);
-
         innerGbc.gridx = 0;
         innerGbc.gridy++;
         configurationPanel.add(maxPercentAllowedPerInstrumentLabel, innerGbc);

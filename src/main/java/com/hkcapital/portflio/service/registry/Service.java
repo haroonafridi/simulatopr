@@ -24,5 +24,6 @@ public interface Service
     String LiveInstrumentFeedService = "LiveInstrumentFeedService";
     String InstrumentMarketStructureService = "InstrumentMarketStructureService";
     String InstrumentMarketStructureConfService = "InstrumentMarketStructureConfService";
+    String EtoroInstrumentService = "EtoroInstrumentService";
 
 }

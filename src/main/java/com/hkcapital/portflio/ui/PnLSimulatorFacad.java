@@ -8,6 +8,7 @@ import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.TradingSessions;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
+import com.hkcapital.portflio.service.api.etoro.EtoroInstrumentService;
 import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
@@ -85,8 +86,7 @@ public class PnLSimulatorFacad
     private final InstrumentMarketStructureService instrumentMarketStructureService;
     private final InstrumentMarketStructureConfService instMrktStctrConfSrv;
 
-
-
+    private final EtoroInstrumentService etoroInstrumentService;
     private final EnvService envService;
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
@@ -109,6 +109,7 @@ public class PnLSimulatorFacad
                              EnvService envService,
                              InstrumentMarketStructureService instrumentMarketStructureService,
                              InstrumentMarketStructureConfService instMrktStctrConfSrv,
+                             EtoroInstrumentService etoroInstrumentService,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -131,6 +132,7 @@ public class PnLSimulatorFacad
         this.liveInstrumentFeedService = liveInstrumentFeedService;
         this.instrumentMarketStructureService = instrumentMarketStructureService;
         this.instMrktStctrConfSrv = instMrktStctrConfSrv;
+        this.etoroInstrumentService = etoroInstrumentService;
         this.envService = envService;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
@@ -152,6 +154,7 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.InstrumentMarketStructureConfService, this.instMrktStctrConfSrv);
         serviceRegistery.putService(Service.EnvService, this.envService);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
+        serviceRegistery.putService(Service.EtoroInstrumentService, this.etoroInstrumentService);
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException

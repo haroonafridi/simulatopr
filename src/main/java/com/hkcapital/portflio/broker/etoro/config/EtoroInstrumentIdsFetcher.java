@@ -10,7 +10,7 @@ public class EtoroInstrumentIdsFetcher {
 
     public static void main(String[] args) throws Exception {
 
-        String symbol = "AAPL";
+        String symbol = "ALNY";
 
         String url =
                 "https://public-api.etoro.com/api/v1/market-data/search?internalSymbolFull="

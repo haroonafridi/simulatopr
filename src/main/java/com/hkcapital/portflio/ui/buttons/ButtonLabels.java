@@ -15,8 +15,9 @@ public enum ButtonLabels
 
     RemoveAll("Remove All"),
 
-    Refresh("Read");
+    Refresh("Read"),
 
+    UpdateEtoroId("Update Etoro Id");
     private String label;
 
     ButtonLabels(String label)

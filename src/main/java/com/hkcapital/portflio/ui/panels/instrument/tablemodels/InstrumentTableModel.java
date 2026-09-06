@@ -31,42 +31,46 @@ public class InstrumentTableModel<E> extends TableModel
         {
             case 0:
             {
-                return inst.getInstrumentTicker();
+                return inst.getId();
             }
-
             case 1:
             {
-                return inst.getName();
+                return inst.getInstrumentTicker();
             }
 
             case 2:
             {
-                return inst.getMaxSlippage();
+                return inst.getName();
             }
+
             case 3:
             {
-                return inst.getEtoroInstrumentId();
+                return inst.getMaxSlippage();
             }
             case 4:
             {
-                return inst.getUrl();
+                return inst.getEtoroInstrumentId();
             }
             case 5:
             {
-
-                return inst.getWithCandle() ? "YES" : "NO";
+                return inst.getUrl();
             }
             case 6:
             {
 
-                return inst.getWithFeed() ? "YES" : "NO";
+                return inst.getWithCandle() ? "YES" : "NO";
             }
             case 7:
             {
 
-                return inst.getWithBand() ? "YES" : "NO";
+                return inst.getWithFeed() ? "YES" : "NO";
             }
             case 8:
+            {
+
+                return inst.getWithBand() ? "YES" : "NO";
+            }
+            case 9:
             {
 
                 return inst.getActive() ? "YES" : "NO";
