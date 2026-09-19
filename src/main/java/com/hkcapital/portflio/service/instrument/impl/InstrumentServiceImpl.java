@@ -58,7 +58,7 @@ public class InstrumentServiceImpl implements InstrumentService
     @Override
     public Instrument findById(Integer id)
     {
-        Optional<Instrument>  instrument = instrumentRepository.findById(id);
+        Optional<Instrument> instrument = instrumentRepository.findById(id);
         return !instrument.isEmpty() ? instrument.get() : null;
     }
 
@@ -110,6 +110,11 @@ public class InstrumentServiceImpl implements InstrumentService
         return instrumentRepository.findByActiveAndWithBand(active, withBand);
     }
 
+    @Override
+    public List<Instrument> findByActiveAndWithFeedAndWithCandle(Boolean active, Boolean withFeed, Boolean withCandle)
+    {
+        return instrumentRepository.findByActiveAndWithFeedAndWithCandle(active, withFeed, withCandle);
+    }
 
 
 }

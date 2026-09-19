@@ -39,18 +39,10 @@ public class ChartUtil
             {
                 case 1:
                 {
-                   CandleDto candle = null;
-//                           signalBuilder.getCandleBuilder1Min().getCandles()
-//                                   .get(signalBuilder.getCandleBuilder1Min()
-//                                           .getCandles().size());
 
-                    LocalDate td = candle.getHighTime().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(-1);
-
+                    LocalDate td = LocalDate.now(); //candle.getHighTime().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(-1);
 
                     today.atStartOfDay(ZoneId.systemDefault()).plusDays(-1).toInstant();
-
-                    //startOfDay = Date.from();
-
                     endOfDay = Date.from(today.plusDays(1)
                             .atTime(23, 59, 59)
                             .atZone(ZoneId.systemDefault()).toInstant());

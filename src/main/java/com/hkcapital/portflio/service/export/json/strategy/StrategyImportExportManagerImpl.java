@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.service.strategy;
+package com.hkcapital.portflio.service.export.json.strategy;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hkcapital.portflio.model.*;
+import com.hkcapital.portflio.repository.instrumentmarketstructureconf.InstrumentMarketStructureConfFilter;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixFilter;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixToleranceFilter;
@@ -15,6 +16,8 @@ import com.hkcapital.portflio.service.configuration.dto.ConfigurationDTO;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.dto.InstrumentStructureConfDTO;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.marketconditions.dto.MarketConditionsDTO;
 import com.hkcapital.portflio.service.positions.PositionService;
@@ -23,9 +26,9 @@ import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.srmatrix.dto.SRMatrixDTO;
 import com.hkcapital.portflio.service.srmatrix.dto.SRMatrixToleranceDTO;
+import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.service.strategy.dto.StrategyDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -38,9 +41,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class StrategyImportExportManagerImpl implements StrategyImportExportManager
 {
-    private static final Logger logger = LoggerFactory.getLogger(StrategyImportExportManager.class);
     private final ServiceRegistery serviceRegistery;
     private final InstrumentService instService;
     private final MarketConditionsService marketCondService;
@@ -49,6 +52,7 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
     private final SRMatrixToleranceService sRMatrixToleranceService;
     private final PositionService positionService;
     private final StrategyService strategyService;
+    private final InstrumentMarketStructureConfService instMrktStrConfSrv;
     private final EnvService envService;
 
     ObjectReader objectReader = new ObjectMapper()
@@ -70,12 +74,14 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
         this.sRMatrixService = (SRMatrixService) serviceRegistery.getService(SRMatrixService.SRMatrixService);
         this.sRMatrixToleranceService = (SRMatrixToleranceService) serviceRegistery.getService(SRMatrixToleranceService.SRMatrixToleranceService);
         this.positionService = (PositionService) serviceRegistery.getService(PositionService.PositionService);
+        this.instMrktStrConfSrv = (InstrumentMarketStructureConfService) serviceRegistery.getService(InstrumentMarketStructureConfService.InstrumentMarketStructureConfService);
         this.envService = (EnvService) serviceRegistery.getService(EnvService.EnvService);
     }
 
     @Override
     public void exportStrategy(int strategyId)
     {
+        exportMarketStructureConf();
         exportSRMatrixTolerance();
         exportSRMatrix();
         Strategy strategy = strategyService.findById(strategyId);
@@ -85,7 +91,12 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
             final String json = objectWriter.writeValueAsString(strategyDTO);
             try
             {
-                FileWriter fileWriter = new FileWriter("D:/hk-simulation/strategies-export/" + strategyDTO.getName() + "-strategy.json");
+                File file = new File("D:/hk-simulation/strategies-export/" + strategyDTO.getName() + "-strategy.json");
+
+                if(!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(json);
                 fileWriter.close();
 
@@ -106,14 +117,13 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
 
         if (!envService.getActiveProfile().equals("simulation"))
         {
-            logger.info("Strategy cannot be imported in env = {}", envService.getActiveProfile());
+            log.info("Strategy cannot be imported in env = {}", envService.getActiveProfile());
             return;
         }
 
-        logger.info("Importing strategy in simulation env.");
-
+        log.info("Importing strategy in simulation env.");
+        importMarketStructureConf();
         importSRMatrixTolerance();
-
         importSRMatrix();
 
         String dir = "D:/hk-simulation/strategies-imports/";
@@ -157,6 +167,9 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
                                 .maxSlippage(instrumentDTO.getMaxSlippage())
                                 .etoroInstrumentId(instrumentDTO.getEtoroInstrumentId())
                                 .active(instrumentDTO.getActive())
+                                .withFeed(instrumentDTO.getWithFeed())
+                                .withBand(instrumentDTO.getWithBand())
+                                .withCandle(instrumentDTO.getWithCandle())
                                 .build());
                     }
 
@@ -208,7 +221,7 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
                                     .stopLoss(srMatrixDTO.getStopLoss())
                                     .support(srMatrixDTO.getSupport())
                                     .takeProfit(srMatrixDTO.getTakeProfit())
-                                    .instrumentId(instrument.getId())
+                                    .instrument(instrument)
                                     .creationDate(srMatrixDTO.getCreationDate())
                                     .build();
 
@@ -284,13 +297,18 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
         try
         {
             final String json = objectWriter.writeValueAsString(sRMatrixDTO);
-            FileWriter fileWriter = new FileWriter("D:/hk-simulation/strategies-export/sr-matrix/sr-matrix.json");
+            File file = new File("D:/hk-simulation/strategies-export/sr-matrix/sr-matrix.json");
+            if(!file.exists())
+            {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
             fileWriter.write(json);
             fileWriter.close();
 
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+                log.error("Error in reading file sr-matrix");
         }
 
     }
@@ -309,13 +327,133 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
         try
         {
             final String json = objectWriter.writeValueAsString(SRMatrixToleranceDTOList);
-            FileWriter fileWriter = new FileWriter("D:/hk-simulation/strategies-export/sr-matrix-tolerance/sr-matrix-tolerance.json");
+            File file = new File("D:/hk-simulation/strategies-export/sr-matrix-tolerance/sr-matrix-tolerance.json");
+            if(!file.exists())
+            {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
             fileWriter.write(json);
             fileWriter.close();
 
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+            log.error("Error in reading file r-matrix-tolerance");
+        }
+    }
+
+    @Override
+    public void exportMarketStructureConf()
+    {
+        List<InstrumentMarketStructureConf> instMrktStrtrConfs = instMrktStrConfSrv.findAll();
+
+        List<InstrumentStructureConfDTO> instMrktStrtrConfsDtos = new ArrayList<>();
+
+        instMrktStrtrConfs.stream().forEach(markConf ->
+        {
+            instMrktStrtrConfsDtos.add(markConf.buildDto());
+        });
+        try
+        {
+            final String json = objectWriter.writeValueAsString(instMrktStrtrConfsDtos);
+
+            File file = new File("D:/hk-simulation/strategies-export/instrument-market-structure-conf/instrument-market-structure-conf.json");
+
+            if(!file.exists())
+            {
+                file.createNewFile();
+            }
+
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(json);
+            fileWriter.close();
+        } catch (IOException e)
+        {
+            log.error("Error in reading file instrument-market-structure-conf");
+        }
+    }
+
+    @Override
+    public void importMarketStructureConf()
+    {
+        String dir = "D:/hk-simulation/strategies-imports/instrument-market-structure-conf/";
+        try
+        {
+            Set<String> files = Stream.of(new File(dir).listFiles())
+                    .filter(file -> !file.isDirectory() && file.getName().contains("instrument-market-structure-conf"))
+                    .map(File::getName)
+                    .collect(Collectors.toSet());
+        for (String file : files)
+        {
+            try
+            {
+
+                List<InstrumentStructureConfDTO> instStrConfDTOs =
+                        objectReader.forType(new TypeReference<List<InstrumentStructureConfDTO>>()
+                                {
+                                })
+                                .readValue(new File(dir + file));
+
+
+                for (InstrumentStructureConfDTO instStrConfDTO : instStrConfDTOs)
+                {
+
+                    Instrument instrument = instService.findByInstrumentTicker(instStrConfDTO.getInstrumentDto().getInstrumentTicker());
+
+                    if (instrument == null)
+                    {
+                        InstrumentDTO instDTO = instStrConfDTO.getInstrumentDto();
+                        instrument = instService
+                                .addInstrument(Instrument.builder().instrumentTicker(instDTO.getInstrumentTicker())
+                                        .etoroInstrumentId(instDTO.getEtoroInstrumentId())
+                                        .name(instDTO.getName())
+                                        .url(instDTO.getUrl())
+                                        .maxSlippage(instDTO.getMaxSlippage())
+                                        .active(instDTO.getActive())
+                                        .withCandle(instDTO.getWithCandle())
+                                        .withFeed(instDTO.getWithFeed())
+                                        .withBand(instDTO.getWithBand())
+                                        .withCandle(instDTO.getWithCandle())
+                                        .instrumentDesc(instDTO.getInstrumentDesc())
+                                        .build());
+                    }
+
+
+                    InstrumentMarketStructureConfFilter filter =
+                            InstrumentMarketStructureConfFilter
+                                    .builder()
+                                    .structureName(instStrConfDTO.getStructureName())
+                                    .build();
+
+                    List<InstrumentMarketStructureConf> instMrktStrConf = //
+                            instMrktStrConfSrv.findByFilter(filter);
+
+                    if (instMrktStrConf == null || instMrktStrConf.size() == 0)
+                    {
+                        instMrktStrConfSrv.add(InstrumentMarketStructureConf.builder()
+                                .structureName(instStrConfDTO.getStructureName())
+                                        .marketOrder(instStrConfDTO.getMarketOrder())
+                                        .sub(instStrConfDTO.getSub())
+                                        .intrvl(instStrConfDTO.getIntrvl())
+                                        .module(instStrConfDTO.getModule())
+                                        .timeFrameUnit(instStrConfDTO.getTimeFrameUnit())
+                                        .instrument(instrument)
+                                        .active(instStrConfDTO.isActive())
+                                        .creationDate(instStrConfDTO.getCreationDate())
+                                        .timeFrame(instStrConfDTO.getTimeFrame())
+                                .build());
+
+                    }
+                }
+
+
+            } catch (IOException e)
+            {
+               log.error("Cannot read file instrument-market-structure-conf");
+            }
+        }
+        } catch (Exception e) {
+            log.error("Cannot read file instrument-market-structure-conf");
         }
     }
 
@@ -354,6 +492,9 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
                                         .url(instDTO.getUrl())
                                         .maxSlippage(instDTO.getMaxSlippage())
                                         .active(instDTO.getActive())
+                                        .withCandle(instDTO.getWithCandle())
+                                        .withBand(instDTO.getWithBand())
+                                        .withCandle(instDTO.getWithCandle())
                                         .instrumentDesc(instDTO.getInstrumentDesc())
                                         .build());
                     }
@@ -371,7 +512,7 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
                                     .stopLoss(sRMatrixDTO.getStopLoss())
                                     .support(sRMatrixDTO.getSupport())
                                     .takeProfit(sRMatrixDTO.getTakeProfit())
-                                    .instrumentId(instrument.getId())
+                                    .instrument(instrument)
                                     .creationDate(sRMatrixDTO.getCreationDate())
                                     .build();
 
@@ -401,7 +542,7 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
 
             } catch (IOException e)
             {
-                throw new RuntimeException(e);
+               log.error("Cannot read file sr-matrix");
             }
         }
     }
@@ -441,6 +582,9 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
                                         .url(instDTO.getUrl())
                                         .maxSlippage(instDTO.getMaxSlippage())
                                         .active(instDTO.getActive())
+                                        .withCandle(instDTO.getWithCandle())
+                                        .withBand(instDTO.getWithBand())
+                                        .withCandle(instDTO.getWithCandle())
                                         .instrumentDesc(instDTO.getInstrumentDesc())
                                         .build());
                     }
@@ -455,7 +599,7 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
                                     .r_r_tolerance_percent(sRMatrixToleranceDTO.getR_r_tolerance_percent())
                                     .timeFrameUnit(sRMatrixToleranceDTO.getTimeFrameUnit())
                                     .timeFrame(sRMatrixToleranceDTO.getTimeFrame())
-                                    .instrumentId(instrument.getId())
+                                    .instrument(instrument)
                                     .stopLossPercent(sRMatrixToleranceDTO.getStopLossPercent())
                                     .takeProfitPercent(sRMatrixToleranceDTO.getTakeProfitPercent())
                                     .active(sRMatrixToleranceDTO.getActive())
@@ -487,7 +631,7 @@ public class StrategyImportExportManagerImpl implements StrategyImportExportMana
 
             } catch (IOException e)
             {
-                throw new RuntimeException(e);
+                log.error("Cannot read file sr-matrix-tolerance");
             }
         }
     }

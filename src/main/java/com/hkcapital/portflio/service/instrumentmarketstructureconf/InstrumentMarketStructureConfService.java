@@ -2,6 +2,9 @@ package com.hkcapital.portflio.service.instrumentmarketstructureconf;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructureConf;
+import com.hkcapital.portflio.model.SRMatrixTolerance;
+import com.hkcapital.portflio.repository.instrumentmarketstructureconf.InstrumentMarketStructureConfFilter;
+import com.hkcapital.portflio.repository.srmatrix.SRMatrixToleranceFilter;
 import com.hkcapital.portflio.service.registry.Service;
 
 import java.util.List;
@@ -15,4 +18,7 @@ public interface InstrumentMarketStructureConfService extends Service
     List<InstrumentMarketStructureConf> findByInstrumentAndActiveOrdeyByMarketOrder(Instrument instrument, boolean active);
 
     void remove(InstrumentMarketStructureConf instMrkConf);
+    void removeAll();
+
+    List<InstrumentMarketStructureConf> findByFilter(InstrumentMarketStructureConfFilter filter);
 }

@@ -38,12 +38,12 @@ public class SRMatrixSpecification
                 );
             }
 
-            if (sRMatrixFilter.getInstrumentId() != null)
+            if (sRMatrixFilter.getInstrument() != null)
             {
                 predicates.add(
                         cb.equal(
-                                root.get("instrumentTicker").get("id"),
-                                sRMatrixFilter.getInstrumentId()
+                                root.get("instrument").get("instrumentTicker"),
+                                sRMatrixFilter.getInstrument().getInstrumentTicker()
                         )
                 );
             }

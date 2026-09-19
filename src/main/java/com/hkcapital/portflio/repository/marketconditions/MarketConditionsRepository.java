@@ -5,6 +5,8 @@ import com.hkcapital.portflio.model.MarketConditions;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface MarketConditionsRepository extends JpaRepository<MarketConditions, Integer>
 {
@@ -15,6 +17,6 @@ public interface MarketConditionsRepository extends JpaRepository<MarketConditio
                                                       Double percentMove);
 
 
-    MarketConditions //
+    List<MarketConditions> //
     findByInstrumentOrderByIdDesc(Instrument instrument);
 }

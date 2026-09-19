@@ -1,6 +1,7 @@
 package com.hkcapital.portflio.model;
 
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.dto.InstrumentStructureConfDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,5 +47,24 @@ public class InstrumentMarketStructureConf {
     private Instrument instrument;
     @Column(name = "structure_name")
     private String structureName;
+
+
+
+    public InstrumentStructureConfDTO buildDto()
+    {
+        return InstrumentStructureConfDTO.builder()
+                .instrumentDto(instrument.buildDto())
+                .sub(sub)
+                .creationDate(creationDate)
+                .marketOrder(marketOrder)
+                .intrvl(intrvl)
+                .structureName(structureName)
+                .module(module)
+                .timeFrameUnit(timeFrameUnit)
+                .timeFrame(timeFrame)
+                .active(active)
+                .structureName(structureName)
+                .build();
+    }
 }
 

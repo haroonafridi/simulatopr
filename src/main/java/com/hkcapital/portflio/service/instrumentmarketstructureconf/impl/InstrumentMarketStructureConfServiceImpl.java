@@ -2,7 +2,9 @@ package com.hkcapital.portflio.service.instrumentmarketstructureconf.impl;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructureConf;
+import com.hkcapital.portflio.repository.instrumentmarketstructureconf.InstrumentMarketStructureConfFilter;
 import com.hkcapital.portflio.repository.instrumentmarketstructureconf.InstrumentMarketStructureConfRepository;
+import com.hkcapital.portflio.repository.instrumentmarketstructureconf.InstrumentMarketStructureConfSpecification;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,17 @@ public class InstrumentMarketStructureConfServiceImpl //
     public void remove(InstrumentMarketStructureConf instMrkConf)
     {
         instMrkConfRepo.delete(instMrkConf);
+    }
+
+    @Override
+    public void removeAll()
+    {
+        instMrkConfRepo.deleteAll();
+    }
+
+    @Override
+    public List<InstrumentMarketStructureConf> findByFilter(InstrumentMarketStructureConfFilter filter)
+    {
+        return instMrkConfRepo.findAll(InstrumentMarketStructureConfSpecification.byFilter(filter));
     }
 }

@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.hkcapital.portflio.DataObject;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.simulation.SimulationHelper;
+import com.hkcapital.portflio.config.DataPathConfig;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.TradingSessions;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -13,6 +14,8 @@ import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
+import com.hkcapital.portflio.service.export.csv.candle.CandleCSVGenerator;
+import com.hkcapital.portflio.service.export.file.csv.CSVFileGenerator;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
@@ -48,8 +51,7 @@ import com.hkcapital.portflio.ui.panels.srmatrix.panels.SRMatrixTolerancePanel;
 import com.hkcapital.portflio.ui.panels.strategy.StrategyHeaderPanel;
 import com.hkcapital.portflio.ui.panels.tradingsessions.TradingSessionDialogue;
 import com.hkcapital.portflio.ui.panels.tradingsessions.TradingSessionPanel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -59,10 +61,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
 @Component
+@Slf4j
 public class PnLSimulatorFacad
 {
-
-    private static Logger logger = LoggerFactory.getLogger(PnLSimulatorFacad.class);
     private final ServiceRegistery<Service> serviceRegistery;
     private final ConfigurationService configurationService;
     private final StrategyService strategyService;
@@ -70,7 +71,6 @@ public class PnLSimulatorFacad
     private final InstrumentService instrumentService;
     private final PositionService positionPnLService;
     private final EtoroOrderManagerServiceImpl etoroOrderManagerService;
-
     private final TradingSessionsService<TradingSessions> tradingSessionsService;
     private final EtoroCandleService etoroCandleService;
     private final EtoroWebSocketManagerService etoroWebSocketManagerService;
@@ -80,14 +80,16 @@ public class PnLSimulatorFacad
     private final EtoroApiConfiguration etoroApiInformationService;
     private DataObject<String, String> dataObject = new DataObject<>();
     private final MarketStructureCache marketStructureManagerCache;
-    private final EtoroApiConfiguration etoroApiConfiguration;
     private final LiveInstrumentFeedService liveInstrumentFeedService;
     private final SRMatrixToleranceService sRMatrixToleranceService;
     private final InstrumentMarketStructureService instrumentMarketStructureService;
     private final InstrumentMarketStructureConfService instMrktStctrConfSrv;
-
+    private final CSVFileGenerator csvCandleFileGenerator;
+    private final CandleCSVGenerator candleCSVGenerator;
     private final EtoroInstrumentService etoroInstrumentService;
     private final EnvService envService;
+    private final DataPathConfig dataPathConfig;
+
 
     public PnLSimulatorFacad(ConfigurationService configurationService,
                              StrategyService strategyService,
@@ -98,10 +100,10 @@ public class PnLSimulatorFacad
                              EtoroCandleService etoroCandleService,
                              EtoroOrderManagerServiceImpl etoroOrderManager,
                              EtoroApiConfiguration apiInformationService,
+                             DataPathConfig dataPathConfig,
                              EtoroWebSocketManagerService etoroWebSocketManagerService,
                              SRMatrixService srMatrixService,
                              ProfileService profileService,
-                             EtoroApiConfiguration etoroApiConfiguration,
                              MarketStructureCache marketStructureManagerCache,
                              EtoroApiService etoroApiService,
                              LiveInstrumentFeedService liveInstrumentFeedService,
@@ -110,6 +112,8 @@ public class PnLSimulatorFacad
                              InstrumentMarketStructureService instrumentMarketStructureService,
                              InstrumentMarketStructureConfService instMrktStctrConfSrv,
                              EtoroInstrumentService etoroInstrumentService,
+                             CSVFileGenerator csvCandleFileGenerator,
+                             CandleCSVGenerator candleCSVGenerator,
                              ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -122,11 +126,11 @@ public class PnLSimulatorFacad
         this.serviceRegistery = serviceRegistery;
         this.etoroCandleService = etoroCandleService;
         this.etoroApiInformationService = apiInformationService;
+        this.dataPathConfig = dataPathConfig;
         this.etoroWebSocketManagerService = etoroWebSocketManagerService;
         this.srMatrixService = srMatrixService;
         this.sRMatrixToleranceService = sRMatrixToleranceService;
         this.profileService = profileService;
-        this.etoroApiConfiguration = etoroApiConfiguration;
         this.etoroApiService = etoroApiService;
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.liveInstrumentFeedService = liveInstrumentFeedService;
@@ -134,6 +138,8 @@ public class PnLSimulatorFacad
         this.instMrktStctrConfSrv = instMrktStctrConfSrv;
         this.etoroInstrumentService = etoroInstrumentService;
         this.envService = envService;
+        this.candleCSVGenerator = candleCSVGenerator;
+        this.csvCandleFileGenerator = csvCandleFileGenerator;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -143,17 +149,19 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.EtoroCandleService, this.etoroCandleService);
         serviceRegistery.putService(Service.OrderManagerService, this.etoroOrderManagerService);
         serviceRegistery.putService(Service.EtoroAPIConfiguration, this.etoroApiInformationService);
+        serviceRegistery.putService(Service.DataPathConfig, this.dataPathConfig);
         serviceRegistery.putService(Service.EtoroWebSocketManagerService, this.etoroApiInformationService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.SRMatrixToleranceService, this.sRMatrixToleranceService);
         serviceRegistery.putService(Service.SRMatrixService, this.srMatrixService);
         serviceRegistery.putService(Service.ProfileService, this.profileService);
         serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
-        serviceRegistery.putService(Service.EtoroApiService, this.etoroApiService);
         serviceRegistery.putService(Service.InstrumentMarketStructureService, this.instrumentMarketStructureService);
         serviceRegistery.putService(Service.InstrumentMarketStructureConfService, this.instMrktStctrConfSrv);
         serviceRegistery.putService(Service.EnvService, this.envService);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
+        serviceRegistery.putService(Service.CandleCSVGenerator, this.candleCSVGenerator);
+        serviceRegistery.putService(Service.CSVCandleFileGenerator, this.csvCandleFileGenerator);
         serviceRegistery.putService(Service.EtoroInstrumentService, this.etoroInstrumentService);
     }
 
@@ -236,7 +244,6 @@ public class PnLSimulatorFacad
         navigationTree.setPreferredSize(new Dimension(400, 400));
         treeScrollPane.setPreferredSize(new Dimension(400, 400));
         rootPanel.add(treeScrollPane, rootGbc);
-
 
 
         // === RIGHT: Vertical split with Header + Actions ===

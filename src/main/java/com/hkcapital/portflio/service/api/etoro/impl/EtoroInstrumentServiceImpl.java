@@ -65,7 +65,8 @@ public class EtoroInstrumentServiceImpl implements EtoroInstrumentService
     {
         InstrumentResponse instResponse = fetchInstrumentInstrumentResponse(ticker);
 
-        return instResponse.getItems().stream().filter(inst -> "Nasdaq".equals(inst.getInternalExchangeName()) &&
+        return instResponse.getItems().stream()
+                .filter(inst -> "Nasdaq".equals(inst.getInternalExchangeName()) &&
                         "Stocks".equals(inst.getInternalAssetClassName())) //
                 .collect(Collectors.toList()) //
                 .stream() //

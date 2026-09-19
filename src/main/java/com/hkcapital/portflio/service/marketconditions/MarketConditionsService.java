@@ -31,5 +31,5 @@ public interface MarketConditionsService extends Service
 
     void removeAll();
 
-    MarketConditions findByInstrumentOrderByIdDesc(Instrument instrument);
+    List<MarketConditions> findByInstrumentOrderByIdDesc(Instrument instrument);
 }

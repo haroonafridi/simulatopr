@@ -20,10 +20,15 @@ public interface Service
     String SRMatrixToleranceService = "SRMatrixToleranceService";
     String ProfileService = "ProfileService";
     String EtoroApiService = "EtoroApiService";
+
     String EnvService = "EnvService";
     String LiveInstrumentFeedService = "LiveInstrumentFeedService";
     String InstrumentMarketStructureService = "InstrumentMarketStructureService";
+
     String InstrumentMarketStructureConfService = "InstrumentMarketStructureConfService";
     String EtoroInstrumentService = "EtoroInstrumentService";
+    String DataPathConfig = "DataPathConfig";
+    String CandleCSVGenerator = "CandleCSVGenerator";
+    String CSVCandleFileGenerator = "CSVCandleFileGenerator";
 
 }

@@ -22,7 +22,8 @@ public class MarketStructureCSVScheduler implements ScheduleService
     private final MarketStructureCache marketStructureManagerCache;
     private InstrumentService instrumentService;
 
-    public MarketStructureCSVScheduler(MarketStructureCache marketStructureManagerCache, InstrumentService instrumentService)
+    public MarketStructureCSVScheduler(MarketStructureCache marketStructureManagerCache, //
+                                       InstrumentService instrumentService)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.instrumentService = instrumentService;
@@ -48,10 +49,13 @@ public class MarketStructureCSVScheduler implements ScheduleService
                 if (str.getValue().getInstrument().equals(inst))
                 {
                     MarketStructure marketStructure = str.getValue();
+
                     PreviousDayMarketRangeDTO dayRange = //
                             new PreviousDayMarketRangeDTO(marketStructure.getPriceRange().getLow(),
                                     marketStructure.getPriceRange().getHigh());
+
                     MarketStructureDTO marketStructureDTO = MarketStructureDTO.from(marketStructure);
+
                     MarketStructureJsonWrapper marketStructureJsonWrapper =
                             MarketStructureJsonWrapper.builder()
                                     .marketStructure(marketStructureDTO)

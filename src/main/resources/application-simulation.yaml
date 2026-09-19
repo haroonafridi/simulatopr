@@ -20,7 +20,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
   server:
     port: 8087
+
+data:
+  csv : "D:/simulation/data/csv/"
+  json : "D:/simulation/data/json/"

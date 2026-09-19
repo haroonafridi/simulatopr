@@ -33,6 +33,8 @@ public interface InstrumentService  extends Service
     List<Instrument> findByActiveAndWithFeed(Boolean active, Boolean withFeed);
 
     List<Instrument> findByActiveAndWithBand(Boolean active, Boolean withBand);
+
+    List<Instrument> findByActiveAndWithFeedAndWithCandle(Boolean active, Boolean withFeed, Boolean withCandle);
     List<Instrument> findAllOrderByName();
 
     Instrument findByName(String name);

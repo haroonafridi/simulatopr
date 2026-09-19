@@ -18,12 +18,12 @@ public class SRMatrixToleranceSpecification
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if (filter.getInstrumentId() != null)
+            if (filter.getInstrument() != null)
             {
                 predicates.add(
                         cb.equal(
-                                root.get("instrumentTicker").get("id"),
-                                filter.getInstrumentId()
+                                root.get("instrument").get("instrumentTicker"),
+                                filter.getInstrument().getInstrumentTicker()
                         )
                 );
             }

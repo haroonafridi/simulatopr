@@ -6,6 +6,7 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.marketfeed.LiveInstrumentFeedService;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
@@ -13,8 +14,8 @@ import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
-import com.hkcapital.portflio.service.strategy.StrategyImportExportManager;
-import com.hkcapital.portflio.service.strategy.StrategyImportExportManagerImpl;
+import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManager;
+import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManagerImpl;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -33,6 +34,7 @@ public class SimulationHelper
     private PositionService positionService;
     private EtoroCandleService etoroCandleService;
     private EtoroApiConfiguration etoroApiConfiguration;
+    private InstrumentMarketStructureConfService instMrktStrtrConfSrv;
     private RestClient restClient;
 
     public SimulationHelper(RestClient restClient,
@@ -50,6 +52,7 @@ public class SimulationHelper
         this.etoroCandleService = (EtoroCandleService) serviceRegistery.getService(Service.EtoroCandleService);
         this.etoroApiConfiguration = (EtoroApiConfiguration) serviceRegistery.getService(Service.EtoroAPIConfiguration);
         this.sRMatrixToleranceService = (SRMatrixToleranceService) serviceRegistery.getService(Service.SRMatrixToleranceService);
+        this.instMrktStrtrConfSrv = (InstrumentMarketStructureConfService) serviceRegistery.getService(Service.InstrumentMarketStructureConfService);
         this.restClient = restClient;
 
     }
@@ -58,6 +61,7 @@ public class SimulationHelper
     public void cleanAndInitPortfolio(double value)
     {
 
+        instMrktStrtrConfSrv.removeAll();
         positionService.removeAll();
         orderManagerService.removeAll();
         liveInstrumentFeedService.removeAll();

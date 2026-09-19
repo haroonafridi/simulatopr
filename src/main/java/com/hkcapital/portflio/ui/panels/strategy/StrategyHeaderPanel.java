@@ -14,8 +14,8 @@ import com.hkcapital.portflio.service.marketstructure.InstrumentMarketStructureS
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
-import com.hkcapital.portflio.service.strategy.StrategyImportExportManager;
-import com.hkcapital.portflio.service.strategy.StrategyImportExportManagerImpl;
+import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManager;
+import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManagerImpl;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
@@ -133,7 +133,8 @@ public class StrategyHeaderPanel extends UIBag
         // TABLE MODEL
         // ============================================================
 
-        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed", "Description", "Active"}, strategyService.findAll());
+        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed", "Description", "Active"},
+                strategyService.findAll());
 
 
         // ============================================================
@@ -476,13 +477,9 @@ public class StrategyHeaderPanel extends UIBag
         strategyName.setText(strategy.getName());
 
         strategyDescription.setText(strategy.getDescription());
-
-        // If Strategy has a capital field, set it here.
-        // Example:
-        //
-        // capitalAllocated.setText(
-        //         String.valueOf(strategy.getCapitalAllocated())
-        // );
+         capitalAllocated.setText(
+                 String.valueOf(strategy.getCapitalAllocated())
+         );
     }
 
 
@@ -575,7 +572,6 @@ public class StrategyHeaderPanel extends UIBag
         Set<File> files = listFiles();
         for (File f : files)
         {
-            System.out.println("File name => " + f.getName());
             processBandCsv(f);
         }
 

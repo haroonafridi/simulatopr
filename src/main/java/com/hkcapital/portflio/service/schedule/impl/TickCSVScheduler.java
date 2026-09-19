@@ -3,7 +3,7 @@ package com.hkcapital.portflio.service.schedule.impl;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.LiveInstrumentFeed;
 import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRepository;
-import com.hkcapital.portflio.service.csv.impl.LiveInstrumentFeedCsvGenerator;
+import com.hkcapital.portflio.service.export.csv.feed.LiveInstrumentFeedCsvGenerator;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import org.slf4j.Logger;

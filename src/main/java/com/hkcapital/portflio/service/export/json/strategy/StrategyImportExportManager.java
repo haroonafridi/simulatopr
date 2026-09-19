@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.service.strategy;
+package com.hkcapital.portflio.service.export.json.strategy;
 
 public interface StrategyImportExportManager
 {
@@ -10,4 +10,8 @@ public interface StrategyImportExportManager
 
     void exportSRMatrix();
     void exportSRMatrixTolerance();
+
+    void exportMarketStructureConf();
+
+    void importMarketStructureConf();
 }

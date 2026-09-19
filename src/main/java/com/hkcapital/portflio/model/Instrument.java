@@ -89,6 +89,9 @@ public class Instrument
                 .etoroInstrumentId(etoroInstrumentId)
                 .maxSlippage(maxSlippage)
                 .active(active)
+                .withBand(withBand)
+                .withFeed(withFeed)
+                .withCandle(withCandle)
                 .build();
     }
 }

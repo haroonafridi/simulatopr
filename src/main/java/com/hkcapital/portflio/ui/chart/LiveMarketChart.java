@@ -8,9 +8,11 @@ import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import com.hkcapital.portflio.market.structure.MarketStructure;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.market.structure.MarketTypes;
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
+import com.hkcapital.portflio.service.instrument.InstrumentService;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -48,6 +50,8 @@ public class LiveMarketChart extends JFrame
     private JComboBox<String> unitCombo;
     private JComboBox<String> bandsCombo;
 
+    private JComboBox<Instrument> instruments;
+
     private JButton showHide = new JButton("Hide");
 
     private double minClose = 4300;
@@ -70,8 +74,11 @@ public class LiveMarketChart extends JFrame
     private SignalBuilder signalBuilder;
     private final EtoroCandleService etoroCandleService;
     private final ServiceRegistery serviceRegistery;
-    DateAxis xAxis = new DateAxis("Time");
-    NumberAxis yAxis = new NumberAxis("Close Price");
+    private DateAxis xAxis = new DateAxis("Time");
+    private NumberAxis yAxis = new NumberAxis("Close Price");
+    private final InstrumentService instSrv;
+
+    java.util.List<CandleDto> candles = new ArrayList<>();
 
     public LiveMarketChart(MarketStructureCache marketStructureCache,
                            SignalBuilder signalBuilder,
@@ -82,19 +89,38 @@ public class LiveMarketChart extends JFrame
         this.serviceRegistery = serviceRegistery;
         this.marketStructureCache = marketStructureCache;
         this.signalBuilder = signalBuilder;
-
         this.etoroCandleService = (EtoroCandleService) serviceRegistery.getService(EtoroCandleService.EtoroCandleService);
-
+        this.instSrv = (InstrumentService) serviceRegistery.getService(EtoroCandleService.InstrumentService);
         setTitle("Live - Market Information of GOLD");
         // ================= DATA =================
         series = new TimeSeries("Close Price");
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(series);
-
         // ================= CHART =================
+        Instrument[] insts =instSrv.findByActiveAndWithBand(true, true).toArray(new Instrument[0]);
+        instruments = new JComboBox<>(insts);
+        String[] timeframes = {"1", "5", "15", "30", "4"};
+        timeframeCombo = new JComboBox<>(timeframes);
+        timeframeCombo.setSelectedItem("1"); // DEFAULT
+        String[] units = {"MINUTE", "HOUR", "DAY"};
+        unitCombo = new JComboBox<>(units);
+        unitCombo.setSelectedItem("MINUTE");
+        String[] bands = {"UPPER", "LOWER"};
+        bandsCombo = new JComboBox<>(bands);
+        bandsCombo.setSelectedItem("UPPER");
+        JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        toolBar.add(new JLabel("Instruments:"));
+        toolBar.add(instruments);
+        toolBar.add(new JLabel("Timeframe:"));
+        toolBar.add(timeframeCombo);
+        toolBar.add(new JLabel("Unit:"));
+        toolBar.add(unitCombo);
+        toolBar.add(bandsCombo);
+        toolBar.add(showHide);
 
+        Instrument instrument= (Instrument)instruments.getSelectedItem();
         List<CandleDto> candleDtoList =
-                this.etoroCandleService.findCandleDtoByInstrumentIDAndCreationDateTimeBetween(null,
+                this.etoroCandleService.findCandleDtoByInstrumentIDAndCreationDateTimeBetween(instrument,
                         LocalDateTime.of(LocalDateTime.now().getYear(),
                                 LocalDateTime.now().getMonth(),
                                 LocalDateTime.now().getDayOfMonth(),
@@ -129,7 +155,6 @@ public class LiveMarketChart extends JFrame
         CandlestickRenderer renderer = new CandlestickRenderer();
         renderer.setAutoWidthMethod(CandlestickRenderer.WIDTHMETHOD_SMALLEST);
 
-
         ArrayList<OHLCDataItem> ohlc = new ArrayList<>();
 
         candleDtoList.forEach(c ->
@@ -159,26 +184,11 @@ public class LiveMarketChart extends JFrame
         );
 
         chartPanel = new ChartPanel(chart);
-
         chartPanel.addOverlay(crosshairOverlay);
 
-        String[] timeframes = {"1", "5", "15", "30", "4"};
 
-        timeframeCombo = new JComboBox<>(timeframes);
-        timeframeCombo.setSelectedItem("1"); // DEFAULT
-        String[] units = {"MINUTE", "HOUR", "DAY"};
-        unitCombo = new JComboBox<>(units);
-        unitCombo.setSelectedItem("MINUTE");
-        String[] bands = {"UPPER", "LOWER"};
-        bandsCombo = new JComboBox<>(bands);
-        bandsCombo.setSelectedItem("UPPER");
-        JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        toolBar.add(new JLabel("Timeframe:"));
-        toolBar.add(timeframeCombo);
-        toolBar.add(new JLabel("Unit:"));
-        toolBar.add(unitCombo);
-        toolBar.add(bandsCombo);
-        toolBar.add(showHide);
+
+
         // ================= LAYOUT =================
         setLayout(new BorderLayout());
         add(toolBar, BorderLayout.NORTH);
@@ -242,12 +252,9 @@ public class LiveMarketChart extends JFrame
 
     public void handleMarketTick()
     {
-        // Always modify Swing components on the Event Dispatch Thread (EDT)
-
         SwingUtilities.invokeLater(() ->
         {
             org.jfree.data.xy.OHLCDataItem[] dataArray = null;
-            java.util.List<CandleDto> candles = null;
 
             if (unitCombo.getSelectedItem().equals(TimeFramesUnit.MINUTE.getUnit()))
             {
@@ -279,7 +286,7 @@ public class LiveMarketChart extends JFrame
                             .toArray(org.jfree.data.xy.OHLCDataItem[]::new);
                     processBand();
                     drawPlot(dataArray, ChartUtil.createYaxisNumberTickUnit(TimeFramesUnit.MINUTE, 1),
-                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 1, null),
+                            ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 1, signalBuilder),
                             ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 1));
                 }
 

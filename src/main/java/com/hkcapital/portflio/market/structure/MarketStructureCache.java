@@ -123,12 +123,14 @@ public class MarketStructureCache implements Service
 
                 if (highLow.size() == 0)
                 {
-                    MarketConditions marketConditions = marketConditionsService.findByInstrumentOrderByIdDesc(inst);
-                    if (marketConditions != null)
+                    List<MarketConditions> marketConditions = //
+                            marketConditionsService.findByInstrumentOrderByIdDesc(inst);
+                    if(marketConditions != null && marketConditions.size() > 0 ) //
                     {
-                        low = marketConditions.getDayLow();
-                        high = marketConditions.getDayHigh();
+                        low = marketConditions.get(0).getDayLow();
+                        high = marketConditions.get(0).getDayHigh();
                     }
+
                 } else
                 {
                     low = highLow.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
@@ -174,7 +176,7 @@ public class MarketStructureCache implements Service
 
             } else
             {
-                log.info("Candle and Market bands will not be generarted for instrumentTicker [{}] ", inst.getInstrumentTicker());
+                log.info("Candle and Market bands will not be generated for instrumentTicker [{}] ", inst.getInstrumentTicker());
             }
         }
     }

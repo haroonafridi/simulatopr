@@ -50,7 +50,7 @@ public class AddPositionsButtonListener implements ActionListener
                                       final StrategyHeaderPanel strategyHeaderPanel,
                                       final SRMatrixSourcePanel srMatrixSourcePanel,
                                       final SRMatrixService srMatrixService,
-                                      final  List<Position> positionPnLList,
+                                      final List<Position> positionPnLList,
                                       final PositionService positionService,
                                       final PositionTableModel model,
                                       final PositionActionsPanel positionActionsPanel)
@@ -76,16 +76,18 @@ public class AddPositionsButtonListener implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        MarketConditions marketConditions = marketConditionsService.findById(marketConditionsSourcePanel.getPositionId().getIntValue());
+        MarketConditions marketConditions = marketConditionsService//
+                .findById(marketConditionsSourcePanel.getPositionId().getIntValue());
         Position position = new Position();
-        Configuration configuration = configurationService.findById(configurationSourcePanel.getId().getIntValue());
+        Configuration configuration = configurationService //
+                .findById(configurationSourcePanel.getId().getIntValue());
         SRMatrix srMatrix = srMatrixService.findById(srMatrixSourcePanel.getId().intValue());
         position.setInstrument(srMatrix.getInstrument());
         position.setConfiguration(configuration);
         position.setMarketConditions(marketConditions);
         position.setSrMatrix(srMatrix);
         position.setStrategy(strategyHeaderPanel.getStrategy());
-        PositionParameters positionParameter = calculatePosition(positionPnLList,configuration, marketConditions,
+        PositionParameters positionParameter = calculatePosition(positionPnLList, configuration, marketConditions,
                 positionActionsPanel.getPositionSizeInPercent(),
                 positionActionsPanel.getCapitalPanel().getOpeningCapitalValue(),
                 positionActionsPanel.getCapitalPanel().getAllocatedCapital());

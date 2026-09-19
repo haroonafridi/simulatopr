@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.repository.srmatrix;
 
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class SRMatrixFilter
 
     private String timeFrameUnit;
 
-    private Integer instrumentId;
+    private Instrument instrument;
 
     private Double l_s_tolerance;
 

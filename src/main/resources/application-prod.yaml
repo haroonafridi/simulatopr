@@ -24,3 +24,7 @@ spring:
     show-sql: false
   server:
       port: 8089
+
+data:
+  csv: "D:/prod/data/csv/"
+  json: "D:/prod/data/json/"

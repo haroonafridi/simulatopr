@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.service.instrument.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +19,7 @@ public class InstrumentDTO
     private Integer etoroInstrumentId;
     private Double maxSlippage;
     private Boolean active;
+    private Boolean withCandle = false;
+    private Boolean withFeed = false;
+    private Boolean withBand = false;
 }

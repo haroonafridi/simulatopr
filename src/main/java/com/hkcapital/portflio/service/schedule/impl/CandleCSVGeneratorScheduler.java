@@ -3,7 +3,7 @@ package com.hkcapital.portflio.service.schedule.impl;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
-import com.hkcapital.portflio.service.csv.impl.CandleCSVBuilder;
+import com.hkcapital.portflio.service.export.csv.candle.CandleCSVBuilder;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import org.slf4j.Logger;

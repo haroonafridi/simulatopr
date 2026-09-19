@@ -183,8 +183,8 @@ public class EtoroLiveFeedListener implements Listener
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
                     logger.info("tick => {}", tick);
-                    SwingUtilities.invokeLater(() ->
-                    {
+                  //  SwingUtilities.invokeLater(() ->
+                   // {
                         signalBuilder.getCandleBuilder().forEach(candleBuilder ->
                         {
                             if (liveInstrumentRate.getInstrumentId() == candleBuilder.getInstrument().getEtoroInstrumentId().intValue()
@@ -198,7 +198,7 @@ public class EtoroLiveFeedListener implements Listener
                                 }
                             }
                         });
-                    });
+                    //});
 
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }

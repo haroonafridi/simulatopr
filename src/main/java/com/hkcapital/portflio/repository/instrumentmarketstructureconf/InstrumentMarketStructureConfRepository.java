@@ -3,13 +3,15 @@ package com.hkcapital.portflio.repository.instrumentmarketstructureconf;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructureConf;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface InstrumentMarketStructureConfRepository //
-        extends JpaRepository<InstrumentMarketStructureConf, Integer>
+        extends JpaRepository<InstrumentMarketStructureConf, Integer>,
+        JpaSpecificationExecutor<InstrumentMarketStructureConf>
 {
     List<InstrumentMarketStructureConf> findByActive(Boolean active);
     List<InstrumentMarketStructureConf>  findByInstrumentAndActiveOrderByMarketOrder(Instrument instrument, boolean active);

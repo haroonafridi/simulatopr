@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.repository.srmatrix;
 
+import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 public class SRMatrixToleranceFilter
 {
 
-    private Integer instrumentId;
+    private Instrument instrument;
 
     private Integer timeFrame;
 

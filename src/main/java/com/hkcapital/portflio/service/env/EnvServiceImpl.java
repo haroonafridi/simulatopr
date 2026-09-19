@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.service.env;
 
+import com.hkcapital.portflio.config.DataPathConfig;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -21,4 +22,10 @@ public class EnvServiceImpl implements EnvService
                 .findFirst()
                 .orElse("default");
     }
+
+    public Environment getEnvironment()
+    {
+        return environment;
+    }
+
 }
