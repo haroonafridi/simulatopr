@@ -4,8 +4,8 @@ public enum FileTypes
 {
     TICK("tick"),
     CANDLE("candle"),
-    BAND("band");
-
+    BAND("band"),
+    MARKET_STRUCTURE("market-structure");
     private final String type;
 
     FileTypes(String type)

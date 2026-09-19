@@ -1,6 +1,6 @@
 package com.hkcapital.portflio.service.export.csv.candle;
 
-import com.hkcapital.portflio.market.structure.DateTimeUtil;
+import com.hkcapital.portflio.util.DateTimeUtil;
 import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
@@ -14,7 +14,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 
-import static com.hkcapital.portflio.market.structure.DateTimeUtil.asLocalDateTime;
+import static com.hkcapital.portflio.util.DateTimeUtil.asLocalDateTime;
 import static com.hkcapital.portflio.service.export.GenerateParameterValidator.validateGenerateParameters;
 import static com.hkcapital.portflio.service.export.Literals.UNDER_SCORE;
 
@@ -23,13 +23,13 @@ import static com.hkcapital.portflio.service.export.Literals.UNDER_SCORE;
 public class CandleCSVGenerator implements CSVGenerator
 {
     private final EtoroCandleService etoroCandleService;
-    private final CSVFileGenerator csvFileGenerator;
+    private final CSVFileGenerator fileGenerator;
 
     public CandleCSVGenerator(EtoroCandleService etoroCandleService,
-                              CSVFileGenerator csvFileGenerator)
+                              CSVFileGenerator fileGenerator)
     {
         this.etoroCandleService = etoroCandleService;
-        this.csvFileGenerator = csvFileGenerator;
+        this.fileGenerator = fileGenerator;
     }
 
     @Override
@@ -47,8 +47,10 @@ public class CandleCSVGenerator implements CSVGenerator
                                 asLocalDateTime(toDate, ZoneOffset.UTC)
                         );
 
-        csvFileGenerator.fileOf(CandleCSVBuilder.buildCSV(candles),
-                instrument.getInstrumentTicker() + UNDER_SCORE.getValue() + DateTimeUtil.toYearMonthDay(fromDate), //
+        fileGenerator.fileOf(CandleCSVBuilder.buildCSV(candles),
+                instrument.getInstrumentTicker() + //
+                        UNDER_SCORE.getValue() + //
+                        DateTimeUtil.toYearMonthDay(fromDate), //
                 FileTypes.CANDLE.getType());
 
         log.info("Total csv ticks records created {} , Date from : {} , Date to: {} ", //

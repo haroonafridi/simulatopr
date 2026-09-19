@@ -2,14 +2,15 @@ package com.hkcapital.portflio.service.schedule.impl;
 
 import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.service.export.ExtensionTypes;
+import com.hkcapital.portflio.service.export.FileTypes;
+import com.hkcapital.portflio.service.export.Literals;
+import com.hkcapital.portflio.service.export.file.csv.CSVFileGenerator;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,14 +20,19 @@ import java.util.List;
 @Slf4j
 public class MarketStructureCSVScheduler implements ScheduleService
 {
+    private static final String DATE_FORMAT = "yyyy-MM-dd_HH-mm-ss";
     private final MarketStructureCache marketStructureManagerCache;
     private InstrumentService instrumentService;
-
+    private final CSVFileGenerator csvFileGenerator;
+    private final String DASH = Literals.DASH.getValue();
+    private final String FOLDER_NAME = "market-data/";
     public MarketStructureCSVScheduler(MarketStructureCache marketStructureManagerCache, //
-                                       InstrumentService instrumentService)
+                                       InstrumentService instrumentService,
+                                       CSVFileGenerator csvFileGenerator)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.instrumentService = instrumentService;
+        this.csvFileGenerator = csvFileGenerator;
     }
 
     @Scheduled(cron = "0 0 4,8,11,15,23 * * MON-FRI")
@@ -34,12 +40,7 @@ public class MarketStructureCSVScheduler implements ScheduleService
     public void run()
     {
         log.info("Generating csv file ");
-        extractAndGenerateFile();
 
-    }
-
-    private void extractAndGenerateFile()
-    {
         List<Instrument> bandInstruments = instrumentService.findByActiveAndWithBand(true, true);
 
         marketStructureManagerCache.getStructures().entrySet().forEach(str ->
@@ -63,33 +64,23 @@ public class MarketStructureCSVScheduler implements ScheduleService
                                     .previousDayRange(dayRange)//
                                     .build();
                     StringBuilder data = new StringBuilder("price_band");
+
                     data.append(",").append("band_type").append(",").append("lowerBound").append(",")
                             .append("upperBound").append(",").append("timeFrame").append(",")
                             .append("timeFrameUnit").append(",").append("initialVisitedTime").append(",")
                             .append("lastVisitedTime").append(",").append("marketVisitCount").append(",")
                             .append("timeDifference").append(",");
-                    generateCSV(marketStructureJsonWrapper.getMarketStructure(), data);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-                    Path outputFile = Path.of(
-                            "market-data",
-                            marketStructure.getInstrument().getInstrumentTicker() + //
-                                    "-market-structure_" + LocalDateTime.now().format(formatter) + ".csv"
-                    );
 
-                    try
-                    {
-                        Files.createDirectories(outputFile.getParent());
-                        Files.writeString(outputFile, data.toString());
-                    } catch (IOException e)
-                    {
-                        log.info("Cannot write csv file to location {}");
-                        throw new RuntimeException(e);
-                    }
+                    generateCSV(marketStructureJsonWrapper.getMarketStructure(), data);
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+                    String fileName = marketStructure.getInstrument().getInstrumentTicker() + //
+                            DASH + FileTypes.MARKET_STRUCTURE.getType() +DASH + LocalDateTime.now().format(formatter) + ExtensionTypes.csv.getType();
+                    csvFileGenerator.fileOf(data.toString(), FOLDER_NAME.concat(fileName), FileTypes.MARKET_STRUCTURE.getType());
                 }
             }
         });
-
-
     }
 
     private StringBuilder generateCSV(MarketStructureDTO marketStructure, StringBuilder csv)

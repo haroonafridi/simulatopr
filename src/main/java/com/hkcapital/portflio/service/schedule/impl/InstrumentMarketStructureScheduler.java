@@ -18,10 +18,10 @@ import java.util.List;
 @Slf4j
 public class InstrumentMarketStructureScheduler implements ScheduleService
 {
+    public static final String GENERATOR = "generator_";
     private final MarketStructureCache marketStructureManagerCache;
     private final InstrumentService instService;
     private final InstrumentMarketStructureService instMarkStrctrSrv;
-
     private static final DateTimeFormatter TIMESTAMP_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
@@ -79,7 +79,7 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
                                 .timeFrameUnit(e.getTimeFrameUnit().getUnit())
                                 .bandType(e.getBandType().getValue())
                                 .instrument(e.getInstrument())
-                                .marketStructureKey("generator_" + timestamp)
+                                .marketStructureKey(GENERATOR + timestamp)
                                 .creationDate(LocalDateTime.now())
                                 .build();
                 instMarkStrctrSrv.add(instrumentMarketStructure);
@@ -101,7 +101,7 @@ public class InstrumentMarketStructureScheduler implements ScheduleService
                                 .timeFrameUnit(e.getTimeFrameUnit().getUnit())
                                 .bandType(e.getBandType().getValue())
                                 .instrument(e.getInstrument())
-                                .marketStructureKey("generator_" + timestamp)
+                                .marketStructureKey(GENERATOR + timestamp)
                                 .creationDate(LocalDateTime.now())
                                 .build();
                 instMarkStrctrSrv.add(instrumentMarketStructure);

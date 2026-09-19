@@ -1,12 +1,15 @@
-package com.hkcapital.portflio.market.structure;
+package com.hkcapital.portflio.util;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
+import com.hkcapital.portflio.market.structure.Day;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 public class DateTimeUtil
 {
+    final static ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
+
     public static Day toDay() //
     {
         DayOfWeek dayOfWeek = LocalDateTime.now().getDayOfWeek();
@@ -114,6 +117,29 @@ public class DateTimeUtil
     public static LocalDateTime asLocalDateTime(Instant date, ZoneOffset zoneOffset) //
     {
         return date.atOffset(zoneOffset).toLocalDateTime();
+    }
+
+
+    public static Instant asOfDayStart()
+    {
+
+        return LocalDateTime.now()
+                .withHour(0) //
+                .withMinute(0) //
+                .withSecond(0) //
+                .withNano(0)
+                .atZone(DEFAULT_ZONE).toInstant();
+    }
+
+    public static Instant asOfDayEnd()
+    {
+
+        return LocalDateTime.now()
+                .withHour(0) //
+                .withMinute(0) //
+                .withSecond(0) //
+                .withNano(0)
+                .atZone(DEFAULT_ZONE).toInstant();
     }
 
 

@@ -31,7 +31,6 @@ public class CSVFileGenerator implements FileGenerator
                             .resolve(fileName + ExtensionTypes.csv.getType()),
                     data, StandardCharsets.UTF_8);
 
-
         } catch (IOException e)
         {
             log.error("Cannot create file with name due to an error = " + e.getMessage());

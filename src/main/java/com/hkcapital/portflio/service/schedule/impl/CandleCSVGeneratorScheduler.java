@@ -1,115 +1,38 @@
 package com.hkcapital.portflio.service.schedule.impl;
 
-import com.hkcapital.portflio.model.Candle;
-import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
-import com.hkcapital.portflio.service.export.csv.candle.CandleCSVBuilder;
-import com.hkcapital.portflio.service.env.EnvService;
+import com.hkcapital.portflio.service.export.csv.candle.CandleCSVGenerator;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
+import static com.hkcapital.portflio.util.DateTimeUtil.asOfDayEnd;
+import static com.hkcapital.portflio.util.DateTimeUtil.asOfDayStart;
 @Service("CandleCSVGenerator")
+@Slf4j
 public class CandleCSVGeneratorScheduler implements ScheduleService
 {
-    private Logger logger = LoggerFactory.getLogger(CandleCSVGeneratorScheduler.class);
-    private final EtoroCandleService candleService;
-    private final EnvService envService;
-
+    private static final String CRON = "0 5 22 * * MON-FRI";
+    private final CandleCSVGenerator candleCSVGenerator;
     private final InstrumentService instrumentService;
-    private static final DateTimeFormatter FILE_FORMAT =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-    public CandleCSVGeneratorScheduler(final EtoroCandleService candleService,
-                                       final EnvService envService,
-                                       final InstrumentService instrumentService)
+    public CandleCSVGeneratorScheduler(final InstrumentService instrumentService,
+                                       final CandleCSVGenerator candleCSVGenerator)
     {
-        this.candleService = candleService;
-        this.envService = envService;
         this.instrumentService = instrumentService;
+        this.candleCSVGenerator = candleCSVGenerator;
     }
-
-    //@Scheduled(cron = "0 5 23 * * MON-FRI")
-    @Scheduled(cron = "0 5 22 * * MON-FRI")
+    @Scheduled(cron = CRON)
     @Override
     public void run()
     {
-        generateCandleCsvData();
+        log.info("Generating Candle daily csv file started. ");
+        instrumentService //
+                .findByActiveAndWithCandle(true, true) //
+                .forEach(el ->
+                {
+                    candleCSVGenerator.generate(asOfDayStart(), asOfDayEnd(), el);
+                });
     }
-
-    private void generateCandleCsvData()
-    {
-        logger.info("Generating Candle csv file ");
-
-        LocalDate targetDate = LocalDate.now();
-
-        LocalDateTime start = targetDate.atStartOfDay();
-
-        LocalDateTime end = targetDate
-                .plusDays(1)
-                .atStartOfDay()
-                .minusNanos(1);
-
-        List<Instrument> instruments = instrumentService.findByActive(true);
-
-        for (Instrument inst : instruments)
-        {
-            if (!inst.getWithCandle() || !inst.getWithBand())
-            {
-                continue;
-            }
-
-            List<Candle> candle = candleService.findByInstrumentIDAndCreationDateTimeBetween(inst.getEtoroInstrumentId(), start, end);
-
-            String data = CandleCSVBuilder.buildCSV(candle);
-
-            String pathProd = "D:/data/" + inst.getInstrumentTicker() + "/";
-            String pathDev = "D:/data_dev/" + inst.getInstrumentTicker() + "/";
-            String pathSim = "D:/data_sim/" + inst.getInstrumentTicker() + "/";
-
-            LocalDate today = LocalDate.now();
-
-            String folderName = pathProd + today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/candle/";
-
-            if (envService.getActiveProfile().equals("dev"))
-            {
-                folderName = pathDev + today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/candle/";
-            }
-
-            if (envService.getActiveProfile().equals("simulation"))
-            {
-                folderName = pathSim + today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/candle/";
-            }
-
-            String fileName = inst.getInstrumentTicker() + "_candle_" + today.format(FILE_FORMAT) + ".csv";
-            try
-            {
-                Path folder = Path.of(folderName);
-                Files.createDirectories(folder);
-                Path csvFile = folder.resolve(fileName);
-                Files.writeString(
-                        csvFile,
-                        data,
-                        StandardCharsets.UTF_8
-                );
-            } catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
 
 }
 

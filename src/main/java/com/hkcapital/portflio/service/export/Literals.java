@@ -2,7 +2,8 @@ package com.hkcapital.portflio.service.export;
 
 public enum Literals
 {
-    UNDER_SCORE("_");
+    UNDER_SCORE("_"),
+    DASH("-");
 
     private String value;
 

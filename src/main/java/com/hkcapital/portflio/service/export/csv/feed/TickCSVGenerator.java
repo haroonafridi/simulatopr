@@ -1,6 +1,6 @@
 package com.hkcapital.portflio.service.export.csv.feed;
 
-import com.hkcapital.portflio.market.structure.DateTimeUtil;
+import com.hkcapital.portflio.util.DateTimeUtil;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.LiveInstrumentFeed;
 import com.hkcapital.portflio.service.export.FileTypes;
@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 
-import static com.hkcapital.portflio.market.structure.DateTimeUtil.asLocalDateTime;
+import static com.hkcapital.portflio.util.DateTimeUtil.asLocalDateTime;
 import static com.hkcapital.portflio.service.export.GenerateParameterValidator.validateGenerateParameters;
 
 @Service
@@ -42,7 +42,8 @@ public class TickCSVGenerator implements CSVGenerator
         csvFileGenerator.fileOf //
                 (
                         LiveInstrumentFeedCsvGenerator.generate(feed),  //
-                        instrument.getInstrumentTicker() + Literals.UNDER_SCORE.getValue() + DateTimeUtil.toYearMonthDay(fromDate), //
+                        instrument.getInstrumentTicker() + Literals.UNDER_SCORE.getValue() //
+                                + DateTimeUtil.toYearMonthDay(fromDate), //
                         FileTypes.TICK.getType()
                 );
 
