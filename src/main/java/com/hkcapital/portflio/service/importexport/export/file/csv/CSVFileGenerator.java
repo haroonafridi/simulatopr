@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Service
+@Service("csvFileGenerator")
 @Slf4j
 public class CSVFileGenerator extends FileGeneratorAbstract implements FileGenerator<String>
 {

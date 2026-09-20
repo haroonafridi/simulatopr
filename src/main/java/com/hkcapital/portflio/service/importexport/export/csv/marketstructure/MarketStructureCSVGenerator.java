@@ -25,7 +25,7 @@ import java.util.List;
 import static com.hkcapital.portflio.service.importexport.GenerateParameterValidator.validateGenerateParameters;
 import static com.hkcapital.portflio.util.DateTimeUtil.asLocalDateTime;
 
-@Service
+@Service("marketStructureCSVGenerator")
 @Slf4j
 public class MarketStructureCSVGenerator implements CSVGenerator
 {

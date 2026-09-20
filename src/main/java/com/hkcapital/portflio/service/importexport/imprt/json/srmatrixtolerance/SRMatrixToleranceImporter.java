@@ -7,6 +7,7 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixToleranceFilter;
 import com.hkcapital.portflio.service.importexport.Importer;
 import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
 import com.hkcapital.portflio.service.srmatrix.dto.SRMatrixToleranceDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +20,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+@Service("sRMatrixToleranceImporter")
 @Slf4j
 public class SRMatrixToleranceImporter extends ImporterExporterAbstract implements Importer
 {
-    public SRMatrixToleranceImporter(final ServiceRegistery serviceRegistery)
+    public SRMatrixToleranceImporter(final ImporterExporterDependencies dependencies)
     {
-        super(serviceRegistery);
+        super(dependencies);
     }
 
     @Override

@@ -5,8 +5,10 @@ import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.importexport.Exporter;
 import com.hkcapital.portflio.service.importexport.FileGenerator;
 import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.srmatrix.dto.SRMatrixToleranceDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -15,17 +17,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("srMatrixToleranceExporter")
 @Slf4j
 public class SRMatrixToleranceExporter //
         extends ImporterExporterAbstract implements Exporter
 {
     private final FileGenerator fileGenerator;
 
-    public SRMatrixToleranceExporter(final ServiceRegistery serviceRegistery, //
-                                     final FileGenerator fileGenerator)
+    public SRMatrixToleranceExporter(final ImporterExporterDependencies dependencies, //
+                                     final @Qualifier("jsonFileGenerator") FileGenerator fileGenerator)
     {
-        super(serviceRegistery);
+        super(dependencies);
         this.fileGenerator = fileGenerator;
     }
 

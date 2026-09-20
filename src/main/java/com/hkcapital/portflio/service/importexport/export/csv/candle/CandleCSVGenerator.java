@@ -19,7 +19,7 @@ import java.util.List;
 import static com.hkcapital.portflio.util.DateTimeUtil.asLocalDateTime;
 
 @Slf4j
-@Service
+@Service("candleCSVGenerator")
 public class CandleCSVGenerator implements CSVGenerator
 {
     private final EtoroCandleService etoroCandleService;

@@ -31,4 +31,14 @@ public interface Service
     String CandleCSVGenerator = "CandleCSVGenerator";
     String CSVCandleFileGenerator = "CSVCandleFileGenerator";
 
+    String StrategyImporter = "StrategyImporter";
+    String StrategyExporter = "StrategyExporter";
+    String MarketStructureConfigurationImporter = "MarketStructureConfigurationImporter";
+    String MarketStructureConfigurationExporter = "MarketStructureConfigurationExporter";
+    String SRMatrixToleranceImporter = "SRMatrixToleranceImporter";
+    String SRMatrixToleranceExporter = "SRMatrixToleranceExporter";
+
+    String SRMatrixImporter = "SRMatrixImporter";
+    String SRMatrixExporter = "SRMatrixExporter";
+
 }

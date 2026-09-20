@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public abstract class ImporterExporterAbstract
 {
-    protected final ServiceRegistery serviceRegistery;
     protected final InstrumentService instService;
     protected final MarketConditionsService marketCondService;
     protected final ConfigurationService configService;
@@ -41,17 +40,16 @@ public abstract class ImporterExporterAbstract
             .writer()
             .withDefaultPrettyPrinter();
 
-    public ImporterExporterAbstract(final ServiceRegistery serviceRegistery)
+    public ImporterExporterAbstract(final ImporterExporterDependencies deps)
     {
-        this.serviceRegistery = serviceRegistery;
-        this.strategyService = (StrategyService) serviceRegistery.getService(StrategyService.StrategyService);
-        this.instService = (InstrumentService) serviceRegistery.getService(InstrumentService.InstrumentService);
-        this.marketCondService = (MarketConditionsService) serviceRegistery.getService(MarketConditionsService.MarketConditionsService);
-        this.configService = (ConfigurationService) serviceRegistery.getService(ConfigurationService.ConfigurationService);
-        this.sRMatrixService = (SRMatrixService) serviceRegistery.getService(SRMatrixService.SRMatrixService);
-        this.sRMatrixToleranceService = (SRMatrixToleranceService) serviceRegistery.getService(SRMatrixToleranceService.SRMatrixToleranceService);
-        this.positionService = (PositionService) serviceRegistery.getService(PositionService.PositionService);
-        this.instMrktStrConfSrv = (InstrumentMarketStructureConfService) serviceRegistery.getService(InstrumentMarketStructureConfService.InstrumentMarketStructureConfService);
-        this.envService = (EnvService) serviceRegistery.getService(EnvService.EnvService);
+        this.strategyService = deps.strategyService;
+        this.instService = deps.instService;
+        this.marketCondService = deps.marketCondService;
+        this.configService = deps.configService;
+        this.sRMatrixService = deps.sRMatrixService;
+        this.sRMatrixToleranceService = deps.sRMatrixToleranceService;
+        this.positionService = deps.positionService;
+        this.instMrktStrConfSrv = deps.instMrktStrConfSrv;
+        this.envService = deps.envService;
     }
 }

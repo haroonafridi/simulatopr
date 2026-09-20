@@ -18,7 +18,7 @@ import java.util.List;
 import static com.hkcapital.portflio.util.DateTimeUtil.asLocalDateTime;
 import static com.hkcapital.portflio.service.importexport.GenerateParameterValidator.validateGenerateParameters;
 
-@Service
+@Service("tickCSVGenerator")
 @Slf4j
 public class TickCSVGenerator implements CSVGenerator
 {

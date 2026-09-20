@@ -7,6 +7,7 @@ import com.hkcapital.portflio.repository.instrumentmarketstructureconf.Instrumen
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.importexport.Importer;
 import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.dto.InstrumentStructureConfDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +20,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+
 @Slf4j
+@Service("marketStructureConfigurationImporter")
 public class MarketStructureConfigurationImporter //
         extends ImporterExporterAbstract implements Importer
 {
-    public MarketStructureConfigurationImporter(final ServiceRegistery serviceRegistery)
+    public MarketStructureConfigurationImporter(final ImporterExporterDependencies dependencies)
     {
-        super(serviceRegistery);
+        super(dependencies);
     }
 
     @Override

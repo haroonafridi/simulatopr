@@ -5,6 +5,10 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
+import com.hkcapital.portflio.service.importexport.export.json.marketstructureconf.MarketStructureConfigurationExporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.marketsructureconf.MarketStructureConfigurationImporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.srmatrixtolerance.SRMatrixToleranceImporter;
 import com.hkcapital.portflio.service.importexport.imprt.json.strategy.StrategyImporter;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
@@ -33,11 +37,19 @@ public class SimulationHelper
     private PositionService positionService;
     private EtoroCandleService etoroCandleService;
     private EtoroApiConfiguration etoroApiConfiguration;
-    private InstrumentMarketStructureConfService instMrktStrtrConfSrv;
+    private final InstrumentMarketStructureConfService instMrktStrtrConfSrv;
+    private final MarketStructureConfigurationImporter marktStructureConfImporter;
+    private final MarketStructureConfigurationExporter marketStructureConfigurationExporter;
+
+    private final SRMatrixToleranceImporter srMatrixToleranceImporter;
+
+    private final ImporterExporterDependencies dep;
+
     private RestClient restClient;
 
     public SimulationHelper(RestClient restClient,
-                            ServiceRegistery serviceRegistery)
+                            ServiceRegistery serviceRegistery,
+                            ImporterExporterDependencies dep)
     {
         this.serviceRegistery = serviceRegistery;
         this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
@@ -52,8 +64,11 @@ public class SimulationHelper
         this.etoroApiConfiguration = (EtoroApiConfiguration) serviceRegistery.getService(Service.EtoroAPIConfiguration);
         this.sRMatrixToleranceService = (SRMatrixToleranceService) serviceRegistery.getService(Service.SRMatrixToleranceService);
         this.instMrktStrtrConfSrv = (InstrumentMarketStructureConfService) serviceRegistery.getService(Service.InstrumentMarketStructureConfService);
+        this.marktStructureConfImporter = (MarketStructureConfigurationImporter) serviceRegistery.getService(Service.MarketStructureConfigurationImporter);
+        this.marketStructureConfigurationExporter = (MarketStructureConfigurationExporter) serviceRegistery.getService(Service.MarketStructureConfigurationExporter);
+        this.srMatrixToleranceImporter = (SRMatrixToleranceImporter) serviceRegistery.getService(Service.SRMatrixToleranceImporter);
+        this.dep = dep;
         this.restClient = restClient;
-
     }
 
     @Transactional
@@ -72,9 +87,8 @@ public class SimulationHelper
         etoroCandleService.removeAll();
         orderManagerService.removeAll();
         instrumentService.removeAll();
-        StrategyImporter strategyImporter = //
-                new StrategyImporter(serviceRegistery, null, null, null);
-        strategyImporter.importIn();
+//        dependencies
+//        strategyImporter
         restClient.post().uri(etoroApiConfiguration.getSimulationPortfolioInit())
                 .body(DepositDto.builder().initial(value)
                         .build()).retrieve().body(String.class);

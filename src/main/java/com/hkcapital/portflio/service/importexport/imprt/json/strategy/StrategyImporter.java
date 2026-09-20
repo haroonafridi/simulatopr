@@ -6,6 +6,7 @@ import com.hkcapital.portflio.repository.srmatrix.SRMatrixFilter;
 import com.hkcapital.portflio.service.configuration.dto.ConfigurationDTO;
 import com.hkcapital.portflio.service.importexport.Importer;
 import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.importexport.imprt.json.marketsructureconf.MarketStructureConfigurationImporter;
 import com.hkcapital.portflio.service.importexport.imprt.json.srmatrix.SRMatrixImporter;
 import com.hkcapital.portflio.service.importexport.imprt.json.srmatrixtolerance.SRMatrixToleranceImporter;
@@ -25,7 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+@Service("strategyImporter")
 @Slf4j
 public class StrategyImporter extends ImporterExporterAbstract implements Importer
 {
@@ -34,15 +35,13 @@ public class StrategyImporter extends ImporterExporterAbstract implements Import
     private final SRMatrixToleranceImporter srMatrixToleranceImporter;
     private final SRMatrixImporter srMatrixImporter;
 
-    public StrategyImporter(final ServiceRegistery serviceRegistery,
-                            final MarketStructureConfigurationImporter mrktStructureConfImporter,
-                            final SRMatrixToleranceImporter srMatrixToleranceImporter,
-                            final SRMatrixImporter srMatrixImporter)
+    public StrategyImporter(final ServiceRegistery serviceRegistery, //
+                            ImporterExporterDependencies dependencies)
     {
-        super(serviceRegistery);
-        this.mrktStructureConfImporter = mrktStructureConfImporter;
-        this.srMatrixToleranceImporter = srMatrixToleranceImporter;
-        this.srMatrixImporter = srMatrixImporter;
+        super(dependencies);
+        this.mrktStructureConfImporter = (MarketStructureConfigurationImporter)serviceRegistery.getService(MarketStructureConfigurationImporter);
+        this.srMatrixToleranceImporter = (SRMatrixToleranceImporter)serviceRegistery.getService(SRMatrixToleranceImporter);
+        this.srMatrixImporter = (SRMatrixImporter)serviceRegistery.getService(SRMatrixImporter);
     }
 
     @Override

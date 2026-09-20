@@ -14,8 +14,18 @@ import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
+import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.importexport.export.csv.candle.CandleCSVGenerator;
 import com.hkcapital.portflio.service.importexport.export.file.csv.CSVFileGenerator;
+import com.hkcapital.portflio.service.importexport.export.json.marketstructureconf.MarketStructureConfigurationExporter;
+import com.hkcapital.portflio.service.importexport.export.json.srmatrix.SRMatrixExporter;
+import com.hkcapital.portflio.service.importexport.export.json.srmatrixtolerance.SRMatrixToleranceExporter;
+import com.hkcapital.portflio.service.importexport.export.json.strategy.StrategyExporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.marketsructureconf.MarketStructureConfigurationImporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.srmatrix.SRMatrixImporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.srmatrixtolerance.SRMatrixToleranceImporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.strategy.StrategyImporter;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
@@ -89,32 +99,50 @@ public class PnLSimulatorFacad
     private final EtoroInstrumentService etoroInstrumentService;
     private final EnvService envService;
     private final DataPathConfig dataPathConfig;
+    private final MarketStructureConfigurationImporter mrktStrConfImporter;
+    private final MarketStructureConfigurationExporter mrktStrConfExporter;
+    private final StrategyImporter strategyImporter;
+    private final StrategyExporter strategyExporter;
+    private final SRMatrixToleranceImporter srMatrixToleranceImporter;
+    private final SRMatrixToleranceExporter srMatrixToleranceExporter;
+    private final SRMatrixImporter srMatrixImporter;
+    private final SRMatrixExporter srMatrixExporter;
 
+    private final ImporterExporterDependencies dep;
 
-    public PnLSimulatorFacad(ConfigurationService configurationService,
-                             StrategyService strategyService,
-                             MarketConditionsService marketConditionsService,
-                             InstrumentService instrumentService,
-                             PositionService positionPnLService,
-                             TradingSessionsService<TradingSessions> tradingSessionsService,
-                             EtoroCandleService etoroCandleService,
-                             EtoroOrderManagerServiceImpl etoroOrderManager,
-                             EtoroApiConfiguration apiInformationService,
-                             DataPathConfig dataPathConfig,
-                             EtoroWebSocketManagerService etoroWebSocketManagerService,
-                             SRMatrixService srMatrixService,
-                             ProfileService profileService,
-                             MarketStructureCache marketStructureManagerCache,
-                             EtoroApiService etoroApiService,
-                             LiveInstrumentFeedService liveInstrumentFeedService,
-                             SRMatrixToleranceService sRMatrixToleranceService,
-                             EnvService envService,
-                             InstrumentMarketStructureService instrumentMarketStructureService,
-                             InstrumentMarketStructureConfService instMrktStctrConfSrv,
-                             EtoroInstrumentService etoroInstrumentService,
-                             CSVFileGenerator csvCandleFileGenerator,
-                             CandleCSVGenerator candleCSVGenerator,
-                             ServiceRegistery<Service> serviceRegistery)
+    public PnLSimulatorFacad(final ConfigurationService configurationService,
+                             final StrategyService strategyService,
+                             final MarketConditionsService marketConditionsService,
+                             final InstrumentService instrumentService,
+                             final PositionService positionPnLService,
+                             final TradingSessionsService<TradingSessions> tradingSessionsService,
+                             final EtoroCandleService etoroCandleService,
+                             final EtoroOrderManagerServiceImpl etoroOrderManager,
+                             final EtoroApiConfiguration apiInformationService,
+                             final DataPathConfig dataPathConfig,
+                             final EtoroWebSocketManagerService etoroWebSocketManagerService,
+                             final SRMatrixService srMatrixService,
+                             final ProfileService profileService,
+                             final MarketStructureCache marketStructureManagerCache,
+                             final EtoroApiService etoroApiService,
+                             final LiveInstrumentFeedService liveInstrumentFeedService,
+                             final SRMatrixToleranceService sRMatrixToleranceService,
+                             final EnvService envService,
+                             final InstrumentMarketStructureService instrumentMarketStructureService,
+                             final InstrumentMarketStructureConfService instMrktStctrConfSrv,
+                             final EtoroInstrumentService etoroInstrumentService,
+                             final CSVFileGenerator csvCandleFileGenerator,
+                             final CandleCSVGenerator candleCSVGenerator,
+                             final StrategyImporter strategyImporter,
+                             final StrategyExporter strategyExporter,
+                             final MarketStructureConfigurationImporter mrktStrConfImporter,
+                             final MarketStructureConfigurationExporter mrktStrConfExporter,
+                             final SRMatrixToleranceImporter srMatrixToleranceImporter,
+                             final SRMatrixToleranceExporter srMatrixToleranceExporter,
+                             final SRMatrixImporter srMatrixImporter,
+                             final SRMatrixExporter srMatrixExporter,
+                             final ImporterExporterDependencies  dep,
+                             final ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
         this.strategyService = strategyService;
@@ -140,6 +168,15 @@ public class PnLSimulatorFacad
         this.envService = envService;
         this.candleCSVGenerator = candleCSVGenerator;
         this.csvCandleFileGenerator = csvCandleFileGenerator;
+        this.strategyImporter = strategyImporter;
+        this.strategyExporter = strategyExporter;
+        this.mrktStrConfImporter = mrktStrConfImporter;
+        this.mrktStrConfExporter = mrktStrConfExporter;
+        this.srMatrixToleranceImporter = srMatrixToleranceImporter;
+        this.srMatrixToleranceExporter = srMatrixToleranceExporter;
+        this.srMatrixImporter = srMatrixImporter;
+        this.srMatrixExporter = srMatrixExporter;
+        this.dep = dep;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -160,9 +197,21 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.InstrumentMarketStructureConfService, this.instMrktStctrConfSrv);
         serviceRegistery.putService(Service.EnvService, this.envService);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
+        serviceRegistery.putService(Service.EtoroInstrumentService, this.etoroInstrumentService);
         serviceRegistery.putService(Service.CandleCSVGenerator, this.candleCSVGenerator);
         serviceRegistery.putService(Service.CSVCandleFileGenerator, this.csvCandleFileGenerator);
-        serviceRegistery.putService(Service.EtoroInstrumentService, this.etoroInstrumentService);
+        serviceRegistery.putService(Service.MarketStructureConfigurationImporter, this.mrktStrConfImporter);
+        serviceRegistery.putService(Service.MarketStructureConfigurationExporter, this.mrktStrConfExporter);
+
+        serviceRegistery.putService(Service.StrategyImporter, this.strategyImporter);
+        serviceRegistery.putService(Service.StrategyExporter, this.strategyExporter);
+
+        serviceRegistery.putService(Service.SRMatrixToleranceImporter, this.srMatrixToleranceImporter);
+        serviceRegistery.putService(Service.SRMatrixToleranceExporter, this.srMatrixToleranceExporter);
+
+        serviceRegistery.putService(Service.SRMatrixImporter, this.srMatrixImporter);
+        serviceRegistery.putService(Service.SRMatrixExporter, this.srMatrixExporter);
+
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
@@ -181,7 +230,7 @@ public class PnLSimulatorFacad
             looAndFeel = new MetalLookAndFeel();
             font = new Font("Roboto Mono", Font.PLAIN, 10);
             SimulationHelper simulationHelper =
-                    new SimulationHelper(RestClient.create(), serviceRegistery);
+                    new SimulationHelper(RestClient.create(), serviceRegistery, dep);
             simulationHelper.cleanAndInitPortfolio(5000);
         }
 

@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Service
+@Service("jsonFileGenerator")
 @Slf4j
 public class JSONFileGenerator extends FileGeneratorAbstract implements FileGenerator<String>
 {

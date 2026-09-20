@@ -1,6 +1,8 @@
 package com.hkcapital.portflio.service.importexport;
 
-public interface Importer
+import com.hkcapital.portflio.service.registry.Service;
+
+public interface Importer extends Service
 {
      void importIn();
 }

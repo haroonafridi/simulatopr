@@ -113,9 +113,9 @@ public class StrategyHeaderPanel extends UIBag
 
         this.marketStructureManagerCache = (MarketStructureCache) serviceRegistery.getService(Service.MarketStructureManagerCache);
 
-        strategyImporter = new StrategyImporter(serviceRegistery, null, null, null);
+        strategyImporter = (StrategyImporter) serviceRegistery.getService(Service.StrategyImporter);
 
-        strategyExporter = new StrategyExporter(serviceRegistery, null, null, null, null, null);
+        strategyExporter =  (StrategyExporter) serviceRegistery.getService(Service.StrategyExporter);
 
         instMarkStrctrSrv = (InstrumentMarketStructureService) serviceRegistery.getService(Service.InstrumentMarketStructureService);
 
