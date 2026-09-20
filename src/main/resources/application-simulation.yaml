@@ -26,5 +26,5 @@ spring:
     port: 8087
 
 data:
-  csv : "D:/simulation/data/csv/"
-  json : "D:/simulation/data/json/"
+  csv : "D:/simulation/export/data/csv/"
+  json : "D:/simulation/export/data/json/"

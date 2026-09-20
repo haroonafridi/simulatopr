@@ -9,13 +9,13 @@ import com.hkcapital.portflio.model.InstrumentMarketStructure;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.model.Strategy;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portflio.service.importexport.export.json.strategy.StrategyExporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.strategy.StrategyImporter;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketstructure.InstrumentMarketStructureService;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
-import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManager;
-import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManagerImpl;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
@@ -47,7 +47,8 @@ public class StrategyHeaderPanel extends UIBag
 {
     private final StrategyService strategyService;
 
-    StrategyImportExportManager strategyImporterExporter;
+    private final StrategyImporter strategyImporter;
+    private final StrategyExporter strategyExporter;
 
     private final JLabel strategyNameLabel = new JLabel("Strategy Name:");
 
@@ -112,7 +113,9 @@ public class StrategyHeaderPanel extends UIBag
 
         this.marketStructureManagerCache = (MarketStructureCache) serviceRegistery.getService(Service.MarketStructureManagerCache);
 
-        strategyImporterExporter = new StrategyImportExportManagerImpl(serviceRegistery);
+        strategyImporter = new StrategyImporter(serviceRegistery, null, null, null);
+
+        strategyExporter = new StrategyExporter(serviceRegistery, null, null, null, null, null);
 
         instMarkStrctrSrv = (InstrumentMarketStructureService) serviceRegistery.getService(Service.InstrumentMarketStructureService);
 
@@ -374,13 +377,13 @@ public class StrategyHeaderPanel extends UIBag
 
             Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
 
-            strategyImporterExporter.exportStrategy(strategy.getId());
+            strategyExporter.export();
 
         });
 
         importStrategyButton.addActionListener(e ->
         {
-            strategyImporterExporter.importStrategy();
+         strategyImporter.importIn();
         });
 
         // ============================================================

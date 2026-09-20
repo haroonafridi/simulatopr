@@ -5,6 +5,7 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.importexport.imprt.json.strategy.StrategyImporter;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
@@ -14,8 +15,6 @@ import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
-import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManager;
-import com.hkcapital.portflio.service.export.json.strategy.StrategyImportExportManagerImpl;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -73,9 +72,9 @@ public class SimulationHelper
         etoroCandleService.removeAll();
         orderManagerService.removeAll();
         instrumentService.removeAll();
-        StrategyImportExportManager strategyImportExportManager = //
-                new StrategyImportExportManagerImpl(serviceRegistery);
-        strategyImportExportManager.importStrategy();
+        StrategyImporter strategyImporter = //
+                new StrategyImporter(serviceRegistery, null, null, null);
+        strategyImporter.importIn();
         restClient.post().uri(etoroApiConfiguration.getSimulationPortfolioInit())
                 .body(DepositDto.builder().initial(value)
                         .build()).retrieve().body(String.class);
