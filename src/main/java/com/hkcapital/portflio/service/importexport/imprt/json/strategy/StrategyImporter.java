@@ -35,13 +35,15 @@ public class StrategyImporter extends ImporterExporterAbstract implements Import
     private final SRMatrixToleranceImporter srMatrixToleranceImporter;
     private final SRMatrixImporter srMatrixImporter;
 
-    public StrategyImporter(final ServiceRegistery serviceRegistery, //
-                            ImporterExporterDependencies dependencies)
+    public StrategyImporter(final MarketStructureConfigurationImporter mrktStructureConfImporter, //
+                            final SRMatrixToleranceImporter srMatrixToleranceImporter,
+                            final SRMatrixImporter srMatrixImporter,
+                            final ImporterExporterDependencies dependencies)
     {
         super(dependencies);
-        this.mrktStructureConfImporter = (MarketStructureConfigurationImporter)serviceRegistery.getService(MarketStructureConfigurationImporter);
-        this.srMatrixToleranceImporter = (SRMatrixToleranceImporter)serviceRegistery.getService(SRMatrixToleranceImporter);
-        this.srMatrixImporter = (SRMatrixImporter)serviceRegistery.getService(SRMatrixImporter);
+        this.mrktStructureConfImporter = mrktStructureConfImporter;
+        this.srMatrixToleranceImporter = srMatrixToleranceImporter;
+        this.srMatrixImporter = srMatrixImporter;
     }
 
     @Override
@@ -53,12 +55,11 @@ public class StrategyImporter extends ImporterExporterAbstract implements Import
             return;
         }
 
-        log.info("Importing strategy in simulation env.");
         mrktStructureConfImporter.importIn();
         srMatrixToleranceImporter.importIn();
         srMatrixImporter.importIn();
 
-        String dir = "D:/hk-simulation/strategies-imports/";
+        final String dir = dataPathConfig.getImportStrategy();;
         try
         {
             Set<String> files = Stream.of(new File(dir).listFiles())

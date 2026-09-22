@@ -27,3 +27,4 @@ spring:
 data:
     csv: "D:/dev/export/data/csv/"
     json: "D:/dev/export/data/json/"
+    import-strategy: "D:/dev/export/data/import/strategy/"

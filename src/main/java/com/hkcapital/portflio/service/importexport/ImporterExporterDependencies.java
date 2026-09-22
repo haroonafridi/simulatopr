@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.service.importexport;
 
+import com.hkcapital.portflio.config.DataPathConfig;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
@@ -25,5 +26,5 @@ public class ImporterExporterDependencies
     final StrategyService strategyService;
     final InstrumentMarketStructureConfService instMrktStrConfSrv;
     final EnvService envService;
-
+    final DataPathConfig dataPathConfig;
 }

@@ -24,11 +24,11 @@ public class CSVFileGenerator extends FileGeneratorAbstract implements FileGener
     }
 
     @Override
-    public void fileOf(String data, String fileName, FileTypes type)
+    public void fileOf(String data, String fileName,String ticker, FileTypes type)
     {
         try
         {
-            Files.writeString(Files.createDirectories(Path.of(dataPathConfig.getCsv() + type.getType() + "/")) //
+            Files.writeString(Files.createDirectories(Path.of(dataPathConfig.getCsv() + type.getType() + "/"+ticker+"/")) //
                             .resolve(fileName + ExtensionTypes.csv.getType()),
                     data, StandardCharsets.UTF_8);
 

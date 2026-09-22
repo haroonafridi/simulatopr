@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hkcapital.portflio.config.DataPathConfig;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
@@ -31,6 +32,8 @@ public abstract class ImporterExporterAbstract
     protected final InstrumentMarketStructureConfService instMrktStrConfSrv;
     protected final EnvService envService;
 
+    protected final DataPathConfig dataPathConfig;
+
     protected ObjectReader objectReader = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .reader();
@@ -51,5 +54,6 @@ public abstract class ImporterExporterAbstract
         this.positionService = deps.positionService;
         this.instMrktStrConfSrv = deps.instMrktStrConfSrv;
         this.envService = deps.envService;
+        this.dataPathConfig = deps.dataPathConfig;
     }
 }

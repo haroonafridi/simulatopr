@@ -51,6 +51,7 @@ public class CandleCSVGenerator implements CSVGenerator
                 instrument.getInstrumentTicker() + //
                         Literals.UNDER_SCORE.getValue() + //
                         DateTimeUtil.toYearMonthDay(fromDate), //
+                instrument.getInstrumentTicker(),
                 FileTypes.CANDLE);
 
         log.info("Total csv ticks records created {} , Date from : {} , Date to: {} ", //

@@ -376,14 +376,14 @@ public class StrategyHeaderPanel extends UIBag
             }
 
             Strategy strategy = (Strategy) tableModel.getElements().get(selectedRow);
-
+            strategyExporter.setStrategy(strategy);
             strategyExporter.export();
 
         });
 
         importStrategyButton.addActionListener(e ->
         {
-         strategyImporter.importIn();
+            strategyImporter.importIn();
         });
 
         // ============================================================

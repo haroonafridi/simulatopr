@@ -34,7 +34,7 @@ public class MarketStructureConfigurationImporter //
     @Override
     public void importIn()
     {
-        String dir = "D:/hk-simulation/strategies-imports/instrument-market-structure-conf/";
+        final String dir = dataPathConfig.getImportStrategy();
         try
         {
             Set<String> files = Stream.of(new File(dir).listFiles())
@@ -108,11 +108,13 @@ public class MarketStructureConfigurationImporter //
                 } catch (IOException e)
                 {
                     log.error("Cannot read file instrument-market-structure-conf");
+                    throw new RuntimeException(e);
                 }
             }
         } catch (Exception e)
         {
             log.error("Cannot read file instrument-market-structure-conf");
+            throw new RuntimeException(e);
         }
     }
 }

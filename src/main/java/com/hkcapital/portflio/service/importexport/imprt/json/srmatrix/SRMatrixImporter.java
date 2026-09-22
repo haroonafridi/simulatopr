@@ -32,7 +32,7 @@ public class SRMatrixImporter extends ImporterExporterAbstract implements Import
     @Override
     public void importIn()
     {
-        String dir = "D:/hk-simulation/strategies-imports/sr-matrix/";
+        final String dir = dataPathConfig.getImportStrategy();
         Set<String> files = Stream.of(new File(dir).listFiles())
                 .filter(file -> !file.isDirectory() && file.getName().contains("sr-matrix"))
                 .map(File::getName)
@@ -116,6 +116,7 @@ public class SRMatrixImporter extends ImporterExporterAbstract implements Import
             } catch (IOException e)
             {
                 log.error("Cannot read file sr-matrix");
+                throw new RuntimeException(e);
             }
         }
     }

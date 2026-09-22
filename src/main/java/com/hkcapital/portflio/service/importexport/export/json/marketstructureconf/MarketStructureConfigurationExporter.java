@@ -2,10 +2,7 @@ package com.hkcapital.portflio.service.importexport.export.json.marketstructurec
 
 import com.hkcapital.portflio.model.InstrumentMarketStructureConf;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
-import com.hkcapital.portflio.service.importexport.Exporter;
-import com.hkcapital.portflio.service.importexport.FileGenerator;
-import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
-import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
+import com.hkcapital.portflio.service.importexport.*;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.dto.InstrumentStructureConfDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,18 +43,8 @@ public class MarketStructureConfigurationExporter extends ImporterExporterAbstra
         });
         try
         {
-            final String json = objectWriter.writeValueAsString(instMrktStrtrConfsDtos);
-            fileGenerator.fileOf(json, null, null);
-            File file = new File("D:/hk-simulation/strategies-export/instrument-market-structure-conf/instrument-market-structure-conf.json");
-
-            if (!file.exists())
-            {
-                file.createNewFile();
-            }
-
-            FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write(json);
-            fileWriter.close();
+            fileGenerator.fileOf(objectWriter.writeValueAsString(instMrktStrtrConfsDtos),
+                    "instrument-market-structure-conf.json","market-structure", FileTypes.MARKET_STRUCTURE_CONF);
         } catch (IOException e)
         {
             log.error("Error in reading file instrument-market-structure-conf");

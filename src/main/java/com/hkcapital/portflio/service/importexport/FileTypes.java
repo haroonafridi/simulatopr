@@ -7,9 +7,11 @@ public enum FileTypes
     BAND("band"),
     MARKET_STRUCTURE("market-structure"),
     SR_MATRIX("sr-matrix"),
-    SR_MATRIX_TOLERANCE("sr-matrix-tolerance"),
+    SR_TOLERANCE("sr-tolerance"),
 
-    MARKET_STRUCTURE_CONF("market_structure_conf");
+    MARKET_STRUCTURE_CONF("market_structure_conf"),
+
+    STRATEGY("strategy");
     private final String type;
 
     FileTypes(String type)

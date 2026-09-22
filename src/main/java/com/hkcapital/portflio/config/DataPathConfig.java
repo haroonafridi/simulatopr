@@ -12,6 +12,7 @@ public class DataPathConfig implements Service
 {
     private String csv;
     private String json;
+    private String importStrategy;
 
     public String getCsv()
     {
@@ -21,5 +22,10 @@ public class DataPathConfig implements Service
     public String getJson()
     {
         return json;
+    }
+
+    public String getImportStrategy()
+    {
+        return importStrategy;
     }
 }

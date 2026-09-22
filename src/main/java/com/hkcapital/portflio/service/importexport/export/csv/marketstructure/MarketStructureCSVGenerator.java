@@ -83,7 +83,7 @@ public class MarketStructureCSVGenerator implements CSVGenerator
 
                     final String fileName = marketStructure.getInstrument().getInstrumentTicker() + //
                             DASH + FileTypes.MARKET_STRUCTURE.getType() + DASH + LocalDateTime.now().format(formatter) + ExtensionTypes.csv.getType();
-                    csvFileGenerator.fileOf(data.toString(), FOLDER_NAME.concat(fileName), FileTypes.MARKET_STRUCTURE);
+                    csvFileGenerator.fileOf(data.toString(), FOLDER_NAME.concat(fileName),null, FileTypes.MARKET_STRUCTURE);
                 }
             }
         });

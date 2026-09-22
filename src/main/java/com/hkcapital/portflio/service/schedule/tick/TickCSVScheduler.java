@@ -14,7 +14,7 @@ import static com.hkcapital.portflio.util.DateTimeUtil.asOfDayStart;
 @Slf4j
 public class TickCSVScheduler implements ScheduleService
 {
-    private static final String SCHEDULE_TIME = "0 1 23 * * MON-FRI";
+    private static final String SCHEDULE_TIME = "0 05 23 * * MON-FRI";
     private final InstrumentService instSrv;
     private final TickCSVGenerator tickCSVGenerator;
 

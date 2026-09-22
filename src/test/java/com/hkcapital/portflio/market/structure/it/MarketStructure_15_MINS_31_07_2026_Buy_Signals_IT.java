@@ -10,6 +10,8 @@ import com.hkcapital.portflio.repository.liveinstrumentfeed.LiveInstrumentFeedRe
 import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
+import com.hkcapital.portflio.service.importexport.imprt.json.strategy.StrategyImporter;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
@@ -40,9 +42,14 @@ public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebS
     private PositionService positionService;
     @Autowired
     private ServiceRegistery serviceRegistery;
+    @Autowired
+    private ImporterExporterDependencies dep;
+
+    @Autowired
+    private StrategyImporter strategyImporter;
 
     SimulationHelper simulationHelper =
-            new SimulationHelper(RestClient.create(), serviceRegistery);
+            new SimulationHelper(RestClient.create(), serviceRegistery, dep, strategyImporter);
     final static String previousDayCandle = "2026-07-30";
     final static String tradingSession = "2026-07-31";
     private static final String PATH = "D:/gold_data/" + previousDayCandle + "/candle/gold_candle_"

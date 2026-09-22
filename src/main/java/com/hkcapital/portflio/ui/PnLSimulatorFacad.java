@@ -107,7 +107,6 @@ public class PnLSimulatorFacad
     private final SRMatrixToleranceExporter srMatrixToleranceExporter;
     private final SRMatrixImporter srMatrixImporter;
     private final SRMatrixExporter srMatrixExporter;
-
     private final ImporterExporterDependencies dep;
 
     public PnLSimulatorFacad(final ConfigurationService configurationService,
@@ -141,7 +140,7 @@ public class PnLSimulatorFacad
                              final SRMatrixToleranceExporter srMatrixToleranceExporter,
                              final SRMatrixImporter srMatrixImporter,
                              final SRMatrixExporter srMatrixExporter,
-                             final ImporterExporterDependencies  dep,
+                             final ImporterExporterDependencies  importerExporterDependencies,
                              final ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -176,7 +175,7 @@ public class PnLSimulatorFacad
         this.srMatrixToleranceExporter = srMatrixToleranceExporter;
         this.srMatrixImporter = srMatrixImporter;
         this.srMatrixExporter = srMatrixExporter;
-        this.dep = dep;
+        this.dep = importerExporterDependencies;
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -230,7 +229,7 @@ public class PnLSimulatorFacad
             looAndFeel = new MetalLookAndFeel();
             font = new Font("Roboto Mono", Font.PLAIN, 10);
             SimulationHelper simulationHelper =
-                    new SimulationHelper(RestClient.create(), serviceRegistery, dep);
+                    new SimulationHelper(RestClient.create(), serviceRegistery, dep, strategyImporter);
             simulationHelper.cleanAndInitPortfolio(5000);
         }
 
@@ -424,7 +423,7 @@ public class PnLSimulatorFacad
             }
 
         });
-        this.marketStructureManagerCache.openMarket();
+        marketStructureManagerCache.openMarket();
         etoroWebSocketManagerService.subscribeAndSchedule();
     }
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+
 @Service
 public class LiveInstrumentFeedServiceImpl implements LiveInstrumentFeedService
 {
@@ -21,6 +22,12 @@ public class LiveInstrumentFeedServiceImpl implements LiveInstrumentFeedService
     public List<LiveInstrumentFeed> findByFeedDateBetween(Instant start, Instant end)
     {
         return liveInstrumentFeedRepository.findByFeedDateBetween(start, end);
+    }
+
+    @Override
+    public List<LiveInstrumentFeed> findByInstrumentIdAndFeedDateBetween(Integer instrumentId, Instant start, Instant end)
+    {
+        return liveInstrumentFeedRepository.findByInstrumentIdAndFeedDateBetween(instrumentId, start, end);
     }
 
     @Override

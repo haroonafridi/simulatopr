@@ -24,7 +24,7 @@ public class JSONFileGenerator extends FileGeneratorAbstract implements FileGene
     }
 
     @Override
-    public void fileOf(String data, String fileName, FileTypes type)
+    public void fileOf(String data, String fileName,String ticker, FileTypes type)
     {
         try
         {

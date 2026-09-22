@@ -13,7 +13,7 @@ import static com.hkcapital.portflio.util.DateTimeUtil.asOfDayStart;
 @Slf4j
 public class CandleCSVGeneratorScheduler implements ScheduleService
 {
-    private static final String CRON = "0 5 22 * * MON-FRI";
+    private static final String CRON = "0 05 23 * * MON-FRI";
     private final CandleCSVGenerator candleCSVGenerator;
     private final InstrumentService instrumentService;
     public CandleCSVGeneratorScheduler(final InstrumentService instrumentService,

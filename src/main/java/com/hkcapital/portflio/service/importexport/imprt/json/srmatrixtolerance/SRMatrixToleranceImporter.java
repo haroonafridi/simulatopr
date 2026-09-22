@@ -32,9 +32,9 @@ public class SRMatrixToleranceImporter extends ImporterExporterAbstract implemen
     @Override
     public void importIn()
     {
-        String dir = "D:/hk-simulation/strategies-imports/sr-matrix-tolerance/";
+        final String dir = dataPathConfig.getImportStrategy();
         Set<String> files = Stream.of(new File(dir).listFiles())
-                .filter(file -> !file.isDirectory() && file.getName().contains("sr-matrix-tolerance"))
+                .filter(file -> !file.isDirectory() && file.getName().contains("sr-tolerance"))
                 .map(File::getName)
                 .collect(Collectors.toSet());
         for (String file : files)
@@ -114,6 +114,7 @@ public class SRMatrixToleranceImporter extends ImporterExporterAbstract implemen
             } catch (IOException e)
             {
                 log.error("Cannot read file sr-matrix-tolerance");
+                throw new RuntimeException(e);
             }
         }
     }

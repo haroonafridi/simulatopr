@@ -12,5 +12,5 @@ public interface FileGenerator<T> extends Service
      * @param fileName  name of the file
      * @param fileTypes {@link  FileTypes}
      */
-    void fileOf(T data, String fileName, FileTypes fileTypes);
+    void fileOf(T data, String fileName, String ticker, FileTypes fileTypes);
 }
