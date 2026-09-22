@@ -25,6 +25,6 @@ spring:
     server:
             port: 8080
 data:
-    csv: "D:/dev/export/data/csv/"
-    json: "D:/dev/export/data/json/"
-    import-strategy: "D:/dev/export/data/import/strategy/"
+    csv: "D:/hk-dev/export/data/csv/"
+    json: "D:/hk-dev/export/data/json/"
+    import-strategy: "D:/hk-dev/export/data/import/strategy/"

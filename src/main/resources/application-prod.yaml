@@ -26,6 +26,6 @@ spring:
       port: 8089
 
 data:
-  csv: "D:/prod/export/data/csv/"
-  json: "D:/prod/export/data/json/"
-  import-strategy: "D:/prod/export/data/import/strategy/"
+  csv: "D:/hk-prod/export/data/csv/"
+  json: "D:/hk-prod/export/data/json/"
+  import-strategy: "D:/hk-prod/export/data/import/strategy/"

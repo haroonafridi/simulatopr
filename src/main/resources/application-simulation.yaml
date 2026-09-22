@@ -26,6 +26,6 @@ spring:
     port: 8087
 
 data:
-  csv : "D:/simulation/export/data/csv/"
-  json : "D:/simulation/export/data/json/"
-  import-strategy: "D:/simulation/data/import/strategy/"
+  csv : "D:/hk-simulation/export/data/csv/"
+  json : "D:/hk-simulation/export/data/json/"
+  import-strategy: "D:/hk-simulation/data/import/strategy/"
