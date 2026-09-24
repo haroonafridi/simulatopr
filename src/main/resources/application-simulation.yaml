@@ -26,6 +26,8 @@ spring:
     port: 8087
 
 data:
-  csv : "D:/hk-simulation/export/data/csv/"
-  json : "D:/hk-simulation/export/data/json/"
-  import-strategy: "D:/hk-simulation/data/import/strategy/"
+  csv : D:/hk-simulation/export/data/csv/
+  json : D:/hk-simulation/export/data/json/
+  import-strategy: D:/hk-simulation/data/import/strategy/
+simulation-config:
+    data-folder: D:/hk-prod/export/data/csv/tick/XAUUSD/XAUUSD_2026_09_23.csv

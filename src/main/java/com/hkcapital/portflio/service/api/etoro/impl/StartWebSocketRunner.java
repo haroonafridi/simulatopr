@@ -2,6 +2,7 @@ package com.hkcapital.portflio.service.api.etoro.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portflio.config.SimulationConfig;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
@@ -35,6 +36,7 @@ public class StartWebSocketRunner implements Runnable
     private final InstrumentMarketStructureConfService instMrktStrConfSrv;
     private final EnvService envService;
 
+    private final SimulationConfig simulationConfig;
     private final ServiceRegistery<Service> serviceRegistery;
 
     public StartWebSocketRunner(EtoroApiConfiguration etoroApiConfiguration,
@@ -47,6 +49,7 @@ public class StartWebSocketRunner implements Runnable
                                 Bandlogger bandlogger,
                                 EnvService envService,
                                 InstrumentMarketStructureConfService instMrktStrConfSrv,
+                                SimulationConfig simulationConfig,
                                 ServiceRegistery serviceRegistery)
     {
         this.etoroApiConfiguration = etoroApiConfiguration;
@@ -58,6 +61,7 @@ public class StartWebSocketRunner implements Runnable
         this.marketStructureManagerCache = marketStructureManagerCache;
         this.bandlogger = bandlogger;
         this.envService = envService;
+        this.simulationConfig = simulationConfig;
         this.serviceRegistery = serviceRegistery;
         this.instMrktStrConfSrv = instMrktStrConfSrv;
     }
@@ -72,6 +76,7 @@ public class StartWebSocketRunner implements Runnable
                         new EtoroLiveFeedListener(etoroApiConfiguration, marketFeedObserver,
                                 liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
                                 marketStructureManagerCache, bandlogger, envService, instMrktStrConfSrv,
+                                simulationConfig,
                                 serviceRegistery))
                 .join();
     }

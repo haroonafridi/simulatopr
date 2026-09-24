@@ -2,6 +2,7 @@ package com.hkcapital.portflio.service.api.etoro.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portflio.config.SimulationConfig;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
@@ -48,6 +49,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
     private final Bandlogger bandlogger;
 
     private final EnvService envService;
+    private final SimulationConfig simulationConfig;
 
     private final ServiceRegistery serviceRegistery;
 
@@ -67,6 +69,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                                             final Bandlogger bandlogger,
                                             final EnvService envService,
                                             final InstrumentMarketStructureConfService instMrktStrCon,
+                                            final SimulationConfig simulationConfig,
                                             final ServiceRegistery serviceRegistery)
     {
 
@@ -87,6 +90,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         this.envService = envService;
         this.instMrktStrCon = instMrktStrCon;
         this.serviceRegistery = serviceRegistery;
+        this.simulationConfig = simulationConfig;
     }
 
     @Override
@@ -97,7 +101,9 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                 new StartWebSocketRunner(etoroApiConfiguration, marketFeedObserver, //
                         liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
                         marketStructureManagerCache, bandlogger, envService,
-                        instMrktStrCon, serviceRegistery);
+                        instMrktStrCon,
+                        simulationConfig,
+                        serviceRegistery);
         new Thread(startWebSocket).start();
 
         ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();

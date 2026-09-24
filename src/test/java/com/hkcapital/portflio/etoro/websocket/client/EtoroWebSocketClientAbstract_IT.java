@@ -2,6 +2,7 @@ package com.hkcapital.portflio.etoro.websocket.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
+import com.hkcapital.portflio.config.SimulationConfig;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
@@ -73,6 +74,8 @@ public abstract class EtoroWebSocketClientAbstract_IT
     protected EnvService envService;
     @Autowired
     protected ServiceRegistery serviceRegistery;
+    @Autowired
+    protected SimulationConfig simulationConfig;
 
     @Autowired
     protected InstrumentMarketStructureConfService instMrktStConf;
@@ -90,6 +93,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 bandlogger,
                 envService,
                 instMrktStConf,
+                simulationConfig,
                 serviceRegistery);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
@@ -124,6 +128,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 bandlogger,
                 envService,
                 instMrktStConf,
+                simulationConfig,
                 serviceRegistery); // //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(

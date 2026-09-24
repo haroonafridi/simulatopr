@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
+import com.hkcapital.portflio.config.SimulationConfig;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
@@ -27,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.swing.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -49,10 +49,8 @@ public class EtoroLiveFeedListener implements Listener
     private final LiveResponseMapper liveResponseMapper;
     private final InstrumentService instrumentService;
     private final ObjectMapper objectMapper;
-    private final EtoroCandleService etoroCandleService;
 
     private static LiveMarketChart instance;
-    private final Bandlogger bandlogger;
     private final Set<String> subscribedTopics = ConcurrentHashMap.newKeySet();
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -63,7 +61,8 @@ public class EtoroLiveFeedListener implements Listener
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
     private final MarketStructureCache marktStctrMgCache;
-    private final InstrumentMarketStructureConfService instMarketStrConfSrv;
+
+    private final SimulationConfig simulationConfig;
 
     List<Instrument> candleInstruments;
     SignalBuilder signalBuilder = SignalBuilder.builder().build();
@@ -80,6 +79,7 @@ public class EtoroLiveFeedListener implements Listener
                                  Bandlogger bandlogger,
                                  EnvService envService,
                                  InstrumentMarketStructureConfService instMarketStrConfSrv,
+                                 final SimulationConfig simulationConfig,
                                  ServiceRegistery<Service> serviceRegistery)
     {
         this.apiConfiguration = apiConfiguration;
@@ -87,12 +87,10 @@ public class EtoroLiveFeedListener implements Listener
         this.liveResponseMapper = liveResponseMapper;
         this.instrumentService = instrumentService;
         this.objectMapper = objectMapper;
-        this.etoroCandleService = etoroCandleService;
         this.marktStctrMgCache = marketStructureManagerCache;
-        this.bandlogger = bandlogger;
         this.envService = envService;
+        this.simulationConfig = simulationConfig;
         this.serRgstry = serviceRegistery;
-        this.instMarketStrConfSrv = instMarketStrConfSrv;
 
         candleInstruments = instrumentService.findByActiveAndWithCandle(Boolean.TRUE, Boolean.TRUE);
 
@@ -142,7 +140,11 @@ public class EtoroLiveFeedListener implements Listener
 
         if (envService.getActiveProfile().equals("simulation"))
         {
-            String data = "{ data:  { value : 2026-08-14} }";
+            String dataPath = simulationConfig.getDataFolder();
+            String data = String.format(
+                    "{\"data\":{\"dataFolder\":\"%s\"}}",
+                    dataPath
+            );
             webSocket.sendText(data, true).join();
         }
         webSocket.request(1);
@@ -183,21 +185,21 @@ public class EtoroLiveFeedListener implements Listener
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
                     logger.info("tick => {}", tick);
-                  //  SwingUtilities.invokeLater(() ->
-                   // {
-                        signalBuilder.getCandleBuilder().forEach(candleBuilder ->
+                    //  SwingUtilities.invokeLater(() ->
+                    // {
+                    signalBuilder.getCandleBuilder().forEach(candleBuilder ->
+                    {
+                        if (liveInstrumentRate.getInstrumentId() == candleBuilder.getInstrument().getEtoroInstrumentId().intValue()
+                                && candleBuilder.getInstrument().getWithCandle().booleanValue()
+                        )
                         {
-                            if (liveInstrumentRate.getInstrumentId() == candleBuilder.getInstrument().getEtoroInstrumentId().intValue()
-                                    && candleBuilder.getInstrument().getWithCandle().booleanValue()
-                            )
+                            CandleDto candleDto = toCandle(tick, candleBuilder.getTimeFrame(), candleBuilder.getInterval());
+                            if (candleDto != null)
                             {
-                                CandleDto candleDto = toCandle(tick, candleBuilder.getTimeFrame(), candleBuilder.getInterval());
-                                if (candleDto != null)
-                                {
-                                    candleBuilder.addAndUpdateCandle(candleDto, candleBuilder.getInstrument());
-                                }
+                                candleBuilder.addAndUpdateCandle(candleDto, candleBuilder.getInstrument());
                             }
-                        });
+                        }
+                    });
                     //});
 
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
