@@ -41,7 +41,6 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final InstrumentService instrumentService;
     private final StrategyService strategyService;
     private final PositionService positionService;
-    private final MarketStructureCache marketStructureCache;
 
     public EtoroOrderManagerServiceImpl(final EtoroOrderRepository orderRepo, //
                                         final EtoroApiService etoroApiService,
@@ -55,17 +54,16 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         this.instrumentService = instrumentService;
         this.strategyService = strategyService;
         this.positionService = positionService;
-        this.marketStructureCache = marketStructureCache;
     }
 
     @Override
     public void process(LiveInstrumentRate instrumentRate, SignalBuilder signalBuilder)
     {
         logger.info("Sending order to etoro!!");
-        TimeFrameOrderProcessor orderProcessor =
+        TimeFrameOrderProcessor processor =
                 new TimeFrameOrderProcessorImpl(instrumentService, strategyService,
-                        positionService, marketStructureCache, this);
-        orderProcessor.process(instrumentRate, signalBuilder);
+                        positionService, this);
+        processor.process(instrumentRate, signalBuilder);
     }
 
     /**

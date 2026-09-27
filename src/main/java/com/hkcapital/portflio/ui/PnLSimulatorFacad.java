@@ -14,7 +14,6 @@ import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.env.EnvService;
-import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
 import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.importexport.export.csv.candle.CandleCSVGenerator;
 import com.hkcapital.portflio.service.importexport.export.file.csv.CSVFileGenerator;
@@ -307,7 +306,7 @@ public class PnLSimulatorFacad
         // --- Top: StrategyHeaderPanel (30% height) ---
         rightGbc.gridy = 0;
         rightGbc.weighty = 0.3;
-        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(serviceRegistery);
+        StrategyHeaderPanel strategyHeaderPanel = new StrategyHeaderPanel(serviceRegistery, dataPathConfig);
         rightPanel.add(strategyHeaderPanel, rightGbc);
 
         // --- Bottom: PositionActionsPanel (70% height) ---
@@ -317,7 +316,6 @@ public class PnLSimulatorFacad
                 new PositionActionsPanel(
                         mainFrame,
                         serviceRegistery,
-                        dataObject,
                         strategyHeaderPanel
                 );
         strategyHeaderPanel.setPositionActionsPanel(positionActionsPanel);

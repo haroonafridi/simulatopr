@@ -3,6 +3,7 @@ package com.hkcapital.portflio.ui.panels.strategy;
 import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.broker.etoro.master.Instruments;
+import com.hkcapital.portflio.config.DataPathConfig;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructure;
@@ -99,7 +100,10 @@ public class StrategyHeaderPanel extends UIBag
     private final InstrumentMarketStructureService instMarkStrctrSrv;
     private final InstrumentService instrumentService;
 
-    public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery)
+    private final DataPathConfig dataPathConfig;
+
+    public StrategyHeaderPanel(final ServiceRegistery<Service> serviceRegistery,
+                               DataPathConfig dataPathConfig)
     {
         super(StrategyHeaderPanel.class);
 
@@ -121,6 +125,7 @@ public class StrategyHeaderPanel extends UIBag
 
         instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
 
+        this.dataPathConfig = dataPathConfig;
         activePositions.setSelected(Boolean.TRUE);
 
         // ============================================================
@@ -383,7 +388,7 @@ public class StrategyHeaderPanel extends UIBag
 
         importStrategyButton.addActionListener(e ->
         {
-            strategyImporter.importIn();
+           openStrategyImportFileDialog();
         });
 
         // ============================================================
@@ -559,28 +564,12 @@ public class StrategyHeaderPanel extends UIBag
     private void openBandFileDialog() throws IOException
     {
 
-//        File bandFile;
-//
-//        JFileChooser fileChooser = new JFileChooser();
-//
-//        fileChooser.setCurrentDirectory(new File("D:/hk-prod/market-data"));
-//
-//        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
-//
-//        int result = fileChooser.showOpenDialog(this);
-
-//        if (result == JFileChooser.APPROVE_OPTION)
-        //       {
-
         Set<File> files = listFiles();
         for (File f : files)
         {
             processBandCsv(f);
         }
-
         JOptionPane.showMessageDialog(this, "Files successfully uploaded " + listFiles().size());
-
-        //      }
     }
 
 
@@ -736,6 +725,22 @@ public class StrategyHeaderPanel extends UIBag
         return Stream.of(new File("D:/hk-prod/market-data").listFiles())
                 .filter(file -> !file.isDirectory() && file.getName().contains("_23-00-00"))
                 .collect(Collectors.toSet());
+    }
+
+
+    private void openStrategyImportFileDialog()
+    {
+
+        JFileChooser fileChooser = new JFileChooser();
+
+        fileChooser.setCurrentDirectory(new File(dataPathConfig.getJson()));
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
+            strategyImporter.importIn();
+        }
     }
 
 

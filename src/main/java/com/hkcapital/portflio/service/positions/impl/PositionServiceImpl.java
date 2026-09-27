@@ -82,6 +82,12 @@ public class PositionServiceImpl implements PositionService
     }
 
     @Override
+    public List<Position> findValidTradPosition(Integer id, boolean active, Integer executionCount)
+    {
+        return positionPnLRepository.findByStrategyIdAndActiveAndExecutionCountGreaterThanOrderByPriorityAsc(id, active, executionCount);
+    }
+
+    @Override
     public List<Position> findByStrategyId(Integer id)
     {
         return positionPnLRepository.findByStrategyId(id);

@@ -111,6 +111,7 @@ public class StrategyDTO
                     .active(posDTO.getActive())
                     .positionType(posDTO.getPositionType())
                     .executionCount(posDTO.getExecutionCount())
+                    .priority(posDTO.getPriority())
                     .build();
             positionList.add(position);
         }

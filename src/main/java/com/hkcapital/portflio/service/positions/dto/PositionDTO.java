@@ -39,5 +39,15 @@ public class PositionDTO implements Serializable
     private Boolean active = true;
     private String positionType;
     private Integer executionCount;
+    private Integer priority;
+
+    public Integer getPriority() //
+    {
+        if (priority == null)
+        {
+            return 1;
+        }
+        return priority;
+    }
 
 }

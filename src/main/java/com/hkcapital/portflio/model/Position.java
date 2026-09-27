@@ -21,8 +21,8 @@ public class Position implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "record_index")
-    private Integer recordIndex;
+    @Column(name = "priority")
+    private Integer priority;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "configuration_id", referencedColumnName = "id")
     private Configuration configuration;
@@ -75,6 +75,14 @@ public class Position implements Serializable
         return executionCount;
     }
 
+    public Integer getPriority()
+    {
+        if(priority == null) {
+            return 1;
+        }
+        return priority;
+    }
+
     @Override
     public String toString()
     {
@@ -101,6 +109,7 @@ public class Position implements Serializable
                 .active(active)
                 .positionType(positionType)
                 .executionCount(executionCount)
+                .priority(priority)
                 .build();
     }
 }

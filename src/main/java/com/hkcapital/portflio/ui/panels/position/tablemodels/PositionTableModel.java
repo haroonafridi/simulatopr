@@ -31,7 +31,8 @@ public class PositionTableModel<E> extends TableModel
             "Time Frame Unite",
             "leverage",
             "active",
-            "Position Execution Count"
+            "Position Execution Count",
+            "Priority"
     };
     private List<Position> data;
 
@@ -122,6 +123,8 @@ public class PositionTableModel<E> extends TableModel
                 return position.getActive() ? "YES" : "NO";
             case 15:
                 return position.getExecutionCount();
+            case 16:
+                return position.getPriority();
             default:
                 return null;
         }

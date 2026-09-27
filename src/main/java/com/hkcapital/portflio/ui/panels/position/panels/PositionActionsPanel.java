@@ -63,13 +63,14 @@ public class PositionActionsPanel extends UIBag
     private final JLabel positionExecutionCountLabel = new JLabel("Position Execution Count");
     private final NumberTextField positionExecutionCount = new NumberTextField(30, 1);
 
+    private final JLabel priorityLabel = new JLabel("Position Priority");
+    private final NumberTextField priority = new NumberTextField(30, 1);
+
     private RunningCapitalPanel runningCapitalPanel = new RunningCapitalPanel(new RunningCapital(1, 5000));
-    final private StrategyHeaderPanel strategyHeaderPanel;
 
     final ConfigurationSourcePanel configurationSourcePanel;
 
     final CapitalPanel capitalPanel;
-
 
     private InstrumentService instrumentService;
 
@@ -77,7 +78,6 @@ public class PositionActionsPanel extends UIBag
     private final Frame frame;
 
     public PositionActionsPanel(Frame owner, final ServiceRegistery<Service> serviceRegistery,
-                                DataObject dataObject,
                                 final StrategyHeaderPanel strategyHeaderPanel)
     {
 
@@ -97,6 +97,8 @@ public class PositionActionsPanel extends UIBag
         positionSizePanel.add(positionSizeInPercent);
         positionSizePanel.add(positionExecutionCountLabel);
         positionSizePanel.add(positionExecutionCount);
+        positionSizePanel.add(priorityLabel);
+        positionSizePanel.add(priority);
         positionSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         //Opening capital panel
         JPanel configurationAndSourcePanel = new JPanel(new GridLayout(3, 0));
@@ -114,7 +116,6 @@ public class PositionActionsPanel extends UIBag
         this.frame = owner;
         positionTable.setRowHeight(25);
         positionTable.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        this.strategyHeaderPanel = strategyHeaderPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Positions "));
         //buttonPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
@@ -298,6 +299,16 @@ public class PositionActionsPanel extends UIBag
             return positionExecutionCount.getIntValue();
         }
         return 0;
+    }
+
+
+    public Integer getPriority()
+    {
+        if (priority.getText() != null)
+        {
+            return priority.getIntValue();
+        }
+        return 1;
     }
 
 

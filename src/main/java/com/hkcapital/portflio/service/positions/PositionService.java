@@ -30,4 +30,6 @@ public interface PositionService extends Service
 
     List<Position> findByStrategyIdAndActivePositionsOrderByActive(Integer id, boolean active);
 
+    List<Position> findValidTradPosition(Integer id, boolean active, Integer executionCount);
+
 }

@@ -98,6 +98,7 @@ public class AddPositionsButtonListener implements ActionListener
         position.setCurrentPositionEquity(positionParameter.capital());
         position.setExecutionCount(positionActionsPanel.getPositionExecutionCount());
         position.setLeverage(positionParameter.leverage());
+        position.setPriority(positionActionsPanel.getPriority());
         positionService.add(position);
         List<Position> positionList = positionService.findByStrategyId(strategyHeaderPanel.getStrategy().getId());
         model.updateData(positionList);

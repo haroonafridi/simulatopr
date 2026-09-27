@@ -1,7 +1,6 @@
 package com.hkcapital.portflio.service.importexport.imprt.json.strategy;
 
 import com.hkcapital.portflio.model.*;
-import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.repository.srmatrix.SRMatrixFilter;
 import com.hkcapital.portflio.service.configuration.dto.ConfigurationDTO;
 import com.hkcapital.portflio.service.importexport.Importer;
@@ -49,17 +48,12 @@ public class StrategyImporter extends ImporterExporterAbstract implements Import
     @Override
     public void importIn()
     {
-        if (!envService.getActiveProfile().equals("simulation"))
-        {
-            log.info("Strategy cannot be imported in env = {}", envService.getActiveProfile());
-            return;
-        }
-
         mrktStructureConfImporter.importIn();
         srMatrixToleranceImporter.importIn();
         srMatrixImporter.importIn();
 
-        final String dir = dataPathConfig.getImportStrategy();;
+        final String dir = dataPathConfig.getImportStrategy();
+
         try
         {
             Set<String> files = Stream.of(new File(dir).listFiles())
@@ -202,6 +196,7 @@ public class StrategyImporter extends ImporterExporterAbstract implements Import
                             .stopLoss(posDTO.getStopLoss())
                             .instrument(instrument)
                             .configuration(conf)
+                            .priority(posDTO.getPriority())
                             .capitalRemainingFirePower(posDTO.getCapitalRemainingFirePower())
                             .build());
                     positionList.add(pos);
