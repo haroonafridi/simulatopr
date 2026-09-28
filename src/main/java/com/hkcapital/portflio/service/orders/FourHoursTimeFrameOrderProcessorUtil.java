@@ -69,9 +69,15 @@ final class FourHoursTimeFrameOrderProcessorUtil
             final Double tp = position.getSrMatrix().getTakeProfit();
             final Double sl = position.getSrMatrix().getStopLoss();
             final EtoroMarketOrderDto buyOrder = (EtoroOrderUtil.buildBuyOrder(instrumentRate, inst.getMaxSlippage(), tp, sl, //
-                    position, inst,  position.getConfiguration().getLev(), "Timeframe = 4 HOURS , support = " + support + " Resistance = " + resistance + " " + "bid = " + instrumentRate.getBid() + "ask = " + instrumentRate.getAsk() + " SL = " + sl + " TP = " + tp, timeFrame));
+                    position, inst, position.getConfiguration().getLev(), "Timeframe = 4 HOURS , support = " + support + " Resistance = " + resistance + " " + "bid = " + instrumentRate.getBid() + "ask = " + instrumentRate.getAsk() + " SL = " + sl + " TP = " + tp, timeFrame));
 
-            final List<EtoroOrder> orders = orderManagerService.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(buyOrder.getInstrumentId(), OrderTypes.AUTO.getOrderType(), OrderStatus.SENT.getOrderStatus(), buyOrder.getTimeFrame().timeFrame(), buyOrder.getTimeFrame().timeFrameUnit(), buyOrder.getIsBuy());
+            final List<EtoroOrder> orders = orderManagerService
+                    .findEtoroOpenOrders(buyOrder.getInstrumentId(), //
+                            OrderTypes.AUTO.getOrderType(), //
+                            OrderStatus.SENT.getOrderStatus(), //
+                            buyOrder.getTimeFrame().timeFrame(), //
+                            buyOrder.getTimeFrame().timeFrameUnit(), //
+                            buyOrder.getIsBuy());
 
             if (orders.size() == 0)
             {
@@ -97,7 +103,12 @@ final class FourHoursTimeFrameOrderProcessorUtil
                     "Timeframe = 4 hours , support = " + support + " Resistance = " + resistance + " " + "bid = " + instrumentRate.getBid() + "ask = " + instrumentRate.getAsk() + " SL = " + sl + " TP = " + tp, timeFrame);
 
             final List<EtoroOrder> orders = orderManagerService
-                    .findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(saleOrder.getInstrumentId(), OrderTypes.AUTO.getOrderType(), OrderStatus.SENT.getOrderStatus(), saleOrder.getTimeFrame().timeFrame(), saleOrder.getTimeFrame().timeFrameUnit(), saleOrder.getIsBuy());
+                    .findEtoroOpenOrders(saleOrder.getInstrumentId(), //
+                            OrderTypes.AUTO.getOrderType(), //
+                            OrderStatus.SENT.getOrderStatus(), //
+                            saleOrder.getTimeFrame().timeFrame(), //
+                            saleOrder.getTimeFrame().timeFrameUnit(),
+                            saleOrder.getIsBuy());
             if (orders.size() == 0)
             {
                 orderManagerService.createAndSaveMarketOrder(saleOrder);

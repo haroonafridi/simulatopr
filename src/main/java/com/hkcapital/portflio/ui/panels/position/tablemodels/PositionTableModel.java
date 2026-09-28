@@ -104,9 +104,9 @@ public class PositionTableModel<E> extends TableModel
 //            case 12:
 //                return position.getMarketConditions().getPercentMove();//
             case 6:
-                return position.getSrMatrix().getSupport();//
+                return  position.getSrMatrix().getL_s_tolerance()+"-"+ position.getSrMatrix().getSupport()+"-"+position.getSrMatrix().getR_s_tolerance();//
             case 7:
-                return position.getSrMatrix().getResistance();//
+                return position.getSrMatrix().getL_r_tolerance()+"-"+position.getSrMatrix().getResistance()+"-"+position.getSrMatrix().getR_r_tolerance();//
             case 8:
                 return position.getSrMatrix().getTakeProfit();//
             case 9:

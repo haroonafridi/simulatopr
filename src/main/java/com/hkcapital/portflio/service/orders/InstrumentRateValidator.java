@@ -8,7 +8,7 @@ public class InstrumentRateValidator
 {
     public static boolean isInValidInstrumentRate(final LiveInstrumentRate instrumentRate)
     {
-        if (instrumentRate != null && instrumentRate.getAsk() != null && instrumentRate.getBid() != null)
+        if (instrumentRate == null || instrumentRate.getAsk() == null || instrumentRate.getBid() == null)
         {
             log.info("Unusual bid and ask received, cannot process order");
             return true;

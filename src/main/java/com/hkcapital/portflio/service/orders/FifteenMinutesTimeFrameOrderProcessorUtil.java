@@ -75,8 +75,9 @@ final class FifteenMinutesTimeFrameOrderProcessorUtil
                             "bid = " + instrumentRate.getBid() + "ask = " + instrumentRate.getAsk() + " SL = " + sl + " TP = " + tp, timeFrame));
 
             List<EtoroOrder> orders =
-                    orderManagerService.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(buyOrder.getInstrumentId(),
-                            OrderTypes.AUTO.getOrderType(), OrderStatus.SENT.getOrderStatus(),
+                    orderManagerService.findEtoroOpenOrders(buyOrder.getInstrumentId(),
+                            OrderTypes.AUTO.getOrderType(),
+                            OrderStatus.SENT.getOrderStatus(),
                             buyOrder.getTimeFrame().timeFrame(),
                             buyOrder.getTimeFrame().timeFrameUnit(),
                             buyOrder.getIsBuy());
@@ -106,7 +107,7 @@ final class FifteenMinutesTimeFrameOrderProcessorUtil
                             "bid = " + instrumentRate.getBid() + "ask = " + instrumentRate.getAsk() + " SL = " + sl + " TP = " + tp, timeFrame);
 
             List<EtoroOrder> orders =
-                    orderManagerService.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(saleOrder.getInstrumentId(),
+                    orderManagerService.findEtoroOpenOrders(saleOrder.getInstrumentId(),
                             OrderTypes.AUTO.getOrderType(), OrderStatus.SENT.getOrderStatus(),
                             saleOrder.getTimeFrame().timeFrame(),
                             saleOrder.getTimeFrame().timeFrameUnit(),

@@ -178,8 +178,8 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     }
 
     @Override
-    public List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy(Integer InstrumentID, String oderType, String status, //
-                                                                                                       Integer timeFrame, String timeFrameUnit, boolean isBuy)
+    public List<EtoroOrder> findEtoroOpenOrders(Integer InstrumentID, String oderType, String status, //
+                                                Integer timeFrame, String timeFrameUnit, boolean isBuy)
     {
         return orderRepository.findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy( //
                 InstrumentID, //

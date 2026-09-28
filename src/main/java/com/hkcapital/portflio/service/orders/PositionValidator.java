@@ -11,13 +11,13 @@ public class PositionValidator
     public static boolean isInValidPosition(final Position position)
     {
 
-        if(position.getPositionType() != null)
+        if(position.getPositionType() == null)
         {
             log.info("Empty position type found cannot send order!");
             return true;
         }
 
-        if (position.getExecutionCount() != null || position.getExecutionCount() <= 0)
+        if (position.getExecutionCount() == null || position.getExecutionCount() <= 0)
         {
             return true;
         }

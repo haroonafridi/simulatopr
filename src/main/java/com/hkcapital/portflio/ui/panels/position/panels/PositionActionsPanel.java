@@ -53,7 +53,6 @@ public class PositionActionsPanel extends UIBag
     private final JButton removePosition = new JButton("Remove Position");
     private final JButton removePositionAll = new JButton("Remove All Positions");
     private final JButton marketConditionsButton = new JButton("Add Market conditions");
-
     private final JButton uploadPositionButton = new JButton("Upload Positions");
     private final JButton srMatrixButton = new JButton("Add SR Matrix");
     private final JButton configurationButton = new JButton("Add Configuration");

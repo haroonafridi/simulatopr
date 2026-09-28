@@ -11,7 +11,6 @@ import com.hkcapital.portflio.service.strategy.StrategyService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.hkcapital.portflio.service.orders.InstrumentRateValidator.isInValidInstrumentRate;
 
@@ -49,36 +48,30 @@ public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
             return;
         }
 
-        final List<Instrument> instrumentList =
-                instrumentService.findAll()
-                        .stream()
-                        .filter(Instrument::getActive)
-                        .collect(Collectors.toList());
-
-        for (Instrument instrument : instrumentList)
+        final List<Strategy> strategies = //
+                strategyService.findAll()//
+                        .stream()//
+                        .filter(Strategy::getActive)//
+                        .toList();
+        for (final Strategy strategy : strategies)
         {
-            if (instrument.getEtoroInstrumentId().intValue() //
-                    == instrumentRate.getInstrumentId().intValue())
-            {
-                final List<Strategy> strategies = //
-                        strategyService.findAll()//
-                                .stream()//
-                                .filter(Strategy::getActive)//
-                                .toList();
-
-                log.info("no of strategies found {} ", strategies.size());
-                for (final Strategy strategy : strategies)
-                {
-                    positionService
-                            .findValidTradPosition(strategy.getId(), true, 0)
-                            .stream()
-                            .findFirst().ifPresent(position ->
+            positionService
+                    .findValidTradPosition(strategy.getId(), true, 0)
+                    .stream()
+                    .findFirst().ifPresent(position ->
+                            {
+                                Instrument positionInst = position.getInstrument();
+                                if (positionInst.getEtoroInstrumentId().intValue() //
+                                        == instrumentRate.getInstrumentId().intValue() &&
+                                        positionInst.getActive())
+                                {
                                     new TimeFrameOrderFactory(instrumentService, positionService, orderManagerService)
                                             .createTimeFrameOrderProcessor(position)
-                                            .process(instrumentRate, signalBuilder)
-                            );
-                }
-            }
+                                            .process(instrumentRate, signalBuilder);
+                                }
+
+                            }
+                    );
         }
     }
 }

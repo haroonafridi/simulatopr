@@ -30,7 +30,7 @@ public interface OrderManagerService extends Service, MarketFeedSubscriber
 
     EtoroOrder addEtoroOrder(EtoroOrder etoroOrder);
 
-    List<EtoroOrder> findByInstrumentIDAndOderTypeAndStatusAndTimeFrameAndTimeFrameUnitAndIsBuy
+    List<EtoroOrder> findEtoroOpenOrders
             (
                     Integer InstrumentID,
                     String oderType,
