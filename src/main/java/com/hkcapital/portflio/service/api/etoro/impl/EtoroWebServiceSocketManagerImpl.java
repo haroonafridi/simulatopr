@@ -5,6 +5,7 @@ import com.hkcapital.portflio.broker.etoro.config.EtoroApiConfiguration;
 import com.hkcapital.portflio.config.SimulationConfig;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
+import com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
@@ -15,6 +16,8 @@ import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,9 +28,9 @@ import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 
 @Service
-public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.service.api.etoro.EtoroWebSocketManagerService
+@Slf4j
+public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerService
 {
-    private final Logger logger = LoggerFactory.getLogger(EtoroWebServiceSocketManagerImpl.class);
 
     private final com.hkcapital.portflio.service.orders.OrderManagerService orderManagerService;
     private final com.hkcapital.portflio.service.instrument.InstrumentService instrumentService;
@@ -37,27 +40,17 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
 
     private final MarketFeedObserver marketFeedObserver;
     private final LiveResponseMapper liveResponseMapper;
-    private final MarketFeedDbWriterSub marketFeedDbWriter;
-    private final BuySellSignalGeneratorSub buySellManager;
-
     private final MarketStructureCache marketStructureManagerCache;
-
     private final InstrumentMarketStructureConfService instMrktStrCon;
-
     private final EtoroCandleService etoroCandleService;
-
     private final Bandlogger bandlogger;
-
     private final EnvService envService;
     private final SimulationConfig simulationConfig;
-
     private final ServiceRegistery serviceRegistery;
 
-    public EtoroWebServiceSocketManagerImpl(final com.hkcapital.portflio.service.srmatrix.SRMatrixService srMatrixService, //
+    public EtoroWebServiceSocketManagerImpl(
                                             final OrderManagerService orderManagerService, //
                                             final InstrumentService instrumentService, //
-                                            final com.hkcapital.portflio.service.strategy.StrategyService strategyService, //
-                                            final com.hkcapital.portflio.service.positions.PositionService positionService, //
                                             final EtoroApiConfiguration etoroApiConfiguration, //
                                             final ObjectMapper objectMapper, //
                                             final MarketFeedObserver marketFeedObserver, //
@@ -79,8 +72,6 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
         this.objectMapper = objectMapper;
         this.marketFeedObserver = marketFeedObserver;
         this.liveResponseMapper = liveResponseMapper;
-        this.marketFeedDbWriter = marketFeedDbWriter;
-        this.buySellManager = buySellManager;
         this.etoroCandleService = etoroCandleService;
         marketFeedObserver.addMarketFeedSubscriber(marketFeedDbWriter);
         marketFeedObserver.addMarketFeedSubscriber(buySellManager);
@@ -104,6 +95,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                         instMrktStrCon,
                         simulationConfig,
                         serviceRegistery);
+
         new Thread(startWebSocket).start();
 
         ScheduledExecutorService scheduler = newSingleThreadScheduledExecutor();
@@ -114,7 +106,7 @@ public class EtoroWebServiceSocketManagerImpl implements com.hkcapital.portflio.
                 orderManagerService.fetchAndCloseEtoroOrder();
             } catch (Exception e)
             {
-                logger.error("Error in background task", e);
+                log.error("Error in background task", e);
             }
         }, 5, 5, TimeUnit.MINUTES);
     }

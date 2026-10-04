@@ -57,8 +57,16 @@ final class FourHoursTimeFrameOrderProcessorUtil
             return;
         }
 
-        log.info("Sending Automatic trade to etoro Timeframe = {} , Timeframe unit = {}", //
-                timeFrame.timeFrame(), timeFrame.timeFrameUnit());
+        log.info("Sending position type = {} , position id = {} , priority = {} , order Timeframe = 4 hours, instrument = {} , " +
+                        "ask = {} , bid = {} , max-slippage = {} , broker-slippage = {}",
+                position.getPositionType(),
+                position.getId(),
+                position.getPriority(),
+                inst.getInstrumentTicker() ,
+                instrumentRate.getAsk() ,
+                instrumentRate.getBid() ,
+                inst.getMaxSlippage(),
+                Math.abs(instrumentRate.getAsk() - instrumentRate.getBid()));
 
         if ((instrumentRate.getAsk() >= lSupportTol
                 && instrumentRate.getAsk() <= rSupportTol)

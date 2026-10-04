@@ -14,21 +14,18 @@ import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.registry.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.net.http.HttpClient;
 
+@Slf4j
 public class StartWebSocketRunner implements Runnable
 {
-    private final Logger logger = LoggerFactory.getLogger(StartWebSocketRunner.class);
     private final EtoroApiConfiguration etoroApiConfiguration;
     private final MarketFeedObserver marketFeedObserver;
     private final LiveResponseMapper liveResponseMapper;
     private final InstrumentService instrumentService;
     private final EtoroCandleService etoroCandleService;
-
     private final MarketStructureCache marketStructureManagerCache;
     private final ObjectMapper objectMapper;
     private final Bandlogger bandlogger;
@@ -69,7 +66,7 @@ public class StartWebSocketRunner implements Runnable
     @Override
     public void run()
     {
-        logger.info("Connected to URL [{}]", etoroApiConfiguration.getUrl());
+        log.info("Connected to URL [{}]", etoroApiConfiguration.getUrl());
         HttpClient.newHttpClient().newWebSocketBuilder()
                 .buildAsync(
                         URI.create(etoroApiConfiguration.getUrl()),

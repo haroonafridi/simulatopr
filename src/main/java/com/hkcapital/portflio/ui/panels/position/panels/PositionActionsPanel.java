@@ -423,6 +423,7 @@ public class PositionActionsPanel extends UIBag
                         .currentPositionEquity(sRMatrixRecord.amount())
                         .executionCount(sRMatrixRecord.executionCount())
                         .active(sRMatrixRecord.active())
+                        .priority(sRMatrixRecord.priority())
                         .build();
                 positionService.add(position);
                 recordProcessed = recordProcessed + 1;

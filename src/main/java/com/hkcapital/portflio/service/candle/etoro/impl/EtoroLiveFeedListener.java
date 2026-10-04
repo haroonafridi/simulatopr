@@ -24,8 +24,7 @@ import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMa
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.ui.chart.LiveMarketChart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -39,11 +38,15 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class EtoroLiveFeedListener implements Listener
 {
-
+    public static final String SIMULATION = "simulation";
+    public static final String SIMULATION_DATA_PATH = "{\"data\":{\"dataFolder\":\"%s\"}}";
+    public static final String OPERATION = "operation";
+    public static final String AUTHENTICATE = "Authenticate";
+    public static final String SUCCESS = "success";
     private StringBuilder buffer = new StringBuilder();
-    private final Logger logger = LoggerFactory.getLogger(EtoroLiveFeedListener.class);
     private final EtoroApiConfiguration apiConfiguration;
     private final MarketFeedObserver marketFeedObserver;
     private final LiveResponseMapper liveResponseMapper;
@@ -127,10 +130,10 @@ public class EtoroLiveFeedListener implements Listener
     @Override
     public void onOpen(WebSocket webSocket)
     {
-        logger.info("WebSocket connected");
+        log.info("WebSocket connected");
         reconnecting = false;
         subscribedTopics.clear();
-        if (envService.getActiveProfile().equals("simulation"))
+        if (envService.getActiveProfile().equals(SIMULATION))
         {
             performAuthSimulation(webSocket, apiConfiguration);
         } else
@@ -138,11 +141,11 @@ public class EtoroLiveFeedListener implements Listener
             performAuth(webSocket, apiConfiguration);
         }
 
-        if (envService.getActiveProfile().equals("simulation"))
+        if (envService.getActiveProfile().equals(SIMULATION))
         {
             String dataPath = simulationConfig.getDataFolder();
             String data = String.format(
-                    "{\"data\":{\"dataFolder\":\"%s\"}}",
+                    SIMULATION_DATA_PATH,
                     dataPath
             );
             webSocket.sendText(data, true).join();
@@ -159,11 +162,11 @@ public class EtoroLiveFeedListener implements Listener
             try
             {
                 JsonNode node = objectMapper.readTree(data.toString());
-                if (node.has("operation") &&
-                        "Authenticate".equals(node.get("operation").asText()) &&
-                        node.path("success").asBoolean(false))
+                if (node.has(OPERATION) &&
+                        AUTHENTICATE.equals(node.get(OPERATION).asText()) &&
+                        node.path(SUCCESS).asBoolean(false))
                 {
-                    logger.info("Authentication successful");
+                    log.info("Authentication successful");
                     List<Instrument> instrumentList = instrumentService.findAll()
                             .stream()
                             .filter(instrument -> instrument != null && instrument.getActive())
@@ -184,12 +187,12 @@ public class EtoroLiveFeedListener implements Listener
                 if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
-                    logger.info("tick => {}", tick);
                     //  SwingUtilities.invokeLater(() ->
                     // {
                     signalBuilder.getCandleBuilder().forEach(candleBuilder ->
                     {
-                        if (liveInstrumentRate.getInstrumentId() == candleBuilder.getInstrument().getEtoroInstrumentId().intValue()
+                        if (liveInstrumentRate.getInstrumentId() //
+                                == candleBuilder.getInstrument().getEtoroInstrumentId().intValue()
                                 && candleBuilder.getInstrument().getWithCandle().booleanValue()
                         )
                         {
@@ -223,7 +226,7 @@ public class EtoroLiveFeedListener implements Listener
                 }
             } catch (JsonProcessingException e)
             {
-                logger.error("JSON parse error", data);
+                log.error("JSON parse error", data);
             }
         }
         ws.request(1);
@@ -233,14 +236,14 @@ public class EtoroLiveFeedListener implements Listener
     @Override
     public void onError(WebSocket webSocket, Throwable error)
     {
-        logger.error("WebSocket error", error);
+        log.error("WebSocket error", error);
         reconnect(apiConfiguration.getUrl());
     }
 
     @Override
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason)
     {
-        logger.warn("WebSocket closed [{}] {}", statusCode, reason);
+        log.warn("WebSocket closed [{}] {}", statusCode, reason);
         signalBuilder.getCandleBuilder()
                 .forEach(candleBuilder -> candleBuilder.flush());
         reconnect(apiConfiguration.getUrl());
@@ -266,7 +269,7 @@ public class EtoroLiveFeedListener implements Listener
 
         ws.sendText(authMessage, true);
 
-        logger.info("Authentication sent");
+        log.info("Authentication sent");
     }
 
     private void performAuthSimulation(WebSocket ws, EtoroApiConfiguration apiInformation)
@@ -288,7 +291,7 @@ public class EtoroLiveFeedListener implements Listener
 
         ws.sendText(authMessage, true);
 
-        logger.info("Authentication sent");
+        log.info("Authentication sent");
     }
 
 
@@ -314,7 +317,7 @@ public class EtoroLiveFeedListener implements Listener
 
         subscribedTopics.add(instrumentId);
 
-        logger.info("Subscribed instrument {}", instrumentId);
+        log.info("Subscribed instrument {}", instrumentId);
     }
 
     private void reconnect(String url)
@@ -326,7 +329,7 @@ public class EtoroLiveFeedListener implements Listener
 
         reconnecting = true;
 
-        logger.warn("Reconnecting to eToro WebSocket...");
+        log.warn("Reconnecting to eToro WebSocket...");
 
         scheduler.schedule(() ->
         {
@@ -336,7 +339,7 @@ public class EtoroLiveFeedListener implements Listener
                     {
                         if (error != null)
                         {
-                            logger.error("Reconnect failed", error);
+                            log.error("Reconnect failed", error);
                             reconnecting = false;
                             reconnect(apiConfiguration.getUrl());
                         }

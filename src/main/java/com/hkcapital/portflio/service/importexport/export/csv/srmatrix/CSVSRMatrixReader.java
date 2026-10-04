@@ -53,15 +53,15 @@ public class CSVSRMatrixReader implements Reader<String, List<StrategyPositionRe
                     throw new IllegalArgumentException("Expected at least " + COLUMN_COUNT + " columns, got " + values.length + ": " + line);
                 }
 
-                StrategyPositionRecords instrument = new StrategyPositionRecords(
+                StrategyPositionRecords positionRec = new StrategyPositionRecords(
 
                         values[0].trim(),     // STRATEGY_NAME
 
                         values[1].trim(),     // STRATEGY_DESC
 
-                        Double.parseDouble(values[2].trim()),     // CAPITAL_ALLOCATED
+                        Double.parseDouble( values[2] != null || values[2] != "" ? values[2].trim() : "0"),     // CAPITAL_ALLOCATED
 
-                        Boolean.parseBoolean(values[3].trim()),     // STRATEGY_ACTIVE
+                        Boolean.parseBoolean(values[2] != null || values[2] != "" ? values[2].trim() : "true"),     // STRATEGY_ACTIVE
 
                         values[4].trim(),     // INSTRUMENT
 
@@ -71,17 +71,17 @@ public class CSVSRMatrixReader implements Reader<String, List<StrategyPositionRe
 
                         values[7].trim(),     // URL
 
-                        Integer.parseInt(values[8].trim()), // ETORO_ID
+                        Integer.parseInt(values[8].trim() == "" ? "-1" : values[8].trim()), // ETORO_ID
 
                         Integer.parseInt(values[9].trim()), // TIME_FRAME
 
                         values[10].trim(),     // TIME_FRAME_UNIT
 
-                        Double.parseDouble(values[11].trim()), // SLIPPAGE
+                        Double.parseDouble(values[11].trim() == "" ? "0" : values[11].trim()), // SLIPPAGE
 
-                        Double.parseDouble(values[12].trim()), // AMOUNT
+                        Double.parseDouble(values[12].trim()  == "" ? "0" : values[12].trim()), // AMOUNT
 
-                        Integer.parseInt(values[13].trim()), // LEV
+                        Integer.parseInt(values[13].trim() == "" ? "2" : values[13].trim()), // LEV
 
                         values[14].trim(),    // POSITION_TYPE
 
@@ -103,21 +103,22 @@ public class CSVSRMatrixReader implements Reader<String, List<StrategyPositionRe
 
                         Integer.parseInt(values[23].trim()), // EXECUTION_COUNT
 
-                        Boolean.parseBoolean(values[24].trim()), // ACTIVE
+                        Boolean.parseBoolean(values[24].trim() != "" ? values[24].trim() : "false"), // ACTIVE
 
-                        Boolean.parseBoolean(values[25].trim()), // WITH_FEED
+                        Boolean.parseBoolean(values[25].trim() != "" ? values[25].trim() : "false"), // WITH_FEED
 
-                        Boolean.parseBoolean(values[26].trim()), // WITH_BAND
+                        Boolean.parseBoolean(values[26].trim() != "" ? values[26].trim() : "false"), // WITH_BAND
 
-                        Boolean.parseBoolean(values[27].trim()), // WITH_CANDLE
+                        Boolean.parseBoolean(values[27].trim() != "" ? values[27].trim() : "false"), // WITH_CANDLE
                         values[28].trim(),  // CONFIG_CODE
-                        Double.parseDouble(values[29].trim()),  // ALLOCATION_ALLOWED
-                        Integer.parseInt(values[30].trim()),  // no of Instruments
-                        Integer.parseInt(values[31].trim()),  // no Of Positions per inst
-                        Double.parseDouble(values[32].trim())  // max allowed percent
+                        Double.parseDouble(values[29].trim() != "" ? values[29].trim() : "0"),  // ALLOCATION_ALLOWED
+                        Integer.parseInt(values[30].trim() != "" ? values[30].trim() : "1"),  // no of Instruments
+                        Integer.parseInt(values[31].trim() != "" ? values[31].trim() : "1"),  // no Of Positions per inst
+                        Double.parseDouble(values[32].trim() != "" ? values[24].trim() : "2"),  // max allowed percent
+                        Integer.parseInt(values[33].trim() != "" ? values[33].trim() : "1")  // max allowed percent
                 );
 
-                srMatrixRecords.add(instrument);
+                srMatrixRecords.add(positionRec);
             }
         } catch (IOException e)
         {

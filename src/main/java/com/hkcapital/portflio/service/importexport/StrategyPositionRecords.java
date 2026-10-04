@@ -33,7 +33,9 @@ public record StrategyPositionRecords(
         double allocationAllowed,
         int noOfInstruments,
         int noOfPositionsPerInstruments,
-        double maxPercentAllowPercent
-)
+        double maxPercentAllowPercent,
+
+        int priority
+        )
 {
 }

@@ -58,8 +58,17 @@ final class FifteenMinutesTimeFrameOrderProcessorUtil
             return;
         }
 
-        log.info("Sending Automatic trade to etoro Timeframe = {} , Timeframe unit = {}", //
-                timeFrame.timeFrame(), timeFrame.timeFrameUnit());
+
+        log.info("Sending position type = {} , position id = {} , priority = {} , order Timeframe = 15 minutes instrument = {} , " +
+                        "ask = {} , bid = {} , max-slippage = {} , broker-slippage = {}",
+                position.getPositionType(),
+                position.getId(),
+                position.getPriority(),
+                inst.getInstrumentTicker() ,
+                instrumentRate.getAsk() ,
+                instrumentRate.getBid() ,
+                inst.getMaxSlippage(),
+                Math.abs(instrumentRate.getAsk() - instrumentRate.getBid()));
 
         if ((instrumentRate.getAsk() >= lSupportTol
                 && instrumentRate.getAsk() <= rSupportTol)
@@ -99,8 +108,6 @@ final class FifteenMinutesTimeFrameOrderProcessorUtil
         {
             Double sl = position.getSrMatrix().getStopLoss();
             Double tp = position.getSrMatrix().getTakeProfit();
-
-            log.info("Sell order successfully placed for timeframe 4 hour");
 
             EtoroMarketOrderDto saleOrder = EtoroOrderUtil.buildSellOrder(instrumentRate, sl,
                     tp, position, inst, "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
