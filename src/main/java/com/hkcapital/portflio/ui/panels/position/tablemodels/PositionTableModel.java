@@ -10,6 +10,7 @@ public class PositionTableModel<E> extends TableModel
 {
     private final String[] columns = {
             "Position Id",
+            "SRM-Id",
             "Instrument Name",
             "Allowed Slippage",
             //"Etoro Instrument Id",
@@ -80,16 +81,18 @@ public class PositionTableModel<E> extends TableModel
             case 0:
                 return position.getId();
             case 1:
-                return position.getInstrument().getName();
+                return position.getSrMatrix().getId();
             case 2:
+                return position.getInstrument().getName();
+            case 3:
                 return position.getInstrument().getMaxSlippage();
 //            case 3:
 //                return position.getInstrument().getEtoroInstrumentId();
-            case 3:
-                return position.getPercentCapitalDeployed();
             case 4:
-                return position.getCurrentPositionEquity();
+                return position.getPercentCapitalDeployed();
             case 5:
+                return position.getCurrentPositionEquity();
+            case 6:
                 return position.getCurrentPositionEquity() * position.getLeverage();
 //            case 7:
 //                return position.getAllowedFirePower();
@@ -103,27 +106,27 @@ public class PositionTableModel<E> extends TableModel
 //                return position.getMarketConditions().getDayHigh();
 //            case 12:
 //                return position.getMarketConditions().getPercentMove();//
-            case 6:
-                return  position.getSrMatrix().getL_s_tolerance()+"-"+ position.getSrMatrix().getSupport()+"-"+position.getSrMatrix().getR_s_tolerance();//
             case 7:
-                return position.getSrMatrix().getL_r_tolerance()+"-"+position.getSrMatrix().getResistance()+"-"+position.getSrMatrix().getR_r_tolerance();//
+                return  position.getSrMatrix().getL_s_tolerance()+"-"+ position.getSrMatrix().getSupport()+"-"+position.getSrMatrix().getR_s_tolerance();//
             case 8:
-                return position.getSrMatrix().getTakeProfit();//
+                return position.getSrMatrix().getL_r_tolerance()+"-"+position.getSrMatrix().getResistance()+"-"+position.getSrMatrix().getR_r_tolerance();//
             case 9:
-                return position.getSrMatrix().getStopLoss();//
+                return position.getSrMatrix().getTakeProfit();//
             case 10:
-                return position.getPositionType();
+                return position.getSrMatrix().getStopLoss();//
             case 11:
-                return position.getSrMatrix().getTimeFrame();//
+                return position.getPositionType();
             case 12:
-                return position.getSrMatrix().getTimeFrameUnit();//
+                return position.getSrMatrix().getTimeFrame();//
             case 13:
-                return position.getLeverage();
+                return position.getSrMatrix().getTimeFrameUnit();//
             case 14:
-                return position.getActive() ? "YES" : "NO";
+                return position.getLeverage();
             case 15:
-                return position.getExecutionCount();
+                return position.getActive() ? "YES" : "NO";
             case 16:
+                return position.getExecutionCount();
+            case 17:
                 return position.getPriority();
             default:
                 return null;

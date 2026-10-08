@@ -323,17 +323,23 @@ public class StrategyHeaderPanel extends UIBag
         // AUTOMATIC TRADING
         // ============================================================
 
+        automaticTrading.setBackground(Color.red);
+        automaticTrading.setForeground(Color.blue);
+
         automaticTrading.addActionListener(e ->
         {
             if (TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
             {
                 TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.FALSE;
-
+                automaticTrading.setBackground(Color.red);
+                automaticTrading.setForeground(Color.blue);
                 automaticTrading.setText("Activate Auto Trading");
-            } else
+            } //
+            else
             {
                 TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING = Boolean.TRUE;
-
+                automaticTrading.setBackground(Color.GREEN);
+                automaticTrading.setForeground(Color.red);
                 automaticTrading.setText("Deactivate Auto Trading");
             }
         });

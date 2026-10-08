@@ -176,7 +176,34 @@ public class PositionActionsPanel extends UIBag
             {
                 Component c = super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);
+
                 Position r = positionService.findById((Integer) table.getModel().getValueAt(row, 0));
+
+                if(r.getPositionType() != null && r.getPositionType().equals(PositionType.SELL.getValue()))
+                {
+                    if(r.getSrMatrix().getResistance() > r.getSrMatrix().getStopLoss() ||
+                            r.getSrMatrix().getResistance() < r.getSrMatrix().getTakeProfit() )
+                    {
+                        c.setFont(new Font("Arial", Font.BOLD, 14));
+                        c.setBackground(Color.MAGENTA);
+                        c.setForeground(Color.BLUE);
+                        return c;
+                    }
+                }
+
+                if(r.getPositionType() != null && r.getPositionType().equals(PositionType.BUY.getValue()))
+                {
+                    if(r.getSrMatrix().getSupport() < r.getSrMatrix().getStopLoss() ||
+                            r.getSrMatrix().getSupport() > r.getSrMatrix().getTakeProfit() )
+                    {
+                        c.setFont(new Font("Arial", Font.BOLD, 14));
+                        c.setBackground(Color.MAGENTA);
+                        c.setForeground(Color.BLUE);
+                        return c;
+                    }
+                }
+
+
                 if (isSelected)
                 {
                     c.setFont(new Font("Arial", Font.BOLD, 14));

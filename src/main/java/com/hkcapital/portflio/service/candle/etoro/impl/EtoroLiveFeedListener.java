@@ -27,6 +27,7 @@ import com.hkcapital.portflio.ui.chart.LiveMarketChart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -187,8 +188,8 @@ public class EtoroLiveFeedListener implements Listener
                 if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
-                    //  SwingUtilities.invokeLater(() ->
-                    // {
+                     // SwingUtilities.invokeLater(() ->
+                     //{
                     signalBuilder.getCandleBuilder().forEach(candleBuilder ->
                     {
                         if (liveInstrumentRate.getInstrumentId() //
@@ -203,27 +204,27 @@ public class EtoroLiveFeedListener implements Listener
                             }
                         }
                     });
-                    //});
+                   // });
+                    if (TradingConfiguration.SHOW_TRADING)
+                    {
+                        if (instance == null)
+                        {
+                            instance = new LiveMarketChart(marktStctrMgCache, signalBuilder, serRgstry);
+                            instance.display();
 
+                        } else
+                        {
+                            if (!instance.isVisible())
+                            {
+                                instance.setVisible(Boolean.TRUE);
+                            }
+                            instance.handleMarketTick();
+                        }
+                    }
                     marketFeedObserver.process(liveInstrumentRate, signalBuilder);
                 }
 
-                if (TradingConfiguration.SHOW_TRADING)
-                {
-                    if (instance == null)
-                    {
-                        instance = new LiveMarketChart(marktStctrMgCache, signalBuilder, serRgstry);
-                        instance.display();
 
-                    } else
-                    {
-                        if (!instance.isVisible())
-                        {
-                            instance.setVisible(Boolean.TRUE);
-                        }
-                        instance.handleMarketTick();
-                    }
-                }
             } catch (JsonProcessingException e)
             {
                 log.error("JSON parse error", data);

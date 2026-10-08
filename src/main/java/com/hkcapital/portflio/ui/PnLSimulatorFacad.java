@@ -217,7 +217,7 @@ public class PnLSimulatorFacad
         String activeProfile = profileService.getActiveProfile();
         LookAndFeel looAndFeel = new FlatDarkLaf();
         Font font = new Font("Roboto Mono", Font.PLAIN, 12);
-        if ("dev".equals(activeProfile))
+        if ("dev".equals(activeProfile) || "prod".equals(activeProfile))
         {
             looAndFeel = new MetalLookAndFeel();
             font = new Font("Roboto Mono", Font.PLAIN, 12);

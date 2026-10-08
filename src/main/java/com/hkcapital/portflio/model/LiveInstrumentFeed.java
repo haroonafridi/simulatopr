@@ -9,7 +9,7 @@ import java.time.Instant;
 @Builder
 @ToString
 @Entity
-@Table(name = "live_instrument_feed")
+@Table(name = "live_instrument_feed_new")
 @NoArgsConstructor
 @AllArgsConstructor
 public class LiveInstrumentFeed
