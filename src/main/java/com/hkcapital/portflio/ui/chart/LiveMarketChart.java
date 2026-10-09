@@ -94,7 +94,7 @@ public class LiveMarketChart extends JFrame
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(series);
         // ================= CHART =================
-        Instrument[] insts =instSrv.findByActiveAndWithBand(true, true).toArray(new Instrument[0]);
+        Instrument[] insts = instSrv.findByActiveAndWithBand(true, true).toArray(new Instrument[0]);
         instruments = new JComboBox<>(insts);
         String[] timeframes = {"1", "5", "15", "30", "4"};
         timeframeCombo = new JComboBox<>(timeframes);
@@ -115,19 +115,20 @@ public class LiveMarketChart extends JFrame
         toolBar.add(bandsCombo);
         toolBar.add(showHide);
 
-        Instrument instrument= (Instrument)instruments.getSelectedItem();
+        Instrument instrument = (Instrument) instruments.getSelectedItem();
 
-                this.marketStructureCache.getStructures().entrySet().forEach(e-> {
-                    if(instrument != null && e.getValue().getInstrument()!= null
-                            && instrument.equals(e.getValue().getInstrument()))
-                    {
-                        maxClose =   e.getValue().getUpperBands()
-                              .stream().map(b-> b.getUpperBound()).max(Comparator.reverseOrder()).get()+100;
+        this.marketStructureCache.getStructures().entrySet().forEach(e ->
+        {
+            if (instrument != null && e.getValue().getInstrument() != null
+                    && instrument.equals(e.getValue().getInstrument()))
+            {
+                maxClose = e.getValue().getUpperBands()
+                        .stream().map(b -> b.getUpperBound()).max(Comparator.reverseOrder()).get() + 100;
 
-                        minClose =   e.getValue().getLowerBands()
-                                .stream().map(b-> b.getLowerBound()).min(Comparator.reverseOrder()).get()-100;
-                    }
-                });
+                minClose = e.getValue().getLowerBands()
+                        .stream().map(b -> b.getLowerBound()).min(Comparator.reverseOrder()).get() - 100;
+            }
+        });
 
         List<CandleDto> candleDtoList =
                 this.etoroCandleService.findCandleDtoByInstrumentIDAndCreationDateTimeBetween(instrument,
@@ -320,7 +321,6 @@ public class LiveMarketChart extends JFrame
                 }
 
 
-
                 if (timeframeCombo.getSelectedItem().equals("15"))
                 {
 
@@ -352,7 +352,6 @@ public class LiveMarketChart extends JFrame
                             ChartUtil.createDateRange(TimeFramesUnit.MINUTE, 15, null),
                             ChartUtil.createXaxisNumberTickUnit(TimeFramesUnit.MINUTE, 15));
                 }
-
 
 
                 if (timeframeCombo.getSelectedItem().equals("30"))
@@ -479,45 +478,73 @@ public class LiveMarketChart extends JFrame
     {
         XYPlot plot = (XYPlot) chartPanel.getChart().getPlot();
         plot.clearRangeMarkers();
-        MarketStructure marketStructure4Hr = this.marketStructureCache.getStructures().get(MarketTypes.GOLD_4_HOUR.getValue());
+
+        MarketStructure marketStructure4Hr = null;
+        Instrument ins = (Instrument) instruments.getSelectedItem();
+        if(ins.getInstrumentTicker().equals("NSDQ100"))
+        {
+            marketStructure4Hr = this.marketStructureCache.getStructures().get(MarketTypes.NASDAQ_4_HOUR.getValue());
+            maxClose = 31500;
+            minClose = 30000;
+        }
+        else
+        {
+            marketStructure4Hr = this.marketStructureCache.getStructures().get(MarketTypes.GOLD_4_HOUR.getValue());
+        }
+
+
         if (unitCombo.getSelectedItem().toString().equals("HOUR"))
         {
-            if (timeframeCombo.getSelectedItem().toString().equals("4") )
+            if (timeframeCombo.getSelectedItem().toString().equals("4"))
             {
-                if(bandsCombo.getSelectedItem().equals("UPPER"))
+                if (bandsCombo.getSelectedItem().equals("UPPER"))
                 {
                     NavigableSet<MarketPriceBand> upperBand = getStructure("HOUR", 4, marketStructure4Hr).getUpperBands();
 
                     upperBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
-                if(bandsCombo.getSelectedItem().equals("LOWER")) {
-                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR",4, marketStructure4Hr).getLowerBands();
+                if (bandsCombo.getSelectedItem().equals("LOWER"))
+                {
+                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR", 4, marketStructure4Hr).getLowerBands();
                     lowerBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
 
             }
             if (timeframeCombo.getSelectedItem().toString().equals("1"))
             {
-                if(bandsCombo.getSelectedItem().equals("UPPER"))
+                if (bandsCombo.getSelectedItem().equals("UPPER"))
                 {
                     NavigableSet<MarketPriceBand> upperBand = getStructure("HOUR", 1, marketStructure4Hr).getUpperBands();
 
                     upperBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
-                if(bandsCombo.getSelectedItem().equals("LOWER")) {
-                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR",1, marketStructure4Hr).getLowerBands();
+                if (bandsCombo.getSelectedItem().equals("LOWER"))
+                {
+                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR", 1, marketStructure4Hr).getLowerBands();
                     lowerBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
             }
@@ -528,79 +555,108 @@ public class LiveMarketChart extends JFrame
             if (timeframeCombo.getSelectedItem().toString().equals("1"))
             {
 
-                if(bandsCombo.getSelectedItem().equals("UPPER"))
+                if (bandsCombo.getSelectedItem().equals("UPPER"))
                 {
                     NavigableSet<MarketPriceBand> upperBand = getStructure("MINUTE", 1, marketStructure4Hr).getUpperBands();
 
                     upperBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
-                if(bandsCombo.getSelectedItem().equals("LOWER")) {
-                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR",1, marketStructure4Hr).getLowerBands();
+                if (bandsCombo.getSelectedItem().equals("LOWER"))
+                {
+                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR", 1, marketStructure4Hr).getLowerBands();
                     lowerBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
             }
 
             if (timeframeCombo.getSelectedItem().toString().equals("5"))
             {
-                if(bandsCombo.getSelectedItem().equals("UPPER"))
+                if (bandsCombo.getSelectedItem().equals("UPPER"))
                 {
                     NavigableSet<MarketPriceBand> upperBand = getStructure("MINUTE", 5, marketStructure4Hr).getUpperBands();
 
                     upperBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
-                if(bandsCombo.getSelectedItem().equals("LOWER")) {
-                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR",5, marketStructure4Hr).getLowerBands();
+                if (bandsCombo.getSelectedItem().equals("LOWER"))
+                {
+                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR", 5, marketStructure4Hr).getLowerBands();
                     lowerBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
             }
 
             if (timeframeCombo.getSelectedItem().toString().equals("15"))
             {
-                if(bandsCombo.getSelectedItem().equals("UPPER"))
+                if (bandsCombo.getSelectedItem().equals("UPPER"))
                 {
                     NavigableSet<MarketPriceBand> upperBand = getStructure("MINUTE", 15, marketStructure4Hr).getUpperBands();
 
                     upperBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
-                if(bandsCombo.getSelectedItem().equals("LOWER")) {
-                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR",15, marketStructure4Hr).getLowerBands();
+                if (bandsCombo.getSelectedItem().equals("LOWER"))
+                {
+                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR", 15, marketStructure4Hr).getLowerBands();
                     lowerBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
             }
-            if (timeframeCombo.getSelectedItem().toString().equals("30") )
+            if (timeframeCombo.getSelectedItem().toString().equals("30"))
             {
-                if(bandsCombo.getSelectedItem().equals("UPPER"))
+                if (bandsCombo.getSelectedItem().equals("UPPER"))
                 {
                     NavigableSet<MarketPriceBand> upperBand = getStructure("MINUTE", 30, marketStructure4Hr).getUpperBands();
 
                     upperBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
                     });
                 }
-                if(bandsCombo.getSelectedItem().equals("LOWER")) {
-                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR",30, marketStructure4Hr).getLowerBands();
+                if (bandsCombo.getSelectedItem().equals("LOWER"))
+                {
+                    NavigableSet<MarketPriceBand> lowerBand = getStructure("HOUR", 30, marketStructure4Hr).getLowerBands();
                     lowerBand.forEach(b ->
                     {
-                        drawBands(plot, b);
+                        if (b.getInstrument() != null && b.getInstrument().equals(instruments.getSelectedItem()))
+                        {
+                            drawBands(plot, b);
+                        }
+
                     });
                 }
             }
@@ -608,14 +664,16 @@ public class LiveMarketChart extends JFrame
     }
 
 
-    private MarketStructure getStructure(String timeFrameUnit, int timeFrame, MarketStructure structure)
+    private MarketStructure getStructure(String timeFrameUnit,
+                                         int timeFrame,
+                                         MarketStructure structure)
     {
-        if(structure.getTimeFrameUnit().getUnit().equals(timeFrameUnit)
+        if (structure.getTimeFrameUnit().getUnit().equals(timeFrameUnit)
                 && structure.getTimeFrame().intValue() == timeFrame)
         {
-          return structure;
+            return structure;
         }
-        return getStructure(timeFrameUnit,timeFrame, structure.getChildMarketStructure());
+        return getStructure(timeFrameUnit, timeFrame, structure.getChildMarketStructure());
     }
 
     private static void drawBands(XYPlot plot, MarketPriceBand b)
