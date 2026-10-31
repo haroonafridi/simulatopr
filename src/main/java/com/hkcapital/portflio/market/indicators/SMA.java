@@ -1,28 +1,56 @@
+
 package com.hkcapital.portflio.market.indicators;
+
+import com.hkcapital.portflio.model.Instrument;
+import com.hkcapital.portflio.service.orders.IndicatorProcessor;
+
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
-public class SMA {
-
+public class SMA implements IndicatorProcessor
+{
     private final int period;
+    private final Instrument instrument;
     private final Queue<Double> window = new LinkedList<>();
     private double sum = 0.0;
 
-    public SMA(int period) {
+    public SMA(int period, Instrument instrument)
+    {
+        Objects.requireNonNull(instrument, "Instrument cannot be null");
+        if (period <= 0)
+        {
+            throw new IllegalArgumentException("Period must be greater than zero");
+        }
+        this.instrument = instrument;
         this.period = period;
     }
 
-    public Double onPrice(double price) {
+    @Override
+    public void onCandleClose(CandleDto candle)
+    {
+        double close = candle.getClose();
 
-        window.add(price);
-        sum += price;
+        window.add(close);
+        sum += close;
 
-        if (window.size() > period) {
+        if (window.size() > period)
+        {
             sum -= window.poll();
         }
+    }
 
-        if (window.size() < period) {
-            return null;
+    @Override
+    public String getType()
+    {
+        return "SMA";
+    }
+
+    public double getSma()
+    {
+        if (window.size() < period)
+        {
+            return Double.NaN;
         }
 
         return sum / period;

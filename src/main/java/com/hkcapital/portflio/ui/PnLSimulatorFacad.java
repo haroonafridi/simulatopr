@@ -17,6 +17,7 @@ import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.importexport.export.csv.candle.CandleCSVGenerator;
 import com.hkcapital.portflio.service.importexport.export.file.csv.CSVFileGenerator;
+import com.hkcapital.portflio.service.importexport.export.file.json.JSONFileGenerator;
 import com.hkcapital.portflio.service.importexport.export.json.marketstructureconf.MarketStructureConfigurationExporter;
 import com.hkcapital.portflio.service.importexport.export.json.srmatrix.SRMatrixExporter;
 import com.hkcapital.portflio.service.importexport.export.json.srmatrixtolerance.SRMatrixToleranceExporter;
@@ -37,6 +38,7 @@ import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import com.hkcapital.portflio.service.tradingsessions.TradingSessionsService;
 import com.hkcapital.portflio.ui.chart.dialogue.MarketStructureDialogue;
 import com.hkcapital.portflio.ui.chart.panel.MarketStructureChartPanel;
@@ -46,6 +48,8 @@ import com.hkcapital.portflio.ui.panels.csvdata.dialogues.CSVDataDialogue;
 import com.hkcapital.portflio.ui.panels.csvdata.panels.CSVDataPanel;
 import com.hkcapital.portflio.ui.panels.etoro.configuartion.dialogues.EtoroOrdersDialogue;
 import com.hkcapital.portflio.ui.panels.etoro.configuartion.panels.EtoroOrdersPanel;
+import com.hkcapital.portflio.ui.panels.indicators.dialogues.IndicatorsDialogue;
+import com.hkcapital.portflio.ui.panels.indicators.panels.IndicatorsPanel;
 import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentConfDialogue;
 import com.hkcapital.portflio.ui.panels.instrument.dialogues.InstrumentDialogue;
 import com.hkcapital.portflio.ui.panels.instrument.panels.InstrumentConfPanel;
@@ -96,6 +100,7 @@ public class PnLSimulatorFacad
     private final CSVFileGenerator csvCandleFileGenerator;
     private final CandleCSVGenerator candleCSVGenerator;
     private final EtoroInstrumentService etoroInstrumentService;
+    private final TradingIndicatorsService tradingIndicatorsService;
     private final EnvService envService;
     private final DataPathConfig dataPathConfig;
     private final MarketStructureConfigurationImporter mrktStrConfImporter;
@@ -107,6 +112,8 @@ public class PnLSimulatorFacad
     private final SRMatrixImporter srMatrixImporter;
     private final SRMatrixExporter srMatrixExporter;
     private final ImporterExporterDependencies dep;
+
+    private final JSONFileGenerator jsonFileGenerator;
 
     public PnLSimulatorFacad(final ConfigurationService configurationService,
                              final StrategyService strategyService,
@@ -129,6 +136,7 @@ public class PnLSimulatorFacad
                              final InstrumentMarketStructureService instrumentMarketStructureService,
                              final InstrumentMarketStructureConfService instMrktStctrConfSrv,
                              final EtoroInstrumentService etoroInstrumentService,
+                             final TradingIndicatorsService tradingIndicatorsService,
                              final CSVFileGenerator csvCandleFileGenerator,
                              final CandleCSVGenerator candleCSVGenerator,
                              final StrategyImporter strategyImporter,
@@ -139,7 +147,8 @@ public class PnLSimulatorFacad
                              final SRMatrixToleranceExporter srMatrixToleranceExporter,
                              final SRMatrixImporter srMatrixImporter,
                              final SRMatrixExporter srMatrixExporter,
-                             final ImporterExporterDependencies  importerExporterDependencies,
+                             final ImporterExporterDependencies importerExporterDependencies,
+                             final JSONFileGenerator jSONFileGenerator,
                              final ServiceRegistery<Service> serviceRegistery)
     {
         this.configurationService = configurationService;
@@ -163,6 +172,7 @@ public class PnLSimulatorFacad
         this.instrumentMarketStructureService = instrumentMarketStructureService;
         this.instMrktStctrConfSrv = instMrktStctrConfSrv;
         this.etoroInstrumentService = etoroInstrumentService;
+        this.tradingIndicatorsService = tradingIndicatorsService;
         this.envService = envService;
         this.candleCSVGenerator = candleCSVGenerator;
         this.csvCandleFileGenerator = csvCandleFileGenerator;
@@ -175,6 +185,8 @@ public class PnLSimulatorFacad
         this.srMatrixImporter = srMatrixImporter;
         this.srMatrixExporter = srMatrixExporter;
         this.dep = importerExporterDependencies;
+        this.jsonFileGenerator = jSONFileGenerator;
+
         serviceRegistery.putService(Service.ConfigurationService, this.configurationService);
         serviceRegistery.putService(Service.StrategyService, this.strategyService);
         serviceRegistery.putService(Service.MarketConditionsService, this.marketConditionsService);
@@ -196,20 +208,19 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.EnvService, this.envService);
         serviceRegistery.putService(Service.LiveInstrumentFeedService, this.liveInstrumentFeedService);
         serviceRegistery.putService(Service.EtoroInstrumentService, this.etoroInstrumentService);
+        serviceRegistery.putService(Service.TradingIndicatorsService, this.tradingIndicatorsService);
         serviceRegistery.putService(Service.CandleCSVGenerator, this.candleCSVGenerator);
         serviceRegistery.putService(Service.CSVCandleFileGenerator, this.csvCandleFileGenerator);
+        serviceRegistery.putService(Service.JSONFileGenerator, this.jsonFileGenerator);
         serviceRegistery.putService(Service.MarketStructureConfigurationImporter, this.mrktStrConfImporter);
         serviceRegistery.putService(Service.MarketStructureConfigurationExporter, this.mrktStrConfExporter);
-
         serviceRegistery.putService(Service.StrategyImporter, this.strategyImporter);
         serviceRegistery.putService(Service.StrategyExporter, this.strategyExporter);
-
         serviceRegistery.putService(Service.SRMatrixToleranceImporter, this.srMatrixToleranceImporter);
         serviceRegistery.putService(Service.SRMatrixToleranceExporter, this.srMatrixToleranceExporter);
-
+        serviceRegistery.putService(Service.ImporterExporterDependencies, this.dep);
         serviceRegistery.putService(Service.SRMatrixImporter, this.srMatrixImporter);
         serviceRegistery.putService(Service.SRMatrixExporter, this.srMatrixExporter);
-
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
@@ -251,6 +262,7 @@ public class PnLSimulatorFacad
         DefaultMutableTreeNode instruments = new DefaultMutableTreeNode("Instruments");
         instruments.add(new DefaultMutableTreeNode("Instruments"));
         instruments.add(new DefaultMutableTreeNode("Instruments Configuration"));
+        instruments.add(new DefaultMutableTreeNode("Indicators Configuration"));
 
         DefaultMutableTreeNode settings = new DefaultMutableTreeNode("Settings");
         settings.add(new DefaultMutableTreeNode("Profile"));
@@ -379,6 +391,14 @@ public class PnLSimulatorFacad
                 InstrumentConfDialogue instrumentConfDialogue = new InstrumentConfDialogue(mainFrame, //
                         new InstrumentConfPanel(serviceRegistery));
                 instrumentConfDialogue.setVisible(true);
+            }
+
+            if (nodeObject.toString().equals("Indicators Configuration"))
+            {
+                // Optional: handle folders or intermediate nodes
+                IndicatorsDialogue indicatorsDialogue = new IndicatorsDialogue(mainFrame, //
+                        new IndicatorsPanel(serviceRegistery));
+                indicatorsDialogue.setVisible(true);
             }
 
             if (nodeObject.toString().equals("Sessions"))

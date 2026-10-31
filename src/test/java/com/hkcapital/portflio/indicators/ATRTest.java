@@ -29,23 +29,23 @@ class ATRTest
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        ATR atr = new ATR(14);
-        atr.onCandleAdd(candle0);
-        atr.onCandleAdd(candle1);
-        atr.onCandleAdd(candle2);
-        atr.onCandleAdd(candle3);
-        atr.onCandleAdd(candle4);
-        atr.onCandleAdd(candle5);
-        atr.onCandleAdd(candle6);
-        atr.onCandleAdd(candle7);
-        atr.onCandleAdd(candle8);
-        atr.onCandleAdd(candle9);
-        atr.onCandleAdd(candle10);
-        atr.onCandleAdd(candle11);
-        atr.onCandleAdd(candle12);
-        atr.onCandleAdd(candle13);
-        Double atrVal = atr.onCandleAdd(candle14);
+        ATR atr = new ATR(14, null);
+        atr.onCandleClose(candle0);
+        atr.onCandleClose(candle1);
+        atr.onCandleClose(candle2);
+        atr.onCandleClose(candle3);
+        atr.onCandleClose(candle4);
+        atr.onCandleClose(candle5);
+        atr.onCandleClose(candle6);
+        atr.onCandleClose(candle7);
+        atr.onCandleClose(candle8);
+        atr.onCandleClose(candle9);
+        atr.onCandleClose(candle10);
+        atr.onCandleClose(candle11);
+        atr.onCandleClose(candle12);
+        atr.onCandleClose(candle13);
+        atr.onCandleClose(candle14);
 
-        Assertions.assertEquals(1.3128571428571507, atrVal);
+        Assertions.assertEquals(1.3128571428571507, atr.getAtr());
     }
 }

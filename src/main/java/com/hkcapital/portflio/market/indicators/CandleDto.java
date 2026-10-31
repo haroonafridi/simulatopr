@@ -22,7 +22,6 @@ public class CandleDto
     private Instant highTime;
     private double close;
     private Instant time;
-
     private TimeFramesUnit timeFramesUnit;
 
     private Integer interval;

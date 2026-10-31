@@ -31,14 +31,17 @@ public interface Service
     String CandleCSVGenerator = "CandleCSVGenerator";
     String CSVCandleFileGenerator = "CSVCandleFileGenerator";
 
+    String JSONFileGenerator = "JSONFileGenerator";
+
     String StrategyImporter = "StrategyImporter";
     String StrategyExporter = "StrategyExporter";
     String MarketStructureConfigurationImporter = "MarketStructureConfigurationImporter";
     String MarketStructureConfigurationExporter = "MarketStructureConfigurationExporter";
     String SRMatrixToleranceImporter = "SRMatrixToleranceImporter";
     String SRMatrixToleranceExporter = "SRMatrixToleranceExporter";
-
+    String ImporterExporterDependencies = "ImporterExporterDependencies";
     String SRMatrixImporter = "SRMatrixImporter";
     String SRMatrixExporter = "SRMatrixExporter";
+    String TradingIndicatorsService = "TradingIndicatorsService";
 
 }

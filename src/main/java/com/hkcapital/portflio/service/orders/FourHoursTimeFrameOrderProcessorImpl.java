@@ -8,7 +8,7 @@ import com.hkcapital.portflio.service.positions.PositionService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class FourHoursTimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
+public class FourHoursTimeFrameOrderProcessorImpl implements OrderProcessor
 {
     private final Instrument instrument;
     private final Position position;

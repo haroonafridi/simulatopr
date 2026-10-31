@@ -26,7 +26,7 @@ public class EtoroOrdersPanelTest
         JPanel contents = new JPanel();
         contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
         contents.setBorder(BorderFactory.createEmptyBorder(20, 200, 20, 200)); // margins
-        com.hkcapital.portflio.ui.panels.configuartion.panels.ConfigurationPanel instrumentPanel = new ConfigurationPanel(serviceRegistery, null);
+        ConfigurationPanel instrumentPanel = new ConfigurationPanel(serviceRegistery, null);
         mainFrame.add(instrumentPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

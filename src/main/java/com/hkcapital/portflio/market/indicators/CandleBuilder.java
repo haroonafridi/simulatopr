@@ -12,8 +12,6 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -30,21 +28,17 @@ import static java.lang.Math.max;
 @Component
 public class CandleBuilder
 {
-    private Logger logger = LoggerFactory.getLogger(CandleBuilder.class);
     private CandleList candles = new CandleList();
     private TimeFramesUnit timeFrame;
     private Integer interval;
-    private RSI rsi = new RSI();
-    private final ATR atr = new ATR(14);
-    private final EMA ema = new EMA(14);
-    private final SMA sma = new SMA(14);
-    private EtoroCandleService candleService;
-
     private Instrument instrument;
+    private RSI rsi = new RSI(14, new Instrument());
+    private final ATR atr = new ATR(14, new Instrument());
+    private final EMA ema = new EMA(14, new Instrument());
+    private final SMA sma = new SMA(14, new Instrument());
+    private EtoroCandleService candleService;
     private MarketStructureCache marketStructureManagerCache;
-
     private Bandlogger bandlogger;
-
     private ObjectMapper objectMapper;
 
     public CandleBuilder(EtoroCandleService candleService, Instrument instrument)
@@ -78,9 +72,11 @@ public class CandleBuilder
         return new CandleBuilder();
     }
 
-    public CandleBuilder addAndUpdateCandle(final CandleDto subCandle) {
+    public CandleBuilder addAndUpdateCandle(final CandleDto subCandle)
+    {
         return null;
     }
+
     public CandleBuilder addAndUpdateCandle(final CandleDto subCandle, Instrument inst)
     {
         if (candles.isEmpty())
@@ -98,29 +94,10 @@ public class CandleBuilder
         {
             CandleDto closedCandle = mainCandle;
             addCandle(subCandle, timeFrame, interval);
-            Double rsiValue = rsi.onCandleAdd(closedCandle, 14);
-            Double atrVal = atr.onCandleAdd(closedCandle);
-            Double emaVal = ema.onPrice(closedCandle.getClose());
-            Double smaVal = sma.onPrice(closedCandle.getClose());
-
-            if (rsiValue == null)
-            {
-                rsiValue = 0d;
-            }
-
-            if (atrVal == null)
-            {
-                atrVal = 0d;
-            }
-
-            if (emaVal == null)
-            {
-                emaVal = 0d;
-            }
-            if (smaVal == null)
-            {
-                smaVal = 0d;
-            }
+            rsi.onCandleClose(closedCandle);
+            atr.onCandleClose(closedCandle);
+            ema.onCandleClose(closedCandle);
+            sma.onCandleClose(closedCandle);
             Candle candle = com.hkcapital.portflio.model
                     .Candle.builder()
                     .instrumentID(closedCandle.getInstrument().getEtoroInstrumentId())
@@ -132,10 +109,6 @@ public class CandleBuilder
                     .open(closedCandle.getOpen())
                     .fromDate(closedCandle.getTime())
                     .instrument(inst)
-                    .atr(atrVal)
-                    .ema(emaVal)
-                    .rsi(rsiValue)
-                    .sma(smaVal)
                     .creationDateTime(LocalDateTime.now())
                     .timeFrame(closedCandle.getInterval())
                     .timeFrameUnit(closedCandle.getTimeFramesUnit().getUnit())
@@ -199,7 +172,6 @@ public class CandleBuilder
             });
 
             candleService.save(candle);
-            logger.info("Candle closed event fired: rsi = {}  atr = {}, ema = {} sma = {}, {} ", rsiValue, atrVal, emaVal, smaVal, closedCandle);
         }
         return this;
     }

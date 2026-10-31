@@ -14,7 +14,7 @@ import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
-import com.hkcapital.portflio.service.orders.TimeFrameOrderProcessor;
+import com.hkcapital.portflio.service.orders.OrderProcessor;
 import com.hkcapital.portflio.service.orders.TimeFrameOrderProcessorImpl;
 import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
@@ -60,7 +60,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     public void process(LiveInstrumentRate instrumentRate, SignalBuilder signalBuilder)
     {
         logger.info("Sending order to etoro!!");
-        TimeFrameOrderProcessor processor =
+        OrderProcessor processor =
                 new TimeFrameOrderProcessorImpl(instrumentService, strategyService,
                         positionService, this);
         processor.process(instrumentRate, signalBuilder);

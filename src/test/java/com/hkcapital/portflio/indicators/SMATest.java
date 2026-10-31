@@ -3,12 +3,16 @@ package com.hkcapital.portflio.indicators;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.SMA;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 
-class SMATest
+class SMATest extends IndicatorsTestAbstract
 {
+
 
 
     @Test
@@ -30,24 +34,68 @@ class SMATest
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        SMA sma = new SMA(15);
-        sma.onPrice(candle0.getClose());
-        sma.onPrice(candle1.getClose());
-        sma.onPrice(candle2.getClose());
-        sma.onPrice(candle3.getClose());
-        sma.onPrice(candle4.getClose());
-        sma.onPrice(candle5.getClose());
-        sma.onPrice(candle6.getClose());
-        sma.onPrice(candle7.getClose());
-        sma.onPrice(candle8.getClose());
-        sma.onPrice(candle9.getClose());
-        sma.onPrice(candle10.getClose());
-        sma.onPrice(candle11.getClose());
-        sma.onPrice(candle12.getClose());
-        sma.onPrice(candle13.getClose());
-        Double smaPrice = sma.onPrice(candle14.getClose());
-
+        SMA sma = new SMA(15, null);
+        sma.onCandleClose(candle0);
+        sma.onCandleClose(candle1);
+        sma.onCandleClose(candle2);
+        sma.onCandleClose(candle3);
+        sma.onCandleClose(candle4);
+        sma.onCandleClose(candle5);
+        sma.onCandleClose(candle6);
+        sma.onCandleClose(candle7);
+        sma.onCandleClose(candle8);
+        sma.onCandleClose(candle9);
+        sma.onCandleClose(candle10);
+        sma.onCandleClose(candle11);
+        sma.onCandleClose(candle12);
+        sma.onCandleClose(candle13);
+        sma.onCandleClose(candle14);
+        System.out.println(sma.getSma());
     }
+
+    @Test
+    public void testSMATF15Min() throws IOException
+    {
+
+        final List<CandleDto> loadCandles = loadCandles("/data/indicators/candles.json");
+
+        SMA sma9 = new SMA(9, null);
+        SMA sma20 = new SMA(20, null);
+
+        for (CandleDto e : loadCandles)
+        {
+            if (e.getInterval().intValue() == 15 && e.getTimeFramesUnit().getUnit().equals("MINUTE"))
+            {
+              sma9.onCandleClose(e);
+              sma20.onCandleClose(e);
+            }
+        }
+
+        Assertions.assertEquals(4014.413333333332, sma9.getSma(), "SMA 9 does not match");
+        Assertions.assertEquals(4016.5164999999993, sma20.getSma(), "SMA 20 does not match");
+    }
+
+   @Test
+    public void testSMATF30Min() throws IOException
+    {
+
+        final List<CandleDto> loadCandles = loadCandles("/data/indicators/candles.json");
+
+        final SMA sma9 = new SMA(9, null);
+        final SMA sma20 = new SMA(20, null);
+        for (CandleDto e : loadCandles)
+        {
+            if (e.getInterval().intValue() == 30 && e.getTimeFramesUnit().getUnit().equals("MINUTE"))
+            {
+                 sma9.onCandleClose(e);
+                 sma20.onCandleClose(e);
+            }
+        }
+
+        Assertions.assertEquals(4016.3222222222216, sma9.getSma(), "SMA 9 does not match");
+        Assertions.assertEquals(4015.311999999999, sma20.getSma(), "SMA 20 does not match");
+    }
+
 
 
 }

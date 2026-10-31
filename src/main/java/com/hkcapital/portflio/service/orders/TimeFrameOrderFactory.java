@@ -25,7 +25,7 @@ public class TimeFrameOrderFactory
         this.orderManagerService = orderManagerService;
     }
 
-    public TimeFrameOrderProcessor createTimeFrameOrderProcessor(final Position position)
+    public OrderProcessor createTimeFrameOrderProcessor(final Position position)
     {
         final SRMatrix srMatrix = position.getSrMatrix();
         final Integer srTimeFrame = srMatrix.getTimeFrame();

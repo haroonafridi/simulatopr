@@ -30,21 +30,21 @@ class EMATest
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        EMA ema = new EMA(14);
-        ema.onPrice(candle0.getClose());
-        ema.onPrice(candle1.getClose());
-        ema.onPrice(candle2.getClose());
-        ema.onPrice(candle3.getClose());
-        ema.onPrice(candle4.getClose());
-        ema.onPrice(candle5.getClose());
-        ema.onPrice(candle6.getClose());
-        ema.onPrice(candle7.getClose());
-        ema.onPrice(candle8.getClose());
-        ema.onPrice(candle9.getClose());
-        ema.onPrice(candle10.getClose());
-        ema.onPrice(candle11.getClose());
-        ema.onPrice(candle12.getClose());
-        ema.onPrice(candle13.getClose());
-        Double emaPrice = ema.onPrice(candle14.getClose());
+        EMA ema = new EMA(14, null);
+        ema.onCandleClose(candle0);
+        ema.onCandleClose(candle1);
+        ema.onCandleClose(candle2);
+        ema.onCandleClose(candle3);
+        ema.onCandleClose(candle4);
+        ema.onCandleClose(candle5);
+        ema.onCandleClose(candle6);
+        ema.onCandleClose(candle7);
+        ema.onCandleClose(candle8);
+        ema.onCandleClose(candle9);
+        ema.onCandleClose(candle10);
+        ema.onCandleClose(candle11);
+        ema.onCandleClose(candle12);
+        ema.onCandleClose(candle13);
+        ema.onCandleClose(candle14);
     }
 }

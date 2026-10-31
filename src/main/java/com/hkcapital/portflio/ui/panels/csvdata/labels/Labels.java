@@ -2,7 +2,7 @@ package com.hkcapital.portflio.ui.panels.csvdata.labels;
 
 public enum Labels
 {
-    CSVData("CSV Data"),
+    CSVJSONData("CSV/JSON Data"),
     Generate("Generate"),
     CandleData("Candle Data"),
     TickData("Tick Data");

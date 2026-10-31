@@ -12,6 +12,7 @@ public enum FileTypes
     MARKET_STRUCTURE_CONF("market_structure_conf"),
 
     STRATEGY("strategy");
+
     private final String type;
 
     FileTypes(String type)

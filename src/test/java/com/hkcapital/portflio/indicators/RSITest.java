@@ -3,14 +3,15 @@ package com.hkcapital.portflio.indicators;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.RSI;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 
-class RSITest
+class RSITest extends IndicatorsTestAbstract
 {
-
-
     @Test
     public void shouldReturnRSIOf30Min14Period()
     {
@@ -30,23 +31,41 @@ class RSITest
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        RSI rsi = new RSI();
-        rsi.onCandleAdd(candle0, 14);
-        rsi.onCandleAdd(candle1, 14);
-        rsi.onCandleAdd(candle2, 14);
-        rsi.onCandleAdd(candle3, 14);
-        rsi.onCandleAdd(candle4, 14);
-        rsi.onCandleAdd(candle5, 14);
-        rsi.onCandleAdd(candle6, 14);
-        rsi.onCandleAdd(candle7, 14);
-        rsi.onCandleAdd(candle8, 14);
-        rsi.onCandleAdd(candle9, 14);
-        rsi.onCandleAdd(candle10, 14);
-        rsi.onCandleAdd(candle11, 14);
-        rsi.onCandleAdd(candle12, 14);
-        rsi.onCandleAdd(candle13, 14);
-        Double rsiret = rsi.onCandleAdd(candle14, 14);
+        RSI rsi = new RSI(14, null);
+        rsi.onCandleClose(candle0);
+        rsi.onCandleClose(candle1);
+        rsi.onCandleClose(candle2);
+        rsi.onCandleClose(candle3);
+        rsi.onCandleClose(candle4);
+        rsi.onCandleClose(candle5);
+        rsi.onCandleClose(candle6);
+        rsi.onCandleClose(candle7);
+        rsi.onCandleClose(candle8);
+        rsi.onCandleClose(candle9);
+        rsi.onCandleClose(candle10);
+        rsi.onCandleClose(candle11);
+        rsi.onCandleClose(candle12);
+        rsi.onCandleClose(candle13);
+        Double rsiret = rsi.getRsi();
+    }
 
+
+    @Test
+    public void testSMATF30Min() throws IOException
+    {
+
+        final List<CandleDto> loadCandles = loadCandles("/data/indicators/candles.json");
+
+        RSI rsi = new RSI(14, null);
+        for (CandleDto e : loadCandles)
+        {
+            if (e.getInterval() == 15
+                    && e.getTimeFramesUnit().getUnit().equals("MINUTE"))
+            {
+               rsi.onCandleClose(e);
+            }
+        }
+        Assertions.assertEquals(48.65689173232429, rsi.getRsi(), "RSI does not match");
     }
 
 

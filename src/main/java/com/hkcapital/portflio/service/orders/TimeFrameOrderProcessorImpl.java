@@ -15,7 +15,7 @@ import java.util.List;
 import static com.hkcapital.portflio.service.orders.InstrumentRateValidator.isInValidInstrumentRate;
 
 @Slf4j
-public class TimeFrameOrderProcessorImpl implements TimeFrameOrderProcessor
+public class TimeFrameOrderProcessorImpl implements OrderProcessor
 {
     private final InstrumentService instrumentService;
     private final StrategyService strategyService;

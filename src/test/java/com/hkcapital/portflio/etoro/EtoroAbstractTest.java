@@ -1,13 +1,17 @@
 package com.hkcapital.portflio.etoro;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroMarketOrderDto;
 import com.hkcapital.portflio.broker.etoro.dto.order.EtoroOrderDetails;
 import com.hkcapital.portflio.broker.etoro.dto.portfolio.EtoroPortfolioResponseDTO;
+import com.hkcapital.portflio.market.indicators.Tick;
 import com.hkcapital.portflio.model.etoro.EtoroOrder;
+import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.values.order.OrderTypes;
 import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +34,6 @@ public abstract class EtoroAbstractTest
     private static final double BID = 5400.01;
     private static final double ASK = 5398.25;
     private static final int LEVERAGE_20 = 20;
-
     private static final double STOP_LOSS_RATE = 4255.49;
     private static final double TAKE_PROFIT_RATE = 4473.73;
     private static final double ETORO_SLIPPAGE = 0.75d;
@@ -59,11 +62,6 @@ public abstract class EtoroAbstractTest
         return getClass().getResourceAsStream(path);
     }
 
-
-    public List<String> loadFile(String path) throws IOException
-    {
-        return Files.readAllLines(Path.of(path));
-    }
 
     public EtoroPortfolioResponseDTO loadPortfolio(String path) throws IOException
     {
@@ -157,4 +155,24 @@ public abstract class EtoroAbstractTest
                 .build();
         return orderDetails;
     }
+
+    public List<String> loadData(final String fileName) throws IOException
+    {
+        return IOUtils.readLines(loadResource(fileName));
+    }
+
+    public List<String> loadFile(String path) throws IOException
+    {
+        return Files.readAllLines(Path.of(path));
+    }
+    public Tick tickFromRate(final LiveInstrumentRate rate)
+    {
+        return TickHelper.tickFromRate(rate);
+    }
+
+    public LiveInstrumentRate rateFromString(final String line) throws JsonProcessingException
+    {
+        return TickHelper.rateFromString(line);
+    }
+
 }
