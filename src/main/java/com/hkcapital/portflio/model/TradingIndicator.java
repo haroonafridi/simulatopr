@@ -1,5 +1,6 @@
 package com.hkcapital.portflio.model;
 
+import com.hkcapital.portflio.service.tradingindicators.dto.TradingIndicatorDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,12 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TradingIndicators")
+@Table(name = "trading_indicators")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class TradingIndicators
+public class TradingIndicator
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,15 +26,26 @@ public class TradingIndicators
     private String timeFrameUnit;
     private int period;
 
-    public TradingIndicators(Instrument instrument, String name,
-                             int timeFrame,
-                             String timeFrameUnit,
-                             int period)
+    public TradingIndicator(Instrument instrument, String name,
+                            int timeFrame,
+                            String timeFrameUnit,
+                            int period)
     {
         this.instrument = instrument;
         this.name = name;
         this.timeFrame = timeFrame;
         this.timeFrameUnit = timeFrameUnit;
         this.period = period;
+    }
+
+    public TradingIndicatorDTO buildTradingIndicatorDTO()
+    {
+
+        return TradingIndicatorDTO.builder().instrument(this.instrument.buildDto())
+                .period(this.period)
+                .name(this.name)
+                .timeFrame(this.timeFrame)
+                .timeFrameUnit(this.timeFrameUnit)
+                .build();
     }
 }

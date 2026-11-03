@@ -21,6 +21,7 @@ import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWri
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import org.glassfish.tyrus.server.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,6 +75,9 @@ public abstract class EtoroWebSocketClientAbstract_IT
     protected EnvService envService;
     @Autowired
     protected ServiceRegistery serviceRegistery;
+
+    @Autowired
+    protected TradingIndicatorsService indicatorsService;
     @Autowired
     protected SimulationConfig simulationConfig;
 
@@ -94,6 +98,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 envService,
                 instMrktStConf,
                 simulationConfig,
+                indicatorsService,
                 serviceRegistery);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
@@ -129,6 +134,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 envService,
                 instMrktStConf,
                 simulationConfig,
+                indicatorsService,
                 serviceRegistery); // //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(

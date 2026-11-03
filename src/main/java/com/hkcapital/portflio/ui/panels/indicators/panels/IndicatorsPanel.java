@@ -1,16 +1,14 @@
 package com.hkcapital.portflio.ui.panels.indicators.panels;
 
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
-import com.hkcapital.portflio.model.Configuration;
 import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.model.TradingIndicators;
+import com.hkcapital.portflio.model.TradingIndicator;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.buttons.ButtonLabels;
-import com.hkcapital.portflio.ui.fields.NumberTextField;
 import com.hkcapital.portflio.ui.panels.indicators.labels.Labels;
 import com.hkcapital.portflio.ui.panels.indicators.tablemodels.IndicatorsTableModel;
 
@@ -27,12 +25,14 @@ public class IndicatorsPanel extends UIBag
     private final JLabel instrumentLabel = new JLabel(Labels.Instrument.getLabel());
     private JComboBox<Instrument> instrumentList = new JComboBox<>();
     private final JLabel nameLabel = new JLabel(Labels.Name.getLabel());
-    private final TextField name = new TextField(40);
+
+    private JComboBox<String> indicator = new JComboBox<>(new String[]{"SMA", "EMA", "RSI", "ATR"});
     private final JLabel periodLabel = new JLabel(Labels.Period.getLabel());
-    private final NumberTextField period = new NumberTextField(30);
+
+    private JComboBox<Integer> period = new JComboBox<>(new Integer[]{9, 20,50, 100});
 
     private final JLabel timeFrameLabel = new JLabel(Labels.TimeFrame.getLabel());
-    private final NumberTextField timeFrame = new NumberTextField(30);
+    private JComboBox<Integer> timeFrame = new JComboBox<>(new Integer[] { 1, 5, 4, 15, 30,});
 
     private final JLabel timeFrameUnitLabel = new JLabel(Labels.TimeFrameUnit.getLabel());
     private JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), //
@@ -56,7 +56,7 @@ public class IndicatorsPanel extends UIBag
         this.tradingIndicatorsService = (TradingIndicatorsService) serviceRegister.getService(Service.TradingIndicatorsService);
         this.instrumentService = (InstrumentService) this.serviceRegister.getService(Service.InstrumentService);
 
-        tableModel = new IndicatorsTableModel<TradingIndicators>(tradingIndicatorsService.findAll());
+        tableModel = new IndicatorsTableModel<TradingIndicator>(tradingIndicatorsService.findAll());
 
         List<Instrument> instrumentList = instrumentService.findByActiveAndWithCandle(true, true);
 
@@ -91,7 +91,7 @@ public class IndicatorsPanel extends UIBag
 
         tradingIndicatorPanel.add(nameLabel, innerGbc);
         innerGbc.gridx = 1;
-        tradingIndicatorPanel.add(name, innerGbc);
+        tradingIndicatorPanel.add(indicator, innerGbc);
         innerGbc.gridx = 0;
         innerGbc.gridy++;
         tradingIndicatorPanel.add(periodLabel, innerGbc);
@@ -170,18 +170,19 @@ public class IndicatorsPanel extends UIBag
 
     public void save()
     {
-        TradingIndicators tradingIndicators = new TradingIndicators((Instrument) instrumentList.getSelectedItem(),
-                name.getText(),
-                timeFrame.getIntValue(),
+        TradingIndicator tradingIndicators = //
+                new TradingIndicator((Instrument) instrumentList.getSelectedItem(),
+                indicator.getSelectedItem().toString(),
+                (Integer)timeFrame.getSelectedItem(),
                 timeFrameUnit.getSelectedItem().toString(),
-                period.getIntValue()
+                (Integer)period.getSelectedItem()
         );
         tableModel.addRow(tradingIndicatorsService.save(tradingIndicators));
     }
 
     public void remove()
     {
-        TradingIndicators tradingIndicators = (TradingIndicators) tableModel.removeRow(indicatorsTable.getSelectedRow());
+        TradingIndicator tradingIndicators = (TradingIndicator) tableModel.removeRow(indicatorsTable.getSelectedRow());
         tradingIndicatorsService.remove(tradingIndicators);
     }
 

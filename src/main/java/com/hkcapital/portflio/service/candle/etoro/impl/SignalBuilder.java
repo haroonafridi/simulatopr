@@ -11,7 +11,6 @@ import java.util.List;
 public class SignalBuilder
 {
     private List<CandleBuilder> candleBuilder;
-
     List<Instrument> instruments;
 
     public List<CandleBuilder> getCandleBuilder()

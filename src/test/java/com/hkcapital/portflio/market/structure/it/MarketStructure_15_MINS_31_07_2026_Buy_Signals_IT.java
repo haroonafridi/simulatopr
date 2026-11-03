@@ -49,7 +49,7 @@ public class MarketStructure_15_MINS_31_07_2026_Buy_Signals_IT extends EtoroWebS
     private StrategyImporter strategyImporter;
 
     SimulationHelper simulationHelper =
-            new SimulationHelper(RestClient.create(), serviceRegistery, dep, strategyImporter);
+            new SimulationHelper(RestClient.create(), serviceRegistery, strategyImporter);
     final static String previousDayCandle = "2026-07-30";
     final static String tradingSession = "2026-07-31";
     private static final String PATH = "D:/gold_data/" + previousDayCandle + "/candle/gold_candle_"

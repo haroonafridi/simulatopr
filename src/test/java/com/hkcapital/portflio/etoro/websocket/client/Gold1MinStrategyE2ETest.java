@@ -211,6 +211,7 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 envService,
                 instMrktStConf,
                 simulationConfig,
+                indicatorsService,
                 serviceRegistery); //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
@@ -234,7 +235,8 @@ public class Gold1MinStrategyE2ETest extends EtoroWebSocketClientAbstract_IT
                 etoroCandleService, null, bandlogger, envService,
                 instMrktStConf,
                 simulationConfig,
-                serviceRegistery);  //add market cache here
+                indicatorsService,
+                serviceRegistery);
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
                         URI.create(etoroApiConfiguration.getUrl()),

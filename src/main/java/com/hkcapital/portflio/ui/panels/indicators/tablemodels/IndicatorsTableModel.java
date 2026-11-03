@@ -1,7 +1,6 @@
 package com.hkcapital.portflio.ui.panels.indicators.tablemodels;
 
-import com.hkcapital.portflio.model.Configuration;
-import com.hkcapital.portflio.model.TradingIndicators;
+import com.hkcapital.portflio.model.TradingIndicator;
 import com.hkcapital.portflio.ui.TableModel;
 import com.hkcapital.portflio.ui.panels.indicators.labels.Labels;
 
@@ -16,7 +15,7 @@ public class IndicatorsTableModel<E> extends TableModel
             Labels.TimeFrameUnit.getLabel(),
     };
 
-    public IndicatorsTableModel(List<TradingIndicators> elements)
+    public IndicatorsTableModel(List<TradingIndicator> elements)
     {
         super(columnsName, elements);
     }
@@ -33,7 +32,7 @@ public class IndicatorsTableModel<E> extends TableModel
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        TradingIndicators tradingIndicators = (TradingIndicators) getElements().get(rowIndex);
+        TradingIndicator tradingIndicators = (TradingIndicator) getElements().get(rowIndex);
 
         switch (columnIndex)
         {

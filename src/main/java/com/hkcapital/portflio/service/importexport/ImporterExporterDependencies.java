@@ -11,6 +11,7 @@ import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,8 @@ public class ImporterExporterDependencies implements Service
     final PositionService positionService;
     final StrategyService strategyService;
     final InstrumentMarketStructureConfService instMrktStrConfSrv;
+
+    final TradingIndicatorsService tradingIndicatorsService;
     final EnvService envService;
     final DataPathConfig dataPathConfig;
 }

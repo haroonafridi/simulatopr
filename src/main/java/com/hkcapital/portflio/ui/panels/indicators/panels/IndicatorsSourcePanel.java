@@ -1,6 +1,6 @@
 package com.hkcapital.portflio.ui.panels.indicators.panels;
 import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.model.TradingIndicators;
+import com.hkcapital.portflio.model.TradingIndicator;
 import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
@@ -42,7 +42,7 @@ public class IndicatorsSourcePanel extends UIBag
         add(timeFrame);
     }
 
-    public TradingIndicators getTradingIndicators()
+    public TradingIndicator getTradingIndicators()
     {
 
         if (id != null && id.getText() != "" && id.intValue() != null)

@@ -14,6 +14,7 @@ import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.registry.Service;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,25 +30,26 @@ public class StartWebSocketRunner implements Runnable
     private final MarketStructureCache marketStructureManagerCache;
     private final ObjectMapper objectMapper;
     private final Bandlogger bandlogger;
-
     private final InstrumentMarketStructureConfService instMrktStrConfSrv;
     private final EnvService envService;
-
     private final SimulationConfig simulationConfig;
+
+    final TradingIndicatorsService indicatorsService;
     private final ServiceRegistery<Service> serviceRegistery;
 
-    public StartWebSocketRunner(EtoroApiConfiguration etoroApiConfiguration,
-                                MarketFeedObserver marketFeedObserver,
-                                LiveResponseMapper liveResponseMapper,
-                                InstrumentService instrumentService,
-                                ObjectMapper objectMapper,
-                                EtoroCandleService etoroCandleService,
-                                MarketStructureCache marketStructureManagerCache,
-                                Bandlogger bandlogger,
-                                EnvService envService,
-                                InstrumentMarketStructureConfService instMrktStrConfSrv,
-                                SimulationConfig simulationConfig,
-                                ServiceRegistery serviceRegistery)
+    public StartWebSocketRunner(final EtoroApiConfiguration etoroApiConfiguration,
+                                final MarketFeedObserver marketFeedObserver,
+                                final LiveResponseMapper liveResponseMapper,
+                                final InstrumentService instrumentService,
+                                final ObjectMapper objectMapper,
+                                final EtoroCandleService etoroCandleService,
+                                final MarketStructureCache marketStructureManagerCache,
+                                final Bandlogger bandlogger,
+                                final EnvService envService,
+                                final InstrumentMarketStructureConfService instMrktStrConfSrv,
+                                final SimulationConfig simulationConfig,
+                                final TradingIndicatorsService indicatorsService,
+                                final ServiceRegistery serviceRegistery)
     {
         this.etoroApiConfiguration = etoroApiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
@@ -59,6 +61,7 @@ public class StartWebSocketRunner implements Runnable
         this.bandlogger = bandlogger;
         this.envService = envService;
         this.simulationConfig = simulationConfig;
+        this.indicatorsService = indicatorsService;
         this.serviceRegistery = serviceRegistery;
         this.instMrktStrConfSrv = instMrktStrConfSrv;
     }
@@ -74,6 +77,8 @@ public class StartWebSocketRunner implements Runnable
                                 liveResponseMapper, instrumentService, objectMapper, etoroCandleService,
                                 marketStructureManagerCache, bandlogger, envService, instMrktStrConfSrv,
                                 simulationConfig,
+                                indicatorsService,
+                                etoroCandleService,
                                 serviceRegistery))
                 .join();
     }

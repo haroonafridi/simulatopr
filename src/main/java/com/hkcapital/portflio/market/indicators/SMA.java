@@ -5,6 +5,7 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
@@ -30,20 +31,23 @@ public class SMA implements IndicatorProcessor
     public void onCandleClose(CandleDto candle)
     {
         double close = candle.getClose();
-
         window.add(close);
         sum += close;
-
         if (window.size() > period)
         {
             sum -= window.poll();
         }
     }
-
     @Override
     public String getType()
     {
         return "SMA";
+    }
+
+    @Override
+    public double getValue()
+    {
+        return getSma();
     }
 
     public double getSma()
@@ -55,4 +59,9 @@ public class SMA implements IndicatorProcessor
 
         return sum / period;
     }
+
+    public Instrument getInstrument() {
+        return instrument;
+    }
+
 }

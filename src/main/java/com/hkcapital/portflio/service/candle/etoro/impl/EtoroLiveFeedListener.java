@@ -11,8 +11,10 @@ import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.Tick;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketStructureCache;
+import com.hkcapital.portflio.model.Candle;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructureConf;
+import com.hkcapital.portflio.model.TradingIndicator;
 import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveResponseMapper;
@@ -22,19 +24,22 @@ import com.hkcapital.portflio.service.env.EnvService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
+import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 import com.hkcapital.portflio.service.registry.Service;
+import com.hkcapital.portflio.service.tradingindicators.IndicatorProcessorsFactory;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import com.hkcapital.portflio.ui.chart.LiveMarketChart;
+import com.hkcapital.portflio.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import javax.swing.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -65,26 +70,29 @@ public class EtoroLiveFeedListener implements Listener
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
     private final MarketStructureCache marktStctrMgCache;
-
     private final SimulationConfig simulationConfig;
 
-    List<Instrument> candleInstruments;
-    SignalBuilder signalBuilder = SignalBuilder.builder().build();
+    private final EtoroCandleService candleService;
+
+    final List<Instrument> candleInstruments;
+    final SignalBuilder signalBuilder = SignalBuilder.builder().build();
 
     private volatile boolean reconnecting = false;
 
-    public EtoroLiveFeedListener(EtoroApiConfiguration apiConfiguration,
-                                 MarketFeedObserver marketFeedObserver,
-                                 LiveResponseMapper liveResponseMapper,
-                                 InstrumentService instrumentService,
-                                 ObjectMapper objectMapper,
-                                 EtoroCandleService etoroCandleService,
-                                 MarketStructureCache marketStructureManagerCache,
-                                 Bandlogger bandlogger,
-                                 EnvService envService,
-                                 InstrumentMarketStructureConfService instMarketStrConfSrv,
+    public EtoroLiveFeedListener(final EtoroApiConfiguration apiConfiguration,
+                                 final MarketFeedObserver marketFeedObserver,
+                                 final LiveResponseMapper liveResponseMapper,
+                                 final InstrumentService instrumentService,
+                                 final ObjectMapper objectMapper,
+                                 final EtoroCandleService etoroCandleService,
+                                 final MarketStructureCache marketStructureManagerCache,
+                                 final Bandlogger bandlogger,
+                                 final EnvService envService,
+                                 final InstrumentMarketStructureConfService instMarketStrConfSrv,
                                  final SimulationConfig simulationConfig,
-                                 ServiceRegistery<Service> serviceRegistery)
+                                 final TradingIndicatorsService indicatorsService,
+                                 final EtoroCandleService candleService,
+                                 final ServiceRegistery<Service> serviceRegistery)
     {
         this.apiConfiguration = apiConfiguration;
         this.marketFeedObserver = marketFeedObserver;
@@ -95,10 +103,12 @@ public class EtoroLiveFeedListener implements Listener
         this.envService = envService;
         this.simulationConfig = simulationConfig;
         this.serRgstry = serviceRegistery;
-
+        this.candleService = candleService;
         candleInstruments = instrumentService.findByActiveAndWithCandle(Boolean.TRUE, Boolean.TRUE);
 
-        List<Instrument> instrumentList = instrumentService.findByActive(Boolean.TRUE);
+        final List<Instrument> instrumentList = instrumentService.findByActive(Boolean.TRUE);
+
+        final List<TradingIndicator> indicators = indicatorsService.findAll();
 
         if (instrumentList.size() == 0)
         {
@@ -121,11 +131,86 @@ public class EtoroLiveFeedListener implements Listener
                 candleBuilder.objectMapper(objectMapper);
                 candleBuilder.bandLogger(bandlogger);
                 candleBuilder.setCandleService(etoroCandleService);
-                signalBuilder.getCandleBuilder()
-                        .add(candleBuilder);
+                signalBuilder.getCandleBuilder().add(candleBuilder);
             }
             signalBuilder.getInstruments().add(inst);
         }
+
+        for (CandleBuilder e : signalBuilder.getCandleBuilder())
+        {
+            final Map<String, IndicatorProcessor> processors = new HashMap();
+
+            for(TradingIndicator indicator : indicators)
+            {
+                if(e.getTimeFrame().getUnit().equals(indicator.getTimeFrameUnit())
+                        && e.getInterval().intValue() == indicator.getTimeFrame() &&
+                        e.getInstrument().getInstrumentTicker()
+                                .equals(e.getInstrument().getInstrumentTicker())
+                )
+                {
+                    String processorKey = indicator.getName()+"_"+indicator.getPeriod()+"_"+indicator.getTimeFrame()+"_"+indicator.getTimeFrameUnit();
+                    processors.put(processorKey, IndicatorProcessorsFactory.createProcessor(indicator));
+                }
+            }
+            e.addIndicators(processors);
+        }
+
+        LocalDateTime dateTime = LocalDateTime.now();
+
+        LocalDateTime startOfDay = dateTime.toLocalDate().atStartOfDay().plusDays(-14);
+        LocalDateTime endOfDay = dateTime.toLocalDate().atTime(LocalTime.MAX);
+
+        List<Candle> candleList =
+                candleService.findByCreationDateTimeBetween(startOfDay, endOfDay);
+
+        for (CandleBuilder e : signalBuilder.getCandleBuilder())
+        {
+            for(Candle candle : candleList)
+            {
+                if(e.getInstrument().getInstrumentTicker()
+                        .equals(candle.getInstrument().getInstrumentTicker())
+                && e.getTimeFrame().getUnit().equals(candle.getTimeFrameUnit())
+                && e.getInterval().intValue() == candle.getTimeFrame().intValue())
+                {
+                    TimeFramesUnit timeFramesUnit = TimeFramesUnit.MINUTE;
+
+                    if(candle.getTimeFrameUnit().equals(TimeFramesUnit.HOUR.getUnit()))
+                    {
+                        timeFramesUnit = TimeFramesUnit.HOUR;
+                    }
+
+                    if(candle.getTimeFrameUnit().equals(TimeFramesUnit.SECOND.getUnit()))
+                    {
+                        timeFramesUnit = TimeFramesUnit.SECOND;
+                    }
+
+                    if(candle.getTimeFrameUnit().equals(TimeFramesUnit.DAY.getUnit()))
+                    {
+                        timeFramesUnit = TimeFramesUnit.DAY;
+                    }
+
+                    if(candle.getTimeFrameUnit().equals(TimeFramesUnit.WEEK.getUnit()))
+                    {
+                        timeFramesUnit = TimeFramesUnit.WEEK;
+                    }
+
+                    CandleDto candleDto = CandleDto.builder().close(candle.getClose())
+                            .low(candle.getLow())
+                            .high(candle.getHigh())
+                            .open(candle.getOpen())
+                            .instrument(candle.getInstrument())
+                            .timeFramesUnit(timeFramesUnit)
+                            .interval(candle.getTimeFrame())
+                            .time(candle.getFromDate())
+                            .lowTime(candle.getLowTime())
+                            .highTime(candle.getHighTime())
+                            .build();
+                    e.getCandles().add(candleDto);
+                }
+            }
+        }
+
+        System.out.println("stop me here");
     }
 
     @Override

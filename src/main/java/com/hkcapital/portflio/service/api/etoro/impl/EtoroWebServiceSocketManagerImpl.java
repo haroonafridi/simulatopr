@@ -16,7 +16,7 @@ import com.hkcapital.portflio.service.marketfeed.observer.MarketFeedObserver;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.BuySellSignalGeneratorSub;
 import com.hkcapital.portflio.service.marketfeed.subscriber.impl.MarketFeedDbWriterSub;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
-import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +46,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
     private final Bandlogger bandlogger;
     private final EnvService envService;
     private final SimulationConfig simulationConfig;
+    private final TradingIndicatorsService indicatorsService;
     private final ServiceRegistery serviceRegistery;
 
     public EtoroWebServiceSocketManagerImpl(
@@ -63,6 +64,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                                             final EnvService envService,
                                             final InstrumentMarketStructureConfService instMrktStrCon,
                                             final SimulationConfig simulationConfig,
+                                            final TradingIndicatorsService indicatorsService,
                                             final ServiceRegistery serviceRegistery)
     {
 
@@ -80,6 +82,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
         this.bandlogger = bandlogger;
         this.envService = envService;
         this.instMrktStrCon = instMrktStrCon;
+        this.indicatorsService = indicatorsService;
         this.serviceRegistery = serviceRegistery;
         this.simulationConfig = simulationConfig;
     }
@@ -94,6 +97,7 @@ public class EtoroWebServiceSocketManagerImpl implements EtoroWebSocketManagerSe
                         marketStructureManagerCache, bandlogger, envService,
                         instMrktStrCon,
                         simulationConfig,
+                        indicatorsService,
                         serviceRegistery);
 
         new Thread(startWebSocket).start();

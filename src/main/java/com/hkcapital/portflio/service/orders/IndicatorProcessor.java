@@ -7,4 +7,5 @@ public interface IndicatorProcessor
   void onCandleClose(CandleDto candle);
 
   String getType();
+  double getValue();
 }

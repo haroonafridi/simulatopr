@@ -18,28 +18,31 @@ import java.io.IOException;
 public class StrategyExporter extends ImporterExporterAbstract implements Exporter
 {
     private Strategy strategy;
-
     private final MarketStructureConfigurationExporter mrktStrtureConfigExporter;
     private final SRMatrixToleranceExporter srMatrixTolranceExporter;
     private final SRMatrixExporter srMatrixExporter;
+    private final com.hkcapital.portflio.service.importexport.export.json.indicator.TradingIndicatorExporter indicatorConfExporter;
     private final FileGenerator fileGenerator;
 
     public StrategyExporter(final ImporterExporterDependencies dependencies,
                             final MarketStructureConfigurationExporter mrktStrtureConfigExporter,
                             final SRMatrixToleranceExporter srMatrixTolranceExporter,
                             final SRMatrixExporter srMatrixExporter,
+                            final com.hkcapital.portflio.service.importexport.export.json.indicator.TradingIndicatorExporter indicatorConfExporter,
                             final @Qualifier("jsonFileGenerator") FileGenerator fileGenerator)
     {
         super(dependencies);
         this.mrktStrtureConfigExporter = mrktStrtureConfigExporter;
         this.srMatrixTolranceExporter = srMatrixTolranceExporter;
         this.srMatrixExporter = srMatrixExporter;
+        this.indicatorConfExporter = indicatorConfExporter;
         this.fileGenerator = fileGenerator;
     }
 
     @Override
     public void export()
     {
+        indicatorConfExporter.export();
         mrktStrtureConfigExporter.export();
         srMatrixTolranceExporter.export();
         srMatrixExporter.export();

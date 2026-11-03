@@ -33,21 +33,25 @@ public class StrategyImporter extends ImporterExporterAbstract implements Import
     private final MarketStructureConfigurationImporter mrktStructureConfImporter;
     private final SRMatrixToleranceImporter srMatrixToleranceImporter;
     private final SRMatrixImporter srMatrixImporter;
+    private final com.hkcapital.portflio.service.importexport.imprt.json.indicator.TradingIndicatorImporter indicatorImporter;
 
     public StrategyImporter(final MarketStructureConfigurationImporter mrktStructureConfImporter, //
                             final SRMatrixToleranceImporter srMatrixToleranceImporter,
                             final SRMatrixImporter srMatrixImporter,
+                            final com.hkcapital.portflio.service.importexport.imprt.json.indicator.TradingIndicatorImporter indicatorImporter,
                             final ImporterExporterDependencies dependencies)
     {
         super(dependencies);
         this.mrktStructureConfImporter = mrktStructureConfImporter;
         this.srMatrixToleranceImporter = srMatrixToleranceImporter;
         this.srMatrixImporter = srMatrixImporter;
+        this.indicatorImporter = indicatorImporter;
     }
 
     @Override
     public void importIn()
     {
+        indicatorImporter.importIn();
         mrktStructureConfImporter.importIn();
         srMatrixToleranceImporter.importIn();
         srMatrixImporter.importIn();

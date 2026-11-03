@@ -197,27 +197,27 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
 
         }
 
-        if (lowerBands != null)
-        {
-            try
-            {
-                log.info(objectMapper.writeValueAsString(lowerBands));
-            } catch (JsonProcessingException e)
-            {
-                log.info("Error in logging lower bands");
-            }
-        }
+//        if (lowerBands != null)
+//        {
+//            try
+//            {
+//                log.info(objectMapper.writeValueAsString(lowerBands));
+//            } catch (JsonProcessingException e)
+//            {
+//                log.info("Error in logging lower bands");
+//            }
+//        }
 
-        if (upperBands != null)
-        {
-            try
-            {
-                log.info(objectMapper.writeValueAsString(upperBands));
-            } catch (JsonProcessingException e)
-            {
-                log.info("Error in logging upper bands");
-            }
-        }
+//        if (upperBands != null)
+//        {
+//            try
+//            {
+//                //log.info(objectMapper.writeValueAsString(upperBands));
+//            } catch (JsonProcessingException e)
+//            {
+//                log.info("Error in logging upper bands");
+//            }
+//        }
     }
 
     private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price, Instant highLowTime)
@@ -269,6 +269,5 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         lowerBands.clear(); //
         initCompleted = false;
     }
-
 
 }

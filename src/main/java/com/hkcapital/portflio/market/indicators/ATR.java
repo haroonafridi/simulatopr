@@ -1,83 +1,102 @@
+
 package com.hkcapital.portflio.market.indicators;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
-public class ATR implements IndicatorProcessor
-{
+import java.util.Objects;
+
+public class ATR implements IndicatorProcessor {
 
     private final int period;
+    private final Instrument instrument;
+
     private Double prevClose = null;
     private Double atr = null;
 
     private int trCount = 0;
     private double trSum = 0.0;
 
-    private final Instrument instrument;
+    public ATR(int period, Instrument instrument) {
 
-    public ATR(int period, Instrument instrument)
-    {
+        Objects.requireNonNull(instrument,
+                "Instrument cannot be null");
+
+        if (period <= 0) {
+            throw new IllegalArgumentException(
+                    "Period must be greater than zero");
+        }
+
         this.period = period;
         this.instrument = instrument;
     }
 
+    @Override
     public void onCandleClose(CandleDto candle) {
 
-        // First candle → no TR possible
-        if (prevClose == null) {
-            prevClose = candle.getClose();
-            atr = 0d;
-        }
+        Objects.requireNonNull(candle,
+                "Candle cannot be null");
 
-        // --- Step 1: Calculate TR ---
         double high = candle.getHigh();
         double low = candle.getLow();
+        double close = candle.getClose();
 
-        double highLow = high - low;
-        double highPrevClose = Math.abs(high - prevClose);
-        double lowPrevClose = Math.abs(low - prevClose);
-
-        double tr = Math.max(highLow, Math.max(highPrevClose, lowPrevClose));
-
-        // --- Step 2: Build initial ATR (SMA of first N TRs) ---
-        if (atr == null) {
-            trSum += tr;
-            trCount++;
-
-            if (trCount < period) {
-                prevClose = candle.getClose();
-            }
-
-            // First ATR
-            atr = trSum / period;
-
-            prevClose = candle.getClose();
+        // First candle: establish previous close
+        if (prevClose == null) {
+            prevClose = close;
             return;
         }
 
-        // --- Step 3: Wilder smoothing (O(1)) ---
+        // Calculate True Range
+        double tr = Math.max(
+                high - low,
+                Math.max(
+                        Math.abs(high - prevClose),
+                        Math.abs(low - prevClose)
+                )
+        );
+
+        // Initialize ATR using SMA of first N TR values
+        if (atr == null) {
+
+            trSum += tr;
+            trCount++;
+
+            prevClose = close;
+
+            if (trCount < period) {
+                return;
+            }
+
+            atr = trSum / period;
+            return;
+        }
+
+        // Wilder smoothing
         atr = ((atr * (period - 1)) + tr) / period;
 
-        prevClose = candle.getClose();
+        prevClose = close;
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return "ATR";
+    }
+
+    @Override
+    public double getValue() {
+        return atr == null ? Double.NaN : atr;
     }
 
     public Double getAtr() {
         return atr;
     }
 
-    public int getPeriod()
-    {
+    public int getPeriod() {
         return period;
     }
 
-    public Instrument getInstrument()
-    {
+    public Instrument getInstrument() {
         return instrument;
     }
 

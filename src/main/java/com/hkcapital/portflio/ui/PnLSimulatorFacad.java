@@ -18,10 +18,12 @@ import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
 import com.hkcapital.portflio.service.importexport.export.csv.candle.CandleCSVGenerator;
 import com.hkcapital.portflio.service.importexport.export.file.csv.CSVFileGenerator;
 import com.hkcapital.portflio.service.importexport.export.file.json.JSONFileGenerator;
+import com.hkcapital.portflio.service.importexport.export.json.indicator.TradingIndicatorExporter;
 import com.hkcapital.portflio.service.importexport.export.json.marketstructureconf.MarketStructureConfigurationExporter;
 import com.hkcapital.portflio.service.importexport.export.json.srmatrix.SRMatrixExporter;
 import com.hkcapital.portflio.service.importexport.export.json.srmatrixtolerance.SRMatrixToleranceExporter;
 import com.hkcapital.portflio.service.importexport.export.json.strategy.StrategyExporter;
+import com.hkcapital.portflio.service.importexport.imprt.json.indicator.TradingIndicatorImporter;
 import com.hkcapital.portflio.service.importexport.imprt.json.marketsructureconf.MarketStructureConfigurationImporter;
 import com.hkcapital.portflio.service.importexport.imprt.json.srmatrix.SRMatrixImporter;
 import com.hkcapital.portflio.service.importexport.imprt.json.srmatrixtolerance.SRMatrixToleranceImporter;
@@ -111,6 +113,9 @@ public class PnLSimulatorFacad
     private final SRMatrixToleranceExporter srMatrixToleranceExporter;
     private final SRMatrixImporter srMatrixImporter;
     private final SRMatrixExporter srMatrixExporter;
+
+    final TradingIndicatorImporter tradingIndicatorImporter;
+    final TradingIndicatorExporter tradingIndicatorExporter;
     private final ImporterExporterDependencies dep;
 
     private final JSONFileGenerator jsonFileGenerator;
@@ -147,6 +152,8 @@ public class PnLSimulatorFacad
                              final SRMatrixToleranceExporter srMatrixToleranceExporter,
                              final SRMatrixImporter srMatrixImporter,
                              final SRMatrixExporter srMatrixExporter,
+                             final TradingIndicatorImporter tradingIndicatorImporter,
+                             final TradingIndicatorExporter tradingIndicatorExporter,
                              final ImporterExporterDependencies importerExporterDependencies,
                              final JSONFileGenerator jSONFileGenerator,
                              final ServiceRegistery<Service> serviceRegistery)
@@ -184,6 +191,8 @@ public class PnLSimulatorFacad
         this.srMatrixToleranceExporter = srMatrixToleranceExporter;
         this.srMatrixImporter = srMatrixImporter;
         this.srMatrixExporter = srMatrixExporter;
+        this.tradingIndicatorImporter = tradingIndicatorImporter;
+        this.tradingIndicatorExporter = tradingIndicatorExporter;
         this.dep = importerExporterDependencies;
         this.jsonFileGenerator = jSONFileGenerator;
 
@@ -221,6 +230,8 @@ public class PnLSimulatorFacad
         serviceRegistery.putService(Service.ImporterExporterDependencies, this.dep);
         serviceRegistery.putService(Service.SRMatrixImporter, this.srMatrixImporter);
         serviceRegistery.putService(Service.SRMatrixExporter, this.srMatrixExporter);
+        serviceRegistery.putService(Service.TradingIndicatorImporter, this.tradingIndicatorImporter);
+        serviceRegistery.putService(Service.TradingIndicatorExporter, this.tradingIndicatorExporter);
     }
 
     public void createApplication() throws UnsupportedLookAndFeelException
@@ -239,7 +250,7 @@ public class PnLSimulatorFacad
             looAndFeel = new MetalLookAndFeel();
             font = new Font("Roboto Mono", Font.PLAIN, 10);
             SimulationHelper simulationHelper =
-                    new SimulationHelper(RestClient.create(), serviceRegistery, dep, strategyImporter);
+                    new SimulationHelper(RestClient.create(), serviceRegistery, strategyImporter);
             simulationHelper.cleanAndInitPortfolio(5000);
         }
 

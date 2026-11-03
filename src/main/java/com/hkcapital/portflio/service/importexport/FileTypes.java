@@ -4,6 +4,8 @@ public enum FileTypes
 {
     TICK("tick"),
     CANDLE("candle"),
+
+    INDICATOR("indicator"),
     BAND("band"),
     MARKET_STRUCTURE("market-structure"),
     SR_MATRIX("sr-matrix"),

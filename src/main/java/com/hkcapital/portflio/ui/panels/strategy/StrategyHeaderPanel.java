@@ -86,9 +86,7 @@ public class StrategyHeaderPanel extends UIBag
     private final JButton showLiveMarket = new JButton("Show Live Market");
     private final JButton exportStrategyButton = new JButton("Export Strategy");
     private final JButton importStrategyButton = new JButton("Import Strategy");
-
     private final JButton importMarketStructure = new JButton("Import Market Structure");
-
     private final JTable strategyTable;
     private final StrategyTableModel<Strategy> tableModel;
     private PositionActionsPanel positionActionsPanel;

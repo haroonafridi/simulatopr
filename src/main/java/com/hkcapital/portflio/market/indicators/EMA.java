@@ -1,43 +1,71 @@
+
 package com.hkcapital.portflio.market.indicators;
 
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
-public class EMA implements IndicatorProcessor
-{
-    private final Instrument instrument;
-    private final double alpha;
-    private Double ema = null;
+import java.util.Objects;
 
-    public EMA(int period, final Instrument instrument)
-    {
+public class EMA implements IndicatorProcessor {
+
+    private final Instrument instrument;
+    private final int period;
+    private final double alpha;
+
+    private Double ema = null;
+    private double seedSum = 0.0;
+    private int seedCount = 0;
+
+    public EMA(int period, final Instrument instrument) {
+
+        Objects.requireNonNull(instrument,
+                "Instrument cannot be null");
+
+        if (period <= 0) {
+            throw new IllegalArgumentException(
+                    "Period must be greater than zero");
+        }
+
         this.instrument = instrument;
+        this.period = period;
         this.alpha = 2.0 / (period + 1.0);
     }
 
     @Override
-    public void onCandleClose(CandleDto candle)
-    {
-        if (ema == null)
-        {
-            ema = candle.getClose(); // initial seed
+    public void onCandleClose(CandleDto candle) {
+
+        double close = candle.getClose();
+
+        // Initialize EMA using SMA of first N candles
+        if (ema == null) {
+            seedSum += close;
+            seedCount++;
+
+            if (seedCount == period) {
+                ema = seedSum / period;
+            }
+            return;
         }
-        ema = (candle.getClose() * alpha) + (ema * (1 - alpha));
+        // Standard recursive EMA calculation
+        ema = (close * alpha)
+                + (ema * (1.0 - alpha));
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return "EMA";
     }
 
-    public Double getEma()
-    {
+    @Override
+    public double getValue() {
+        return ema == null ? Double.NaN : ema;
+    }
+
+    public Double getEma() {
         return ema;
     }
 
-    public Instrument getInstrument()
-    {
+    public Instrument getInstrument() {
         return instrument;
     }
 }

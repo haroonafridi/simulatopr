@@ -1,21 +1,27 @@
 package com.hkcapital.portflio.service.tradingindicators;
 
 import com.hkcapital.portflio.model.Instrument;
-import com.hkcapital.portflio.model.TradingIndicators;
+import com.hkcapital.portflio.model.SRMatrix;
+import com.hkcapital.portflio.model.TradingIndicator;
+import com.hkcapital.portflio.repository.srmatrix.SRMatrixFilter;
+import com.hkcapital.portflio.repository.tradingindicators.TradingIndicatorsFilter;
 import com.hkcapital.portflio.service.registry.Service;
 
 import java.util.List;
 
 public interface TradingIndicatorsService extends Service
 {
-    TradingIndicators save(TradingIndicators indicators);
+    TradingIndicator save(TradingIndicator indicators);
 
-    List<TradingIndicators> findByName(String name);
+    List<TradingIndicator> findByName(String name);
 
-    List<TradingIndicators> findByInstrument(Instrument instrument);
-    List<TradingIndicators> findAll();
+    List<TradingIndicator> findByInstrument(Instrument instrument);
+    List<TradingIndicator> findAll();
 
-    TradingIndicators findById(Integer id);
-    void remove(TradingIndicators indicators);
+    TradingIndicator findById(Integer id);
+    void remove(TradingIndicator indicators);
 
+    void removeAll();
+
+    List<TradingIndicator> findByFilter(TradingIndicatorsFilter filter);
 }

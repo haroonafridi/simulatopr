@@ -15,6 +15,7 @@ import com.hkcapital.portflio.service.positions.PositionService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,8 @@ public abstract class ImporterExporterAbstract
     protected final EnvService envService;
 
     protected final DataPathConfig dataPathConfig;
+
+    protected final TradingIndicatorsService indicatorsService;
 
     protected ObjectReader objectReader = new ObjectMapper()
             .registerModule(new JavaTimeModule())
@@ -53,6 +56,7 @@ public abstract class ImporterExporterAbstract
         this.sRMatrixToleranceService = deps.sRMatrixToleranceService;
         this.positionService = deps.positionService;
         this.instMrktStrConfSrv = deps.instMrktStrConfSrv;
+        this.indicatorsService = deps.tradingIndicatorsService;
         this.envService = deps.envService;
         this.dataPathConfig = deps.dataPathConfig;
     }

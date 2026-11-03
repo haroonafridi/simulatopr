@@ -42,6 +42,10 @@ public interface Service
     String ImporterExporterDependencies = "ImporterExporterDependencies";
     String SRMatrixImporter = "SRMatrixImporter";
     String SRMatrixExporter = "SRMatrixExporter";
+
     String TradingIndicatorsService = "TradingIndicatorsService";
+
+    String TradingIndicatorExporter = "TradingIndicatorExporter";
+    String TradingIndicatorImporter = "TradingIndicatorImporter";
 
 }

@@ -32,8 +32,7 @@ public class InstrumentConfPanel extends UIBag
     private JComboBox<String> timeFrameUnit = new JComboBox<>(new String[]{TimeFramesUnit.MINUTE.getUnit(), //
             TimeFramesUnit.HOUR.getUnit(), TimeFramesUnit.DAY.getUnit(), //
             TimeFramesUnit.WEEK.getUnit()});
-
-
+    
     private JComboBox<MarketTypes> marketStructName =
             new JComboBox<>(MarketTypes.values());
 

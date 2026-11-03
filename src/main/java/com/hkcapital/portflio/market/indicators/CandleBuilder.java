@@ -12,6 +12,7 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.bandlogger.Bandlogger;
 import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
+import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,24 +34,17 @@ public class CandleBuilder
     private TimeFramesUnit timeFrame;
     private Integer interval;
     private Instrument instrument;
-    private RSI rsi = new RSI(14, new Instrument());
-    private final ATR atr = new ATR(14, new Instrument());
-    private final EMA ema = new EMA(14, new Instrument());
-    private final SMA sma = new SMA(14, new Instrument());
+    private Map<String, IndicatorProcessor> indicatorProcessors;
     private EtoroCandleService candleService;
     private MarketStructureCache marketStructureManagerCache;
     private Bandlogger bandlogger;
     private ObjectMapper objectMapper;
 
-    public CandleBuilder(EtoroCandleService candleService, Instrument instrument)
+    public CandleBuilder(final EtoroCandleService candleService,
+                         final Instrument instrument)
     {
         this.candleService = candleService;
         this.instrument = instrument;
-    }
-
-    public EtoroCandleService getCandleService()
-    {
-        return candleService;
     }
 
     private CandleBuilder()
@@ -93,11 +88,14 @@ public class CandleBuilder
         else
         {
             CandleDto closedCandle = mainCandle;
+
             addCandle(subCandle, timeFrame, interval);
-            rsi.onCandleClose(closedCandle);
-            atr.onCandleClose(closedCandle);
-            ema.onCandleClose(closedCandle);
-            sma.onCandleClose(closedCandle);
+
+            indicatorProcessors.entrySet().forEach(entry ->
+            {
+                entry.getValue().onCandleClose(closedCandle);
+            });
+
             Candle candle = com.hkcapital.portflio.model
                     .Candle.builder()
                     .instrumentID(closedCandle.getInstrument().getEtoroInstrumentId())
@@ -279,10 +277,22 @@ public class CandleBuilder
         return this;
     }
 
+    public CandleBuilder indicatorProcessors(Integer interval)
+    {
+        this.interval = interval;
+        return this;
+    }
+
 
     public CandleBuilder marketStructureManagerCache(MarketStructureCache marketStructureManagerCache)
     {
         this.marketStructureManagerCache = marketStructureManagerCache;
+        return this;
+    }
+
+    public CandleBuilder addIndicators(Map<String, IndicatorProcessor> indicatorProcessors)
+    {
+        this.indicatorProcessors = indicatorProcessors;
         return this;
     }
 
@@ -367,29 +377,25 @@ public class CandleBuilder
         return interval;
     }
 
-    public RSI getRsi()
-    {
-        return rsi;
-    }
-
-    public ATR getAtr()
-    {
-        return atr;
-    }
-
-    public EMA getEma()
-    {
-        return ema;
-    }
-
-    public SMA getSma()
-    {
-        return sma;
-    }
-
     public Instrument getInstrument()
     {
         return instrument;
+    }
+
+    public Map<String, IndicatorProcessor> getIndicatorProcessors()
+    {
+        return indicatorProcessors;
+    }
+
+    public CandleBuilder indicatorProcessors(Map<String, IndicatorProcessor> indicatorProcessors)
+    {
+        this.indicatorProcessors = indicatorProcessors;
+        return this;
+    }
+
+    public MarketStructureCache getMarketStructureManagerCache()
+    {
+        return marketStructureManagerCache;
     }
 }
 

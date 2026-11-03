@@ -20,12 +20,12 @@ import com.hkcapital.portflio.service.registry.Service;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixToleranceService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
+import com.hkcapital.portflio.service.tradingindicators.TradingIndicatorsService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 public class SimulationHelper
 {
-    private final ServiceRegistery serviceRegistery;
     private InstrumentService instrumentService;
     private LiveInstrumentFeedService liveInstrumentFeedService;
     private OrderManagerService orderManagerService;
@@ -38,20 +38,16 @@ public class SimulationHelper
     private EtoroCandleService etoroCandleService;
     private EtoroApiConfiguration etoroApiConfiguration;
     private final InstrumentMarketStructureConfService instMrktStrtrConfSrv;
-    private final MarketStructureConfigurationImporter marktStructureConfImporter;
-    private final MarketStructureConfigurationExporter marketStructureConfigurationExporter;
-    private final SRMatrixToleranceImporter srMatrixToleranceImporter;
-    private final ImporterExporterDependencies dep;
     private final StrategyImporter strategyImporter;
+
+    private final TradingIndicatorsService indicatorsService;
 
     private RestClient restClient;
 
     public SimulationHelper(RestClient restClient,
                             ServiceRegistery serviceRegistery,
-                            ImporterExporterDependencies dep,
                             StrategyImporter strategyImporter)
     {
-        this.serviceRegistery = serviceRegistery;
         this.instrumentService = (InstrumentService) serviceRegistery.getService(Service.InstrumentService);
         this.liveInstrumentFeedService = (LiveInstrumentFeedService) serviceRegistery.getService(Service.LiveInstrumentFeedService);
         this.orderManagerService = (OrderManagerService) serviceRegistery.getService(Service.OrderManagerService);
@@ -64,10 +60,7 @@ public class SimulationHelper
         this.etoroApiConfiguration = (EtoroApiConfiguration) serviceRegistery.getService(Service.EtoroAPIConfiguration);
         this.sRMatrixToleranceService = (SRMatrixToleranceService) serviceRegistery.getService(Service.SRMatrixToleranceService);
         this.instMrktStrtrConfSrv = (InstrumentMarketStructureConfService) serviceRegistery.getService(Service.InstrumentMarketStructureConfService);
-        this.marktStructureConfImporter = (MarketStructureConfigurationImporter) serviceRegistery.getService(Service.MarketStructureConfigurationImporter);
-        this.marketStructureConfigurationExporter = (MarketStructureConfigurationExporter) serviceRegistery.getService(Service.MarketStructureConfigurationExporter);
-        this.srMatrixToleranceImporter = (SRMatrixToleranceImporter) serviceRegistery.getService(Service.SRMatrixToleranceImporter);
-        this.dep = dep;
+        this.indicatorsService = (TradingIndicatorsService)serviceRegistery.getService(Service.TradingIndicatorsService);
         this.strategyImporter = strategyImporter;
         this.restClient = restClient;
     }
@@ -76,6 +69,7 @@ public class SimulationHelper
     public void cleanAndInitPortfolio(double value)
     {
 
+        indicatorsService.removeAll();
         instMrktStrtrConfSrv.removeAll();
         positionService.removeAll();
         orderManagerService.removeAll();
