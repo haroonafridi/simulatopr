@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.InstrumentMarketStructureConf;
 import com.hkcapital.portflio.repository.instrumentmarketstructureconf.InstrumentMarketStructureConfFilter;
-import com.hkcapital.portflio.repository.registry.ServiceRegistery;
 import com.hkcapital.portflio.service.importexport.Importer;
 import com.hkcapital.portflio.service.importexport.ImporterExporterAbstract;
 import com.hkcapital.portflio.service.importexport.ImporterExporterDependencies;
@@ -92,7 +91,7 @@ public class MarketStructureConfigurationImporter //
                                     .structureName(instStrConfDTO.getStructureName())
                                     .marketOrder(instStrConfDTO.getMarketOrder())
                                     .sub(instStrConfDTO.getSub())
-                                    .intrvl(instStrConfDTO.getIntrvl())
+                                    .intrvl(instStrConfDTO.getInterval())
                                     .module(instStrConfDTO.getModule())
                                     .timeFrameUnit(instStrConfDTO.getTimeFrameUnit())
                                     .instrument(instrument)

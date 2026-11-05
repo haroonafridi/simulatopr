@@ -50,5 +50,8 @@ public interface EtoroCandleService extends Service
             LocalDateTime endDate
     );
 
+    List<Candle> findByCreationDateTimeBetweenOrderByCreationDateTimeAsc(
+            LocalDateTime startDate,
+            LocalDateTime endDate);
     void removeAll();
 }

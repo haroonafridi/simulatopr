@@ -5,7 +5,6 @@ import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
@@ -35,9 +34,10 @@ public class SMA implements IndicatorProcessor
         sum += close;
         if (window.size() > period)
         {
-            sum -= window.poll();
+            sum = sum - window.poll();
         }
     }
+
     @Override
     public String getType()
     {
@@ -50,6 +50,12 @@ public class SMA implements IndicatorProcessor
         return getSma();
     }
 
+    @Override
+    public int getPeriod()
+    {
+        return period;
+    }
+
     public double getSma()
     {
         if (window.size() < period)
@@ -60,7 +66,8 @@ public class SMA implements IndicatorProcessor
         return sum / period;
     }
 
-    public Instrument getInstrument() {
+    public Instrument getInstrument()
+    {
         return instrument;
     }
 

@@ -88,9 +88,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
 
-        final double pTAbove = PriceTolerance.getPriceToleranceAbove(marketTypes, instrument);
 
-        final double pTBelow = PriceTolerance.getPriceToleranceBelow(marketTypes, instrument);
 
         MarketStructureMap ub = new MarketStructureMap(upperBands, liveInstrumentRate.getAsk());
 
@@ -196,28 +194,6 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
             updateMarketVisitCountAndTime(lowerBands, low, candle.getLowTime());
 
         }
-
-//        if (lowerBands != null)
-//        {
-//            try
-//            {
-//                log.info(objectMapper.writeValueAsString(lowerBands));
-//            } catch (JsonProcessingException e)
-//            {
-//                log.info("Error in logging lower bands");
-//            }
-//        }
-
-//        if (upperBands != null)
-//        {
-//            try
-//            {
-//                //log.info(objectMapper.writeValueAsString(upperBands));
-//            } catch (JsonProcessingException e)
-//            {
-//                log.info("Error in logging upper bands");
-//            }
-//        }
     }
 
     private void updateMarketVisitCountAndTime(NavigableSet<MarketPriceBand> bands, double price, Instant highLowTime)

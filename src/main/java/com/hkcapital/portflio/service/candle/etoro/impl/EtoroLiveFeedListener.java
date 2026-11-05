@@ -104,6 +104,7 @@ public class EtoroLiveFeedListener implements Listener
         this.simulationConfig = simulationConfig;
         this.serRgstry = serviceRegistery;
         this.candleService = candleService;
+
         candleInstruments = instrumentService.findByActiveAndWithCandle(Boolean.TRUE, Boolean.TRUE);
 
         final List<Instrument> instrumentList = instrumentService.findByActive(Boolean.TRUE);
@@ -138,7 +139,7 @@ public class EtoroLiveFeedListener implements Listener
 
         for (CandleBuilder e : signalBuilder.getCandleBuilder())
         {
-            final Map<String, IndicatorProcessor> processors = new HashMap();
+            final Map<String, IndicatorProcessor> processors = new HashMap<>();
 
             for(TradingIndicator indicator : indicators)
             {
@@ -148,8 +149,7 @@ public class EtoroLiveFeedListener implements Listener
                                 .equals(e.getInstrument().getInstrumentTicker())
                 )
                 {
-                    String processorKey = indicator.getName()+"_"+indicator.getPeriod()+"_"+indicator.getTimeFrame()+"_"+indicator.getTimeFrameUnit();
-                    processors.put(processorKey, IndicatorProcessorsFactory.createProcessor(indicator));
+                    processors.put(indicator.getKey(), IndicatorProcessorsFactory.createProcessor(indicator));
                 }
             }
             e.addIndicators(processors);
@@ -161,7 +161,7 @@ public class EtoroLiveFeedListener implements Listener
         LocalDateTime endOfDay = dateTime.toLocalDate().atTime(LocalTime.MAX);
 
         List<Candle> candleList =
-                candleService.findByCreationDateTimeBetween(startOfDay, endOfDay);
+                candleService.findByCreationDateTimeBetweenOrderByCreationDateTimeAsc(startOfDay, endOfDay);
 
         for (CandleBuilder e : signalBuilder.getCandleBuilder())
         {
@@ -210,7 +210,11 @@ public class EtoroLiveFeedListener implements Listener
             }
         }
 
-        System.out.println("stop me here");
+        signalBuilder.getCandleBuilder().forEach(candleBuilder ->
+        {
+            candleBuilder.initIndicator();
+        });
+
     }
 
     @Override
@@ -273,8 +277,6 @@ public class EtoroLiveFeedListener implements Listener
                 if (liveInstrumentRate != null && liveInstrumentRate.getAsk() != null)
                 {
                     Tick tick = tickFromRate(liveInstrumentRate);
-                     // SwingUtilities.invokeLater(() ->
-                     //{
                     signalBuilder.getCandleBuilder().forEach(candleBuilder ->
                     {
                         if (liveInstrumentRate.getInstrumentId() //
@@ -289,7 +291,6 @@ public class EtoroLiveFeedListener implements Listener
                             }
                         }
                     });
-                   // });
                     if (TradingConfiguration.SHOW_TRADING)
                     {
                         if (instance == null)

@@ -48,4 +48,14 @@ public class TradingIndicator
                 .timeFrameUnit(this.timeFrameUnit)
                 .build();
     }
+
+    public String getKey()
+    {
+        String key = name + "_" + period + "_" + timeFrame + "_" + timeFrameUnit;
+        if (key == null)
+        {
+            throw new IllegalArgumentException("Invalid indicator key");
+        }
+        return key;
+    }
 }

@@ -99,6 +99,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 instMrktStConf,
                 simulationConfig,
                 indicatorsService,
+                null,
                 serviceRegistery);  //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(
@@ -135,6 +136,7 @@ public abstract class EtoroWebSocketClientAbstract_IT
                 instMrktStConf,
                 simulationConfig,
                 indicatorsService,
+                null,
                 serviceRegistery); // //add market cache here
         WebSocket ws = client.newWebSocketBuilder()
                 .buildAsync(

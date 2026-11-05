@@ -24,4 +24,6 @@ public interface InstrumentRepository extends JpaRepository<Instrument, Integer>
     Instrument findByName(String name);
 
     List<Instrument> findAllByOrderByNameAsc();
+
+    List<Instrument> findByActiveAndWithBandAndWithCandle(Boolean active, Boolean withBand, Boolean withCandle);
 }

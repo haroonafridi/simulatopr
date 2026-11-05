@@ -1,6 +1,5 @@
 package com.hkcapital.portflio.model;
 
-import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.dto.InstrumentStructureConfDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -57,7 +56,7 @@ public class InstrumentMarketStructureConf {
                 .sub(sub)
                 .creationDate(creationDate)
                 .marketOrder(marketOrder)
-                .intrvl(intrvl)
+                .interval(intrvl)
                 .structureName(structureName)
                 .module(module)
                 .timeFrameUnit(timeFrameUnit)

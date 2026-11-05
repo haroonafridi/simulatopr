@@ -133,19 +133,11 @@ public class EtoroCandleServiceImpl implements EtoroCandleService
                 .collect(Collectors.toList());
     }
 
-
-    private String instrument;
-    private double open;
-    private double low;
-    private Instant lowTime;
-    private double high;
-    private Instant highTime;
-    private double close;
-    private Instant time;
-
-    private TimeFramesUnit timeFramesUnit;
-
-    private Integer interval;
+    @Override
+    public List<Candle> findByCreationDateTimeBetweenOrderByCreationDateTimeAsc(LocalDateTime startDate, LocalDateTime endDate)
+    {
+        return candleRepository.findByCreationDateTimeBetweenOrderByCreationDateTimeAsc(startDate, endDate);
+    }
 
     @Override
     public void removeAll()

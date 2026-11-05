@@ -10,12 +10,9 @@ public class RSI implements IndicatorProcessor {
 
     private final int period;
     private final Instrument instrument;
-
     private Double prevClose = null;
-
     private Double avgGain = null;
     private Double avgLoss = null;
-
     private double gainSum = 0.0;
     private double lossSum = 0.0;
 

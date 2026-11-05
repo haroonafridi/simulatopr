@@ -111,6 +111,12 @@ public class InstrumentServiceImpl implements InstrumentService
     }
 
     @Override
+    public List<Instrument> findByActiveAndWithBandAndWithCandle(Boolean active, Boolean withBand, Boolean withCandle)
+    {
+        return instrumentRepository.findByActiveAndWithBandAndWithCandle(active, withBand, withCandle);
+    }
+
+    @Override
     public List<Instrument> findByActiveAndWithFeedAndWithCandle(Boolean active, Boolean withFeed, Boolean withCandle)
     {
         return instrumentRepository.findByActiveAndWithFeedAndWithCandle(active, withFeed, withCandle);

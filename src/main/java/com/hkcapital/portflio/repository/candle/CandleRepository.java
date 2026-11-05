@@ -34,4 +34,8 @@ public interface CandleRepository extends JpaRepository<Candle, Integer>
     List<Candle> findByCreationDateTimeBetween(
             LocalDateTime startDate,
             LocalDateTime endDate);
+
+    List<Candle> findByCreationDateTimeBetweenOrderByCreationDateTimeAsc(
+            LocalDateTime startDate,
+            LocalDateTime endDate);
 }

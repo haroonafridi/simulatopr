@@ -61,6 +61,12 @@ public class EMA implements IndicatorProcessor {
         return ema == null ? Double.NaN : ema;
     }
 
+    @Override
+    public int getPeriod()
+    {
+        return period;
+    }
+
     public Double getEma() {
         return ema;
     }

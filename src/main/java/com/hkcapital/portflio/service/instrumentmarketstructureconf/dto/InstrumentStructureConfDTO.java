@@ -17,7 +17,7 @@ public class InstrumentStructureConfDTO
     private int marketOrder;
     private int module;
     private int sub;
-    private int intrvl;
+    private int interval;
     private int timeFrame;
     private String timeFrameUnit;
     private boolean active;

@@ -103,82 +103,79 @@ public class MarketStructureCache implements Service
                 .atStartOfDay()
                 .minusNanos(1);
 
-        List<Instrument> instruments = instrumentService.findByActive(true);
+        List<Instrument> instruments = instrumentService//
+                .findByActiveAndWithBandAndWithCandle(true, true, true);
 
         for (Instrument inst : instruments)
         {
-            if (inst.getWithBand() && inst.getWithCandle())
+
+            MarketStructure parentMarketStructure;
+
+            List<InstrumentMarketStructureConf> instMrktConfs =
+                    instMarkeStrConfSrv.findByInstrumentAndActiveOrdeyByMarketOrder(inst, true);
+
+            List<Candle> highLow = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst,
+                    15,
+                    TimeFramesUnit.MINUTE.getUnit(), start, end);
+
+            double low = 0;
+            double high = 0;
+
+            if (highLow.size() == 0)
             {
-
-                MarketStructure parentMarketStructure;
-
-                List<InstrumentMarketStructureConf> instMrktConfs =
-                        instMarkeStrConfSrv.findByInstrumentAndActiveOrdeyByMarketOrder(inst, true);
-
-                List<Candle> highLow = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst,
-                        15,
-                        TimeFramesUnit.MINUTE.getUnit(), start, end);
-
-                double low = 0;
-                double high = 0;
-
-                if (highLow.size() == 0)
+                List<MarketConditions> marketConditions = //
+                        marketConditionsService.findByInstrumentOrderByIdDesc(inst);
+                if (marketConditions != null && marketConditions.size() > 0) //
                 {
-                    List<MarketConditions> marketConditions = //
-                            marketConditionsService.findByInstrumentOrderByIdDesc(inst);
-                    if(marketConditions != null && marketConditions.size() > 0 ) //
-                    {
-                        low = marketConditions.get(0).getDayLow();
-                        high = marketConditions.get(0).getDayHigh();
-                    }
-
-                } else
-                {
-                    low = highLow.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
-                    high = highLow.stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
-                }
-
-                MarketStructure childMarketStructure = null;
-                InstrumentMarketStructureConf parentConf = null;
-                for (InstrumentMarketStructureConf instMrktConf : instMrktConfs)
-                {
-                    List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst,
-                            instMrktConf.getTimeFrame(),
-                            instMrktConf.getTimeFrameUnit(), start, end);
-
-                    final PreviousDayMarketRange
-                            priceRangeGold = PreviousDayMarketRange.builder()
-                            .instrument(inst)
-                            .date(Instant.now())
-                            .low(low)
-                            .high(high)
-                            .build();
-
-                    MarketStructure marketStructure = MarketStructure.builder().priceRange(priceRangeGold)
-                            .modus(Modus.builder().mod(instMrktConf.getModule()).subtract(instMrktConf.getSub()).build())
-                            .objectMapper(objectMapper)
-                            .instrument(inst)
-                            .marketDate(LocalDate.now())
-                            .childMarketStructure(childMarketStructure)
-                            .marketSession(null)
-                            .intervals(instMrktConf.getIntrvl())
-                            .timeFrame(instMrktConf.getTimeFrame())
-                            .timeFrameUnit(TimeFramesUnit.valueOf(instMrktConf.getTimeFrameUnit()))
-                            .build();
-                    marketStructure.init(candleList);
-                    childMarketStructure = marketStructure;
-                    parentConf = instMrktConf;
-                }
-                parentMarketStructure = childMarketStructure;
-                if (parentConf != null)
-                {
-                    register(parentConf.getStructureName(), parentMarketStructure);
+                    low = marketConditions.get(0).getDayLow();
+                    high = marketConditions.get(0).getDayHigh();
                 }
 
             } else
             {
-                log.info("Candle and Market bands will not be generated for instrumentTicker [{}] ", inst.getInstrumentTicker());
+                low = highLow.stream().mapToDouble(c -> c.getLow()).min().getAsDouble();
+                high = highLow.stream().mapToDouble(c -> c.getHigh()).max().getAsDouble();
             }
+
+            MarketStructure childMarketStructure = null;
+            InstrumentMarketStructureConf parentConf = null;
+            for (InstrumentMarketStructureConf instMrktConf : instMrktConfs)
+            {
+                List<Candle> candleList = candleService.findByInstrumentIDAndTimeFrameAndTimeFrameUnitAndCreationDateTimeBetween(inst,
+                        instMrktConf.getTimeFrame(),
+                        instMrktConf.getTimeFrameUnit(),
+                        start,
+                        end);
+
+                final PreviousDayMarketRange
+                        priceRangeGold = PreviousDayMarketRange.builder()
+                        .instrument(inst)
+                        .date(Instant.now())
+                        .low(low)
+                        .high(high)
+                        .build();
+
+                MarketStructure marketStructure = MarketStructure.builder().priceRange(priceRangeGold)
+                        .modus(Modus.builder().mod(instMrktConf.getModule()).subtract(instMrktConf.getSub()).build())
+                        .objectMapper(objectMapper)
+                        .instrument(inst)
+                        .marketDate(LocalDate.now())
+                        .childMarketStructure(childMarketStructure)
+                        .marketSession(null)
+                        .intervals(instMrktConf.getIntrvl())
+                        .timeFrame(instMrktConf.getTimeFrame())
+                        .timeFrameUnit(TimeFramesUnit.valueOf(instMrktConf.getTimeFrameUnit()))
+                        .build();
+                marketStructure.init(candleList);
+                childMarketStructure = marketStructure;
+                parentConf = instMrktConf;
+            }
+            parentMarketStructure = childMarketStructure;
+            if (parentConf != null)
+            {
+                register(parentConf.getStructureName(), parentMarketStructure);
+            }
+
         }
     }
 

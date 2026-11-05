@@ -8,4 +8,6 @@ public interface IndicatorProcessor
 
   String getType();
   double getValue();
+
+  int getPeriod();
 }

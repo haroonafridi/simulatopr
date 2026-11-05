@@ -397,6 +397,14 @@ public class CandleBuilder
     {
         return marketStructureManagerCache;
     }
+
+    public void initIndicator()
+    {
+        indicatorProcessors.forEach((key, processor) ->
+        {
+            candles.forEach(processor::onCandleClose);
+        });
+    }
 }
 
 
