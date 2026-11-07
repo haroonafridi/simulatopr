@@ -1,7 +1,7 @@
 package com.hkcapital.portflio.indicators;
 
 import com.hkcapital.portflio.market.indicators.CandleDto;
-import com.hkcapital.portflio.market.indicators.EMA;
+import com.hkcapital.portflio.market.indicators.EMAProcessor;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ class EMATest
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        EMA ema = new EMA(14, null);
+        EMAProcessor ema = new EMAProcessor(14, null);
         ema.onCandleClose(candle0);
         ema.onCandleClose(candle1);
         ema.onCandleClose(candle2);

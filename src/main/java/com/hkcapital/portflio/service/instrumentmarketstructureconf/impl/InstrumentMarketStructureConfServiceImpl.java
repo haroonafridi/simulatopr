@@ -63,4 +63,10 @@ public class InstrumentMarketStructureConfServiceImpl //
     {
         return instMrkConfRepo.findAll(InstrumentMarketStructureConfSpecification.byFilter(filter));
     }
+
+    @Override
+    public List<InstrumentMarketStructureConf> findByStructureName(String structureName)
+    {
+        return instMrkConfRepo.findByStructureName(structureName);
+    }
 }

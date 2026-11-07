@@ -74,6 +74,17 @@ public class InstrumentConfTableModel<E> extends TableModel
             case 9:
             {
 
+                return instConf.getTrendStructureName();
+            }
+
+            case 10:
+            {
+
+                return instConf.getOrderBlockDepth();
+            }
+            case 11:
+            {
+
                 return instConf.isActive();
             }
 

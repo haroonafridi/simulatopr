@@ -1,7 +1,7 @@
 package com.hkcapital.portflio.indicators;
 
 import com.hkcapital.portflio.market.indicators.CandleDto;
-import com.hkcapital.portflio.market.indicators.SMA;
+import com.hkcapital.portflio.market.indicators.SMAProcessor;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class SMATest extends IndicatorsTestAbstract
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        SMA sma = new SMA(15, null);
+        SMAProcessor sma = new SMAProcessor(15, null);
         sma.onCandleClose(candle0);
         sma.onCandleClose(candle1);
         sma.onCandleClose(candle2);
@@ -59,8 +59,8 @@ class SMATest extends IndicatorsTestAbstract
 
         final List<CandleDto> loadCandles = loadCandles("/data/indicators/candles.json");
 
-        SMA sma9 = new SMA(9, null);
-        SMA sma20 = new SMA(20, null);
+        SMAProcessor sma9 = new SMAProcessor(9, null);
+        SMAProcessor sma20 = new SMAProcessor(20, null);
 
         for (CandleDto e : loadCandles)
         {
@@ -81,8 +81,8 @@ class SMATest extends IndicatorsTestAbstract
 
         final List<CandleDto> loadCandles = loadCandles("/data/indicators/candles.json");
 
-        final SMA sma9 = new SMA(9, null);
-        final SMA sma20 = new SMA(20, null);
+        final SMAProcessor sma9 = new SMAProcessor(9, null);
+        final SMAProcessor sma20 = new SMAProcessor(20, null);
         for (CandleDto e : loadCandles)
         {
             if (e.getInterval().intValue() == 30 && e.getTimeFramesUnit().getUnit().equals("MINUTE"))

@@ -28,6 +28,10 @@ public enum Labels
 
     StructureName("Structure Name"),
 
+    TrendStructureName("Trend Structure Name"),
+
+    OrderBlockDepth("Order Block Depth"),
+
     Order("Order");
 
     private String label;

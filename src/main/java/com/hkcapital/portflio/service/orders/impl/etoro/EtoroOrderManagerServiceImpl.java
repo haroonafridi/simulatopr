@@ -14,6 +14,7 @@ import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.orders.DynamicOrderProcessor;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
@@ -47,9 +48,9 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final PositionService positionService;
     private final MarketConditionsService marketConditionsService;
     private final ConfigurationService confService;
-
     private final SRMatrixService srMatrixService;
 
+    private final InstrumentMarketStructureConfService instMarktStrConfService;
     public EtoroOrderManagerServiceImpl(final EtoroOrderRepository orderRepo, //
                                         final EtoroApiService etoroApiService,
                                         final InstrumentService instrumentService,
@@ -58,6 +59,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                                         final ConfigurationService confService,
                                         final MarketConditionsService marketConditionsService,
                                         final SRMatrixService srMatrixService,
+                                        final InstrumentMarketStructureConfService instMarktStrConfService,
                                         final MarketStructureCache marketStructureCache)
     {
         this.orderRepository = orderRepo;
@@ -67,6 +69,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
         this.marketConditionsService = marketConditionsService;
         this.positionService = positionService;
         this.srMatrixService = srMatrixService;
+        this.instMarktStrConfService = instMarktStrConfService;
         this.confService = confService;
     }
 
@@ -85,7 +88,8 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                         srMatrixService,
                         marketConditionsService,
                         positionService,
-                        this
+                        this,
+                        instMarktStrConfService
                         );
         dynamicOrderProcessor.process(instrumentRate, signalBuilder);
     }

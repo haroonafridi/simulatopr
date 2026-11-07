@@ -10,6 +10,7 @@ import com.hkcapital.portflio.service.candle.etoro.EtoroCandleService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.instrumentmarketstructureconf.InstrumentMarketStructureConfService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
+import com.hkcapital.portflio.service.orders.*;
 import com.hkcapital.portflio.service.registry.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,11 +30,20 @@ public class MarketStructureCache implements Service
 {
     private final Map<String, MarketStructure> structures =
             new ConcurrentHashMap<>();
+
+    private Region region = new Region(0,0);
+    private Support support = new Support(region, region, region);
+    private Resistance resistance = new Resistance(region, region, region);
+    private final TrendTopic trendTopic = new TrendTopic(new TrendIndicatorSignal(
+            TimeFramesUnit.MINUTE.getUnit(), 30, 0d, 0d,
+            new EMA(0d,0d,0d,0d),
+            new SMA(0d,0d,0d,0d),
+            support,
+            resistance));
     private final EtoroCandleService candleService;
     private final InstrumentService instrumentService;
     private final MarketConditionsService marketConditionsService;
     private final InstrumentMarketStructureConfService instMarkeStrConfSrv;
-
     private final ObjectMapper objectMapper;
 
     public MarketStructureCache(final EtoroCandleService candleService,
@@ -47,6 +57,7 @@ public class MarketStructureCache implements Service
         this.marketConditionsService = marketConditionsService;
         this.instMarkeStrConfSrv = instMarkeStrConfSrv;
         this.objectMapper = objectMapper;
+        trendTopic.addManager(new ThirtyMinuteTrend());
     }
 
     public void register(String key, MarketStructure structure)
@@ -179,6 +190,10 @@ public class MarketStructureCache implements Service
         }
     }
 
+    public TrendTopic getTrendTopic()
+    {
+        return trendTopic;
+    }
 
     public void initDefaultMarket(MarketStructure structure,
                                   final String marketKey)

@@ -15,5 +15,6 @@ public interface InstrumentMarketStructureConfRepository //
 {
     List<InstrumentMarketStructureConf> findByActive(Boolean active);
     List<InstrumentMarketStructureConf>  findByInstrumentAndActiveOrderByMarketOrder(Instrument instrument, boolean active);
+    List<InstrumentMarketStructureConf>  findByStructureName(String structureName);
 
 }

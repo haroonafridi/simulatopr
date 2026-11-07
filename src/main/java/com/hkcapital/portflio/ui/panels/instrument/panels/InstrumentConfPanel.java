@@ -47,10 +47,16 @@ public class InstrumentConfPanel extends UIBag
     private final NumberTextField module = new NumberTextField(30);
     private final JLabel subLabel = new JLabel("Sub:");
     private final NumberTextField sub = new NumberTextField(30);
-
     private final JLabel intervalLabel = new JLabel("Interval:");
     private final NumberTextField intrvl = new NumberTextField(30);
+
+    private final JLabel orderBlockDepthLabel = new JLabel(Labels.OrderBlockDepth.getLabel());
+    private final NumberTextField orderBlockDepth = new NumberTextField(30);
     private final JCheckBox active = new JCheckBox();
+
+    private JComboBox<MarketTypes> trendStructName =
+            new JComboBox<>(MarketTypes.values());
+
     private final JTable instrumentConfTable;
     private final InstrumentConfTableModel instrumentConfTableModel;
     private final JButton saveButton = new JButton(ButtonLabels.Save.getLabel());
@@ -74,6 +80,8 @@ public class InstrumentConfPanel extends UIBag
                 Labels.Sub.getLabel(),
                 Labels.Interval.getLabel(),
                 Labels.StructureName.getLabel(),
+                Labels.TrendStructureName.getLabel(),
+                Labels.OrderBlockDepth.getLabel(),
                 Labels.Active.getLabel()}, //
                 instMarktStrConfService.findAll());
 
@@ -105,6 +113,9 @@ public class InstrumentConfPanel extends UIBag
         instrumentConfInputPanel.add(this.sub);
         instrumentConfInputPanel.add(this.intervalLabel);
         instrumentConfInputPanel.add(this.intrvl);
+        instrumentConfInputPanel.add(this.trendStructName);
+        instrumentConfInputPanel.add(this.orderBlockDepthLabel);
+        instrumentConfInputPanel.add(this.orderBlockDepth);
         instrumentConfInputPanel.add(this.active);
 
         gbc.gridx = 0;
@@ -146,8 +157,11 @@ public class InstrumentConfPanel extends UIBag
         readButton.addActionListener(e ->
         {
             InstrumentConfTableModel instConfTableModel = new InstrumentConfTableModel<>(new String[]{Labels.Id.getLabel(), Labels.Ticker.getLabel(), Labels.TimeFrame.getLabel(), Labels.TimeFrameUnit.getLabel(), Labels.Module.getLabel(), //
-                    Labels.Sub.getLabel(), Labels.StructureName.getLabel(), Labels.Active.getLabel()}, //
+                    Labels.Sub.getLabel(), Labels.StructureName.getLabel(), Labels.TrendStructureName.getLabel() ,
+                    Labels.OrderBlockDepth.getLabel() ,
+                    Labels.Active.getLabel()}, //
                     instMarktStrConfService.findByInstrumentAndActiveOrdeyByMarketOrder((Instrument) this.instrumentList.getSelectedItem(), true));
+
             this.instrumentConfTable.setModel(instConfTableModel);
         });
         closeButton.addActionListener(e ->
@@ -190,13 +204,17 @@ public class InstrumentConfPanel extends UIBag
         int sub = this.sub.getIntValue();
         int intrvl = this.intrvl.getIntValue();
         boolean active = this.active.isSelected();
+        int orderBlockDepth = this.orderBlockDepth.getIntValue();
         final Instrument inst = (Instrument) this.instrumentList.getSelectedItem();
 
-        MarketTypes selected =
+        MarketTypes selectedStructure =
                 (MarketTypes) marketStructName.getSelectedItem();
 
+        MarketTypes selectedTrendStructure =
+                (MarketTypes) trendStructName.getSelectedItem();
+
         final InstrumentMarketStructureConf instMrktStrConf = InstrumentMarketStructureConf.builder()
-                .structureName(selected.getValue())
+                .structureName(selectedStructure.getValue())
                 .instrument(inst)//
                 .marketOrder(marketOrder)//
                 .timeFrame(timeFrame)//
@@ -205,7 +223,9 @@ public class InstrumentConfPanel extends UIBag
                 .sub(sub)//
                 .intrvl(intrvl)//
                 .active(active)//
-                .structureName(selected.getValue())
+                .trendStructureName(selectedTrendStructure.getValue())
+                .structureName(selectedStructure.getValue())
+                .orderBlockDepth(orderBlockDepth)
                 .creationDate(LocalDateTime.now())//
                 .build();
         instMarktStrConfService.add(instMrktStrConf);

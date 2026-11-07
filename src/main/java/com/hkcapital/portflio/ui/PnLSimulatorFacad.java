@@ -113,7 +113,6 @@ public class PnLSimulatorFacad
     private final SRMatrixToleranceExporter srMatrixToleranceExporter;
     private final SRMatrixImporter srMatrixImporter;
     private final SRMatrixExporter srMatrixExporter;
-
     final TradingIndicatorImporter tradingIndicatorImporter;
     final TradingIndicatorExporter tradingIndicatorExporter;
     private final ImporterExporterDependencies dep;

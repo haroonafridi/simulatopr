@@ -1,6 +1,6 @@
 package com.hkcapital.portflio.indicators;
 
-import com.hkcapital.portflio.market.indicators.ATR;
+import com.hkcapital.portflio.market.indicators.ATRProcessor;
 import com.hkcapital.portflio.market.indicators.CandleDto;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +29,7 @@ class ATRTest
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        ATR atr = new ATR(14, null);
+        ATRProcessor atr = new ATRProcessor(14, null);
         atr.onCandleClose(candle0);
         atr.onCandleClose(candle1);
         atr.onCandleClose(candle2);

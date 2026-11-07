@@ -6,7 +6,7 @@ import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
 import java.util.Objects;
 
-public class EMA implements IndicatorProcessor {
+public class EMAProcessor implements IndicatorProcessor {
 
     private final Instrument instrument;
     private final int period;
@@ -16,7 +16,7 @@ public class EMA implements IndicatorProcessor {
     private double seedSum = 0.0;
     private int seedCount = 0;
 
-    public EMA(int period, final Instrument instrument) {
+    public EMAProcessor(int period, final Instrument instrument) {
 
         Objects.requireNonNull(instrument,
                 "Instrument cannot be null");

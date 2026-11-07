@@ -1,15 +1,11 @@
 package com.hkcapital.portflio.service.orders;
 
-import com.hkcapital.portflio.market.indicators.CandleBuilder;
-import com.hkcapital.portflio.market.indicators.SMA;
 import com.hkcapital.portflio.model.Instrument;
 import com.hkcapital.portflio.model.Position;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
 import com.hkcapital.portflio.service.positions.PositionService;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.stream.Collectors;
 
 @Slf4j
 public class FifteenMinuteTimeFrameOrderProcessorImpl implements OrderProcessor

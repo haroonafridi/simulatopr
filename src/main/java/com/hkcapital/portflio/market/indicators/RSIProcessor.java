@@ -6,7 +6,7 @@ import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
 import java.util.Objects;
 
-public class RSI implements IndicatorProcessor {
+public class RSIProcessor implements IndicatorProcessor {
 
     private final int period;
     private final Instrument instrument;
@@ -20,7 +20,7 @@ public class RSI implements IndicatorProcessor {
 
     private Double rsi = null;
 
-    public RSI(int period, final Instrument instrument) {
+    public RSIProcessor(int period, final Instrument instrument) {
 
         Objects.requireNonNull(instrument,
                 "Instrument cannot be null");

@@ -1,7 +1,7 @@
 package com.hkcapital.portflio.indicators;
 
 import com.hkcapital.portflio.market.indicators.CandleDto;
-import com.hkcapital.portflio.market.indicators.RSI;
+import com.hkcapital.portflio.market.indicators.RSIProcessor;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class RSITest extends IndicatorsTestAbstract
         CandleDto candle13 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.99).low(4737.73).open(4737.97).close(4738.6).build();
         CandleDto candle14 = CandleDto.builder().time(Instant.now()).timeFramesUnit(TimeFramesUnit.MINUTE).high(4738.98).low(4737.4).open(4738.94).close(4738.1).build();
 
-        RSI rsi = new RSI(14, null);
+        RSIProcessor rsi = new RSIProcessor(14, null);
         rsi.onCandleClose(candle0);
         rsi.onCandleClose(candle1);
         rsi.onCandleClose(candle2);
@@ -56,7 +56,7 @@ class RSITest extends IndicatorsTestAbstract
 
         final List<CandleDto> loadCandles = loadCandles("/data/indicators/candles.json");
 
-        RSI rsi = new RSI(14, null);
+        RSIProcessor rsi = new RSIProcessor(14, null);
         for (CandleDto e : loadCandles)
         {
             if (e.getInterval() == 15

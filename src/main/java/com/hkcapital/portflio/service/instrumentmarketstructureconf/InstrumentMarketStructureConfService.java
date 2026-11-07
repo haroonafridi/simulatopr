@@ -21,4 +21,6 @@ public interface InstrumentMarketStructureConfService extends Service
     void removeAll();
 
     List<InstrumentMarketStructureConf> findByFilter(InstrumentMarketStructureConfFilter filter);
+
+    List<InstrumentMarketStructureConf>  findByStructureName(String structureName);
 }

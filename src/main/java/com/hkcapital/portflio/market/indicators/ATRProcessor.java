@@ -6,7 +6,7 @@ import com.hkcapital.portflio.service.orders.IndicatorProcessor;
 
 import java.util.Objects;
 
-public class ATR implements IndicatorProcessor {
+public class ATRProcessor implements IndicatorProcessor {
 
     private final int period;
     private final Instrument instrument;
@@ -17,7 +17,7 @@ public class ATR implements IndicatorProcessor {
     private int trCount = 0;
     private double trSum = 0.0;
 
-    public ATR(int period, Instrument instrument) {
+    public ATRProcessor(int period, Instrument instrument) {
 
         Objects.requireNonNull(instrument,
                 "Instrument cannot be null");

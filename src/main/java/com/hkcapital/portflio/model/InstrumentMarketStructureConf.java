@@ -47,6 +47,11 @@ public class InstrumentMarketStructureConf {
     @Column(name = "structure_name")
     private String structureName;
 
+    @Column(name = "trend_structure_name")
+    private String trendStructureName;
+
+    @Column(name = "order_block_depth")
+    private Integer orderBlockDepth;
 
 
     public InstrumentStructureConfDTO buildDto()
@@ -62,7 +67,9 @@ public class InstrumentMarketStructureConf {
                 .timeFrameUnit(timeFrameUnit)
                 .timeFrame(timeFrame)
                 .active(active)
+                .trendStructureName(trendStructureName)
                 .structureName(structureName)
+                .orderBlockDepth(orderBlockDepth)
                 .build();
     }
 }

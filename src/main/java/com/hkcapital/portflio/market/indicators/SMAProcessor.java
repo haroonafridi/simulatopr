@@ -8,14 +8,14 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
-public class SMA implements IndicatorProcessor
+public class SMAProcessor implements IndicatorProcessor
 {
     private final int period;
     private final Instrument instrument;
     private final Queue<Double> window = new LinkedList<>();
     private double sum = 0.0;
 
-    public SMA(int period, Instrument instrument)
+    public SMAProcessor(int period, Instrument instrument)
     {
         Objects.requireNonNull(instrument, "Instrument cannot be null");
         if (period <= 0)
