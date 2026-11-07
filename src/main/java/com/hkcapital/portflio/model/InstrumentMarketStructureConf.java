@@ -56,7 +56,7 @@ public class InstrumentMarketStructureConf {
                 .sub(sub)
                 .creationDate(creationDate)
                 .marketOrder(marketOrder)
-                .interval(intrvl)
+                .intrvl(intrvl)
                 .structureName(structureName)
                 .module(module)
                 .timeFrameUnit(timeFrameUnit)

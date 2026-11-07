@@ -12,12 +12,15 @@ import com.hkcapital.portflio.repository.orders.etoro.EtoroOrderRepository;
 import com.hkcapital.portflio.service.api.etoro.EtoroApiService;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
+import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.orders.DynamicOrderProcessor;
 import com.hkcapital.portflio.service.orders.OrderManagerService;
 import com.hkcapital.portflio.service.orders.OrderProcessor;
 import com.hkcapital.portflio.service.orders.TimeFrameOrderProcessorImpl;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.values.order.OrderStatus;
 import org.slf4j.Logger;
@@ -42,19 +45,29 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final InstrumentService instrumentService;
     private final StrategyService strategyService;
     private final PositionService positionService;
+    private final MarketConditionsService marketConditionsService;
+    private final ConfigurationService confService;
+
+    private final SRMatrixService srMatrixService;
 
     public EtoroOrderManagerServiceImpl(final EtoroOrderRepository orderRepo, //
                                         final EtoroApiService etoroApiService,
                                         final InstrumentService instrumentService,
                                         final StrategyService strategyService,
                                         final PositionService positionService,
+                                        final ConfigurationService confService,
+                                        final MarketConditionsService marketConditionsService,
+                                        final SRMatrixService srMatrixService,
                                         final MarketStructureCache marketStructureCache)
     {
         this.orderRepository = orderRepo;
         this.etoroApiService = etoroApiService;
         this.instrumentService = instrumentService;
         this.strategyService = strategyService;
+        this.marketConditionsService = marketConditionsService;
         this.positionService = positionService;
+        this.srMatrixService = srMatrixService;
+        this.confService = confService;
     }
 
     @Override
@@ -65,7 +78,14 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 new TimeFrameOrderProcessorImpl(instrumentService, strategyService,
                         positionService, this);
         processor.process(instrumentRate, signalBuilder);
-        OrderProcessor  dynamicOrderProcessor =  new DynamicOrderProcessor();
+        OrderProcessor  dynamicOrderProcessor = //
+                new DynamicOrderProcessor(instrumentService,
+                        confService,
+                        strategyService,
+                        srMatrixService,
+                        marketConditionsService,
+                        positionService
+                        );
         dynamicOrderProcessor.process(instrumentRate, signalBuilder);
     }
 

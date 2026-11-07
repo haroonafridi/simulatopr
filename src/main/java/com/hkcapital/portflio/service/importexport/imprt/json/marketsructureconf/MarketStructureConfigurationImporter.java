@@ -91,7 +91,7 @@ public class MarketStructureConfigurationImporter //
                                     .structureName(instStrConfDTO.getStructureName())
                                     .marketOrder(instStrConfDTO.getMarketOrder())
                                     .sub(instStrConfDTO.getSub())
-                                    .intrvl(instStrConfDTO.getInterval())
+                                    .intrvl(instStrConfDTO.getIntrvl())
                                     .module(instStrConfDTO.getModule())
                                     .timeFrameUnit(instStrConfDTO.getTimeFrameUnit())
                                     .instrument(instrument)

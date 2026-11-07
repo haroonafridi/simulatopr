@@ -25,4 +25,6 @@ public interface StrategyService extends Service
 
     Strategy findByIdOrderByActiveDesc(Integer id);
 
+    List<Strategy> findDynamicStrategies(boolean dynamic);
+
 }

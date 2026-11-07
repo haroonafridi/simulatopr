@@ -21,9 +21,9 @@ import com.hkcapital.portflio.service.strategy.StrategyService;
 import com.hkcapital.portflio.ui.UIBag;
 import com.hkcapital.portflio.ui.fields.NumberTextField;
 import com.hkcapital.portflio.ui.panels.position.panels.PositionActionsPanel;
-import com.hkcapital.portflio.ui.panels.strategy.listners.RemoveStrategyButtonListener;
-import com.hkcapital.portflio.ui.panels.strategy.listners.SaveStrategyButtonListener;
-import com.hkcapital.portflio.ui.panels.strategy.listners.StrategyEditDialogueMouseHandler;
+import com.hkcapital.portflio.ui.panels.strategy.listeners.RemoveStrategyButtonListener;
+import com.hkcapital.portflio.ui.panels.strategy.listeners.SaveStrategyButtonListener;
+import com.hkcapital.portflio.ui.panels.strategy.listeners.StrategyEditDialogueMouseHandler;
 import com.hkcapital.portflio.values.order.OrderTypes;
 import com.hkcapital.portflio.values.timeframe.TimeFrame;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,11 +55,13 @@ public class StrategyHeaderPanel extends UIBag
 
     private final JCheckBox activePositions = new JCheckBox("Active Positions");
     private final JCheckBox allPositions = new JCheckBox("All Positions");
-    private final JTextField strategyName = new JTextField(20);
+    private final JTextField name = new JTextField(20);
 
-    private final JLabel strategyDescriptionLabel = new JLabel("Strategy Description:");
+    private final JLabel descriptionLabel =
+            new JLabel("Strategy Description:");
 
-    private final JTextField strategyDescription = new JTextField(30);
+    private final JTextField description =
+            new JTextField(30);
 
     private final JLabel capitalAllocatedLabel = new JLabel("Capital Allocated:");
 
@@ -94,7 +96,6 @@ public class StrategyHeaderPanel extends UIBag
     private final ServiceRegistery<Service> serviceRegistery;
     private final OrderManagerService orderManagerService;
     private final MarketStructureCache marketStructureManagerCache;
-
     private final InstrumentMarketStructureService instMarkStrctrSrv;
     private final InstrumentService instrumentService;
 
@@ -139,7 +140,7 @@ public class StrategyHeaderPanel extends UIBag
         // TABLE MODEL
         // ============================================================
 
-        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed", "Description", "Active"},
+        tableModel = new StrategyTableModel<>(new String[]{"Id", "Name", "Capital Deployed", "Description", "Active", "Dynamic"},
                 strategyService.findAll());
 
 
@@ -178,7 +179,7 @@ public class StrategyHeaderPanel extends UIBag
         // Strategy name
         fieldGbc.gridx = 1;
 
-        fieldsPanel.add(strategyName, fieldGbc);
+        fieldsPanel.add(name, fieldGbc);
 
         // Capital label
         fieldGbc.gridx = 2;
@@ -193,14 +194,14 @@ public class StrategyHeaderPanel extends UIBag
         // Description label
         fieldGbc.gridx = 4;
 
-        fieldsPanel.add(strategyDescriptionLabel, fieldGbc);
+        fieldsPanel.add(descriptionLabel, fieldGbc);
 
         // Description field
         fieldGbc.gridx = 5;
         fieldGbc.weightx = 1.0;
         fieldGbc.fill = GridBagConstraints.HORIZONTAL;
 
-        fieldsPanel.add(strategyDescription, fieldGbc);
+        fieldsPanel.add(description, fieldGbc);
 
         // Active checkbox
         fieldGbc.gridx = 6;
@@ -486,9 +487,9 @@ public class StrategyHeaderPanel extends UIBag
     {
         active.setSelected(strategy.getActive());
 
-        strategyName.setText(strategy.getName());
+        name.setText(strategy.getName());
 
-        strategyDescription.setText(strategy.getDescription());
+        description.setText(strategy.getDescription());
          capitalAllocated.setText(
                  String.valueOf(strategy.getCapitalAllocated())
          );
@@ -518,9 +519,9 @@ public class StrategyHeaderPanel extends UIBag
 
     public void clear()
     {
-        strategyName.setText(null);
+        name.setText(null);
 
-        strategyDescription.setText(null);
+        description.setText(null);
 
         capitalAllocated.setText(null);
 
@@ -549,13 +550,13 @@ public class StrategyHeaderPanel extends UIBag
 
     public Strategy createStrategy()
     {
-        Strategy strategy = Strategy.builder().name(strategyName.getText()).description(strategyDescription.getText()).creationDate(LocalDateTime.now()).active(active.isSelected()).build();
+        Strategy strategy = Strategy.builder().name(name.getText()).description(description.getText()).creationDate(LocalDateTime.now()).active(active.isSelected()).build();
 
         strategyService.addStrategy(strategy);
 
-        strategyName.setText(null);
+        name.setText(null);
 
-        strategyDescription.setText(null);
+        description.setText(null);
 
         capitalAllocated.setText(null);
 

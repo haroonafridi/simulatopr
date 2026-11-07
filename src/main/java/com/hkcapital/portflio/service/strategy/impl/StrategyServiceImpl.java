@@ -73,4 +73,10 @@ public class StrategyServiceImpl implements StrategyService
         return strategyRepository.findByIdOrderByActiveDesc(id);
     }
 
+    @Override
+    public List<Strategy> findDynamicStrategies(boolean dynamic)
+    {
+        return strategyRepository.findByDynamic(dynamic);
+    }
+
 }

@@ -28,6 +28,8 @@ public class StrategyDTO
     private Double capitalAllocated;
     private LocalDateTime creationDate;
     private Boolean active;
+
+    private Boolean dynamic;
     private List<PositionDTO> positionPnLList;
 
 

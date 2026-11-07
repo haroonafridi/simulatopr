@@ -43,7 +43,18 @@ public class Instrument
     @Column(name = "with_band")
     private Boolean withBand = false;
 
+    @Column(name = "with_dynamic_orders")
+    private Boolean withDynamicOrders = false;
 
+
+    public Boolean getWithDynamicOrder()
+    {
+        if (withDynamicOrders == null)
+        {
+            return false;
+        }
+        return withDynamicOrders;
+    }
     public Boolean getWithFeed()
     {
         if (withFeed == null)

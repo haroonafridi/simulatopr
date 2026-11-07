@@ -41,6 +41,10 @@ public class StrategyTableModel<E> extends TableModel
                 return strategy.getActive();
             }
 
+            case 5:
+            {
+                return strategy.getDynamic();
+            }
             default:
             {
                 return null;

@@ -70,11 +70,20 @@ public class InstrumentTableModel<E> extends TableModel
 
                 return inst.getWithBand() ? "YES" : "NO";
             }
+
             case 9:
+            {
+
+                return inst.getWithDynamicOrder() ? "YES" : "NO";
+            }
+
+            case 10:
             {
 
                 return inst.getActive() ? "YES" : "NO";
             }
+
+
 
             default:
             {

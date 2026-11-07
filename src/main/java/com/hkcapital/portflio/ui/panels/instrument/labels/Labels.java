@@ -14,6 +14,8 @@ public enum Labels
     WithCandle("With Candle"),
     WithFeed("With Feed"),
     WithBands("With Bands"),
+
+    WithDynamicOrder("With Dynamic Order"),
     Url("Url"),
     InstrumentPanel("Instrument Panel"),
 

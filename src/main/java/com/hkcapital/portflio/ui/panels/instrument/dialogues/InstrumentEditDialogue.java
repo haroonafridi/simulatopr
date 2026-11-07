@@ -29,6 +29,8 @@ public class InstrumentEditDialogue extends JDialog
     JTextField maxSlippage = new NumberTextField(30);
 
     JCheckBox withCandle = new JCheckBox("With Candle");
+
+    JCheckBox withDynamicOrder = new JCheckBox("With Dynaic Order");
     JCheckBox active = new JCheckBox("Active");
 
     JCheckBox withFeed = new JCheckBox("With Feed");
@@ -59,6 +61,7 @@ public class InstrumentEditDialogue extends JDialog
         withCandle.setSelected(instrument.getWithCandle() == null ? false : instrument.getWithCandle());
         withFeed.setSelected(instrument.getWithFeed() == null ? false : instrument.getWithFeed());
         withBand.setSelected(instrument.getWithBand() == null ? false : instrument.getWithFeed());
+        withDynamicOrder.setSelected(instrument.getWithDynamicOrder() == null ? false : instrument.getWithDynamicOrder());
         JDialog dialog = new JDialog((Frame) null, "Instrument = [" + instrument.getName() + "]", true);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -102,6 +105,7 @@ public class InstrumentEditDialogue extends JDialog
         panel1.add(withCandle);
         panel1.add(withFeed);
         panel1.add(withBand);
+        panel1.add(withDynamicOrder);
         panel2.add(scroll);
         JPanel buttonPanel = new JPanel();
         panel.add(panel1);
@@ -118,6 +122,7 @@ public class InstrumentEditDialogue extends JDialog
         instrument.setWithCandle(withCandle.isSelected());
         instrument.setWithFeed(withFeed.isSelected());
         instrument.setWithBand(withBand.isSelected());
+        instrument.setWithDynamicOrders(withDynamicOrder.isSelected());
         instrument.setInstrumentTicker(instrumentSymbol.getText());
         instrument.setInstrumentDesc(instrumentDescription.getText());
         instrument.setUrl(instrumentUrl.getText());

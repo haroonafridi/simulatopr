@@ -117,6 +117,12 @@ public class InstrumentServiceImpl implements InstrumentService
     }
 
     @Override
+    public List<Instrument> findByActiveAndWithFeedAndWithCandleAndWithDynamicOrders(Boolean active, Boolean withFeed, Boolean withCandle, Boolean withDynamicOrders)
+    {
+        return instrumentRepository.findByActiveAndWithFeedAndWithCandleAndWithDynamicOrders(active, withFeed, withCandle, withDynamicOrders);
+    }
+
+    @Override
     public List<Instrument> findByActiveAndWithFeedAndWithCandle(Boolean active, Boolean withFeed, Boolean withCandle)
     {
         return instrumentRepository.findByActiveAndWithFeedAndWithCandle(active, withFeed, withCandle);

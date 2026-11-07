@@ -28,7 +28,7 @@ public class InstrumentPanel extends UIBag
     private final JLabel tckrLbl = new JLabel(Labels.Ticker.getLabel());
     private final JTextField ticker = new JTextField(30);
 
-    private final JLabel etoroIdLbl = new JLabel(Labels.Name.getLabel());
+    private final JLabel etoroIdLbl = new JLabel(Labels.EtoroInstrumentId.getLabel());
     private final NumberTextField etoroId = new NumberTextField(30);
     private final JLabel instNameLbl = new JLabel(Labels.Name.getLabel());
     private final JTextField instName = new JTextField(30);
@@ -53,6 +53,7 @@ public class InstrumentPanel extends UIBag
                 Labels.WithCandle.getLabel(),
                 Labels.WithFeed.getLabel(),
                 Labels.WithBands.getLabel(),
+                Labels.WithDynamicOrder.getLabel(),
                 Labels.Active.getLabel()}, //
                 insServ.findAllOrderByName());
         setLayout(new GridBagLayout());

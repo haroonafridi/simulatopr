@@ -31,8 +31,20 @@ public class Strategy
     private Double capitalAllocated;
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    @Column(name = "dynamic")
+    private Boolean dynamic = false;
     @Column(name = "active")
     private Boolean active;
+
+    public Boolean getDynamic()
+    {
+        if(dynamic == null)
+        {
+            return false;
+        }
+        return dynamic;
+    }
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Position> positionPnLList;
 
@@ -41,7 +53,8 @@ public class Strategy
 
         List<PositionDTO> positionDTOList = new ArrayList<>();
 
-        for (Position position : positionPnLList){
+        for (Position position : positionPnLList)
+        {
             positionDTOList.add(position.buildPositionDTO());
         }
 
@@ -52,6 +65,7 @@ public class Strategy
                 .capitalAllocated(capitalAllocated)
                 .creationDate(creationDate)
                 .active(active)
+                .dynamic(dynamic)
                 .positionPnLList(positionDTOList)
                 .build();
     }

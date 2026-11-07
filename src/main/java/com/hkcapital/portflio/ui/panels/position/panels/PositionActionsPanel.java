@@ -179,7 +179,7 @@ public class PositionActionsPanel extends UIBag
 
                 Position r = positionService.findById((Integer) table.getModel().getValueAt(row, 0));
 
-                if(r.getPositionType() != null && r.getPositionType().equals(PositionType.SELL.getValue()))
+                if( r !=null && r.getPositionType() != null && r.getPositionType().equals(PositionType.SELL.getValue()))
                 {
                     if(r.getSrMatrix().getResistance() > r.getSrMatrix().getStopLoss() ||
                             r.getSrMatrix().getResistance() < r.getSrMatrix().getTakeProfit() )
@@ -191,7 +191,8 @@ public class PositionActionsPanel extends UIBag
                     }
                 }
 
-                if(r.getPositionType() != null && r.getPositionType().equals(PositionType.BUY.getValue()))
+                if(  r != null && r.getPositionType() != null //
+                        && r.getPositionType().equals(PositionType.BUY.getValue()))
                 {
                     if(r.getSrMatrix().getSupport() < r.getSrMatrix().getStopLoss() ||
                             r.getSrMatrix().getSupport() > r.getSrMatrix().getTakeProfit() )

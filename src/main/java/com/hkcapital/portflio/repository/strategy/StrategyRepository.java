@@ -4,9 +4,13 @@ import com.hkcapital.portflio.model.Strategy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface StrategyRepository extends JpaRepository<Strategy, Integer>
 {
     Strategy findByIdOrderByActiveDesc(Integer id);
     Strategy findByName(String name);
+
+    List<Strategy> findByDynamic(boolean dynamic);
 }

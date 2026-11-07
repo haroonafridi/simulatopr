@@ -1,149 +1,170 @@
 package com.hkcapital.portflio.service.orders;
 
+import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import com.hkcapital.portflio.market.structure.MarketStructure;
+import com.hkcapital.portflio.market.structure.PriceRange;
+import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
+import com.hkcapital.portflio.service.configuration.ConfigurationService;
+import com.hkcapital.portflio.service.instrument.InstrumentService;
+import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
+import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
+import com.hkcapital.portflio.service.strategy.StrategyService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Comparator;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class DynamicOrderProcessor implements OrderProcessor
 {
 
+    private final InstrumentService instrumentService;
+    private final ConfigurationService confService;
+    private final StrategyService strategyService;
+    private final SRMatrixService sRMatrixService;
+    private final MarketConditionsService marktConditionsService;
+    private final PositionService positionService;
+
+    private String trend;
+
+    public DynamicOrderProcessor(InstrumentService instrumentService, ConfigurationService confService, //
+                                 StrategyService strategyService, SRMatrixService sRMatrixService, //
+                                 MarketConditionsService marktConditionsService, PositionService positionService)
+    {
+        this.instrumentService = instrumentService;
+        this.confService = confService;
+        this.strategyService = strategyService;
+        this.sRMatrixService = sRMatrixService;
+        this.marktConditionsService = marktConditionsService;
+        this.positionService = positionService;
+    }
+
     @Override
     public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
 
-        List<CandleBuilder> fiftenMinCb = signalBuilder.getCandleBuilder()
+        if (!TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
+        {
+            log.info("Skip dynamic orders, activate auto trading.");
+            return;
+        }
+
+        if (InstrumentRateValidator.isInValidInstrumentRate(liveInstrumentRate))
+        {
+            return;
+        }
+
+
+        Strategy strategy = strategyService.findDynamicStrategies(true).stream().findFirst().get();
+
+        if(!strategy.getActive())
+        {
+            log.info("Skip dynamic orders, no active strategy found.");
+        }
+
+        List<CandleBuilder> fourHourCandles = signalBuilder.getCandleBuilder()
                 .stream()
-                .filter(e -> e.getInterval().intValue() == 1
-                        && e.getTimeFrame().equals(TimeFramesUnit.MINUTE))
+                .filter(e -> e.getInterval().intValue() == 4
+                        && e.getTimeFrame().equals(TimeFramesUnit.HOUR))
                 .collect(Collectors.toList());
 
-        CandleBuilder candleBuilder = fiftenMinCb.stream()
+        CandleBuilder candleBuilderGold = fourHourCandles.stream()
                 .filter(cb -> cb.getInstrument()
                         .getInstrumentTicker()
                         .equals("XAUUSD"))
                 .findFirst().get();
 
-
-        MarketStructure str15MinsGld =
-                getStructureByTimeFrame(candleBuilder.getMarketStructureManagerCache().getStructures().get("gold_4_hour"),
-                        "MINUTE",15);
-
-
-        MarketStructure str1HourGld =
-                getStructureByTimeFrame(candleBuilder.getMarketStructureManagerCache().getStructures().get("gold_4_hour"),
-                        "HOUR",1);
-
-        MarketStructure str4HourGld =
-                getStructureByTimeFrame(candleBuilder.getMarketStructureManagerCache().getStructures().get("gold_4_hour"),
-                        "HOUR",4);
-
-        MarketStructure str15MinsNsdq =
-                getStructureByTimeFrame(candleBuilder.getMarketStructureManagerCache().getStructures().get("nasdaq_4_hour"),
-                        "MINUTE",15);
+        CandleBuilder candleBuilderNasdaq = fourHourCandles.stream()
+                .filter(cb -> cb.getInstrument()
+                        .getInstrumentTicker()
+                        .equals("NSDQ100"))
+                .findFirst().get();
 
 
-        MarketStructure str1HourNsdq =
-                getStructureByTimeFrame(candleBuilder.getMarketStructureManagerCache().getStructures().get("nasdaq_4_hour"),
-                        "HOUR",1);
-
-        MarketStructure str4HourNsdq =
-                getStructureByTimeFrame(candleBuilder.getMarketStructureManagerCache().getStructures().get("nasdaq_4_hour"),
-                        "HOUR",4);
+        MarketStructure gold4HourStr =
+                getStructureByTimeFrame(candleBuilderGold.getMarketStructureManagerCache().getStructures().get("gold_4_hour"),
+                        "HOUR", 4);
 
 
+        Instrument inst = gold4HourStr.getInstrument();
 
-        Map<String, IndicatorProcessor> ip = candleBuilder.getIndicatorProcessors();
-
-
-        IndicatorProcessor SMA_9_1_HOUR = ip.get("SMA_9_1_HOUR");
-        IndicatorProcessor SMA_20_1_HOUR = ip.get("SMA_20_1_HOUR");
-        IndicatorProcessor SMA_50_1_HOUR = ip.get("SMA_50_1_HOUR");
-        IndicatorProcessor SMA_100_1_HOUR = ip.get("SMA_100_1_HOUR");
-
-
-        IndicatorProcessor SMA_9_1_MINUTE = ip.get("SMA_9_1_MINUTE");
-        IndicatorProcessor SMA_20_1_MINUTE = ip.get("SMA_20_1_MINUTE");
-        IndicatorProcessor SMA_50_1_MINUTE = ip.get("SMA_50_1_MINUTE");
-        IndicatorProcessor SMA_100_1_MINUTE = ip.get("SMA_100_1_MINUTE");
-
-
-
-        if( liveInstrumentRate.getAsk().doubleValue() < SMA_9_1_MINUTE.getValue()  &&
-                SMA_9_1_MINUTE.getValue() > SMA_20_1_MINUTE.getValue())
+        if (SlippageValidator.isInValidSlippage(liveInstrumentRate, inst))
         {
-           List<MarketPriceBand> str =  str15MinsGld.getUpperBands()
-                    .stream()
-                    .collect(Collectors.toList());
-
-            str.sort(Comparator.comparing(MarketPriceBand::getMarketVisitCount));
-
-           System.out.println("Bullish signal reported "+str.get(0).getUpperBound()+" / "+str.get(0).getLowerBound());
+            return;
         }
 
+        PriceRange range = gold4HourStr.getPriceRange();
 
-        if( liveInstrumentRate.getAsk().doubleValue() < SMA_9_1_MINUTE.getValue()
-                &&  SMA_9_1_MINUTE.getValue() < SMA_20_1_MINUTE.getValue())
-        {
-            List<MarketPriceBand> str =  str15MinsGld.getUpperBands()
-                    .stream()
-                    .collect(Collectors.toList());
+        MarketConditions marketConditions =
+                MarketConditions.builder()
+                        .instrument(inst)
+                        .dayLow(range.getLow())
+                        .dayHigh(range.getHigh())
+                        .percentMove(0d)
+                        .build();
 
-            str.sort((o1, o2) -> o2.getMarketVisitCount().compareTo(o1.getMarketVisitCount()));
+        marktConditionsService.addMarketCondition(marketConditions);
 
-            System.out.println("Sell signal reported "+str.get(0).getUpperBound()+" / "+str.get(0).getLowerBound());
-        }
+        Configuration configuration = confService.findByCode("Lev_20_15Per");
 
-        IndicatorProcessor EMA_9_1_MINUTE = ip.get("EMA_9_1_MINUTE");
-        IndicatorProcessor EMA_20_1_MINUTE = ip.get("EMA_20_1_MINUTE");
-        IndicatorProcessor EMA_50_1_MINUTE = ip.get("EMA_50_1_MINUTE");
-        IndicatorProcessor EMA_100_1_MINUTE = ip.get("EMA_100_1_MINUTE");
+        MarketStructure  structure15Mins = getStructureByTimeFrame(gold4HourStr, "MINUTE", 15);
 
-        IndicatorProcessor RSI_9_1_MINUTE = ip.get("RSI_9_1_MINUTE");
-        IndicatorProcessor RSI_20_1_MINUTE = ip.get("RSI_20_1_MINUTE");
-        IndicatorProcessor RSI_50_1_MINUTE = ip.get("RSI_50_1_MINUTE");
-        IndicatorProcessor RSI_100_1_MINUTE = ip.get("RSI_100_1_MINUTE");
+        MarketPriceBand str = structure15Mins.getUpperBands().stream().findFirst().get();
 
-        IndicatorProcessor ATR_9_1_MINUTE = ip.get("ATR_9_1_MINUTE");
-        IndicatorProcessor ATR_20_1_MINUTE = ip.get("ATR_20_1_MINUTE");
-        IndicatorProcessor ATR_50_1_MINUTE = ip.get("ATR_50_1_MINUTE");
-        IndicatorProcessor ATR_100_1_MINUTE = ip.get("ATR_100_1_MINUTE");
+        SRMatrix srMatrix = SRMatrix.builder().creationDate(LocalDateTime.now())
+                .active(true)
+                .l_s_tolerance(str.getLowerBound()-2)
+                .support(str.getLowerBound())
+                .r_s_tolerance(str.getLowerBound()+2)
+                .l_r_tolerance(str.getUpperBound()-2)
+                .resistance(str.getLowerBound())
+                .r_r_tolerance(str.getUpperBound()+2)
+                .timeFrameUnit(str.getTimeFrameUnit().getUnit())
+                .timeFrame(str.getTimeFrame())
+                .instrument(inst)
+                .takeProfit(str.getUpperBound()+8)
+                .stopLoss(str.getLowerBound()-8)
+                .build();
 
-//        System.out.println("sma_9_1_min = " + SMA_9_1_MINUTE.getValue());
-//        System.out.println("sma_20_1_min = " + SMA_20_1_MINUTE.getValue());
-//        System.out.println("sma_50_1_min = " + SMA_50_1_MINUTE.getValue());
-//        System.out.println("sma_100_1_min = " + SMA_100_1_MINUTE.getValue());
-//
-//
-//        System.out.println("ema_9_1_min = " + EMA_9_1_MINUTE.getValue());
-//        System.out.println("ema_20_1_min = " + EMA_20_1_MINUTE.getValue());
-//        System.out.println("ema_50_1_min = " + EMA_50_1_MINUTE.getValue());
-//        System.out.println("ema_100_1_min = " + EMA_100_1_MINUTE.getValue());
-//
-//        System.out.println("atr_9_1_min = " + ATR_9_1_MINUTE.getValue());
-//        System.out.println("atr_20_1_min = " + ATR_20_1_MINUTE.getValue());
-//        System.out.println("atr_50_1_min = " + ATR_50_1_MINUTE.getValue());
-//        System.out.println("atr_100_1_min = " + ATR_100_1_MINUTE.getValue());
-//
-//        System.out.println("rsi_9_1_min = " + RSI_9_1_MINUTE.getValue());
-//        System.out.println("rsi_20_1_min = " + RSI_20_1_MINUTE.getValue());
-//        System.out.println("rsi_50_1_min = " + RSI_50_1_MINUTE.getValue());
-//        System.out.println("rsi_100_1_min = " + RSI_100_1_MINUTE.getValue());
+        sRMatrixService.addSRMatrix(srMatrix);
 
+        Position position =  Position.builder()
+                .priority(0)
+                .positionType("BUY")
+                .active(true)
+                .currentPositionEquity(50d)
+                .executionCount(1)
+                .percentCapitalDeployed(1.5d)
+                .leverage(configuration.getLev())
+                .configuration(configuration)
+                .strategy(strategy)
+                .takeProfit(srMatrix.getTakeProfit())
+                .stopLoss(srMatrix.getStopLoss())
+                .instrument(inst)
+                .capitalRemainingFirePower(0d)
+                .tradingSessions(null)
+                .portfolioValue(0d)
+                .allowedFirePower(0d)
+                .remainingFirepower(0d)
+                .marketConditions(marketConditions)
+                .srMatrix(srMatrix)
+                .strategy(strategy)
+                .build();
+        positionService.add(position);
+        strategy.getPositionPnLList().add(position);
+        strategyService.updateStrategy(strategy);
     }
 
     private MarketStructure getStructureByTimeFrame(MarketStructure structure, String timeFrame, Integer interval)
     {
-        if (structure!=null && structure.getTimeFrameUnit().getUnit().equals(timeFrame) && structure.getTimeFrame().intValue() == interval)
+        if (structure != null && structure.getTimeFrameUnit().getUnit().equals(timeFrame) && structure.getTimeFrame().intValue() == interval)
         {
             return structure;
         }

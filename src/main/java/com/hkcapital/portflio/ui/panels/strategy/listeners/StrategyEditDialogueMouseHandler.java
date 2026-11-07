@@ -1,4 +1,4 @@
-package com.hkcapital.portflio.ui.panels.strategy.listners;
+package com.hkcapital.portflio.ui.panels.strategy.listeners;
 
 import com.hkcapital.portflio.model.Strategy;
 import com.hkcapital.portflio.service.strategy.StrategyService;
