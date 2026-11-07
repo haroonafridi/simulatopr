@@ -4,6 +4,7 @@ import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketPriceBand;
 import com.hkcapital.portflio.market.structure.MarketStructure;
+import com.hkcapital.portflio.market.structure.MarketTypes;
 import com.hkcapital.portflio.market.structure.PriceRange;
 import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
@@ -12,8 +13,10 @@ import com.hkcapital.portflio.service.configuration.ConfigurationService;
 import com.hkcapital.portflio.service.instrument.InstrumentService;
 import com.hkcapital.portflio.service.marketconditions.MarketConditionsService;
 import com.hkcapital.portflio.service.positions.PositionService;
+import com.hkcapital.portflio.service.positions.PositionType;
 import com.hkcapital.portflio.service.srmatrix.SRMatrixService;
 import com.hkcapital.portflio.service.strategy.StrategyService;
+import com.hkcapital.portflio.util.LeverageCodes;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -30,15 +33,16 @@ public class DynamicOrderProcessor implements OrderProcessor
     private final SRMatrixService sRMatrixService;
     private final MarketConditionsService marktConditionsService;
     private final PositionService positionService;
-
     private final OrderManagerService orderManagerService;
 
     private String trend;
 
-    public DynamicOrderProcessor(final InstrumentService instrumentService, final ConfigurationService confService, //
-                                 final StrategyService strategyService, final SRMatrixService sRMatrixService, //
+    public DynamicOrderProcessor(final InstrumentService instrumentService,
+                                 final ConfigurationService confService, //
+                                 final StrategyService strategyService, //
+                                 final SRMatrixService sRMatrixService, //
                                  final MarketConditionsService marktConditionsService,
-                                 final PositionService positionService,
+                                 final PositionService positionService, //
                                  final OrderManagerService orderManagerService)
     {
         this.instrumentService = instrumentService;
@@ -56,7 +60,11 @@ public class DynamicOrderProcessor implements OrderProcessor
 
         Strategy strategy = strategyService.findDynamicStrategies(true).stream().findFirst().get();
 
-        if(!strategy.getActive())
+        if(true) {
+            return;
+        }
+
+        if (!strategy.getActive())
         {
             log.info("Skip dynamic orders, no active strategy found.");
             return;
@@ -82,8 +90,10 @@ public class DynamicOrderProcessor implements OrderProcessor
 
 
         MarketStructure gold4HourStr =
-                getStructureByTimeFrame(candleBuilderGold.getMarketStructureManagerCache().getStructures().get("gold_4_hour"),
-                        "HOUR", 4);
+                getStructureByTimeFrame(candleBuilderGold//
+                                .getMarketStructureManagerCache().getStructures()
+                                .get(MarketTypes.GOLD_4_HOUR.getValue()),
+                        TimeFramesUnit.HOUR.getUnit(), 4);
 
 
         Instrument inst = gold4HourStr.getInstrument();
@@ -100,28 +110,37 @@ public class DynamicOrderProcessor implements OrderProcessor
 
         marktConditionsService.addMarketCondition(marketConditions);
 
-        Configuration configuration = confService.findByCode("Lev_20_15Per");
+        Configuration configuration = confService.findByCode(LeverageCodes.Lev_20_15Per.getValue());
 
-        MarketStructure  structure15Mins = getStructureByTimeFrame(gold4HourStr, "MINUTE", 15);
+        MarketStructure structure15Mins = getStructureByTimeFrame(gold4HourStr, TimeFramesUnit.MINUTE.getUnit(), 30);
+
         MarketPriceBand str = structure15Mins.getUpperBands().stream().findFirst().get();
+
+        MarketPriceBand oneBand = getStructureByTimeFrame(gold4HourStr, TimeFramesUnit.MINUTE.getUnit(), 5)
+                .getLowerBands().stream().findFirst().get();
+
+        double oneMinBandWidth = Math.abs(oneBand.getUpperBound() - oneBand.getLowerBound());
+
+        double fifteenMinsBandWidth = Math.abs(str.getUpperBound() - str.getLowerBound());
+
         SRMatrix srMatrix = SRMatrix.builder().creationDate(LocalDateTime.now())
                 .active(true)
-                .l_s_tolerance(str.getLowerBound()-2)
+                .l_s_tolerance(str.getLowerBound() - oneMinBandWidth)
                 .support(str.getLowerBound())
-                .r_s_tolerance(str.getLowerBound()+2)
-                .l_r_tolerance(str.getUpperBound()-2)
+                .r_s_tolerance(str.getLowerBound() + oneMinBandWidth)
+                .l_r_tolerance(str.getUpperBound() - oneMinBandWidth)
                 .resistance(str.getLowerBound())
-                .r_r_tolerance(str.getUpperBound()+2)
+                .r_r_tolerance(str.getUpperBound() + oneMinBandWidth)
                 .timeFrameUnit(str.getTimeFrameUnit().getUnit())
                 .timeFrame(str.getTimeFrame())
                 .instrument(inst)
-                .takeProfit(str.getUpperBound()+8)
-                .stopLoss(str.getLowerBound()-8)
+                .takeProfit(str.getUpperBound() + fifteenMinsBandWidth)
+                .stopLoss(str.getLowerBound() - fifteenMinsBandWidth)
                 .build();
         sRMatrixService.addSRMatrix(srMatrix);
-        Position position =  Position.builder()
+        Position position = Position.builder()
                 .priority(0)
-                .positionType("BUY")
+                .positionType(PositionType.BUY.getValue())
                 .active(true)
                 .currentPositionEquity(50d)
                 .executionCount(1)
@@ -145,7 +164,8 @@ public class DynamicOrderProcessor implements OrderProcessor
         strategy.getPositionPnLList().add(position);
         strategyService.updateStrategy(strategy);
 
-        DynamicProcessorUtil orderProcessor = new DynamicProcessorUtil(orderManagerService, positionService);
+        DynamicProcessorUtil orderProcessor = //
+                new DynamicProcessorUtil(orderManagerService, positionService);
 
         strategy.getPositionPnLList().forEach(el ->
         {
@@ -156,7 +176,8 @@ public class DynamicOrderProcessor implements OrderProcessor
 
     private MarketStructure getStructureByTimeFrame(MarketStructure structure, String timeFrame, Integer interval)
     {
-        if (structure != null && structure.getTimeFrameUnit().getUnit().equals(timeFrame) && structure.getTimeFrame().intValue() == interval)
+        if (structure != null && structure.getTimeFrameUnit().getUnit().equals(timeFrame) //
+                && structure.getTimeFrame().intValue() == interval)
         {
             return structure;
         }
