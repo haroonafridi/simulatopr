@@ -133,29 +133,45 @@ public class DynamicOrderProcessor implements OrderProcessor
         Map<String, IndicatorProcessor> indicatorProcessors = trendIngMarketIndicators.getIndicatorProcessors();
 
 
-        IndicatorProcessor EMA_9_5_MINUTE = indicatorProcessors.get("EMA_9_5_MINUTE");
-        IndicatorProcessor EMA_20_5_MINUTE = indicatorProcessors.get("EMA_20_5_MINUTE");
-        IndicatorProcessor EMA_50_5_MINUTE = indicatorProcessors.get("EMA_50_5_MINUTE");
-        IndicatorProcessor EMA_100_5_MINUTE = indicatorProcessors.get("EMA_100_5_MINUTE");
-
-        IndicatorProcessor SMA_9_5_MINUTE = indicatorProcessors.get("SMA_9_5_MINUTE");
-        IndicatorProcessor SMA_20_5_MINUTE = indicatorProcessors.get("SMA_20_5_MINUTE");
-        IndicatorProcessor SMA_50_5_MINUTE = indicatorProcessors.get("SMA_50_5_MINUTE");
-        IndicatorProcessor SMA_100_5_MINUTE = indicatorProcessors.get("SMA_100_5_MINUTE");
-
-
-        System.out.println("Ask => " + liveInstrumentRate.getAsk() + " SMA_9_5_MINUTE =>" + SMA_9_5_MINUTE.getValue());
         if (liveInstrumentRate.getAsk() != null)
         {
+            IndicatorProcessor EMA_9_5_MINUTE = indicatorProcessors.get("EMA_9_5_MINUTE");
+
+            IndicatorProcessor EMA_20_5_MINUTE = indicatorProcessors.get("EMA_20_5_MINUTE");
+
+            IndicatorProcessor EMA_50_5_MINUTE = indicatorProcessors.get("EMA_50_5_MINUTE");
+
+            IndicatorProcessor EMA_100_5_MINUTE = indicatorProcessors.get("EMA_100_5_MINUTE");
+
+            IndicatorProcessor SMA_9_5_MINUTE = indicatorProcessors.get("SMA_9_5_MINUTE");
+
+            IndicatorProcessor SMA_20_5_MINUTE = indicatorProcessors.get("SMA_20_5_MINUTE");
+
+            IndicatorProcessor SMA_50_5_MINUTE = indicatorProcessors.get("SMA_50_5_MINUTE");
+
+            IndicatorProcessor SMA_100_5_MINUTE = indicatorProcessors.get("SMA_100_5_MINUTE");
+
             EMA ema = new EMA(EMA_9_5_MINUTE.getValue(), EMA_20_5_MINUTE.getValue(),
                     EMA_50_5_MINUTE.getValue(), EMA_100_5_MINUTE.getValue());
 
             SMA sma = new SMA(SMA_9_5_MINUTE.getValue(),
                     SMA_20_5_MINUTE.getValue(), SMA_50_5_MINUTE.getValue(), SMA_100_5_MINUTE.getValue());
+
             MarketPriceBand str = structure15Mins.getUpperBands().stream().findFirst().get();
-            Region r = new Region(str.getLowerBound(), str.getUpperBound());
-            Support support = new Support(r, r, r);
-            Resistance resistance = new Resistance(r, r, r);
+
+            Region rr1 = new Region(str.getLowerBound(), str.getUpperBound(), str.getMarketVisitCount());
+            Region rr2 = new Region(str.getLowerBound(), str.getUpperBound(), str.getMarketVisitCount());
+            Region rr3 = new Region(str.getLowerBound(), str.getUpperBound(), str.getMarketVisitCount());
+
+            Resistance resistance = new Resistance(rr1, rr2, rr3);
+
+            Region sr1 = new Region(str.getLowerBound(), str.getUpperBound(), str.getMarketVisitCount());
+
+            Region sr2 = new Region(str.getLowerBound(), str.getUpperBound(), str.getMarketVisitCount());
+
+            Region sr3 = new Region(str.getLowerBound(), str.getUpperBound(), str.getMarketVisitCount());
+
+            Support support = new Support(sr1, sr2, sr3);
 
             candleBuilderGold.getMarketStructureManagerCache().getTrendTopic() //
                     .updateTrend(new TrendIndicatorSignal(TimeFramesUnit.MINUTE.getUnit(),

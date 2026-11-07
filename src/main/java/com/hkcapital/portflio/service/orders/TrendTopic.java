@@ -2,8 +2,6 @@ package com.hkcapital.portflio.service.orders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 public class TrendTopic {
 
     private TrendIndicatorSignal trend;

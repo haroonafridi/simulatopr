@@ -9,4 +9,5 @@ public class Region
 {
     private double r1;
     private double r2;
+    private Integer density;
 }
