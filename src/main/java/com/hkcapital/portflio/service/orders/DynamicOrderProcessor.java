@@ -1,6 +1,5 @@
 package com.hkcapital.portflio.service.orders;
 
-import com.hkcapital.portflio.broker.etoro.config.TradingConfiguration;
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.market.structure.MarketPriceBand;
@@ -32,11 +31,15 @@ public class DynamicOrderProcessor implements OrderProcessor
     private final MarketConditionsService marktConditionsService;
     private final PositionService positionService;
 
+    private final OrderManagerService orderManagerService;
+
     private String trend;
 
-    public DynamicOrderProcessor(InstrumentService instrumentService, ConfigurationService confService, //
-                                 StrategyService strategyService, SRMatrixService sRMatrixService, //
-                                 MarketConditionsService marktConditionsService, PositionService positionService)
+    public DynamicOrderProcessor(final InstrumentService instrumentService, final ConfigurationService confService, //
+                                 final StrategyService strategyService, final SRMatrixService sRMatrixService, //
+                                 final MarketConditionsService marktConditionsService,
+                                 final PositionService positionService,
+                                 final OrderManagerService orderManagerService)
     {
         this.instrumentService = instrumentService;
         this.confService = confService;
@@ -44,29 +47,19 @@ public class DynamicOrderProcessor implements OrderProcessor
         this.sRMatrixService = sRMatrixService;
         this.marktConditionsService = marktConditionsService;
         this.positionService = positionService;
+        this.orderManagerService = orderManagerService;
     }
 
     @Override
     public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
 
-        if (!TradingConfiguration.ACTIVATE_AUTOMATIC_TRADING)
-        {
-            log.info("Skip dynamic orders, activate auto trading.");
-            return;
-        }
-
-        if (InstrumentRateValidator.isInValidInstrumentRate(liveInstrumentRate))
-        {
-            return;
-        }
-
-
         Strategy strategy = strategyService.findDynamicStrategies(true).stream().findFirst().get();
 
         if(!strategy.getActive())
         {
             log.info("Skip dynamic orders, no active strategy found.");
+            return;
         }
 
         List<CandleBuilder> fourHourCandles = signalBuilder.getCandleBuilder()
@@ -95,11 +88,6 @@ public class DynamicOrderProcessor implements OrderProcessor
 
         Instrument inst = gold4HourStr.getInstrument();
 
-        if (SlippageValidator.isInValidSlippage(liveInstrumentRate, inst))
-        {
-            return;
-        }
-
         PriceRange range = gold4HourStr.getPriceRange();
 
         MarketConditions marketConditions =
@@ -115,9 +103,7 @@ public class DynamicOrderProcessor implements OrderProcessor
         Configuration configuration = confService.findByCode("Lev_20_15Per");
 
         MarketStructure  structure15Mins = getStructureByTimeFrame(gold4HourStr, "MINUTE", 15);
-
         MarketPriceBand str = structure15Mins.getUpperBands().stream().findFirst().get();
-
         SRMatrix srMatrix = SRMatrix.builder().creationDate(LocalDateTime.now())
                 .active(true)
                 .l_s_tolerance(str.getLowerBound()-2)
@@ -132,9 +118,7 @@ public class DynamicOrderProcessor implements OrderProcessor
                 .takeProfit(str.getUpperBound()+8)
                 .stopLoss(str.getLowerBound()-8)
                 .build();
-
         sRMatrixService.addSRMatrix(srMatrix);
-
         Position position =  Position.builder()
                 .priority(0)
                 .positionType("BUY")
@@ -160,6 +144,14 @@ public class DynamicOrderProcessor implements OrderProcessor
         positionService.add(position);
         strategy.getPositionPnLList().add(position);
         strategyService.updateStrategy(strategy);
+
+        DynamicProcessorUtil orderProcessor = new DynamicProcessorUtil(orderManagerService, positionService);
+
+        strategy.getPositionPnLList().forEach(el ->
+        {
+            orderProcessor.process(liveInstrumentRate, el, el.getInstrument());
+        });
+
     }
 
     private MarketStructure getStructureByTimeFrame(MarketStructure structure, String timeFrame, Integer interval)

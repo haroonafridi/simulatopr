@@ -84,7 +84,8 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                         strategyService,
                         srMatrixService,
                         marketConditionsService,
-                        positionService
+                        positionService,
+                        this
                         );
         dynamicOrderProcessor.process(instrumentRate, signalBuilder);
     }
