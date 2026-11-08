@@ -82,7 +82,49 @@ public class InstrumentConfTableModel<E> extends TableModel
 
                 return instConf.getOrderBlockDepth();
             }
+
             case 11:
+            {
+
+                return instConf.getRsiOverSold();
+            }
+
+            case 12:
+            {
+
+                return instConf.getRsiOverBought();
+            }
+
+            case 13:
+            {
+
+                return instConf.getRsiBearishFrom();
+            }
+
+            case 14:
+            {
+
+                return instConf.getRsiBearishTo();
+            }
+
+            case 15:
+            {
+
+                return instConf.getRsiBullishFrom();
+            }
+
+            case 16:
+            {
+
+                return instConf.getRsiBullishTo();
+            }
+
+            case 17:
+            {
+
+                return instConf.getAtr();
+            }
+            case 18:
             {
 
                 return instConf.isActive();

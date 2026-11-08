@@ -32,7 +32,16 @@ public enum Labels
 
     OrderBlockDepth("Order Block Depth"),
 
-    Order("Order");
+    Order("Order"),
+
+    RsiOverSold("RSI Oversold"),
+    RsiOverBought("RSI Overbought"),
+    RsiBearishFrom("RSI Bearish From"),
+    RsiBearishTo("RSI Bearish To"),
+    RsiBullishFrom("RSI Bullish From"),
+    RsiBullishTo("RSI Bullish TO"),
+    Atr("ATR");
+
 
     private String label;
 

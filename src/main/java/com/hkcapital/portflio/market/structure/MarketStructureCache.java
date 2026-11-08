@@ -31,7 +31,7 @@ public class MarketStructureCache implements Service
     private final Map<String, MarketStructure> structures =
             new ConcurrentHashMap<>();
 
-    private Region region = new Region(0,0);
+    private Region region = new Region(0,0,0);
     private Support support = new Support(region, region, region);
     private Resistance resistance = new Resistance(region, region, region);
     private final TrendTopic trendTopic = new TrendTopic(new TrendIndicatorSignal(

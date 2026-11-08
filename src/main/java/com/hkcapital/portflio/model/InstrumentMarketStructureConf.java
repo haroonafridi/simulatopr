@@ -53,6 +53,20 @@ public class InstrumentMarketStructureConf {
     @Column(name = "order_block_depth")
     private Integer orderBlockDepth;
 
+    @Column(name = "rsi_over_sold")
+    private Double rsiOverSold;
+    @Column(name = "rsi_over_bought")
+    private Double rsiOverBought;
+    @Column(name = "rsi_bullish_from")
+    private Double rsiBullishFrom;
+    @Column(name = "rsi_bullish_to")
+    private Double rsiBullishTo;
+    @Column(name = "rsi_bearish_from")
+    private Double rsiBearishFrom;
+    @Column(name = "rsi_bearish_to")
+    private Double rsiBearishTo;
+    @Column(name = "atr")
+    private Double atr;
 
     public InstrumentStructureConfDTO buildDto()
     {
@@ -67,6 +81,13 @@ public class InstrumentMarketStructureConf {
                 .timeFrameUnit(timeFrameUnit)
                 .timeFrame(timeFrame)
                 .active(active)
+                .rsiOverBought(rsiOverBought)
+                .rsiOverSold(rsiOverSold)
+                .rsiBearishFrom(rsiBearishFrom)
+                .rsiBearishTo(rsiBearishTo)
+                .rsiBullishFrom(rsiBullishFrom)
+                .rsiBullishTo(rsiBullishTo)
+                .atr(atr)
                 .trendStructureName(trendStructureName)
                 .structureName(structureName)
                 .orderBlockDepth(orderBlockDepth)

@@ -1,7 +1,6 @@
 package com.hkcapital.portflio.service.instrumentmarketstructureconf.dto;
 
 import com.hkcapital.portflio.service.instrument.dto.InstrumentDTO;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +26,13 @@ public class InstrumentStructureConfDTO
     private String structureName;
 
     private String trendStructureName;
-
     private Integer orderBlockDepth;
+
+    private Double rsiOverBought;
+    private Double rsiOverSold;
+    private Double rsiBullishFrom;
+    private Double rsiBullishTo;
+    private Double rsiBearishFrom;
+    private Double rsiBearishTo;
+    private Double atr;
 }

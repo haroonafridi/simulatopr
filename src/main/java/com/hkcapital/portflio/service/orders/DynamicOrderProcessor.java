@@ -69,6 +69,11 @@ public class DynamicOrderProcessor implements OrderProcessor
             return;
         }
 
+        if(true)
+        {
+            return;
+        }
+
         List<CandleBuilder> fourHourCandles = signalBuilder.getCandleBuilder()
                 .stream()
                 .filter(e -> e.getInterval().intValue() == 4

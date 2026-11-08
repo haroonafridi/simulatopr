@@ -26,6 +26,27 @@ public class InstrumentConfEditDialogue extends JDialog
     private final JLabel intervalLabel = new JLabel("Interval:");
     private final NumberTextField intrvl = new NumberTextField(40);
 
+
+    private final JLabel rsiOverSoldLabel = new JLabel("Rsi Oversold:");
+    private final NumberTextField rsiOverSold = new NumberTextField(40);
+
+    private final JLabel rsiOverBoughtLabel = new JLabel("Rsi Overbought:");
+    private final NumberTextField rsiOverBought = new NumberTextField(40);
+    private final JLabel rsiBearishFromLabel = new JLabel("Rsi Bearish From:");
+    private final NumberTextField rsiBearishFrom = new NumberTextField(40);
+
+    private final JLabel rsiBearishToLabel = new JLabel("Rsi Bearish To:");
+    private final NumberTextField rsiBearishTo = new NumberTextField(40);
+
+    private final JLabel rsiBullishFromLabel = new JLabel("Rsi Bullish From:");
+    private final NumberTextField rsiBullishFrom = new NumberTextField(40);
+
+    private final JLabel rsiBullishToLabel = new JLabel("Rsi Bullish To:");
+    private final NumberTextField rsiBullishTo = new NumberTextField(40);
+    private final JLabel atrLabel = new JLabel("ATR:");
+    private final NumberTextField atr = new NumberTextField(40);
+
+
     private final JLabel trendStructureNameLabel = new JLabel(Labels.TrendStructureName.getLabel());
     private JComboBox<MarketTypes> trendStructName =
             new JComboBox<>(MarketTypes.values());
@@ -67,6 +88,29 @@ public class InstrumentConfEditDialogue extends JDialog
         intrvl.setText(String.valueOf(instMrktConf.getIntrvl()));
         trendStructName.setSelectedItem(marketType.isPresent() ? marketType.get() : null);
         orderBlockDepth.setText(String.valueOf(instMrktConf.getOrderBlockDepth()));
+        rsiOverSold.setText( instMrktConf.getRsiOverSold() != null ?
+                String.valueOf(instMrktConf.getRsiOverSold()) : null);
+
+        rsiOverBought.setText(instMrktConf.getRsiOverBought() != null ?
+                String.valueOf(instMrktConf.getRsiOverBought()) : null);
+
+        rsiBearishFrom.setText( instMrktConf.getRsiBearishFrom() != null ?
+                String.valueOf(instMrktConf.getRsiBearishFrom()) : null);
+
+
+        rsiBearishTo.setText(instMrktConf.getRsiBearishTo() != null ?
+                String.valueOf(instMrktConf.getRsiBearishTo()) : null);
+
+
+        rsiBullishFrom.setText(instMrktConf.getRsiBullishFrom() != null ?
+                String.valueOf(instMrktConf.getRsiBullishFrom()) : null);
+
+        rsiBullishTo.setText(instMrktConf.getRsiBullishTo() != null ?
+                String.valueOf(instMrktConf.getRsiBullishTo()) : null);
+
+        atr.setText(instMrktConf.getAtr() != null ?
+                String.valueOf(instMrktConf.getAtr()) : null);
+
         active.setSelected(instMrktConf.isActive());
     }
 
@@ -114,8 +158,53 @@ public class InstrumentConfEditDialogue extends JDialog
         gbc.gridx = 1;
         panel.add(orderBlockDepth, gbc);
 
+
         gbc.gridx = 0;
         gbc.gridy = 5;
+        panel.add(rsiOverSoldLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(rsiOverSold, gbc);
+
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        panel.add(rsiOverBoughtLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(rsiOverBought, gbc);
+
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        panel.add(rsiBearishFromLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(rsiBearishFrom, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        panel.add(rsiBearishToLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(rsiBearishTo, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        panel.add(rsiBullishFromLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(rsiBullishFrom, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 10;
+        panel.add(rsiBullishToLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(rsiBullishTo, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 11;
+        panel.add(atrLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(atr, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 12;
         gbc.gridwidth = 1;
         panel.add(active, gbc);
         add(panel, BorderLayout.CENTER);
@@ -146,6 +235,13 @@ public class InstrumentConfEditDialogue extends JDialog
             instMrktConf.setActive(active.isSelected());
             instMrktConf.setTrendStructureName(selectedTrendStructure.getValue());
             instMrktConf.setOrderBlockDepth(orderBlockDepth.getIntValue());
+            instMrktConf.setRsiOverSold(rsiOverSold.getDoubleValue());
+            instMrktConf.setRsiOverBought(rsiOverBought.getDoubleValue());
+            instMrktConf.setRsiBearishFrom(rsiBearishFrom.getDoubleValue());
+            instMrktConf.setRsiBearishTo(rsiBearishTo.getDoubleValue());
+            instMrktConf.setRsiBullishFrom(rsiBullishFrom.getDoubleValue());
+            instMrktConf.setRsiBullishTo(rsiBullishTo.getDoubleValue());
+            instMrktConf.setAtr(atr.getDoubleValue());
             instMarktStrConfService.add(instMrktConf);
             dispose();
         } catch (NumberFormatException ex)
