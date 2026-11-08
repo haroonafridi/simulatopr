@@ -2,10 +2,7 @@ package com.hkcapital.portflio.service.orders;
 
 import com.hkcapital.portflio.market.indicators.CandleBuilder;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
-import com.hkcapital.portflio.market.structure.MarketPriceBand;
-import com.hkcapital.portflio.market.structure.MarketStructure;
-import com.hkcapital.portflio.market.structure.MarketTypes;
-import com.hkcapital.portflio.market.structure.PriceRange;
+import com.hkcapital.portflio.market.structure.*;
 import com.hkcapital.portflio.model.*;
 import com.hkcapital.portflio.service.api.etoro.websocket.LiveInstrumentRate;
 import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
@@ -69,10 +66,10 @@ public class DynamicOrderProcessor implements OrderProcessor
             return;
         }
 
-        if(true)
-        {
-            return;
-        }
+//        if(true)
+//        {
+//            return;
+//        }
 
         List<CandleBuilder> fourHourCandles = signalBuilder.getCandleBuilder()
                 .stream()
@@ -128,6 +125,10 @@ public class DynamicOrderProcessor implements OrderProcessor
                         .findFirst().get();
 
         MarketStructure structure15Mins = getStructureByTimeFrame(gold4HourStr, TimeFramesUnit.MINUTE.getUnit(), 30);
+
+        List<MarketPriceBand> sup = structure15Mins.findMarketPriceBandByDepthAndBandType(BandType.LOW, mainMarket.getOrderBlockDepth());
+
+        List<MarketPriceBand> res = structure15Mins.findMarketPriceBandByDepthAndBandType(BandType.HIGH, mainMarket.getOrderBlockDepth());
 
         CandleBuilder trendIngMarketIndicators = signalBuilder.getCandleBuilder()
                 .stream()

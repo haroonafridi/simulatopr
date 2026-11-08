@@ -1,6 +1,5 @@
 package com.hkcapital.portflio.market.structure;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hkcapital.portflio.market.indicators.TimeFramesUnit;
 import com.hkcapital.portflio.model.Candle;
@@ -14,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.NavigableSet;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Slf4j
@@ -87,24 +84,7 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     @Override
     public void process(LiveInstrumentRate liveInstrumentRate, SignalBuilder signalBuilder)
     {
-
-
-
-        MarketStructureMap ub = new MarketStructureMap(upperBands, liveInstrumentRate.getAsk());
-
-        MarketStructureMap lb = new MarketStructureMap(lowerBands, liveInstrumentRate.getAsk());
-
-        Optional<MarketPriceBand> hB1 = ub.findMaxUpperBoundOf(BandType.HIGH);
-
-        Optional<MarketPriceBand> hB2 = ub.findNthLeastVisitedHighBand(1);
-
-        Optional<MarketPriceBand> lB1 = lb.findNthMostVisitedLowBand(0);
-
-        Optional<MarketPriceBand> lB2 = lb.findNthMostVisitedLowBand(1);
-
-        Distance dl1 = getDistance(liveInstrumentRate.getAsk(), lB1.get().getLowerBound());
-
-        orderCache.process(liveInstrumentRate, objectMapper);
+        //orderCache.process(liveInstrumentRate, objectMapper);
     }
 
 
@@ -245,5 +225,51 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
         lowerBands.clear(); //
         initCompleted = false;
     }
+
+    public List<MarketPriceBand> findMarketPriceBandByDepthAndBandType(
+            final BandType bandType, int depth) {
+
+        if (bandType == null || depth <= 0) {
+            return new ArrayList<>();
+        }
+
+        List<MarketPriceBand> bands;
+
+        if (bandType.getValue().equals(BandType.LOW.getValue()))
+        {
+            bands = new ArrayList<>(lowerBands);
+
+            bands.sort(
+                    Comparator.comparing(
+                            MarketPriceBand::getMarketVisitCount,
+                            Comparator.nullsLast(Comparator.reverseOrder())
+                    ).thenComparing(
+                            MarketPriceBand::getLowerBound,
+                            Comparator.nullsLast(Comparator.naturalOrder())
+                    )
+            );
+
+        } else if (bandType.getValue().equals(BandType.HIGH.getValue()))
+        {
+
+            bands = new ArrayList<>(upperBands);
+
+            bands.sort(
+                    Comparator.comparing(
+                            MarketPriceBand::getMarketVisitCount,
+                            Comparator.nullsLast(Comparator.reverseOrder())
+                    ).thenComparing(
+                            MarketPriceBand::getUpperBound,
+                            Comparator.nullsLast(Comparator.naturalOrder())
+                    )
+            );
+
+        } else {
+            return new ArrayList<>();
+        }
+
+        return bands.subList(0, Math.min(depth, bands.size()));
+    }
+
 
 }
