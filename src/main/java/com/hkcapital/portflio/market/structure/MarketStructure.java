@@ -272,4 +272,14 @@ public class MarketStructure implements MarketFeedSubscriber, Flushable
     }
 
 
+    public MarketStructure getChildStructureByTimeFrameAndTimeUnit(MarketStructure structure, String timeFrame, Integer interval)
+    {
+        if (structure != null && structure.getTimeFrameUnit().getUnit().equals(timeFrame) //
+                && structure.getTimeFrame().intValue() == interval)
+        {
+            return structure;
+        }
+        return getChildStructureByTimeFrameAndTimeUnit(structure.getChildMarketStructure(), timeFrame, interval);
+    }
+
 }

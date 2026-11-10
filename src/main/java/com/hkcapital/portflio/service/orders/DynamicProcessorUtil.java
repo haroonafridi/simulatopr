@@ -60,11 +60,12 @@ final class DynamicProcessorUtil
         }
 
 
-        log.info("Sending position type = {} , position id = {} , priority = {} , order Timeframe = 15 minutes instrument = {} , " +
+        log.info("Sending position type = {} , position id = {} , priority = {} , order Timeframe = {} minutes instrument = {} , " +
                         "ask = {} , bid = {} , max-slippage = {} , broker-slippage = {}",
                 position.getPositionType(),
                 position.getId(),
                 position.getPriority(),
+                timeFrame.timeFrameUnit(),
                 inst.getInstrumentTicker() ,
                 instrumentRate.getAsk() ,
                 instrumentRate.getBid() ,
@@ -75,13 +76,13 @@ final class DynamicProcessorUtil
                 && instrumentRate.getAsk() <= rSupportTol)
                 && position.getPositionType().equals(PositionType.BUY.getValue()))
         {
-            log.info("Buy order successfully placed for Timeframe = 15 minute");
+            log.info("Buy order successfully placed for Timeframe = {} minute", timeFrame.timeFrame());
             Double tp = position.getSrMatrix().getTakeProfit();
             Double sl = position.getSrMatrix().getStopLoss();
 
             EtoroMarketOrderDto buyOrder = (EtoroOrderUtil.buildBuyOrder(instrumentRate, inst.getMaxSlippage(),
                     tp, sl, //
-                    position, inst, position.getConfiguration().getLev(), "Timeframe = 15 minute , support = " + support + " Resistance = " + resistance + " " +
+                    position, inst, position.getConfiguration().getLev(), "Timeframe = "+ timeFrame.timeFrame()+" minute , support = " + support + " Resistance = " + resistance + " " +
                             "bid = " + instrumentRate.getBid() + "ask = " + instrumentRate.getAsk() + " SL = " + sl + " TP = " + tp, timeFrame));
 
             List<EtoroOrder> orders =

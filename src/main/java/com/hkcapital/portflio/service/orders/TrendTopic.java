@@ -1,11 +1,13 @@
 package com.hkcapital.portflio.service.orders;
 
+import com.hkcapital.portflio.market.indicators.CandleBuilder;
+import com.hkcapital.portflio.service.candle.etoro.impl.SignalBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
-public class TrendTopic {
-
+public class TrendTopic
+{
     private TrendIndicatorSignal trend;
-
     private final List<TrendManager> managers = new ArrayList<>();
 
     public TrendTopic(TrendIndicatorSignal trend) {
@@ -20,7 +22,7 @@ public class TrendTopic {
         managers.remove(manager);
     }
 
-    public void updateTrend(TrendIndicatorSignal newTrend) {
+    public TrendIndicatorSignal updateTrend(TrendIndicatorSignal newTrend) {
 
         //if (!Objects.equals(trend.getValue(), newTrend.getValue())) {
             TrendIndicatorSignal oldTrend = trend.copy();
@@ -29,5 +31,10 @@ public class TrendTopic {
                     manager.onTrendChange(oldTrend, newTrend)
             );
        // }
+
+        return oldTrend;
     }
+
+
+
 }

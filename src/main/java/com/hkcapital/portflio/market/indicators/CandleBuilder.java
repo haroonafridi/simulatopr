@@ -405,6 +405,12 @@ public class CandleBuilder
             candles.forEach(processor::onCandleClose);
         });
     }
+
+    public IndicatorProcessor getIndicator(String key)
+    {
+        return indicatorProcessors.get(key);
+    }
+
 }
 
 

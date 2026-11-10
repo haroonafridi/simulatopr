@@ -51,6 +51,7 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
     private final SRMatrixService srMatrixService;
 
     private final InstrumentMarketStructureConfService instMarktStrConfService;
+
     public EtoroOrderManagerServiceImpl(final EtoroOrderRepository orderRepo, //
                                         final EtoroApiService etoroApiService,
                                         final InstrumentService instrumentService,
@@ -81,15 +82,12 @@ public class EtoroOrderManagerServiceImpl implements OrderManagerService
                 new TimeFrameOrderProcessorImpl(instrumentService, strategyService,
                         positionService, this);
         processor.process(instrumentRate, signalBuilder);
-        OrderProcessor  dynamicOrderProcessor = //
-                new DynamicOrderProcessor(instrumentService,
-                        confService,
-                        strategyService,
-                        srMatrixService,
-                        marketConditionsService,
-                        positionService,
-                        this,
-                        instMarktStrConfService
+        OrderProcessor dynamicOrderProcessor = //
+                new DynamicOrderProcessor
+                        (
+                                instrumentService,
+                                strategyService,
+                                instMarktStrConfService
                         );
         dynamicOrderProcessor.process(instrumentRate, signalBuilder);
     }

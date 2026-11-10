@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public class SignalBuilder
@@ -33,4 +34,22 @@ public class SignalBuilder
         }
         return instruments;
     }
+
+
+    public CandleBuilder getCandlesBuilderByInstrumentAndByTimeFrameAndTimeUnit(Instrument instrument,
+                                                                                Integer timeFrame,
+                                                                                String timeFrameUnit)
+    {
+        return getCandleBuilder()
+                .stream()
+                .filter(e -> e.getInterval().intValue() == timeFrame
+                        && e.getTimeFrame().getUnit().equals(timeFrameUnit))
+                .collect(Collectors.toList()).stream()
+                .filter(cb -> cb.getInstrument()
+                        .getInstrumentTicker()
+                        .equals(instrument.getInstrumentTicker()))
+                .findFirst().get();
+    }
+
+
 }

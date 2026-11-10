@@ -1,16 +1,15 @@
 package com.hkcapital.portflio.service.orders;
 
-public class ThirtyMinuteTrend implements TrendManager {
+public class ThirtyMinuteTrend implements TrendManager
+{
 
     @Override
-    public void onTrendChange(TrendIndicatorSignal oldTrend, TrendIndicatorSignal newTrend) {
+    public void onTrendChange(TrendIndicatorSignal oldTrend, TrendIndicatorSignal newTrend)
+    {
 
-        System.out.println("30 Minute Trend Changed");
-
-        System.out.println("Old: " + oldTrend.getValue());
-
-        System.out.println("New: " + newTrend.getValue());
-
+        if(newTrend.getEma().getEma9().doubleValue() > oldTrend.getEma().getEma9().doubleValue()) {
+            System.out.println("trend change detected");
+        }
         // Your business logic here
     }
 }
